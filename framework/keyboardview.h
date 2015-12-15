@@ -36,26 +36,22 @@ class KeyboardView
 
 		static KeyboardView* create(GuiContainer& parent
 			,const KeyboardLayout& keyboard,EventHandler& handler)
-			{return new KeyboardView(parent,keyboard,handler);}
+			{return instanceCreate(parent,keyboard,handler);}
 
 		static KeyboardView* create(GuiContainer& parent,const KeyboardLayout& keyboard)
-			{
-			return new KeyboardView(parent,keyboard,s_null_handler);
-			}
+			{return instanceCreate(parent,keyboard,s_null_handler);}
 
-		void destroy()
-			{delete this;}
+		virtual void destroy()=0;
+		virtual void update()=0;
+		virtual void eventHandlerSet(EventHandler& eh)=0;
+		virtual void keyboardLayoutSet(const KeyboardLayout& layout)=0;
 
-		void update();
+	protected:
+		virtual ~KeyboardView()=default;
 
 	private:
-		KeyboardView(GuiContainer& parent,const KeyboardLayout& keyboard
+		static KeyboardView* instanceCreate(GuiContainer& parent,const KeyboardLayout& keyboard
 			,EventHandler& handler);
-
-		~KeyboardView();
-
-		class Impl;
-		Impl* m_impl;
 
 		static EventHandler s_null_handler;
 	};
