@@ -34,9 +34,14 @@ class KeyboardView
 					{}
 			};
 
-		static KeyboardView* create(GuiContainer& parent,EventHandler& handler
-			,const KeyboardLayout& keyboard)
-			{return new KeyboardView(parent,handler,keyboard);}
+		static KeyboardView* create(GuiContainer& parent
+			,const KeyboardLayout& keyboard,EventHandler& handler)
+			{return new KeyboardView(parent,keyboard,handler);}
+
+		static KeyboardView* create(GuiContainer& parent,const KeyboardLayout& keyboard)
+			{
+			return new KeyboardView(parent,keyboard,s_null_handler);
+			}
 
 		void destroy()
 			{delete this;}
@@ -44,12 +49,15 @@ class KeyboardView
 		void update();
 
 	private:
-		KeyboardView(GuiContainer& parent,EventHandler& handler
-			,const KeyboardLayout& keyboard);
+		KeyboardView(GuiContainer& parent,const KeyboardLayout& keyboard
+			,EventHandler& handler);
+
 		~KeyboardView();
 
 		class Impl;
 		Impl* m_impl;
+
+		static EventHandler s_null_handler;
 	};
 
 #endif

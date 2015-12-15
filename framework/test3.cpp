@@ -114,7 +114,7 @@ int main(int argc,char** argv)
 	auto mainwin=GuiContainer::create(we);
 
 	KeyboardViewEvents se(keyboard);
-	auto keyboardview=KeyboardView::create(*mainwin,se,keyboard);
+	auto keyboardview=KeyboardView::create(*mainwin,keyboard);
 	se.viewSet(*keyboardview);
 	we.viewSet(*keyboardview);
 	run();

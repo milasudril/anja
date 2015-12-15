@@ -30,9 +30,9 @@ target
 class KeyboardView::Impl
 	{
 	public:
-		Impl(KeyboardView& me,EventHandler& handler
-			,const KeyboardLayout& keyboard):r_handler(handler)
-			,r_keyboard(&keyboard)
+		Impl(KeyboardView& me,const KeyboardLayout& keyboard
+			,EventHandler& handler):
+			r_keyboard(&keyboard),r_handler(&handler)
 			{
 			m_canvas=gtk_drawing_area_new();
 			gtk_widget_set_can_focus(m_canvas,TRUE);
@@ -81,7 +81,7 @@ class KeyboardView::Impl
 			auto key_width=double(width)/(n_cols);
 
 			auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-			_this->r_handler.mouseMove(scancode,keymaskFromSystem(event->state));
+			_this->r_handler->mouseMove(scancode,keymaskFromSystem(event->state));
 			return TRUE;
 			}
 
@@ -95,7 +95,7 @@ class KeyboardView::Impl
 			auto key_width=double(width)/(n_cols);
 
 			auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-			_this->r_handler.mouseDown(scancode,keymaskFromSystem(event->state));
+			_this->r_handler->mouseDown(scancode,keymaskFromSystem(event->state));
 			return TRUE;
 			}
 
@@ -108,21 +108,21 @@ class KeyboardView::Impl
 			auto key_width=double(width)/(n_cols);
 
 			auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-			_this->r_handler.mouseUp(scancode,keymaskFromSystem(event->state));
+			_this->r_handler->mouseUp(scancode,keymaskFromSystem(event->state));
 			return TRUE;
 			}
 
 		static gboolean onKeyDown(GtkWidget *widget, GdkEventKey *event,void* impl)
 			{
 			Impl* _this=(Impl*)impl;
-			_this->r_handler.keyDown(event->hardware_keycode-8);
+			_this->r_handler->keyDown(event->hardware_keycode-8);
 			return TRUE;
 			}
 
 		static gboolean onKeyUp(GtkWidget *widget, GdkEventKey *event,void* impl)
 			{
 			Impl* _this=(Impl*)impl;
-			_this->r_handler.keyUp(event->hardware_keycode-8);
+			_this->r_handler->keyUp(event->hardware_keycode-8);
 			return TRUE;
 			}
 
@@ -201,15 +201,16 @@ class KeyboardView::Impl
 			return FALSE;
 			}
 
-		EventHandler& r_handler;
 		const KeyboardLayout* r_keyboard;
+		EventHandler* r_handler;
 		GtkWidget* m_canvas;
 	};
 
-KeyboardView::KeyboardView(GuiContainer& parent,EventHandler& handler
-	,const KeyboardLayout& keyboard)
+KeyboardView::EventHandler KeyboardView::s_null_handler;
+
+KeyboardView::KeyboardView(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler)
 	{
-	m_impl=new Impl(*this,handler,keyboard);
+	m_impl=new Impl(*this,keyboard,handler);
 	m_impl->addTo(parent);
 	}
 
