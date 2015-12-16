@@ -52,6 +52,7 @@ class KeyboardViewEvents:public KeyboardView::EventHandler
 			auto key=r_model->keyFromScancode(scancode);
 			if(key!=nullptr)
 				{printf("-%s]",key->labelGet());fflush(stdout);}
+			r_view->destroy();
 			}
 
 
@@ -114,7 +115,7 @@ int main(int argc,char** argv)
 	auto mainwin=GuiContainer::create(we);
 
 	KeyboardViewEvents se(keyboard);
-	auto keyboardview=KeyboardView::create(*mainwin,keyboard);
+	auto keyboardview=KeyboardView::create(*mainwin,keyboard,se);
 	se.viewSet(*keyboardview);
 	we.viewSet(*keyboardview);
 	run();

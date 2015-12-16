@@ -33,11 +33,7 @@ class KeyboardViewGtk:public KeyboardView
 		KeyboardViewGtk(GuiContainer& parent,const KeyboardLayout& keyboard
 			,EventHandler& handler);
 
-
-		~KeyboardViewGtk()
-			{
-			gtk_widget_destroy(m_canvas);
-			}
+		~KeyboardViewGtk();
 
 		void addTo(GuiContainer& parent)
 			{parent.objectAdd(m_canvas);}
@@ -60,6 +56,7 @@ class KeyboardViewGtk:public KeyboardView
 		GtkWidget* m_canvas;
 
 		static void onDestroy(GtkWidget* object,void* keyboardviewgtk);
+		static void nullCallback(GtkWidget* object,void* keyboardviewgtk);
 
 		static gboolean onMouseMove(GtkWidget* object,GdkEventMotion* event
 			,void* keyboardviewgtk);
@@ -82,6 +79,9 @@ class KeyboardViewGtk:public KeyboardView
 
 KeyboardView::EventHandler KeyboardView::s_null_handler;
 
+
+
+
 KeyboardView* KeyboardView::instanceCreate
 	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler)
 	{return new KeyboardViewGtk(parent,keyboard,handler);}
@@ -92,27 +92,37 @@ KeyboardViewGtk::KeyboardViewGtk
 	{
 	m_canvas=gtk_drawing_area_new();
 	gtk_widget_set_can_focus(m_canvas,TRUE);
-	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
-	g_signal_connect(m_canvas,"destroy",G_CALLBACK(onDestroy),this);
 	gtk_widget_add_events(m_canvas
-		,GDK_POINTER_MOTION_MASK
-		|GDK_BUTTON_PRESS_MASK
-		|GDK_BUTTON_RELEASE_MASK
-		|GDK_KEY_PRESS_MASK
+		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK
+		|GDK_BUTTON_RELEASE_MASK|GDK_KEY_PRESS_MASK
 		|GDK_KEY_RELEASE_MASK);
 
+	g_signal_connect(m_canvas,"destroy",G_CALLBACK(onDestroy),this);
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(onMouseMove),this);
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(onMouseDown),this);
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(onMouseUp),this);
 	g_signal_connect(m_canvas,"key_press_event",G_CALLBACK(onKeyDown),this);
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
+	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
 	addTo(parent);
+	}
+
+KeyboardViewGtk::~KeyboardViewGtk()
+	{
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onPaint,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onKeyUp,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onKeyDown,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onMouseUp,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onMouseDown,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onMouseMove,this);
+	g_signal_handlers_disconnect_by_func(m_canvas,(void*)onDestroy,this);
+	gtk_widget_destroy(m_canvas);
 	}
 
 void KeyboardViewGtk::onDestroy(GtkWidget* object,void* keyboardviewgtk)
 	{
 	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
-	delete _this;
+	_this->destroy();
 	}
 
 gboolean KeyboardViewGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
