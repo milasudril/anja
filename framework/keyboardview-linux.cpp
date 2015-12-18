@@ -21,6 +21,7 @@ target
 #include "keyboardview.h"
 #include "keyboardlayout.h"
 #include "guicontainer.h"
+#include "guihandle.h"
 #include <gtk/gtk.h>
 
 #include <cmath>
@@ -36,7 +37,7 @@ class KeyboardViewGtk:public KeyboardView
 		~KeyboardViewGtk();
 
 		void addTo(GuiContainer& parent)
-			{parent.objectAdd(m_canvas);}
+			{parent.componentAdd(m_canvas);}
 
 		void update()
 			{gtk_widget_queue_draw(m_canvas);}

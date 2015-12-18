@@ -2,14 +2,12 @@
 target[name[anja] type[application]]
 #endif
 
-#include "framework/mainloop.h"
-#include "framework/guicontainer.h"
+#include "framework/window.h"
 
-int main(int argc, char* argv[])
+int main()
 	{
-	init(argc,argv);
-	GuiContainer::EventHandler we;
-	auto mainwin=GuiContainer::create(we);
-	run();
+	auto event_loop=EventLoop::create();
+	auto mainwin=Window::create(*event_loop);
+	mainwin->titleSet("Anja");
 	return 0;
 	}

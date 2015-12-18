@@ -4,8 +4,7 @@ target[name[test3] type[application] platform[;GNU/Linux]]
 
 #include "keyboardview.h"
 #include "keyboardlayout.h"
-#include "mainloop.h"
-#include "guicontainer.h"
+#include "window.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -62,7 +61,7 @@ class KeyboardViewEvents:public KeyboardView::EventHandler
 		KeyboardLayout::KeyDescriptor* r_key_prev;
 	};
 
-class WindowEvents:public GuiContainer::EventHandler
+class WindowEvents:public Window::EventHandler
 	{
 	public:
 		WindowEvents():m_scancode_prev(0){}
@@ -107,17 +106,17 @@ class WindowEvents:public GuiContainer::EventHandler
 
 int main(int argc,char** argv)
 	{
-	init(argc,argv);
 	KeyboardLayout keyboard;
 
 	WindowEvents we;
 	we.modelSet(keyboard);
-	auto mainwin=GuiContainer::create(we);
+
+	auto event_loop=EventLoop::create();
+	auto mainwin=Window::create(*event_loop,we);
 
 	KeyboardViewEvents se(keyboard);
 	auto keyboardview=KeyboardView::create(*mainwin,keyboard,se);
 	se.viewSet(*keyboardview);
 	we.viewSet(*keyboardview);
-	run();
 	return 0;
 	}

@@ -22,7 +22,10 @@ target
 #include "guicontainer.h"
 #include "curve.h"
 #include "color.h"
+#include "guihandle.h"
+
 #include <gtk/gtk.h>
+
 #include <vector>
 #include <cmath>
 
@@ -57,7 +60,7 @@ class XYPlot::Impl
 			}
 
 		void addTo(GuiContainer& parent)
-			{parent.objectAdd(m_canvas);}
+			{parent.componentAdd(m_canvas);}
 
 		void update()
 			{gtk_widget_queue_draw(m_canvas);}

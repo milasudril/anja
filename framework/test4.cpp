@@ -4,8 +4,7 @@ target[name[test4] type[application] platform[;GNU/Linux]]
 
 #include "xyplot.h"
 #include "curve.h"
-#include "mainloop.h"
-#include "guicontainer.h"
+#include "window.h"
 #include "color.h"
 
 #include <cmath>
@@ -37,7 +36,6 @@ class EventHandlerPlot:public XYPlot::EventHandler
 
 int main(int argc,char** argv)
 	{
-	init(argc,argv);
 	constexpr size_t N=1024;
 	Curve::Point data_0[N+1];
 	Curve::Point data_1[N+1];
@@ -48,8 +46,8 @@ int main(int argc,char** argv)
 		data_1[k]={x,cos(x)};
 		}
 
-	GuiContainer::EventHandler we;
-	auto mainwin=GuiContainer::create(we);
+	auto event_loop=EventLoop::create();
+	auto mainwin=Window::create(*event_loop);
 	EventHandlerPlot pe;
 	auto plotwindow=XYPlot::create(*mainwin,pe);
 	plotwindow->curveAdd({data_0,N+1,COLORS[ColorID::YELLOW]});
@@ -57,7 +55,6 @@ int main(int argc,char** argv)
 	plotwindow->backgroundSet(1);
 	pe.viewSet(*plotwindow);
 //	plotwindow->domainSet({{0,-1},{acos(-1),1}});
-	run();
 
 	return 0;
 	}

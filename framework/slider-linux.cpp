@@ -20,6 +20,7 @@ target
 
 #include "slider.h"
 #include "guicontainer.h"
+#include "guihandle.h"
 #include <gtk/gtk.h>
 
 #include <cstdio>
@@ -66,7 +67,7 @@ class Slider::Impl
 			}
 
 		void addTo(GuiContainer& parent)
-			{parent.objectAdd(m_box);}
+			{parent.componentAdd(m_box);}
 
 	private:
 		static void sliderMoved(GtkRange* range,void* impl)

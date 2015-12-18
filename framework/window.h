@@ -8,11 +8,12 @@ dependency[window.o]
 
 #include "keymask.h"
 #include "eventloop.h"
+#include "guicontainer.h"
 #include <cstdint>
 
 class GuiHandle;
 
-class Window
+class Window:public GuiContainer
 	{
 	public:
 		class EventHandler
@@ -49,17 +50,15 @@ class Window
 		static Window* create(Window& owner,EventHandler& handler)
 			{return create(owner.r_event_loop,handler,&owner);}
 
-		virtual void destroy()=0;
 		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void titleSet(const char* title_new)=0;
-		virtual void componentAdd(const GuiHandle& component)=0;
-		virtual void componentRemove(const GuiHandle& component)=0;
+
 
 	protected:
 		Window(EventLoop& event_loop):r_event_loop(event_loop)
 			{r_event_loop.windowRegister();}
 
-		virtual ~Window()
+		~Window()
 			{r_event_loop.windowUnregister();}
 
 	private:
