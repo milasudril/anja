@@ -57,7 +57,11 @@ void Slider::EventHandler::textGet(double value,TextBuffer& buffer)
 
 double Slider::EventHandler::valueGet(const char* text)
 	{
-	return atof(text);
+	char* result;
+	double v=strtod(text,&result);
+	if(result==text)
+		{return -1;}
+	return v;
 	}
 
 Slider::EventHandler Slider::s_null_handler;
@@ -86,10 +90,8 @@ gint SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk)
 	SliderGtk* _this=(SliderGtk*)slidergtk;
 	GtkEntry* text=(GtkEntry*)entry;
 	auto v=_this->r_handler.valueGet(gtk_entry_get_text(text));
-	if(v>=0 || v<=1)
-		{
-		_this->valueSet(v);
-		}
+	if(v>=0 && v<=1)
+		{_this->valueSet(v);}
 	return 1;
 	}
 
