@@ -105,7 +105,7 @@ gboolean WindowGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
 	_this->r_handler->onKeyDown(keymaskFromSystem(event->state));
-	return TRUE;
+	return FALSE;
 	}
 
 gboolean WindowGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
@@ -113,7 +113,7 @@ gboolean WindowGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
 	_this->r_handler->onKeyDown(keymaskFromSystem(event->state));
-	return TRUE;
+	return FALSE;
 	}
 
 void WindowGtk::onDestroy(GtkWidget* widget,void* windowgtk)

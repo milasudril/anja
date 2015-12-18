@@ -8,34 +8,35 @@ dependency[slider.o]
 
 class GuiContainer;
 
+#include <cstddef>
+
+template<class T,size_t N>
+class ArrayFixed;
+
 class Slider
 	{
 	public:
 		class EventHandler
 			{
 			public:
-				virtual const char* textGet(double value)=0;
-				virtual double valueGet(const char* text)=0;
+				typedef ArrayFixed<char,32> TextBuffer;
+
+				virtual void textGet(double value, TextBuffer& buffer);
+				virtual double valueGet(const char* text);
 			};
 
-		static Slider* create(GuiContainer& parent,EventHandler& handler)
-			{return new Slider(parent,handler);}
+		static Slider* create(GuiContainer& parent)
+			{return create(parent,s_null_handler);}
 
-		void destroy()
-			{delete this;}
+		static Slider* create(GuiContainer& parent,EventHandler& handler);
 
-		void valueSet(double value);
+		virtual void destroy()=0;
+		virtual void valueSet(double value)=0;
 
-		double valueGet() const
-			{return m_value;}
-
+	protected:
+		virtual ~Slider()=default;
 	private:
-		Slider(GuiContainer& parent,EventHandler& handler);
-		~Slider();
-
-		double m_value;
-		class Impl;
-		Impl* m_impl;
+		static EventHandler s_null_handler;
 	};
 
 #endif

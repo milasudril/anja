@@ -7,7 +7,6 @@ dependency[eventloop.o]
 #define EVENTLOOP_H
 
 #include <memory>
-#include <cstdio>
 
 class EventLoop
 	{
