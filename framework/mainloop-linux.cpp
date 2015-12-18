@@ -22,7 +22,7 @@ target
 #include <gtk/gtk.h>
 
 void init(int& argc,char**& argv)
-	{gtk_init(&argc,&argv);}
+	{gtk_init(0,NULL);}
 
 void run()
 	{gtk_main();}

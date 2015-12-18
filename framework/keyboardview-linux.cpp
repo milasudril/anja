@@ -56,7 +56,6 @@ class KeyboardViewGtk:public KeyboardView
 		GtkWidget* m_canvas;
 
 		static void onDestroy(GtkWidget* object,void* keyboardviewgtk);
-		static void nullCallback(GtkWidget* object,void* keyboardviewgtk);
 
 		static gboolean onMouseMove(GtkWidget* object,GdkEventMotion* event
 			,void* keyboardviewgtk);
@@ -79,12 +78,15 @@ class KeyboardViewGtk:public KeyboardView
 
 KeyboardView::EventHandler KeyboardView::s_null_handler;
 
-
-
-
 KeyboardView* KeyboardView::instanceCreate
 	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler)
 	{return new KeyboardViewGtk(parent,keyboard,handler);}
+
+gboolean onDelete(GtkWidget* widget,GdkEvent* event,void* data)
+	{
+	printf("Hello, World\n");
+	return TRUE;
+	}
 
 KeyboardViewGtk::KeyboardViewGtk
 	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler):
@@ -97,6 +99,7 @@ KeyboardViewGtk::KeyboardViewGtk
 		|GDK_BUTTON_RELEASE_MASK|GDK_KEY_PRESS_MASK
 		|GDK_KEY_RELEASE_MASK);
 
+	g_signal_connect(m_canvas,"delete-event",G_CALLBACK(onDelete),this);
 	g_signal_connect(m_canvas,"destroy",G_CALLBACK(onDestroy),this);
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(onMouseMove),this);
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(onMouseDown),this);
