@@ -14,7 +14,6 @@ class BoxVertical:public GuiContainer
 	public:
 		static BoxVertical* create(GuiContainer& parent);
 
-		static constexpr uint32_t INSERTMODE_BEGINNIG=0;
 		static constexpr uint32_t INSERTMODE_END=1;
 		static constexpr uint32_t INSERTMODE_EXPAND=2;
 		static constexpr uint32_t INSERTMODE_FILL=4;
