@@ -11,15 +11,13 @@ template<class SystemType>
 class GuiHandleCommon
 	{
 	public:
-		constexpr GuiHandleCommon(SystemType handle):
-			m_size(sizeof(*this)),m_handle(handle)
+		constexpr GuiHandleCommon(SystemType handle):m_handle(handle)
 			{}
 
 		operator SystemType() const
 			{return m_handle;}
 
 	protected:
-		size_t m_size;
 		SystemType m_handle;
 	};
 

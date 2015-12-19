@@ -22,6 +22,7 @@ target
 #include "keyboardlayout.h"
 #include "guicontainer.h"
 #include "guihandle.h"
+#include "colorsystem.h"
 #include <gtk/gtk.h>
 
 #include <cmath>
@@ -194,11 +195,11 @@ gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 		auto x_max=v.x;
 		auto color=keys->colorGet();
 		auto color_border=keys->colorBorderGet();
-		GdkRGBA color_gtk{color.red,color.green,color.blue,color.alpha};
+		ColorSystem color_gtk{keys->colorGet()};
 		if(v.x==-1.0f)
 			{goto next;} //Is there a better way...
 
-		gdk_cairo_set_source_rgba(cr, &color_gtk);
+		gdk_cairo_set_source_rgba(cr, color_gtk);
 		cairo_move_to(cr,key_width*(v.x+x),key_width*(v.y+l));
 		++vertex;
 		while(v.x!=-1.0f) //Drawing of keys should be done in another function
@@ -215,16 +216,15 @@ gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 		cairo_close_path(cr);
 		cairo_fill_preserve (cr);
 		cairo_set_line_width(cr,key_width/16);
-		color_gtk={color_border.red
-			,color_border.green,color_border.blue,color_border.alpha};
-		gdk_cairo_set_source_rgba(cr,&color_gtk);
+		color_gtk=color_border;
+		gdk_cairo_set_source_rgba(cr,color_gtk);
 		cairo_stroke(cr);
 
 		if(isLight(color))
-			{color_gtk={0,0,0,1};}
+			{color_gtk=COLORS[ColorID::BLACK];}
 		else
-			{color_gtk={1,1,1,1};}
-		gdk_cairo_set_source_rgba(cr, &color_gtk);
+			{color_gtk=COLORS[ColorID::WHITE];}
+		gdk_cairo_set_source_rgba(cr, color_gtk);
 
 		cairo_text_extents_t extents;
 		cairo_text_extents(cr,keys->labelGet(),&extents);

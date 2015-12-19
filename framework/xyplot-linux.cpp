@@ -21,7 +21,7 @@ target
 #include "xyplot.h"
 #include "guicontainer.h"
 #include "curve.h"
-#include "color.h"
+#include "colorsystem.h"
 #include "guihandle.h"
 
 #include <gtk/gtk.h>
@@ -437,16 +437,8 @@ void XYPlotGtk::curveDraw(cairo_t* cr,Curve& curve) const
 	if(N_points==0)
 		{return;}
 
-	ColorRGBA curve_color=ColorHSLA::fromHueAndLuma(curve.colorGet()
-		,m_curve_luma);
-	GdkRGBA color_gtk
-		{
-		curve_color.red
-		,curve_color.green
-		,curve_color.blue
-		,curve_color.alpha
-		};
-	gdk_cairo_set_source_rgba(cr, &color_gtk);
+	ColorSystem color_gtk{ColorHSLA::fromHueAndLuma(curve.colorGet(),m_curve_luma)};
+	gdk_cairo_set_source_rgba(cr,color_gtk);
 	auto point_out=toWindowCoords(*points);
 	++points;
 	--N_points;
@@ -468,15 +460,10 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 	auto width = gtk_widget_get_allocated_width (object);
 	auto height = gtk_widget_get_allocated_height (object);
 
+	//	Draw background
 		{
-		GdkRGBA color_gtk
-			{
-				_this->m_canvas_color.red
-			,_this->m_canvas_color.green
-			,_this->m_canvas_color.blue
-			,_this->m_canvas_color.alpha
-			};
-		gdk_cairo_set_source_rgba(cr,&color_gtk);
+		ColorSystem color_gtk{_this->m_canvas_color};
+		gdk_cairo_set_source_rgba(cr,color_gtk);
 		cairo_paint(cr);
 		}
 
@@ -486,40 +473,35 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 		,_this->m_N_max_y,_this->m_delta_y);
 	_this->windowDomainAdjust(cr,width,height);
 
+	//	Draw plot area
 		{
 		auto w=_this->m_domain_window.max.x-_this->m_domain_window.min.x;
 		auto h=_this->m_domain_window.max.y-_this->m_domain_window.min.y;
 		cairo_rectangle(cr,_this->m_domain_window.min.x
 			,_this->m_domain_window.min.y,w,h);
-		GdkRGBA color_gtk
-			{
-				_this->m_background_color.red
-			,_this->m_background_color.green
-			,_this->m_background_color.blue
-			,_this->m_background_color.alpha
-			};
-		gdk_cairo_set_source_rgba(cr, &color_gtk);
+		ColorSystem color_gtk{_this->m_background_color};
+		gdk_cairo_set_source_rgba(cr,color_gtk);
 		cairo_fill(cr);
 		}
 
-	auto ptr_curve=_this->m_curves.data();
-	auto ptr_curves_end=ptr_curve+_this->m_curves.size();
-	while(ptr_curve!=ptr_curves_end)
+	// Draw all curves
 		{
-		_this->curveDraw(cr,*ptr_curve);
-		++ptr_curve;
+		auto ptr_curve=_this->m_curves.data();
+		auto ptr_curves_end=ptr_curve+_this->m_curves.size();
+		while(ptr_curve!=ptr_curves_end)
+			{
+		//	TODO: Do not plot points outside view? Showing points outside range
+		//		might be a feature
+			_this->curveDraw(cr,*ptr_curve);
+			++ptr_curve;
+			}
 		}
 
-	GdkRGBA color_gtk
+	//	Draw border around plot area
 		{
-			_this->m_text_color.red
-		,_this->m_text_color.green
-		,_this->m_text_color.blue
-		,_this->m_text_color.alpha
-		};
-	gdk_cairo_set_source_rgba(cr, &color_gtk);
+		ColorSystem color_gtk{_this->m_text_color};
+		gdk_cairo_set_source_rgba(cr, color_gtk);
 
-		{
 		auto w=_this->m_domain_window.max.x-_this->m_domain_window.min.x;
 		auto h=_this->m_domain_window.max.y-_this->m_domain_window.min.y;
 		cairo_rectangle(cr,_this->m_domain_window.min.x
@@ -527,8 +509,11 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 		cairo_stroke(cr);
 		}
 
-	_this->axisYDraw(cr);
-	_this->axisXDraw(cr);
+	//	Draw axes
+		{
+		_this->axisYDraw(cr);
+		_this->axisXDraw(cr);
+		}
 
 	return FALSE;
 	}
