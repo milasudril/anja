@@ -19,42 +19,35 @@ class XYPlot
 		class EventHandler
 			{
 			public:
-				virtual void mouseMove(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseMove(const Curve::Point& x,keymask_t key_mask)
 					{}
 
-				virtual void mouseDown(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseDown(const Curve::Point& x,keymask_t key_mask)
 					{}
 
-				virtual void mouseUp(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseUp(const Curve::Point& x,keymask_t key_mask)
 					{}
 
-				virtual void keyDown(uint8_t scancode)
+				virtual void onKeyDown(uint8_t scancode)
 					{}
 
-				virtual void keyUp(uint8_t scancode)
+				virtual void onKeyUp(uint8_t scancode)
 					{}
 			};
 
-		static XYPlot* create(GuiContainer& parent,EventHandler& handler)
-			{return new XYPlot(parent,handler);}
+		static XYPlot* create(GuiContainer& parent,EventHandler& handler);
 
-		void destroy()
-			{delete this;}
+		virtual void destroy()=0;
+		virtual void update()=0;
+		virtual void curveAdd(const Curve& curve)=0;
+		virtual void domainSet(const Curve::Domain& domain)=0;
+		virtual void backgroundSet(bool light)=0;
 
-		void update();
-
-		void curveAdd(const Curve& curve);
-
-		void domainSet(const Curve::Domain& domain);
-
-		void backgroundSet(bool light);
+	protected:
+		virtual ~XYPlot()=default;
 
 	private:
-		XYPlot(GuiContainer& parent,EventHandler& handler);
-		~XYPlot();
-
-		class Impl;
-		Impl* m_impl;
+		static EventHandler s_null_handler;
 	};
 
 #endif
