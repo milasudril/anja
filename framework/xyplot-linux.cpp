@@ -202,7 +202,7 @@ void XYPlotGtk::onDestroy(GtkWidget* object,void* xyplotgtk)
 	}
 
 XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
-	r_parent(parent),r_handler(handler),m_width{0},m_height{0},m_domain_max{0}
+	r_parent(parent),r_handler(handler),m_width{0},m_height{0}
 	{
 	m_canvas=gtk_drawing_area_new();
 
@@ -224,6 +224,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(onSizeChange),this);
 
 	r_parent.componentAdd(*this);
+	domainSet({-1,-1,1,1});
 	}
 
 void XYPlotGtk::curveAdd(const Curve& curve)
