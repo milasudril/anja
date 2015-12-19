@@ -39,13 +39,13 @@ class Window:public GuiContainer
 			};
 
 		static Window* create(EventLoop& event_loop)
-			{return create(event_loop,s_null_handler,nullptr);}
+			{return create(event_loop,s_default_handler,nullptr);}
 
 		static Window* create(EventLoop& event_loop,EventHandler& handler)
 			{return create(event_loop,handler,nullptr);}
 
 		static Window* create(Window& owner)
-			{return create(owner.r_event_loop,s_null_handler,&owner);}
+			{return create(owner.r_event_loop,s_default_handler,&owner);}
 
 		static Window* create(Window& owner,EventHandler& handler)
 			{return create(owner.r_event_loop,handler,&owner);}
@@ -65,7 +65,7 @@ class Window:public GuiContainer
 		static Window* create(EventLoop& event_loop,EventHandler& handler,Window* owner);
 
 		EventLoop& r_event_loop;
-		static EventHandler s_null_handler;
+		static EventHandler s_default_handler;
 	};
 
 #endif

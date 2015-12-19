@@ -64,7 +64,7 @@ double Slider::EventHandler::valueGet(const char* text)
 	return v;
 	}
 
-Slider::EventHandler Slider::s_null_handler;
+Slider::EventHandler Slider::s_default_handler;
 
 Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
 	,bool horizontal)

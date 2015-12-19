@@ -26,13 +26,13 @@ class Slider
 			};
 
 		static Slider* create(GuiContainer& parent)
-			{return create(parent,s_null_handler);}
+			{return create(parent,s_default_handler);}
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler)
 			{return create(parent,handler,0);}
 
 		static Slider* create(GuiContainer& parent,bool horizontal)
-			{return create(parent,s_null_handler,horizontal);}
+			{return create(parent,s_default_handler,horizontal);}
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler,bool horizontal);
 
@@ -42,7 +42,7 @@ class Slider
 	protected:
 		virtual ~Slider()=default;
 	private:
-		static EventHandler s_null_handler;
+		static EventHandler s_default_handler;
 	};
 
 #endif

@@ -47,7 +47,7 @@ class XYPlot
 		virtual ~XYPlot()=default;
 
 	private:
-		static EventHandler s_null_handler;
+		static EventHandler s_default_handler;
 	};
 
 #endif

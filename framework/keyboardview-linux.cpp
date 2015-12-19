@@ -74,7 +74,7 @@ class KeyboardViewGtk:public KeyboardView
 			,void* keyboardviewgtk);
 	};
 
-KeyboardView::EventHandler KeyboardView::s_null_handler;
+KeyboardView::EventHandler KeyboardView::s_default_handler;
 
 KeyboardView* KeyboardView::instanceCreate
 	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler)

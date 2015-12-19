@@ -63,7 +63,7 @@ class WindowGtk:public Window
 		GtkWidget* m_window;
 	};
 
-Window::EventHandler Window::s_null_handler;
+Window::EventHandler Window::s_default_handler;
 
 Window* Window::create(EventLoop& event_loop,EventHandler& handler,Window* owner)
 	{return new WindowGtk(event_loop,handler,dynamic_cast<WindowGtk*>(owner));}

@@ -130,7 +130,7 @@ class XYPlotGtk:public XYPlot
 		float m_curve_luma;
 	};
 
-XYPlot::EventHandler XYPlot::s_null_handler;
+XYPlot::EventHandler XYPlot::s_default_handler;
 
 XYPlot* XYPlot::create(GuiContainer& parent,EventHandler& handler)
 	{return new XYPlotGtk(parent,handler);}

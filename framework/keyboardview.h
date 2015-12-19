@@ -39,7 +39,7 @@ class KeyboardView
 			{return instanceCreate(parent,keyboard,handler);}
 
 		static KeyboardView* create(GuiContainer& parent,const KeyboardLayout& keyboard)
-			{return instanceCreate(parent,keyboard,s_null_handler);}
+			{return instanceCreate(parent,keyboard,s_default_handler);}
 
 		virtual void destroy()=0;
 		virtual void update()=0;
@@ -53,7 +53,7 @@ class KeyboardView
 		static KeyboardView* instanceCreate(GuiContainer& parent,const KeyboardLayout& keyboard
 			,EventHandler& handler);
 
-		static EventHandler s_null_handler;
+		static EventHandler s_default_handler;
 	};
 
 #endif
