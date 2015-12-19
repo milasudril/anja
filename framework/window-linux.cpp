@@ -19,7 +19,6 @@ target
 #endif
 
 #include "window.h"
-#include "widget.h"
 #include "guihandle.h"
 
 class WindowGtk:public Window
@@ -36,7 +35,13 @@ class WindowGtk:public Window
 		void componentAdd(const Widget& component);
 		void componentRemove(const Widget& component);
 		void titleSet(const char* title_new)
-			{gtk_window_set_title((GtkWindow*)m_window,title_new);}
+			{
+			GtkWidget* window=m_window;
+			gtk_window_set_title((GtkWindow*)window,title_new);
+			}
+
+		const GuiHandle& handleNativeGet() const
+			{return m_window;}
 
 	private:
 		static gboolean onClose(GtkWidget* object,GdkEvent* event,void* windowgtk);
@@ -60,7 +65,7 @@ class WindowGtk:public Window
 
 		EventHandler* r_handler;
 		const Widget* r_widget;
-		GtkWidget* m_window;
+		GuiHandle m_window;
 	};
 
 Window::EventHandler Window::s_default_handler;
@@ -125,31 +130,37 @@ void WindowGtk::onDestroy(GtkWidget* widget,void* windowgtk)
 WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner):
 	Window(event_loop),r_handler(&handler),r_widget(nullptr)
 	{
-	m_window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_object_ref_sink(G_OBJECT(m_window));
-	gtk_widget_show(m_window);
-	g_signal_connect(m_window,"button-release-event",G_CALLBACK(onMouseUp),this);
-	g_signal_connect(m_window,"button-press-event",G_CALLBACK(onMouseDown),this);
-	g_signal_connect(m_window,"motion-notify-event",G_CALLBACK(onMouseMove),this);
-	g_signal_connect(m_window,"key_press_event",G_CALLBACK(onKeyDown),this);
-	g_signal_connect(m_window,"key_release_event",G_CALLBACK(onKeyUp),this);
-	g_signal_connect(m_window,"delete-event",G_CALLBACK(onClose),this);
-	g_signal_connect(m_window,"destroy",G_CALLBACK(onDestroy),this);
+	GtkWidget* window_this=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	g_object_ref_sink(G_OBJECT(window_this));
+	gtk_widget_show(window_this);
+	g_signal_connect(window_this,"button-release-event",G_CALLBACK(onMouseUp),this);
+	g_signal_connect(window_this,"button-press-event",G_CALLBACK(onMouseDown),this);
+	g_signal_connect(window_this,"motion-notify-event",G_CALLBACK(onMouseMove),this);
+	g_signal_connect(window_this,"key_press_event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect(window_this,"key_release_event",G_CALLBACK(onKeyUp),this);
+	g_signal_connect(window_this,"delete-event",G_CALLBACK(onClose),this);
+	g_signal_connect(window_this,"destroy",G_CALLBACK(onDestroy),this);
 	if(owner!=nullptr)
 		{
-		gtk_window_set_transient_for((GtkWindow*)m_window,(GtkWindow*)(owner->m_window));
-		gtk_window_set_destroy_with_parent((GtkWindow*)m_window,TRUE);
+		GtkWidget* window_parent=owner->m_window;
+		gtk_window_set_transient_for((GtkWindow*)window_this
+			,(GtkWindow*)window_parent);
+		gtk_window_set_destroy_with_parent((GtkWindow*)window_this,TRUE);
 		}
+	m_window=window_this;
 	}
 
 
 void WindowGtk::componentAdd(const Widget& component)
 	{
+	if(r_widget==&component)
+		{return;}
 	if(r_widget!=nullptr)
 		{componentRemove(*r_widget);}
 	r_widget=&component;
 	auto handle=component.handleNativeGet();
-	gtk_container_add(GTK_CONTAINER(m_window),handle);
+	GtkWidget* window=m_window;
+	gtk_container_add(GTK_CONTAINER(window),handle);
 	gtk_widget_show(handle);
 	}
 
@@ -157,6 +168,8 @@ void WindowGtk::componentRemove(const Widget& component)
 	{
 	auto handle=r_widget->handleNativeGet();
 	gtk_widget_hide(handle);
-	gtk_container_remove(GTK_CONTAINER(m_window),handle);
+
+	GtkWidget* window=m_window;
+	gtk_container_remove(GTK_CONTAINER(window),handle);
 	r_widget=nullptr;
 	}

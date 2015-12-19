@@ -5,9 +5,9 @@ target[name[guicontainer.h] type[include]]
 #ifndef GUICONTAINER_H
 #define GUICONTAINER_H
 
-class Widget;
+#include "widget.h"
 
-class GuiContainer
+class GuiContainer:public Widget
 	{
 	public:
 		virtual void destroy()=0;
