@@ -225,6 +225,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 
 	r_parent.componentAdd(*this);
 	domainSet({-1,-1,1,1});
+	backgroundSet(1);
 	}
 
 void XYPlotGtk::curveAdd(const Curve& curve)
