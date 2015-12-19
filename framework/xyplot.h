@@ -35,6 +35,9 @@ class XYPlot
 					{}
 			};
 
+		static XYPlot* create(GuiContainer& parent)
+			{return create(parent,s_default_handler);}
+			
 		static XYPlot* create(GuiContainer& parent,EventHandler& handler);
 
 		virtual void destroy()=0;

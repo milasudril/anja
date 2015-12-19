@@ -10,30 +10,6 @@ target[name[test4] type[application] platform[;GNU/Linux]]
 #include <cmath>
 #include <cstdio>
 
-class EventHandlerPlot:public XYPlot::EventHandler
-	{
-	public:
-		EventHandlerPlot():r_view(nullptr),m_state(0)
-			{}
-
-		void viewSet(XYPlot& view)
-			{r_view=&view;}
-
-		void mouseUp(const Curve::Point& point,keymask_t keymask)
-			{
-			if(r_view!=nullptr)
-				{
-				r_view->backgroundSet(m_state);
-				m_state=!m_state;
-				}
-			printf("%.15g %.15g\n",point.x,point.y);
-			}
-	private:
-		XYPlot* r_view;
-		bool m_state;
-	};
-
-
 int main(int argc,char** argv)
 	{
 	constexpr size_t N=1024;
@@ -48,13 +24,9 @@ int main(int argc,char** argv)
 
 	auto event_loop=EventLoop::create();
 	auto mainwin=Window::create(*event_loop);
-	EventHandlerPlot pe;
-	auto plotwindow=XYPlot::create(*mainwin,pe);
+	auto plotwindow=XYPlot::create(*mainwin);
 	plotwindow->curveAdd({data_0,N+1,COLORS[ColorID::YELLOW]});
 	plotwindow->curveAdd({data_1,N+1,COLORS[ColorID::BLUE]});
 	plotwindow->backgroundSet(1);
-	pe.viewSet(*plotwindow);
-//	plotwindow->domainSet({{0,-1},{acos(-1),1}});
-
 	return 0;
 	}

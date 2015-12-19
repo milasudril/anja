@@ -18,19 +18,19 @@ class KeyboardView
 		class EventHandler
 			{
 			public:
-				virtual void mouseMove(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseMove(uint8_t scancode,keymask_t key_mask)
 					{}
 
-				virtual void mouseDown(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseDown(uint8_t scancode,keymask_t key_mask)
 					{}
 
-				virtual void mouseUp(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseUp(uint8_t scancode,keymask_t key_mask)
 					{}
 
-				virtual void keyDown(uint8_t scancode)
+				virtual void onKeyDown(uint8_t scancode)
 					{}
 
-				virtual void keyUp(uint8_t scancode)
+				virtual void onKeyUp(uint8_t scancode)
 					{}
 			};
 
