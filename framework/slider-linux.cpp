@@ -30,7 +30,7 @@ target
 class SliderGtk:public Slider
 	{
 	public:
-		SliderGtk(GuiContainer& parent,EventHandler& handler);
+		SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal);
 		~SliderGtk();
 
 		void destroy();
@@ -66,8 +66,9 @@ double Slider::EventHandler::valueGet(const char* text)
 
 Slider::EventHandler Slider::s_null_handler;
 
-Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler)
-	{return new SliderGtk(parent,handler);}
+Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
+	,bool horizontal)
+	{return new SliderGtk(parent,handler,horizontal);}
 
 void SliderGtk::onDestroy(GtkWidget* object,void* slidergtk)
 	{
@@ -95,16 +96,20 @@ gint SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk)
 	return 1;
 	}
 
-SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler):
+SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal):
 	r_parent(parent),r_handler(handler)
 	{
+	gboolean invert=horizontal?
+		FALSE:1;
+	auto orientation=horizontal?
+		GTK_ORIENTATION_HORIZONTAL:GTK_ORIENTATION_VERTICAL;
 	m_box=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 	gtk_box_set_homogeneous((GtkBox*)m_box,FALSE);
 
-	m_slider=gtk_scale_new_with_range(GTK_ORIENTATION_VERTICAL,0,1,1e-3);
+	m_slider=gtk_scale_new_with_range(orientation,0,1,1e-3);
 	gtk_scale_set_has_origin((GtkScale*)m_slider,FALSE);
 	gtk_scale_set_draw_value((GtkScale*)m_slider,FALSE);
-	gtk_range_set_inverted((GtkRange*)m_slider,TRUE);
+	gtk_range_set_inverted((GtkRange*)m_slider,invert);
 	gtk_box_pack_start((GtkBox*)m_box,m_slider,TRUE,TRUE,0);
 	gtk_widget_show(m_slider);
 

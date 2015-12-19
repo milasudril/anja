@@ -28,7 +28,13 @@ class Slider
 		static Slider* create(GuiContainer& parent)
 			{return create(parent,s_null_handler);}
 
-		static Slider* create(GuiContainer& parent,EventHandler& handler);
+		static Slider* create(GuiContainer& parent,EventHandler& handler)
+			{return create(parent,handler,0);}
+
+		static Slider* create(GuiContainer& parent,bool horizontal)
+			{return create(parent,s_null_handler,horizontal);}
+
+		static Slider* create(GuiContainer& parent,EventHandler& handler,bool horizontal);
 
 		virtual void destroy()=0;
 		virtual void valueSet(double value)=0;
