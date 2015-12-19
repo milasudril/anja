@@ -6,6 +6,7 @@ dependency[xyplot.o]
 #ifndef XYPLOT_H
 #define XYPLOT_H
 
+#include "widget.h"
 #include "keymask.h"
 #include "curve.h"
 #include <cstdint>
@@ -13,7 +14,7 @@ dependency[xyplot.o]
 
 class GuiContainer;
 
-class XYPlot
+class XYPlot:public Widget
 	{
 	public:
 		class EventHandler
@@ -37,7 +38,7 @@ class XYPlot
 
 		static XYPlot* create(GuiContainer& parent)
 			{return create(parent,s_default_handler);}
-			
+
 		static XYPlot* create(GuiContainer& parent,EventHandler& handler);
 
 		virtual void destroy()=0;

@@ -8,12 +8,13 @@ dependency[slider.o]
 
 class GuiContainer;
 
+#include "widget.h"
 #include <cstddef>
 
 template<class T,size_t N>
 class ArrayFixed;
 
-class Slider
+class Slider:public Widget
 	{
 	public:
 		class EventHandler
@@ -36,11 +37,8 @@ class Slider
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler,bool horizontal);
 
-		virtual void destroy()=0;
 		virtual void valueSet(double value)=0;
 
-	protected:
-		virtual ~Slider()=default;
 	private:
 		static EventHandler s_default_handler;
 	};

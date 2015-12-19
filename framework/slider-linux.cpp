@@ -31,10 +31,14 @@ class SliderGtk:public Slider
 	{
 	public:
 		SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal);
-		~SliderGtk();
 
-		void destroy();
+		void destroy()
+			{r_parent.componentRemove(*this);}
+
 		void valueSet(double value);
+
+		const GuiHandle& handleNativeGet() const
+			{return m_box;}
 
 	private:
 		static void sliderMoved(GtkRange* range,void* slidergtk);
@@ -45,7 +49,7 @@ class SliderGtk:public Slider
 		EventHandler& r_handler;
 
 		double m_value;
-		GtkWidget* m_box;
+		GuiHandle m_box;
 		GtkWidget* m_slider;
 		GtkWidget* m_text;
 	};
@@ -104,30 +108,26 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	auto orientation=horizontal?
 		GTK_ORIENTATION_HORIZONTAL:GTK_ORIENTATION_VERTICAL;
 	m_box=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-	gtk_box_set_homogeneous((GtkBox*)m_box,FALSE);
+	GtkWidget* box=m_box;
+	gtk_box_set_homogeneous((GtkBox*)box,FALSE);
 
 	m_slider=gtk_scale_new_with_range(orientation,0,1,1e-3);
 	gtk_scale_set_has_origin((GtkScale*)m_slider,FALSE);
 	gtk_scale_set_draw_value((GtkScale*)m_slider,FALSE);
 	gtk_range_set_inverted((GtkRange*)m_slider,invert);
-	gtk_box_pack_start((GtkBox*)m_box,m_slider,TRUE,TRUE,0);
+	gtk_box_pack_start((GtkBox*)box,m_slider,TRUE,TRUE,0);
 	gtk_widget_show(m_slider);
 
 	m_text=gtk_entry_new();
-	gtk_box_pack_end((GtkBox*)m_box,m_text,FALSE,FALSE,0);
+	gtk_box_pack_end((GtkBox*)box,m_text,FALSE,FALSE,0);
 	gtk_widget_show(m_text);
 	gtk_entry_set_width_chars((GtkEntry*)m_text,5);
 
 	g_signal_connect(m_slider,"value-changed",G_CALLBACK(sliderMoved),this);
 	g_signal_connect(m_text,"key_release_event",G_CALLBACK(textChanged),this);
-	g_signal_connect(m_box,"destroy",G_CALLBACK(onDestroy),this);
-	parent.componentAdd(m_box);
+	g_signal_connect(box,"destroy",G_CALLBACK(onDestroy),this);
+	parent.componentAdd(*this);
 	valueSet(0.5);
-	}
-
-void SliderGtk::destroy()
-	{
-	r_parent.componentRemove(m_box);
 	}
 
 void SliderGtk::valueSet(double value)
@@ -135,6 +135,3 @@ void SliderGtk::valueSet(double value)
 	m_value=value;
 	gtk_range_set_value((GtkRange*)m_slider,value);
 	}
-
-SliderGtk::~SliderGtk()
-	{}

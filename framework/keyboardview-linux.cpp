@@ -46,13 +46,16 @@ class KeyboardViewGtk:public KeyboardView
 			{r_keyboard=&keyboard;}
 
 		void destroy()
-			{r_parent.componentRemove(m_canvas);}
+			{r_parent.componentRemove(*this);}
+
+		const GuiHandle& handleNativeGet() const
+			{return m_canvas;}
 
 	private:
 		const KeyboardLayout* r_keyboard;
 		GuiContainer& r_parent;
 		EventHandler* r_handler;
-		GtkWidget* m_canvas;
+		GuiHandle m_canvas;
 
 		static void onDestroy(GtkWidget* object,void* keyboardviewgtk);
 
@@ -99,7 +102,7 @@ KeyboardViewGtk::KeyboardViewGtk
 	g_signal_connect(m_canvas,"key_press_event",G_CALLBACK(onKeyDown),this);
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
-	parent.componentAdd(m_canvas);
+	parent.componentAdd(*this);
 	}
 
 KeyboardViewGtk::~KeyboardViewGtk()

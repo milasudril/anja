@@ -5,14 +5,14 @@ target[name[guicontainer.h] type[include]]
 #ifndef GUICONTAINER_H
 #define GUICONTAINER_H
 
-class GuiHandle;
+class Widget;
 
 class GuiContainer
 	{
 	public:
 		virtual void destroy()=0;
-		virtual void componentAdd(const GuiHandle& component)=0;
-		virtual void componentRemove(const GuiHandle& component)=0;
+		virtual void componentAdd(const Widget& component)=0;
+		virtual void componentRemove(const Widget& component)=0;
 
 	protected:
 		virtual ~GuiContainer()=default;

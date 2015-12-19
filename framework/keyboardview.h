@@ -6,13 +6,14 @@ dependency[keyboardview.o]
 #ifndef KEYBOARDVIEW_H
 #define KEYBOARDVIEW_H
 
+#include "widget.h"
 #include "keymask.h"
 #include <cstdint>
 
 class GuiContainer;
 class KeyboardLayout;
 
-class KeyboardView
+class KeyboardView:public Widget
 	{
 	public:
 		class EventHandler

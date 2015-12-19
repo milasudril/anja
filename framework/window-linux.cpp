@@ -19,13 +19,13 @@ target
 #endif
 
 #include "window.h"
+#include "widget.h"
 #include "guihandle.h"
 
 class WindowGtk:public Window
 	{
 	public:
 		WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner);
-		~WindowGtk();
 
 		void destroy()
 			{gtk_widget_destroy(m_window);}
@@ -33,8 +33,8 @@ class WindowGtk:public Window
 		void eventHandlerSet(EventHandler& handler)
 			{r_handler=&handler;}
 
-		void componentAdd(const GuiHandle& component);
-		void componentRemove(const GuiHandle& component);
+		void componentAdd(const Widget& component);
+		void componentRemove(const Widget& component);
 		void titleSet(const char* title_new)
 			{gtk_window_set_title((GtkWindow*)m_window,title_new);}
 
@@ -59,7 +59,7 @@ class WindowGtk:public Window
 		static void onDestroy(GtkWidget* widget,void* windowgtk);
 
 		EventHandler* r_handler;
-		GtkWidget* r_widget;
+		const Widget* r_widget;
 		GtkWidget* m_window;
 	};
 
@@ -142,22 +142,21 @@ WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owne
 		}
 	}
 
-WindowGtk::~WindowGtk()
-	{
-	}
 
-void WindowGtk::componentAdd(const GuiHandle& component)
+void WindowGtk::componentAdd(const Widget& component)
 	{
 	if(r_widget!=nullptr)
-		{componentRemove(r_widget);}
-	r_widget=component;
-	gtk_container_add(GTK_CONTAINER(m_window),r_widget);
-	gtk_widget_show(r_widget);
+		{componentRemove(*r_widget);}
+	r_widget=&component;
+	auto handle=component.handleNativeGet();
+	gtk_container_add(GTK_CONTAINER(m_window),handle);
+	gtk_widget_show(handle);
 	}
 
-void WindowGtk::componentRemove(const GuiHandle& component)
+void WindowGtk::componentRemove(const Widget& component)
 	{
-	gtk_widget_hide(r_widget);
-	gtk_container_remove(GTK_CONTAINER(m_window),r_widget);
+	auto handle=r_widget->handleNativeGet();
+	gtk_widget_hide(handle);
+	gtk_container_remove(GTK_CONTAINER(m_window),handle);
 	r_widget=nullptr;
 	}

@@ -33,7 +33,6 @@ class XYPlotGtk:public XYPlot
 	{
 	public:
 		XYPlotGtk(GuiContainer& parent,EventHandler& handler);
-		~XYPlotGtk(){}
 
 		void update()
 			{gtk_widget_queue_draw(m_canvas);}
@@ -49,7 +48,10 @@ class XYPlotGtk:public XYPlot
 		void backgroundSet(bool light);
 
 		void destroy()
-			{r_parent.componentRemove(m_canvas);}
+			{r_parent.componentRemove(*this);}
+
+		const GuiHandle& handleNativeGet() const
+			{return m_canvas;}
 
 	private:
 		static void onSizeChange(GtkWidget* widget,GtkAllocation* allocation
@@ -108,7 +110,7 @@ class XYPlotGtk:public XYPlot
 		std::vector<Curve> m_curves;
 		std::vector<TicMark> m_axis_x;
 		std::vector<TicMark> m_axis_y;
-		GtkWidget* m_canvas;
+		GuiHandle m_canvas;
 
 		double m_width;
 		size_t m_N_max_x;
@@ -221,7 +223,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(onSizeChange),this);
 
-	r_parent.componentAdd(m_canvas);
+	r_parent.componentAdd(*this);
 	}
 
 void XYPlotGtk::curveAdd(const Curve& curve)

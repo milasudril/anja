@@ -11,6 +11,8 @@ template<class SystemType>
 class GuiHandleCommon
 	{
 	public:
+		GuiHandleCommon()=default;
+
 		constexpr GuiHandleCommon(SystemType handle):m_handle(handle)
 			{}
 
@@ -28,6 +30,8 @@ class GuiHandleCommon
 class GuiHandle:public GuiHandleCommon<HWND>
 	{
 	public:
+		constexpr GuiHandle()=default;
+
 		constexpr GuiHandle(HWND handle):GuiHandleCommon(handle)
 			{}
 	};
@@ -37,6 +41,8 @@ class GuiHandle:public GuiHandleCommon<HWND>
 class GuiHandle:public GuiHandleCommon<GtkWidget*>
 	{
 	public:
+		GuiHandle()=default;
+
 		constexpr GuiHandle(GtkWidget* handle):GuiHandleCommon(handle)
 			{}
 	};
