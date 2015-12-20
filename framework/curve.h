@@ -29,6 +29,10 @@ class Curve
 			r_points(points),m_n_points(n_points),m_hue(0)
 			{domainUpdate();}
 
+		Curve(const Point* points,size_t n_points,float hue):
+			r_points(points),m_n_points(n_points),m_hue(hue)
+			{domainUpdate();}
+
 		Curve(const Point* points,size_t n_points,const ColorRGBA& color)
 			:r_points(points),m_n_points(n_points)
 			{
@@ -66,6 +70,8 @@ bool belongsTo(const Curve::Point& point, const Curve::Domain& d);
 Curve::Point mapToDomainInvertY(const Curve::Point& point
 	,const Curve::Domain& source,const Curve::Domain& target);
 double mapToDomainX(double x,const Curve::Domain& source
+	,const Curve::Domain& target);
+double mapToDomainY(double y,const Curve::Domain& source
 	,const Curve::Domain& target);
 
 #endif

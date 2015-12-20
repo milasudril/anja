@@ -53,6 +53,56 @@ class XYPlotGtk:public XYPlot
 		const GuiHandle& handleNativeGet() const
 			{return m_canvas;}
 
+		void eventHandlerSet(EventHandler& handler)
+			{r_handler=&handler;}
+
+
+		size_t cursorXAdd(const Cursor& cursor)
+			{
+			m_cursors_x.push_back(cursor);
+			update();
+			return m_cursors_x.size()-1;
+			}
+
+		void cursorXRemove(size_t n)
+			{m_cursors_x.erase(m_cursors_y.begin()+n);}
+
+		void cursorXSet(size_t n,const Cursor& cursor)
+			{
+			m_cursors_x[n]=cursor;
+			update();
+			}
+
+		void cursorXGet(size_t n,Cursor& cursor) const
+			{cursor=m_cursors_x[n];}
+
+
+		size_t cursorYAdd(const Cursor& cursor)
+			{
+			m_cursors_y.push_back(cursor);
+			update();
+			return m_cursors_y.size()-1;
+			}
+
+		void cursorYRemove(size_t n)
+			{m_cursors_y.erase(m_cursors_y.begin()+n);}
+
+		void cursorYSet(size_t n,const Cursor& cursor)
+			{
+			m_cursors_y[n]=cursor;
+			update();
+			}
+
+		void cursorYGet(size_t n,Cursor& cursor) const
+			{cursor=m_cursors_y[n];}
+
+		void cursorsRemove()
+			{
+			m_cursors_x.clear();
+			m_cursors_y.clear();
+			update();
+			}
+
 	private:
 		static void onSizeChange(GtkWidget* widget,GtkAllocation* allocation
 			,void* xyplotgtk);
@@ -99,15 +149,20 @@ class XYPlotGtk:public XYPlot
 			return mapToDomainInvertY(p,m_domain_window,m_domain_current_active);
 			}
 
+		XYPlot::Cursor* cursorXAtPoint(const Curve::Point& p, double tol);
+		XYPlot::Cursor* cursorYAtPoint(const Curve::Point& p, double tol);
+
 		void windowDomainAdjust(cairo_t* cr,int width,int height);
 		void axisYDraw(cairo_t* cr) const;
 		void axisXDraw(cairo_t* cr) const;
-		void curveDraw(cairo_t* cr,Curve& curve) const;
+		void curveDraw(cairo_t* cr,const Curve& curve) const;
 
 		GuiContainer& r_parent;
-		EventHandler& r_handler;
+		EventHandler* r_handler;
 
 		std::vector<Curve> m_curves;
+		std::vector<Cursor> m_cursors_x;
+		std::vector<Cursor> m_cursors_y;
 		std::vector<TicMark> m_axis_x;
 		std::vector<TicMark> m_axis_y;
 		GuiHandle m_canvas;
@@ -154,7 +209,7 @@ gboolean XYPlotGtk::onMouseMove(GtkWidget* object
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler.onMouseMove(point,keymaskFromSystem(event->state));}
+		{_this->r_handler->onMouseMove(point,keymaskFromSystem(event->state));}
 	return TRUE;
 	}
 
@@ -165,7 +220,30 @@ gboolean XYPlotGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler.onMouseDown(point,keymaskFromSystem(event->state));}
+		{
+		auto x_min=mapToDomainX(0,_this->m_domain_window,_this->m_domain_current_active);
+		auto x_max=mapToDomainX(4,_this->m_domain_window,_this->m_domain_current_active);
+		auto tol_x=x_max-x_min;
+
+		auto y_min=mapToDomainY(0,_this->m_domain_window,_this->m_domain_current_active);
+		auto y_max=mapToDomainY(4,_this->m_domain_window,_this->m_domain_current_active);
+		auto tol_y=y_max-y_min;
+
+		auto cursor=_this->cursorXAtPoint(point,tol_x);
+		if(cursor!=nullptr)
+			{
+			_this->r_handler->onCursorXHit(*cursor,keymaskFromSystem(event->state));
+			}
+
+		cursor=_this->cursorYAtPoint(point,tol_y);
+		if(cursor!=nullptr)
+			{
+			_this->r_handler->onCursorYHit(*cursor,keymaskFromSystem(event->state));
+			return TRUE;
+			}
+		else
+			{_this->r_handler->onMouseDown(point,keymaskFromSystem(event->state));}
+		}
 	return TRUE;
 	}
 
@@ -175,7 +253,7 @@ gboolean XYPlotGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler.onMouseUp(point,keymaskFromSystem(event->state));}
+		{_this->r_handler->onMouseUp(point,keymaskFromSystem(event->state));}
 	return TRUE;
 	}
 
@@ -183,7 +261,7 @@ gboolean XYPlotGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler.onKeyDown(event->hardware_keycode-8);
+	_this->r_handler->onKeyDown(event->hardware_keycode-8);
 	return TRUE;
 	}
 
@@ -191,7 +269,7 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler.onKeyUp(event->hardware_keycode-8);
+	_this->r_handler->onKeyUp(event->hardware_keycode-8);
 	return TRUE;
 	}
 
@@ -201,8 +279,35 @@ void XYPlotGtk::onDestroy(GtkWidget* object,void* xyplotgtk)
 	delete _this;
 	}
 
+XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)
+	{
+	auto ptr_cursor=m_cursors_x.data();
+	auto ptr_cursors_end=ptr_cursor+m_cursors_x.size();
+	while(ptr_cursor!=ptr_cursors_end)
+		{
+		if(std::abs(ptr_cursor->position - p.x) < tol)
+			{return ptr_cursor;}
+		++ptr_cursor;
+		}
+	return nullptr;
+	}
+
+XYPlot::Cursor* XYPlotGtk::cursorYAtPoint(const Curve::Point& p,double tol)
+	{
+	auto ptr_cursor=m_cursors_y.data();
+	auto ptr_cursors_end=ptr_cursor+m_cursors_y.size();
+
+	while(ptr_cursor!=ptr_cursors_end)
+		{
+		if(std::abs(ptr_cursor->position - p.y) < tol)
+			{return ptr_cursor;}
+		++ptr_cursor;
+		}
+	return nullptr;
+	}
+
 XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
-	r_parent(parent),r_handler(handler),m_width{0},m_height{0}
+	r_parent(parent),r_handler(&handler),m_width{0},m_height{0}
 	{
 	m_canvas=gtk_drawing_area_new();
 
@@ -368,8 +473,7 @@ void XYPlotGtk::ticksUpdate()
 		windowDomainAdjust(cr,m_width,m_height);
 		delta_x_min=m_axis_x.back().extent_x+2.5;
 		auto x_min_win=mapToDomainX(0,domain_new,m_domain_window);
-		auto x_max_win=mapToDomainX(delta_x
-			,domain_new,m_domain_window);
+		auto x_max_win=mapToDomainX(delta_x,domain_new,m_domain_window);
 		delta_x_win=x_max_win-x_min_win;
 		++N_x;
 		}
@@ -434,7 +538,7 @@ void XYPlotGtk::axisXDraw(cairo_t* cr) const
 		}
 	}
 
-void XYPlotGtk::curveDraw(cairo_t* cr,Curve& curve) const
+void XYPlotGtk::curveDraw(cairo_t* cr,const Curve& curve) const
 	{
 	auto points=curve.pointsGet();
 	auto N_points=curve.nPointsGet();
@@ -498,6 +602,42 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 		//		might be a feature
 			_this->curveDraw(cr,*ptr_curve);
 			++ptr_curve;
+			}
+		}
+
+	//	Draw all X cursors
+		{
+		auto ptr_cursor=_this->m_cursors_x.data();
+		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_x.size();
+		while(ptr_cursor!=ptr_cursors_end)
+			{
+			auto cursor=*ptr_cursor;
+			Curve::Point points[2]=
+				{
+				 {cursor.position,_this->m_domain_current_active.min.y}
+				,{cursor.position,_this->m_domain_current_active.max.y}
+				};
+		//	Curve tmp{points,2,cursor.hue}
+			_this->curveDraw(cr,{points,2,cursor.hue});
+			++ptr_cursor;
+			}
+		}
+
+	//	Draw all Y cursors
+		{
+		auto ptr_cursor=_this->m_cursors_y.data();
+		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_y.size();
+		while(ptr_cursor!=ptr_cursors_end)
+			{
+			auto cursor=*ptr_cursor;
+			Curve::Point points[2]=
+				{
+				 {_this->m_domain_current_active.min.x,cursor.position}
+				,{_this->m_domain_current_active.max.x,cursor.position}
+				};
+		//	Curve tmp{points,2,cursor.hue}
+			_this->curveDraw(cr,{points,2,cursor.hue});
+			++ptr_cursor;
 			}
 		}
 

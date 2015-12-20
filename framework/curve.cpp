@@ -97,3 +97,12 @@ double mapToDomainX(double x,const Curve::Domain& source
 	auto xi=(x-d.min.x)/(d.max.x - d.min.x);
 	return xi*w.max.x+(1-xi)*w.min.x;
 	}
+
+double mapToDomainY(double y,const Curve::Domain& source
+	,const Curve::Domain& target)
+	{
+	auto d=source;
+	auto w=target;
+	auto xi=(y-d.min.y)/(d.max.y - d.min.y);
+	return xi*w.max.y+(1-xi)*w.min.y;
+	}

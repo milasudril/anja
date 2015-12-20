@@ -17,22 +17,35 @@ class GuiContainer;
 class XYPlot:public Widget
 	{
 	public:
+		struct Cursor
+			{
+			double position;
+			float hue;
+			};
+
+
 		class EventHandler
 			{
 			public:
-				virtual void onMouseMove(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseMove(const Curve::Point& point,keymask_t key_mask)
 					{}
 
-				virtual void onMouseDown(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseDown(const Curve::Point& point,keymask_t key_mask)
 					{}
 
-				virtual void onMouseUp(const Curve::Point& x,keymask_t key_mask)
+				virtual void onMouseUp(const Curve::Point& point,keymask_t key_mask)
 					{}
 
 				virtual void onKeyDown(uint8_t scancode)
 					{}
 
 				virtual void onKeyUp(uint8_t scancode)
+					{}
+
+				virtual void onCursorXHit(Cursor& cursor,keymask_t key_mask)
+					{}
+
+				virtual void onCursorYHit(Cursor& cursor,keymask_t key_mask)
 					{}
 			};
 
@@ -41,11 +54,23 @@ class XYPlot:public Widget
 
 		static XYPlot* create(GuiContainer& parent,EventHandler& handler);
 
-		virtual void destroy()=0;
+		virtual void backgroundSet(bool light)=0;
 		virtual void update()=0;
+		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void curveAdd(const Curve& curve)=0;
 		virtual void domainSet(const Curve::Domain& domain)=0;
-		virtual void backgroundSet(bool light)=0;
+
+		virtual size_t cursorXAdd(const Cursor& cursor)=0;
+		virtual void cursorXRemove(size_t n)=0;
+		virtual void cursorXSet(size_t n,const Cursor& cursor)=0;
+		virtual void cursorXGet(size_t n,Cursor& cursor) const=0;
+
+		virtual size_t cursorYAdd(const Cursor& cursor)=0;
+		virtual void cursorYRemove(size_t n)=0;
+		virtual void cursorYSet(size_t n,const Cursor& cursor)=0;
+		virtual void cursorYGet(size_t n,Cursor& cursor) const=0;
+
+		virtual void cursorsRemove()=0;
 
 	protected:
 		virtual ~XYPlot()=default;
