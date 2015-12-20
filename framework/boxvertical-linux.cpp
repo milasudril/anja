@@ -65,6 +65,8 @@ class BoxVerticalGtk:public BoxVertical
 		static void onDestroy(GtkWidget* widget,void* boxverticalgtk)
 			{
 			BoxVerticalGtk* _this=(BoxVerticalGtk*)boxverticalgtk;
+			if(_this->r_handler!=nullptr)
+				{_this->r_handler->onDestroy();}
 			delete _this;
 			}
 	};

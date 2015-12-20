@@ -32,6 +32,9 @@ class GuiContainer:public Widget
 
 				virtual void onCommand(unsigned int command_id)
 					{}
+
+				virtual void onDestroy()
+					{}
 			};
 
 		virtual void componentAdd(const Widget& component)=0;

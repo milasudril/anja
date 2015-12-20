@@ -65,6 +65,8 @@ class BoxHorizontalGtk:public BoxHorizontal
 		static void onDestroy(GtkWidget* widget,void* boxhorizontalgtk)
 			{
 			BoxHorizontalGtk* _this=(BoxHorizontalGtk*)boxhorizontalgtk;
+			if(_this->r_handler!=nullptr)
+				{_this->r_handler->onDestroy();}
 			delete _this;
 			}
 	};

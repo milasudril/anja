@@ -127,6 +127,7 @@ gboolean WindowGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 void WindowGtk::onDestroy(GtkWidget* widget,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
+	_this->r_handler->onDestroy();
 	delete _this;
 	}
 

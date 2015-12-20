@@ -13,7 +13,7 @@ class GuiContainer;
 class Button:public Widget
 	{
 	public:
-		Button* create(GuiContainer& parent,const char* title,unsigned int command_id);
+		static Button* create(GuiContainer& parent,const char* title,unsigned int command_id);
 	};
 
 #endif

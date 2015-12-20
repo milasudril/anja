@@ -63,4 +63,6 @@ ButtonGtk::ButtonGtk(GuiContainer& parent,const char* title,unsigned int command
 	GtkWidget* widget=gtk_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(onClick),this);
 	g_signal_connect(widget,"destroy",G_CALLBACK(onDestroy),this);
+	m_button=widget;
+	parent.componentAdd(*this);
 	}
