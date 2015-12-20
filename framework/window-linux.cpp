@@ -43,6 +43,9 @@ class WindowGtk:public Window
 		const GuiHandle& handleNativeGet() const
 			{return m_window;}
 
+		void commandNotify(unsigned int command_id)
+			{r_handler->onCommand(command_id);}
+
 	private:
 		static gboolean onClose(GtkWidget* object,GdkEvent* event,void* windowgtk);
 

@@ -40,6 +40,9 @@ class BoxVerticalGtk:public BoxVertical
 		void componentAdd(const Widget& widget);
 		void componentRemove(const Widget& widget);
 
+		void commandNotify(unsigned int command_id)
+			{r_parent.commandNotify(command_id);}
+
 	private:
 		GuiContainer& r_parent;
 		GuiHandle m_box;

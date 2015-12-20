@@ -6,34 +6,17 @@ dependency[window.o]
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "keymask.h"
 #include "eventloop.h"
 #include "guicontainer.h"
-#include <cstdint>
 
 class GuiHandle;
 
 class Window:public GuiContainer
 	{
 	public:
-		class EventHandler
+		class EventHandler:public GuiContainer::EventHandler
 			{
 			public:
-				virtual void onMouseMove(int x,int y,keymask_t key_mask)
-					{}
-
-				virtual void onMouseDown(int x,int y,keymask_t key_mask)
-					{}
-
-				virtual void onMouseUp(int x,int y,keymask_t key_mask)
-					{}
-
-				virtual void onKeyDown(uint8_t scancode)
-					{}
-
-				virtual void onKeyUp(uint8_t scancode)
-					{}
-
 				virtual bool onClose()
 					{return true;}
 			};
