@@ -1,21 +1,21 @@
 #ifdef __WAND__
-target[name[boxvertical.h] type[include]]
-dependency[boxvertical.o]
+target[name[boxhorizontal.h] type[include]]
+dependency[boxhorizontal.o]
 #endif
 
-#ifndef BOXVERTICAL_H
-#define BOXVERTICAL_H
+#ifndef BOXHORIZONTAL_H
+#define BOXHORIZONTAL_H
 
 #include "guicontainer.h"
 #include <cstdint>
 
-class BoxVertical:public GuiContainer
+class BoxHorizontal:public GuiContainer
 	{
 	public:
-		static BoxVertical* create(GuiContainer& parent)
+		static BoxHorizontal* create(GuiContainer& parent)
 			{return create(parent,nullptr);}
 
-		static BoxVertical* create(GuiContainer& parent,EventHandler* event_handler);
+		static BoxHorizontal* create(GuiContainer& parent,EventHandler* event_handler);
 
 		static constexpr uint32_t INSERTMODE_END=1;
 		static constexpr uint32_t INSERTMODE_EXPAND=2;

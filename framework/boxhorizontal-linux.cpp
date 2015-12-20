@@ -1,7 +1,7 @@
 #ifdef __WAND__
 target
 	[
-	name[boxvertical.o]
+	name[boxhorizontal.o]
 	type[object]
 	platform[;GNU/Linux]
 	dependency[gtk-3;external]
@@ -18,15 +18,15 @@ target
 	]
 #endif
 
-#include "boxvertical.h"
+#include "boxhorizontal.h"
 #include "guihandle.h"
 #include <vector>
 #include <algorithm>
 
-class BoxVerticalGtk:public BoxVertical
+class BoxHorizontalGtk:public BoxHorizontal
 	{
 	public:
-		BoxVerticalGtk(GuiContainer& parent,EventHandler* event_handler);
+		BoxHorizontalGtk(GuiContainer& parent,EventHandler* event_handler);
 
 		void destroy()
 			{r_parent.componentRemove(*this);}
@@ -62,27 +62,27 @@ class BoxVerticalGtk:public BoxVertical
 			m_widgets.erase(i);
 			}
 
-		static void onDestroy(GtkWidget* widget,void* boxverticalgtk)
+		static void onDestroy(GtkWidget* widget,void* boxhorizontalgtk)
 			{
-			BoxVerticalGtk* _this=(BoxVerticalGtk*)boxverticalgtk;
+			BoxHorizontalGtk* _this=(BoxHorizontalGtk*)boxhorizontalgtk;
 			delete _this;
 			}
 	};
 
-BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
-	{return new BoxVerticalGtk(parent,handler);}
+BoxHorizontal* BoxHorizontal::create(GuiContainer& parent,EventHandler* handler)
+	{return new BoxHorizontalGtk(parent,handler);}
 
-BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
+BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),m_insert_mode(0)
 	{
-	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
+	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,4);
 	g_signal_connect(box,"destroy",G_CALLBACK(onDestroy),this);
 	m_box=box;
 	r_parent.componentAdd(*this);
 	gtk_widget_show(box);
 	}
 
-void BoxVerticalGtk::componentAdd(const Widget& widget)
+void BoxHorizontalGtk::componentAdd(const Widget& widget)
 	{
 	auto h=widget.handleNativeGet();
 	auto begin=m_widgets.begin();
@@ -107,7 +107,7 @@ void BoxVerticalGtk::componentAdd(const Widget& widget)
 	gtk_widget_show(h);
 	}
 
-void BoxVerticalGtk::componentRemove(const Widget& widget)
+void BoxHorizontalGtk::componentRemove(const Widget& widget)
 	{
 	auto begin=m_widgets.begin();
 	auto end=m_widgets.end();
