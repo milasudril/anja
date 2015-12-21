@@ -49,14 +49,14 @@ class TextboxGtk:public Textbox
 			}
 
 	private:
-		static gboolean onKeyUp(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
+		static gboolean onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
 
 		GuiContainer& r_parent;
 		GuiHandle m_textbox;
 		unsigned int m_element_id;
 	};
 
-gboolean TextboxGtk::onKeyUp(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
+gboolean TextboxGtk::onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 	{
 	TextboxGtk* _this=(TextboxGtk*)textboxgtk;
 	_this->r_parent.commandNotify(_this->m_element_id);
@@ -70,7 +70,9 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 	r_parent(parent),m_element_id(element_id)
 	{
 	GtkWidget* widget=gtk_entry_new();
-	g_signal_connect(widget,"key_release_event",G_CALLBACK(onKeyUp),this);
+	gtk_widget_add_events(widget,GDK_FOCUS_CHANGE_MASK);
+
+	g_signal_connect(widget,"focus-out-event",G_CALLBACK(onBlur),this);
 	m_textbox=widget;
 	g_object_ref(widget);
 	parent.componentAdd(*this);

@@ -26,24 +26,25 @@ class InputEntry:public Widget
 			};
 
 		static InputEntry* create(GuiContainer& parent,const char* label
-			,const char* text_button)
-			{return create(parent,label,text_button,s_default_handler);}
+			,const char* text_button,unsigned int id)
+			{return create(parent,label,text_button,s_default_handler,id);}
 
 		static InputEntry* create(GuiContainer& parent,const char* label
-			,const char* text_button
-			,EventHandler& handler)
-			{return new InputEntry(parent,label,text_button,handler);}
+			,const char* text_button,EventHandler& handler,unsigned int id)
+			{return new InputEntry(parent,label,text_button,handler,id);}
 
 		const char* textGet() const;
 		void textSet(const char* text);
 		void destroy();
+		unsigned int idGet() const
+			{return m_id;}
 
 		const GuiHandle& handleNativeGet() const;
 
 
 	private:
 		InputEntry(GuiContainer& parent,const char* label
-			,const char* text_button,EventHandler& handler);
+			,const char* text_button,EventHandler& handler,unsigned int id);
 		~InputEntry()=default;
 
 		class EventHandlerInternal:public BoxHorizontal::EventHandler
@@ -68,6 +69,8 @@ class InputEntry:public Widget
 		Label* m_label;
 		Textbox* m_textbox;
 		Button* m_button;
+
+		int m_id;
 
 		static EventHandler s_default_handler;
 	};

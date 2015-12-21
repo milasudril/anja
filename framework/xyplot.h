@@ -64,16 +64,19 @@ class XYPlot:public Widget
 		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void curveAdd(const Curve& curve)=0;
 		virtual void domainSet(const Curve::Domain& domain)=0;
+		virtual const Curve::Domain& domainGet() const=0;
 
 		virtual size_t cursorXAdd(const Cursor& cursor)=0;
 		virtual void cursorXRemove(size_t n)=0;
 		virtual void cursorXSet(size_t n,const Cursor& cursor)=0;
-		virtual void cursorXGet(size_t n,Cursor& cursor) const=0;
+		virtual Cursor& cursorXGet(size_t n)=0;
+		virtual const Cursor& cursorXGet(size_t n) const=0;
 
 		virtual size_t cursorYAdd(const Cursor& cursor)=0;
 		virtual void cursorYRemove(size_t n)=0;
 		virtual void cursorYSet(size_t n,const Cursor& cursor)=0;
-		virtual void cursorYGet(size_t n,Cursor& cursor) const=0;
+		virtual Cursor& cursorYGet(size_t n)=0;
+		virtual const Cursor& cursorYGet(size_t n) const=0;
 
 		virtual void cursorsRemove()=0;
 

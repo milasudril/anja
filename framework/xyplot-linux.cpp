@@ -45,6 +45,9 @@ class XYPlotGtk:public XYPlot
 			ticksUpdate();
 			}
 
+		const Curve::Domain& domainGet() const
+			{return m_domain_current_active;}
+
 		void backgroundSet(bool light);
 
 		void destroy();
@@ -72,8 +75,11 @@ class XYPlotGtk:public XYPlot
 			update();
 			}
 
-		void cursorXGet(size_t n,Cursor& cursor) const
-			{cursor=m_cursors_x[n];}
+		const Cursor& cursorXGet(size_t n) const
+			{return m_cursors_x[n];}
+
+		Cursor& cursorXGet(size_t n)
+			{return m_cursors_x[n];}
 
 
 		size_t cursorYAdd(const Cursor& cursor)
@@ -92,8 +98,11 @@ class XYPlotGtk:public XYPlot
 			update();
 			}
 
-		void cursorYGet(size_t n,Cursor& cursor) const
-			{cursor=m_cursors_y[n];}
+		const Cursor& cursorYGet(size_t n) const
+			{return m_cursors_y[n];}
+
+		Cursor& cursorYGet(size_t n)
+			{return m_cursors_y[n];}
 
 		void cursorsRemove()
 			{

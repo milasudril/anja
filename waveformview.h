@@ -27,6 +27,9 @@ class WaveformView:public Widget
 		const GuiHandle& handleNativeGet() const;
 
 	private:
+		friend class EventHandlerPlot;
+		friend class EventHandlerEntry;
+
 		WaveformView(GuiContainer& parent);
 
 		class EventHandlerPlot:public XYPlot::EventHandler
@@ -39,10 +42,12 @@ class WaveformView:public Widget
 					,keymask_t key_mask);
 				void onMouseUp(XYPlot& source,const Curve::Point& point
 					,keymask_t key_mask);
+				void cursorsRefSet(const XYPlot::Cursor& begin);
 
 			private:
 				WaveformView& r_view;
 				XYPlot::Cursor* r_cursor;
+				const XYPlot::Cursor* r_cursor_begin;
 			};
 
 		class EventHandlerEntry:public InputEntry::EventHandler
@@ -56,24 +61,16 @@ class WaveformView:public Widget
 				WaveformView& r_view;
 			};
 
-		class EventHandlerInternal:public BoxVertical::EventHandler
-			{
-			public:
-				EventHandlerInternal(WaveformView& view);
-
-			private:
-				WaveformView* r_view;
-			};
+		void inputSet(size_t index,double x);
+		void cursorSet(size_t index,double x);
 
 		GuiContainer& r_parent;
-		EventHandlerInternal handler;
 		EventHandlerPlot plot_handler;
 		EventHandlerEntry entry_handler;
 		BoxVertical* m_box_main;
 		XYPlot* m_plot;
 		BoxHorizontal* m_box_positions;
-		InputEntry* m_entry_begin;
-		InputEntry* m_entry_end;
+		InputEntry* m_entries[2];
 	};
 
 #endif

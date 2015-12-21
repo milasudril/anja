@@ -29,8 +29,8 @@ void InputEntry::EventHandlerInternal::onCommand(BoxHorizontal& source,unsigned 
 InputEntry::EventHandler InputEntry::s_default_handler;
 
 InputEntry::InputEntry(GuiContainer& parent,const char* label
-	,const char* text_button,EventHandler& handler):
-	r_parent(parent),m_handler(*this,handler)
+	,const char* text_button,EventHandler& handler,unsigned int id):
+	r_parent(parent),m_handler(*this,handler),m_id(id)
 	{
 	m_box=BoxHorizontal::create(parent,&m_handler);
 	m_box->slaveAssign(*this);
