@@ -10,25 +10,25 @@ target[name[inputentry.o] type[object]]
 
 InputEntry::EventHandlerInternal::EventHandlerInternal(InputEntry& object
 	,InputEntry::EventHandler& handler):
-	r_handler(handler),r_object(&object)
+	r_handler(handler),r_object(object)
 	{}
 
-void InputEntry::EventHandlerInternal::onCommand(unsigned int command_id)
+void InputEntry::EventHandlerInternal::onCommand(BoxHorizontal& source,unsigned int command_id)
 	{
 	switch(command_id)
 		{
 		case COMMAND_ACTION:
-			r_handler.onButtonClick();
+			r_handler.onButtonClick(r_object);
 			break;
 		case COMMAND_TEXTCHANGED:
-			r_handler.onTextChanged(r_object->textGet());
+			r_handler.onTextChanged(r_object);
 			break;
 		}
 	}
 
-void InputEntry::EventHandlerInternal::onDestroy()
+void InputEntry::EventHandlerInternal::onDestroy(BoxHorizontal& source)
 	{
-	delete r_object;
+	delete &r_object;
 	}
 
 InputEntry::EventHandler InputEntry::s_default_handler;

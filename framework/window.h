@@ -14,11 +14,11 @@ class GuiHandle;
 class Window:public GuiContainer
 	{
 	public:
-		class EventHandler:public GuiContainer::EventHandler
+		class EventHandler:public GuiContainer::EventHandler<Window>
 			{
 			public:
-				virtual bool onClose()
-					{return true;}
+				virtual void onClose(Window& source)
+					{source.destroy();}
 			};
 
 		static Window* create(EventLoop& event_loop)

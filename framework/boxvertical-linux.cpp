@@ -45,7 +45,7 @@ class BoxVerticalGtk:public BoxVertical
 			if(r_handler==nullptr)
 				{r_parent.commandNotify(command_id);}
 			else
-				{r_handler->onCommand(command_id);}
+				{r_handler->onCommand(*this,command_id);}
 			}
 
 	private:
@@ -66,7 +66,7 @@ class BoxVerticalGtk:public BoxVertical
 			{
 			BoxVerticalGtk* _this=(BoxVerticalGtk*)boxverticalgtk;
 			if(_this->r_handler!=nullptr)
-				{_this->r_handler->onDestroy();}
+				{_this->r_handler->onDestroy(*_this);}
 			delete _this;
 			}
 	};

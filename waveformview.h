@@ -9,6 +9,7 @@ dependency[waveformview.o]
 #include "framework/widget.h"
 #include "framework/xyplot.h"
 #include "framework/inputentry.h"
+#include "framework/boxvertical.h"
 
 class BoxVertical;
 class BoxHorizontal;
@@ -32,9 +33,12 @@ class WaveformView:public Widget
 			{
 			public:
 				EventHandlerPlot(WaveformView& view);
-				void onCursorXHit(XYPlot::Cursor& cursor,keymask_t keymask);
-				void onMouseMove(const Curve::Point& point,keymask_t key_mask);
-				void onMouseUp(const Curve::Point& point,keymask_t key_mask);
+				void onCursorXHit(XYPlot& source,XYPlot::Cursor& cursor
+					,keymask_t keymask);
+				void onMouseMove(XYPlot& source,const Curve::Point& point
+					,keymask_t key_mask);
+				void onMouseUp(XYPlot& source,const Curve::Point& point
+					,keymask_t key_mask);
 
 			private:
 				WaveformView& r_view;
@@ -45,20 +49,18 @@ class WaveformView:public Widget
 			{
 			public:
 				EventHandlerEntry(WaveformView& view);
-				void onButtonClick();
-				void onTextChanged(const char* value);
-				void inputEntrySet(InputEntry& entry);
+				void onButtonClick(InputEntry& source);
+				void onTextChanged(InputEntry& source);
 
 			private:
 				WaveformView& r_view;
-				InputEntry* r_entry;
 			};
 
-		class EventHandlerInternal:public GuiContainer::EventHandler
+		class EventHandlerInternal:public BoxVertical::EventHandler
 			{
 			public:
 				EventHandlerInternal(WaveformView& view);
-				void onDestroy();
+				void onDestroy(BoxVertical& source);
 
 			private:
 				WaveformView* r_view;

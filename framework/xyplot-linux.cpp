@@ -209,7 +209,7 @@ gboolean XYPlotGtk::onMouseMove(GtkWidget* object
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler->onMouseMove(point,keymaskFromSystem(event->state));}
+		{_this->r_handler->onMouseMove(*_this,point,keymaskFromSystem(event->state));}
 	return TRUE;
 	}
 
@@ -232,17 +232,17 @@ gboolean XYPlotGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 		auto cursor=_this->cursorXAtPoint(point,tol_x);
 		if(cursor!=nullptr)
 			{
-			_this->r_handler->onCursorXHit(*cursor,keymaskFromSystem(event->state));
+			_this->r_handler->onCursorXHit(*_this,*cursor,keymaskFromSystem(event->state));
 			}
 
 		cursor=_this->cursorYAtPoint(point,tol_y);
 		if(cursor!=nullptr)
 			{
-			_this->r_handler->onCursorYHit(*cursor,keymaskFromSystem(event->state));
+			_this->r_handler->onCursorYHit(*_this,*cursor,keymaskFromSystem(event->state));
 			return TRUE;
 			}
 		else
-			{_this->r_handler->onMouseDown(point,keymaskFromSystem(event->state));}
+			{_this->r_handler->onMouseDown(*_this,point,keymaskFromSystem(event->state));}
 		}
 	return TRUE;
 	}
@@ -253,7 +253,7 @@ gboolean XYPlotGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler->onMouseUp(point,keymaskFromSystem(event->state));}
+		{_this->r_handler->onMouseUp(*_this,point,keymaskFromSystem(event->state));}
 	return TRUE;
 	}
 
@@ -261,7 +261,7 @@ gboolean XYPlotGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler->onKeyDown(event->hardware_keycode-8);
+	_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 	return TRUE;
 	}
 
@@ -269,7 +269,7 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler->onKeyUp(event->hardware_keycode-8);
+	_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
 	return TRUE;
 	}
 

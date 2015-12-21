@@ -12,6 +12,8 @@ dependency[boxvertical.o]
 class BoxVertical:public GuiContainer
 	{
 	public:
+		typedef GuiContainer::EventHandler<BoxVertical> EventHandler;
+
 		static BoxVertical* create(GuiContainer& parent)
 			{return create(parent,nullptr);}
 

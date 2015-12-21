@@ -44,7 +44,7 @@ class WindowGtk:public Window
 			{return m_window;}
 
 		void commandNotify(unsigned int command_id)
-			{r_handler->onCommand(command_id);}
+			{r_handler->onCommand(*this,command_id);}
 
 	private:
 		static gboolean onClose(GtkWidget* object,GdkEvent* event,void* windowgtk);
@@ -79,8 +79,7 @@ Window* Window::create(EventLoop& event_loop,EventHandler& handler,Window* owner
 gboolean WindowGtk::onClose(GtkWidget* widget,GdkEvent* event,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	if(_this->r_handler->onClose())
-		{_this->destroy();}
+	_this->r_handler->onClose(*_this);
 	return TRUE;
 	}
 
@@ -88,46 +87,46 @@ gboolean WindowGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseMove(event->x,event->y,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseMove(*_this,event->x,event->y,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
-gboolean WindowGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
+gboolean WindowGtk::onMouseDown(GtkWidget* widget,GdkEventButton* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseDown(event->x,event->y,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseDown(*_this,event->x,event->y,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
-gboolean WindowGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
+gboolean WindowGtk::onMouseUp(GtkWidget* widget,GdkEventButton* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseUp(event->x,event->y,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseUp(*_this,event->x,event->y,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
-gboolean WindowGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
+gboolean WindowGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onKeyDown(keymaskFromSystem(event->state));
+	_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
 	return FALSE;
 	}
 
-gboolean WindowGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
+gboolean WindowGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onKeyDown(keymaskFromSystem(event->state));
+	_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
 	return FALSE;
 	}
 
 void WindowGtk::onDestroy(GtkWidget* widget,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onDestroy();
+	_this->r_handler->onDestroy(*_this);
 	delete _this;
 	}
 

@@ -19,19 +19,22 @@ class KeyboardView:public Widget
 		class EventHandler
 			{
 			public:
-				virtual void onMouseMove(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseMove(KeyboardView& source,uint8_t scancode
+					,keymask_t key_mask)
 					{}
 
-				virtual void onMouseDown(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseDown(KeyboardView& source,uint8_t scancode
+					,keymask_t key_mask)
 					{}
 
-				virtual void onMouseUp(uint8_t scancode,keymask_t key_mask)
+				virtual void onMouseUp(KeyboardView& source,uint8_t scancode
+					,keymask_t key_mask)
 					{}
 
-				virtual void onKeyDown(uint8_t scancode)
+				virtual void onKeyDown(KeyboardView& source,uint8_t scancode)
 					{}
 
-				virtual void onKeyUp(uint8_t scancode)
+				virtual void onKeyUp(KeyboardView& source,uint8_t scancode)
 					{}
 			};
 

@@ -7,9 +7,8 @@ dependency[inputentry.o]
 #define INPUTENTRY_H
 
 #include "widget.h"
-#include "guicontainer.h"
+#include "boxhorizontal.h"
 
-class BoxHorizontal;
 class Label;
 class Textbox;
 class Button;
@@ -20,9 +19,9 @@ class InputEntry:public Widget
 		class EventHandler
 			{
 			public:
-				virtual void onButtonClick()
+				virtual void onButtonClick(InputEntry& source)
 					{}
-				virtual void onTextChanged(const char* value)
+				virtual void onTextChanged(InputEntry& source)
 					{}
 			};
 
@@ -47,7 +46,7 @@ class InputEntry:public Widget
 			,const char* text_button,EventHandler& handler);
 		~InputEntry()=default;
 
-		class EventHandlerInternal:public GuiContainer::EventHandler
+		class EventHandlerInternal:public BoxHorizontal::EventHandler
 			{
 			public:
 				EventHandlerInternal(InputEntry& object
@@ -56,12 +55,12 @@ class InputEntry:public Widget
 				static constexpr unsigned int COMMAND_ACTION=1;
 				static constexpr unsigned int COMMAND_TEXTCHANGED=2;
 
-				void onCommand(unsigned int command_id);
-				void onDestroy();
+				void onCommand(BoxHorizontal& source,unsigned int command_id);
+				void onDestroy(BoxHorizontal& source);
 
 			private:
 				InputEntry::EventHandler& r_handler;
-				InputEntry* r_object;
+				InputEntry& r_object;
 			};
 
 		GuiContainer& r_parent;

@@ -27,25 +27,30 @@ class XYPlot:public Widget
 		class EventHandler
 			{
 			public:
-				virtual void onMouseMove(const Curve::Point& point,keymask_t key_mask)
+				virtual void onMouseMove(XYPlot& source
+					,const Curve::Point& point,keymask_t key_mask)
 					{}
 
-				virtual void onMouseDown(const Curve::Point& point,keymask_t key_mask)
+				virtual void onMouseDown(XYPlot& source
+					,const Curve::Point& point,keymask_t key_mask)
 					{}
 
-				virtual void onMouseUp(const Curve::Point& point,keymask_t key_mask)
+				virtual void onMouseUp(XYPlot& source
+					,const Curve::Point& point,keymask_t key_mask)
 					{}
 
-				virtual void onKeyDown(uint8_t scancode)
+				virtual void onKeyDown(XYPlot& source,uint8_t scancode)
 					{}
 
-				virtual void onKeyUp(uint8_t scancode)
+				virtual void onKeyUp(XYPlot& source,uint8_t scancode)
 					{}
 
-				virtual void onCursorXHit(Cursor& cursor,keymask_t key_mask)
+				virtual void onCursorXHit(XYPlot& source,Cursor& cursor
+					,keymask_t key_mask)
 					{}
 
-				virtual void onCursorYHit(Cursor& cursor,keymask_t key_mask)
+				virtual void onCursorYHit(XYPlot& source,Cursor& cursor
+					,keymask_t key_mask)
 					{}
 			};
 

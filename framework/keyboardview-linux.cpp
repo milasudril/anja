@@ -124,7 +124,7 @@ gboolean KeyboardViewGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
 	auto key_width=double(width)/(n_cols);
 
 	auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-	_this->r_handler->onMouseMove(scancode,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseMove(*_this,scancode,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
@@ -139,7 +139,7 @@ gboolean KeyboardViewGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 	auto key_width=double(width)/(n_cols);
 
 	auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-	_this->r_handler->onMouseDown(scancode,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseDown(*_this,scancode,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
@@ -153,7 +153,7 @@ gboolean KeyboardViewGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	auto key_width=double(width)/(n_cols);
 
 	auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-	_this->r_handler->onMouseUp(scancode,keymaskFromSystem(event->state));
+	_this->r_handler->onMouseUp(*_this,scancode,keymaskFromSystem(event->state));
 	return TRUE;
 	}
 
@@ -161,7 +161,7 @@ gboolean KeyboardViewGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
 	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
-	_this->r_handler->onKeyDown(event->hardware_keycode-8);
+	_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 	return TRUE;
 	}
 
@@ -169,7 +169,7 @@ gboolean KeyboardViewGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
 	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
-	_this->r_handler->onKeyUp(event->hardware_keycode-8);
+	_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
 	return TRUE;
 	}
 

@@ -12,7 +12,7 @@ WaveformView::EventHandlerInternal::EventHandlerInternal(WaveformView& view):
 	r_view(&view)
 	{}
 
-void WaveformView::EventHandlerInternal::onDestroy()
+void WaveformView::EventHandlerInternal::onDestroy(BoxVertical& source)
 	{delete r_view;}
 
 
@@ -21,12 +21,14 @@ WaveformView::EventHandlerPlot::EventHandlerPlot(WaveformView& view):
 	r_view(view)
 	{}
 
-void WaveformView::EventHandlerPlot::onCursorXHit(XYPlot::Cursor& cursor,keymask_t keymask)
+void WaveformView::EventHandlerPlot::onCursorXHit(XYPlot& source
+	,XYPlot::Cursor& cursor,keymask_t keymask)
 	{
 	r_cursor=&cursor;
 	}
 
-void WaveformView::EventHandlerPlot::onMouseMove(const Curve::Point& point,keymask_t key_mask)
+void WaveformView::EventHandlerPlot::onMouseMove(XYPlot& source
+	,const Curve::Point& point,keymask_t key_mask)
 	{
 	if(r_cursor!=nullptr)
 		{
@@ -34,7 +36,8 @@ void WaveformView::EventHandlerPlot::onMouseMove(const Curve::Point& point,keyma
 		}
 	}
 
-void WaveformView::EventHandlerPlot::onMouseUp(const Curve::Point& point,keymask_t key_mask)
+void WaveformView::EventHandlerPlot::onMouseUp(XYPlot& source
+	,const Curve::Point& point,keymask_t key_mask)
 	{
 	r_cursor=nullptr;
 	}
@@ -45,14 +48,11 @@ WaveformView::EventHandlerEntry::EventHandlerEntry(WaveformView& view):
 	r_view(view)
 	{}
 
-void WaveformView::EventHandlerEntry::onButtonClick()
+void WaveformView::EventHandlerEntry::onButtonClick(InputEntry& source)
 	{printf("OMG a button\n");}
 
-void WaveformView::EventHandlerEntry::onTextChanged(const char* value)
-	{printf("%s\n",value);}
-
-void WaveformView::EventHandlerEntry::inputEntrySet(InputEntry& entry)
-	{}
+void WaveformView::EventHandlerEntry::onTextChanged(InputEntry& source)
+	{printf("%s\n",source.textGet());}
 
 
 
