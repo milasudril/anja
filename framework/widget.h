@@ -7,10 +7,17 @@ target[name[widget.h] type[include]]
 
 class GuiHandle;
 
+#include <cstdio>
+#include <typeinfo>
+
 class Widget
 	{
 	public:
 		virtual void destroy()=0;
+
+		static void widgetDestroy(Widget* widget)
+			{widget->destroy();}
+
 		virtual const GuiHandle& handleNativeGet() const=0;
 
 	protected:

@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[test4] type[application] platform[;GNU/Linux]]
+target[name[xyplot_test] type[application] platform[;GNU/Linux]]
 #endif
 
 #include "xyplot.h"

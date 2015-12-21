@@ -56,7 +56,6 @@ class InputEntry:public Widget
 				static constexpr unsigned int COMMAND_TEXTCHANGED=2;
 
 				void onCommand(BoxHorizontal& source,unsigned int command_id);
-				void onDestroy(BoxHorizontal& source);
 
 			private:
 				InputEntry::EventHandler& r_handler;

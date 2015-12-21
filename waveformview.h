@@ -60,7 +60,6 @@ class WaveformView:public Widget
 			{
 			public:
 				EventHandlerInternal(WaveformView& view);
-				void onDestroy(BoxVertical& source);
 
 			private:
 				WaveformView* r_view;

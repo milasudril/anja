@@ -262,7 +262,6 @@ KeyboardLayout::KeyboardLayout()
 	auto label=s_typing_area_labels_swe.begin();
 	while(ptr!=ptr_end)
 		{
-	//	printf("%s\n",*label);
 		ptr->labelSet(*label);
 		++label;
 		++ptr;

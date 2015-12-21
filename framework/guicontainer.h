@@ -36,17 +36,15 @@ class GuiContainer:public Widget
 
 				virtual void onCommand(ContainerType& source,unsigned int command_id)
 					{}
-
-				virtual void onDestroy(ContainerType& source)
-					{}
 			};
 
-		virtual void componentAdd(const Widget& component)=0;
-		virtual void componentRemove(const Widget& component)=0;
-		virtual void commandNotify(unsigned int command_id)=0;
+		virtual void componentAdd(Widget& component)=0;
+		virtual void componentRemove(Widget& component)=0;
 
-	protected:
-		virtual ~GuiContainer()=default;
+		virtual void slaveAssign(Widget& component)=0;
+		virtual void slaveRelease()=0;
+
+		virtual void commandNotify(unsigned int command_id)=0;
 	};
 
 #endif

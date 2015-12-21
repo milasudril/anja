@@ -26,11 +26,6 @@ void InputEntry::EventHandlerInternal::onCommand(BoxHorizontal& source,unsigned 
 		}
 	}
 
-void InputEntry::EventHandlerInternal::onDestroy(BoxHorizontal& source)
-	{
-	delete &r_object;
-	}
-
 InputEntry::EventHandler InputEntry::s_default_handler;
 
 InputEntry::InputEntry(GuiContainer& parent,const char* label
@@ -38,6 +33,7 @@ InputEntry::InputEntry(GuiContainer& parent,const char* label
 	r_parent(parent),m_handler(*this,handler)
 	{
 	m_box=BoxHorizontal::create(parent,&m_handler);
+	m_box->slaveAssign(*this);
 	m_box->insertModeSet(0);
 	m_label=Label::create(*m_box,label);
 	m_box->insertModeSet(BoxHorizontal::INSERTMODE_FILL|BoxHorizontal::INSERTMODE_EXPAND);
@@ -47,10 +43,16 @@ InputEntry::InputEntry(GuiContainer& parent,const char* label
 	}
 
 void InputEntry::destroy()
-	{r_parent.componentRemove(*m_box);}
+	{
+	m_button->destroy();
+	m_textbox->destroy();
+	m_label->destroy();
+	m_box->slaveRelease();
+	delete this;
+	}
 
 const GuiHandle& InputEntry::handleNativeGet() const
-	{return m_box->handleNativeGet();}
+	{return r_parent.handleNativeGet();}
 
 const char* InputEntry::textGet() const
 	{return m_textbox->textGet();}

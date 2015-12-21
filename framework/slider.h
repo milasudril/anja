@@ -37,8 +37,6 @@ class Slider:public Widget
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler,bool horizontal);
 
-		virtual void valueSet(double value)=0;
-
 	private:
 		static EventHandler s_default_handler;
 	};

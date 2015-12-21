@@ -47,8 +47,7 @@ class XYPlotGtk:public XYPlot
 
 		void backgroundSet(bool light);
 
-		void destroy()
-			{r_parent.componentRemove(*this);}
+		void destroy();
 
 		const GuiHandle& handleNativeGet() const
 			{return m_canvas;}
@@ -106,8 +105,6 @@ class XYPlotGtk:public XYPlot
 	private:
 		static void onSizeChange(GtkWidget* widget,GtkAllocation* allocation
 			,void* xyplotgtk);
-
-		static void onDestroy(GtkWidget* object,void* xyplotgtk);
 
 		static gboolean onMouseMove(GtkWidget* object,GdkEventMotion* event
 			,void* xyplotgtk);
@@ -273,12 +270,6 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	return TRUE;
 	}
 
-void XYPlotGtk::onDestroy(GtkWidget* object,void* xyplotgtk)
-	{
-	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	delete _this;
-	}
-
 XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)
 	{
 	auto ptr_cursor=m_cursors_x.data();
@@ -320,7 +311,6 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 		|GDK_KEY_RELEASE_MASK);
 
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
-	g_signal_connect(m_canvas,"destroy",G_CALLBACK(onDestroy),this);
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(onMouseMove),this);
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(onMouseDown),this);
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(onMouseUp),this);
@@ -328,9 +318,17 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(onSizeChange),this);
 
+	g_object_ref(m_canvas);
 	r_parent.componentAdd(*this);
 	domainSet({-1,-1,1,1});
 	backgroundSet(1);
+	}
+
+void XYPlotGtk::destroy()
+	{
+	r_parent.componentRemove(*this);
+	gtk_widget_destroy(m_canvas);
+	delete this;
 	}
 
 void XYPlotGtk::curveAdd(const Curve& curve)

@@ -28,8 +28,7 @@ class BoxVerticalGtk:public BoxVertical
 	public:
 		BoxVerticalGtk(GuiContainer& parent,EventHandler* event_handler);
 
-		void destroy()
-			{r_parent.componentRemove(*this);}
+		void destroy();
 
 		const GuiHandle& handleNativeGet() const
 			{return m_box;}
@@ -37,8 +36,14 @@ class BoxVerticalGtk:public BoxVertical
 		void insertModeSet(uint32_t mode)
 			{m_insert_mode=mode;}
 
-		void componentAdd(const Widget& widget);
-		void componentRemove(const Widget& widget);
+		void componentAdd(Widget& widget);
+		void componentRemove(Widget& widget);
+
+		void slaveAssign(Widget& slave)
+			{r_slave=&slave;}
+
+		void slaveRelease()
+			{r_slave=nullptr;}
 
 		void commandNotify(unsigned int command_id)
 			{
@@ -52,48 +57,46 @@ class BoxVerticalGtk:public BoxVertical
 		GuiContainer& r_parent;
 		EventHandler* r_handler;
 		GuiHandle m_box;
+		Widget* r_slave;
 		uint32_t m_insert_mode;
 
-		std::vector<GuiHandle> m_widgets;
-		void componentRemoveAt(const std::vector<GuiHandle>::iterator& i)
-			{
-			GtkWidget* widget=m_box;
-			gtk_container_remove(GTK_CONTAINER(widget),*i);
-			m_widgets.erase(i);
-			}
-
-		static void onDestroy(GtkWidget* widget,void* boxverticalgtk)
-			{
-			BoxVerticalGtk* _this=(BoxVerticalGtk*)boxverticalgtk;
-			if(_this->r_handler!=nullptr)
-				{_this->r_handler->onDestroy(*_this);}
-			delete _this;
-			}
+		std::vector<Widget*> m_widgets;
+		void componentRemoveAt(const std::vector<Widget*>::iterator& i);
 	};
 
 BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
 	{return new BoxVerticalGtk(parent,handler);}
 
 BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
-	r_parent(parent),r_handler(handler),m_insert_mode(0)
+	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)
 	{
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
-	g_signal_connect(box,"destroy",G_CALLBACK(onDestroy),this);
 	m_box=box;
+	g_object_ref(box);
 	r_parent.componentAdd(*this);
 	gtk_widget_show(box);
 	}
 
-void BoxVerticalGtk::componentAdd(const Widget& widget)
+void BoxVerticalGtk::destroy()
+	{
+	if(r_slave!=nullptr)
+		{r_slave->destroy();}
+	std::for_each(m_widgets.rbegin(),m_widgets.rend(),widgetDestroy);
+	r_parent.componentRemove(*this);
+	gtk_widget_destroy(m_box);
+	delete this;
+	}
+
+void BoxVerticalGtk::componentAdd(Widget& widget)
 	{
 	auto h=widget.handleNativeGet();
 	auto begin=m_widgets.begin();
 	auto end=m_widgets.end();
-	auto i=std::find(begin,end,h);
+	auto i=std::find(begin,end,&widget);
 	if(i!=m_widgets.end())
 		{return;}
 
-	m_widgets.push_back(h);
+	m_widgets.push_back(&widget);
 	auto insert_mode=m_insert_mode;
 	GtkWidget* box=m_box;
 	if(insert_mode&INSERTMODE_END)
@@ -109,13 +112,22 @@ void BoxVerticalGtk::componentAdd(const Widget& widget)
 	gtk_widget_show(h);
 	}
 
-void BoxVerticalGtk::componentRemove(const Widget& widget)
+void BoxVerticalGtk::componentRemove(Widget& widget)
 	{
 	auto begin=m_widgets.begin();
 	auto end=m_widgets.end();
-	auto i=std::find(begin,end,widget.handleNativeGet());
+	auto i=std::find(begin,end,&widget);
 	if(i!=m_widgets.end())
 		{
 		componentRemoveAt(i);
 		}
+	}
+
+void BoxVerticalGtk::componentRemoveAt(const std::vector<Widget*>::iterator& i)
+	{
+	GtkWidget* widget=m_box;
+	auto object=*i;
+	auto handle=object->handleNativeGet();
+	gtk_container_remove(GTK_CONTAINER(widget),handle);
+	m_widgets.erase(i);
 	}

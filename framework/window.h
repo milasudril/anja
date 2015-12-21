@@ -36,7 +36,6 @@ class Window:public GuiContainer
 		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void titleSet(const char* title_new)=0;
 
-
 	protected:
 		Window(EventLoop& event_loop):r_event_loop(event_loop)
 			{r_event_loop.windowRegister();}

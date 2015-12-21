@@ -27,25 +27,22 @@ class ButtonGtk:public Button
 	public:
 		ButtonGtk(GuiContainer& parent,const char* title,unsigned int command_id);
 		void destroy()
-			{r_parent.componentRemove(*this);}
+			{
+			r_parent.componentRemove(*this);
+			gtk_widget_destroy(m_button);
+			delete this;
+			}
 
 		const GuiHandle& handleNativeGet() const
 			{return m_button;}
 
 	private:
-		static void onDestroy(GtkWidget* widget,void* buttongtk);
 		static void onClick(GtkWidget* widget,void* buttongtk);
 
 		GuiContainer& r_parent;
 		GuiHandle m_button;
 		unsigned int m_command_id;
 	};
-
-void ButtonGtk::onDestroy(GtkWidget* widget,void* buttongtk)
-	{
-	ButtonGtk* _this=(ButtonGtk*)buttongtk;
-	delete _this;
-	}
 
 void ButtonGtk::onClick(GtkWidget* widget,void* buttongtk)
 	{
@@ -62,7 +59,7 @@ ButtonGtk::ButtonGtk(GuiContainer& parent,const char* title,unsigned int command
 	{
 	GtkWidget* widget=gtk_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(onClick),this);
-	g_signal_connect(widget,"destroy",G_CALLBACK(onDestroy),this);
 	m_button=widget;
+	g_object_ref(widget);
 	parent.componentAdd(*this);
 	}

@@ -27,7 +27,11 @@ class TextboxGtk:public Textbox
 	public:
 		TextboxGtk(GuiContainer& parent,unsigned int element_id);
 		void destroy()
-			{r_parent.componentRemove(*this);}
+			{
+			r_parent.componentRemove(*this);
+			gtk_widget_destroy(m_textbox);
+			delete this;
+			}
 
 		const GuiHandle& handleNativeGet() const
 			{return m_textbox;}
@@ -45,19 +49,12 @@ class TextboxGtk:public Textbox
 			}
 
 	private:
-		static void onDestroy(GtkWidget* widget,void* textboxgtk);
 		static gboolean onKeyUp(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
 
 		GuiContainer& r_parent;
 		GuiHandle m_textbox;
 		unsigned int m_element_id;
 	};
-
-void TextboxGtk::onDestroy(GtkWidget* widget,void* textboxgtk)
-	{
-	TextboxGtk* _this=(TextboxGtk*)textboxgtk;
-	delete _this;
-	}
 
 gboolean TextboxGtk::onKeyUp(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 	{
@@ -74,7 +71,7 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 	{
 	GtkWidget* widget=gtk_entry_new();
 	g_signal_connect(widget,"key_release_event",G_CALLBACK(onKeyUp),this);
-	g_signal_connect(widget,"destroy",G_CALLBACK(onDestroy),this);
 	m_textbox=widget;
+	g_object_ref(widget);
 	parent.componentAdd(*this);
 	}

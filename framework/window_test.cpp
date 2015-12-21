@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[window_test] type[application]]
+target[name[window_test] type[application] platform[;GNU/Linux]]
 #endif
 
 #include "window.h"

@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[test3] type[application] platform[;GNU/Linux]]
+target[name[keyboardview_test] type[application] platform[;GNU/Linux]]
 #endif
 
 #include "keyboardview.h"

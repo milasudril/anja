@@ -20,20 +20,27 @@ target
 
 #include "window.h"
 #include "guihandle.h"
+#include <algorithm>
 
 class WindowGtk:public Window
 	{
 	public:
 		WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner);
 
-		void destroy()
-			{gtk_widget_destroy(m_window);}
+		void destroy();
 
 		void eventHandlerSet(EventHandler& handler)
 			{r_handler=&handler;}
 
-		void componentAdd(const Widget& component);
-		void componentRemove(const Widget& component);
+		void componentAdd(Widget& component);
+		void componentRemove(Widget& component);
+
+		void slaveAssign(Widget& component)
+			{r_slave=&component;}
+
+		void slaveRelease()
+			{r_slave=nullptr;}
+
 		void titleSet(const char* title_new)
 			{
 			GtkWidget* window=m_window;
@@ -64,10 +71,13 @@ class WindowGtk:public Window
 		static gboolean onKeyUp(GtkWidget* widget,GdkEventKey* event
 			,void* windowgtk);
 
-		static void onDestroy(GtkWidget* widget,void* windowgtk);
+		void windowRemove(WindowGtk& window);
 
 		EventHandler* r_handler;
-		const Widget* r_widget;
+		Widget* r_widget;
+		Widget* r_slave;
+		WindowGtk* r_owner;
+		std::vector<WindowGtk*> m_owned_windows;
 		GuiHandle m_window;
 	};
 
@@ -123,15 +133,9 @@ gboolean WindowGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
 	return FALSE;
 	}
 
-void WindowGtk::onDestroy(GtkWidget* widget,void* windowgtk)
-	{
-	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onDestroy(*_this);
-	delete _this;
-	}
-
 WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner):
 	Window(event_loop),r_handler(&handler),r_widget(nullptr)
+	,r_slave(nullptr),r_owner(owner)
 	{
 	GtkWidget* window_this=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_object_ref_sink(G_OBJECT(window_this));
@@ -142,19 +146,41 @@ WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owne
 	g_signal_connect(window_this,"key_press_event",G_CALLBACK(onKeyDown),this);
 	g_signal_connect(window_this,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(window_this,"delete-event",G_CALLBACK(onClose),this);
-	g_signal_connect(window_this,"destroy",G_CALLBACK(onDestroy),this);
 	if(owner!=nullptr)
 		{
 		GtkWidget* window_parent=owner->m_window;
 		gtk_window_set_transient_for((GtkWindow*)window_this
 			,(GtkWindow*)window_parent);
-		gtk_window_set_destroy_with_parent((GtkWindow*)window_this,TRUE);
+		owner->m_owned_windows.push_back(this);
 		}
 	m_window=window_this;
 	}
 
+void WindowGtk::windowRemove(WindowGtk& window)
+	{
+	auto begin=m_owned_windows.begin();
+	auto end=m_owned_windows.end();
+	auto i=std::find(begin,end,&window);
+	if(i!=m_owned_windows.end())
+		{m_owned_windows.erase(i);}
+	}
 
-void WindowGtk::componentAdd(const Widget& component)
+void WindowGtk::destroy()
+	{
+	if(r_slave!=nullptr)
+		{r_slave->destroy();}
+	if(r_widget!=nullptr)
+		{r_widget->destroy();}
+	std::for_each(m_owned_windows.rbegin(),m_owned_windows.rend(),widgetDestroy);
+	if(r_owner!=nullptr)
+		{r_owner->windowRemove(*this);}
+
+	gtk_widget_destroy(m_window);
+	delete this;
+	}
+
+
+void WindowGtk::componentAdd(Widget& component)
 	{
 	if(r_widget==&component)
 		{return;}
@@ -167,11 +193,9 @@ void WindowGtk::componentAdd(const Widget& component)
 	gtk_widget_show(handle);
 	}
 
-void WindowGtk::componentRemove(const Widget& component)
+void WindowGtk::componentRemove(Widget& component)
 	{
 	auto handle=r_widget->handleNativeGet();
-	gtk_widget_hide(handle);
-
 	GtkWidget* window=m_window;
 	gtk_container_remove(GTK_CONTAINER(window),handle);
 	r_widget=nullptr;

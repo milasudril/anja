@@ -12,9 +12,6 @@ WaveformView::EventHandlerInternal::EventHandlerInternal(WaveformView& view):
 	r_view(&view)
 	{}
 
-void WaveformView::EventHandlerInternal::onDestroy(BoxVertical& source)
-	{delete r_view;}
-
 
 
 WaveformView::EventHandlerPlot::EventHandlerPlot(WaveformView& view):
@@ -63,6 +60,7 @@ WaveformView::WaveformView(GuiContainer& parent):r_parent(parent)
 	,handler(*this),plot_handler(*this),entry_handler(*this)
 	{
 	m_box_main=BoxVertical::create(parent);
+	m_box_main->slaveAssign(*this);
 
 	m_box_main->insertModeSet(BoxVertical::INSERTMODE_FILL
 		| BoxVertical::INSERTMODE_EXPAND);
@@ -79,7 +77,13 @@ WaveformView::WaveformView(GuiContainer& parent):r_parent(parent)
 
 void WaveformView::destroy()
 	{
-	r_parent.componentRemove(*m_box_main);
+	printf("WaveformView %p\n",this);
+	m_entry_end->destroy();
+	m_entry_begin->destroy();
+	m_box_positions->destroy();
+	m_plot->destroy();
+	m_box_main->slaveRelease();
+	delete this;
 	}
 
 const GuiHandle& WaveformView::handleNativeGet() const
