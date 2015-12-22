@@ -28,7 +28,7 @@ class EventLoop
 			{--m_n_windows;}
 
 		bool windowsLeft() const
-			{return m_n_windows!=0;	}
+			{return m_n_windows!=0;}
 
 	protected:
 		virtual ~EventLoop()=default;
