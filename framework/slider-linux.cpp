@@ -84,7 +84,7 @@ void SliderGtk::sliderMoved(GtkRange* range,void* slidergtk)
 	gtk_entry_set_text((GtkEntry*)_this->m_text,buffer.begin());
 	}
 
-gint SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk)
+gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk)
 	{
 	SliderGtk* _this=(SliderGtk*)slidergtk;
 	GtkEntry* text=(GtkEntry*)entry;
@@ -121,7 +121,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	gtk_entry_set_width_chars((GtkEntry*)m_text,5);
 
 	g_signal_connect(m_slider,"value-changed",G_CALLBACK(sliderMoved),this);
-	g_signal_connect(m_text,"key_release_event",G_CALLBACK(textChanged),this);
+	g_signal_connect(m_text,"focus-out-event",G_CALLBACK(textChanged),this);
 
 	parent.componentAdd(*this);
 	}

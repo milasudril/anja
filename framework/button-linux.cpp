@@ -21,6 +21,7 @@ target
 #include "button.h"
 #include "guicontainer.h"
 #include "guihandle.h"
+#include "exceptionswallow.h"
 
 class ButtonGtk:public Button
 	{
@@ -44,7 +45,8 @@ class ButtonGtk:public Button
 void ButtonGtk::onClick(GtkWidget* widget,void* buttongtk)
 	{
 	ButtonGtk* _this=(ButtonGtk*)buttongtk;
-	_this->r_parent.commandNotify(_this->m_command_id);
+	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_command_id);
+		,_this);
 	}
 
 Button* Button::create(GuiContainer& parent,const char* title

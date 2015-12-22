@@ -23,6 +23,7 @@ target
 #include "curve.h"
 #include "colorsystem.h"
 #include "guihandle.h"
+#include "exceptionswallow.h"
 
 #include <gtk/gtk.h>
 
@@ -219,7 +220,10 @@ gboolean XYPlotGtk::onMouseMove(GtkWidget* object
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler->onMouseMove(*_this,point,keymaskFromSystem(event->state));}
+		{
+		EXCEPTION_SWALLOW(_this->r_handler->onMouseMove(*_this,point,keymaskFromSystem(event->state));
+			,_this);
+		}
 	return TRUE;
 	}
 
@@ -242,17 +246,22 @@ gboolean XYPlotGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 		auto cursor=_this->cursorXAtPoint(point,tol_x);
 		if(cursor!=nullptr)
 			{
-			_this->r_handler->onCursorXHit(*_this,*cursor,keymaskFromSystem(event->state));
+			EXCEPTION_SWALLOW(_this->r_handler->onCursorXHit(*_this,*cursor,keymaskFromSystem(event->state));
+				,_this);
 			}
 
 		cursor=_this->cursorYAtPoint(point,tol_y);
 		if(cursor!=nullptr)
 			{
-			_this->r_handler->onCursorYHit(*_this,*cursor,keymaskFromSystem(event->state));
+			EXCEPTION_SWALLOW(_this->r_handler->onCursorYHit(*_this,*cursor,keymaskFromSystem(event->state));
+				,_this);
 			return TRUE;
 			}
 		else
-			{_this->r_handler->onMouseDown(*_this,point,keymaskFromSystem(event->state));}
+			{
+			EXCEPTION_SWALLOW(_this->r_handler->onMouseDown(*_this,point,keymaskFromSystem(event->state));
+				,_this);
+			}
 		}
 	return TRUE;
 	}
@@ -263,7 +272,10 @@ gboolean XYPlotGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	auto point=_this->toPlotCoords(Curve::Point{event->x,event->y});
 	if(belongsTo(point,_this->m_domain_current_active))
-		{_this->r_handler->onMouseUp(*_this,point,keymaskFromSystem(event->state));}
+		{
+		EXCEPTION_SWALLOW(_this->r_handler->onMouseUp(*_this,point,keymaskFromSystem(event->state));
+			,_this);
+		}
 	return TRUE;
 	}
 
@@ -271,7 +283,8 @@ gboolean XYPlotGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
+		,_this);
 	return TRUE;
 	}
 
@@ -279,7 +292,8 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
-	_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
+		,_this);
 	return TRUE;
 	}
 

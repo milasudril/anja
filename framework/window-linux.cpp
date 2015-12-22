@@ -20,6 +20,7 @@ target
 
 #include "window.h"
 #include "guihandle.h"
+#include "exceptionswallow.h"
 #include <algorithm>
 
 class WindowGtk:public Window
@@ -93,7 +94,7 @@ void WindowGtk::destroy()
 gboolean WindowGtk::onClose(GtkWidget* widget,GdkEvent* event,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onClose(*_this);
+	EXCEPTION_SWALLOW(_this->r_handler->onClose(*_this);,_this);
 	return TRUE;
 	}
 
@@ -101,7 +102,9 @@ gboolean WindowGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseMove(*_this,event->x,event->y,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(
+		_this->r_handler->onMouseMove(*_this,event->x,event->y,keymaskFromSystem(event->state));
+		,_this);
 	return TRUE;
 	}
 
@@ -109,7 +112,9 @@ gboolean WindowGtk::onMouseDown(GtkWidget* widget,GdkEventButton* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseDown(*_this,event->x,event->y,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(
+		_this->r_handler->onMouseDown(*_this,event->x,event->y,keymaskFromSystem(event->state));
+		,_this);
 	return TRUE;
 	}
 
@@ -117,7 +122,9 @@ gboolean WindowGtk::onMouseUp(GtkWidget* widget,GdkEventButton* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onMouseUp(*_this,event->x,event->y,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(
+		_this->r_handler->onMouseUp(*_this,event->x,event->y,keymaskFromSystem(event->state));
+		,_this);
 	return TRUE;
 	}
 
@@ -125,7 +132,8 @@ gboolean WindowGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+		,_this);
 	return FALSE;
 	}
 
@@ -133,7 +141,8 @@ gboolean WindowGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+		,_this);
 	return FALSE;
 	}
 

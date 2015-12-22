@@ -21,6 +21,7 @@ target
 #include "textbox.h"
 #include "guicontainer.h"
 #include "guihandle.h"
+#include "exceptionswallow.h"
 
 class TextboxGtk:public Textbox
 	{
@@ -55,7 +56,8 @@ class TextboxGtk:public Textbox
 gboolean TextboxGtk::onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 	{
 	TextboxGtk* _this=(TextboxGtk*)textboxgtk;
-	_this->r_parent.commandNotify(_this->m_element_id);
+	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_element_id);
+		,_this);
 	return TRUE;
 	}
 

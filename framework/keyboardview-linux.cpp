@@ -23,6 +23,7 @@ target
 #include "guicontainer.h"
 #include "guihandle.h"
 #include "colorsystem.h"
+#include "exceptionswallow.h"
 #include <gtk/gtk.h>
 
 #include <cmath>
@@ -151,7 +152,9 @@ gboolean KeyboardViewGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	auto key_width=double(width)/(n_cols);
 
 	auto scancode=_this->r_keyboard->scancodeFromCoordinates(event->x/key_width,event->y/key_width);
-	_this->r_handler->onMouseUp(*_this,scancode,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(
+		_this->r_handler->onMouseUp(*_this,scancode,keymaskFromSystem(event->state));
+		,_this);
 	return TRUE;
 	}
 
@@ -159,7 +162,8 @@ gboolean KeyboardViewGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
 	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
-	_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
+		,_this);
 	return TRUE;
 	}
 
@@ -167,7 +171,8 @@ gboolean KeyboardViewGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
 	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
-	_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
+		,_this);
 	return TRUE;
 	}
 
