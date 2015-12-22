@@ -26,6 +26,7 @@ class WindowGtk:public Window
 	{
 	public:
 		WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner);
+		~WindowGtk();
 
 		void destroy();
 
@@ -85,6 +86,9 @@ Window::EventHandler Window::s_default_handler;
 
 Window* Window::create(EventLoop& event_loop,EventHandler& handler,Window* owner)
 	{return new WindowGtk(event_loop,handler,dynamic_cast<WindowGtk*>(owner));}
+
+void WindowGtk::destroy()
+	{delete this;}
 
 gboolean WindowGtk::onClose(GtkWidget* widget,GdkEvent* event,void* windowgtk)
 	{
@@ -165,7 +169,7 @@ void WindowGtk::windowRemove(WindowGtk& window)
 		{m_owned_windows.erase(i);}
 	}
 
-void WindowGtk::destroy()
+WindowGtk::~WindowGtk()
 	{
 	if(r_slave!=nullptr)
 		{r_slave->destroy();}
@@ -174,9 +178,7 @@ void WindowGtk::destroy()
 	std::for_each(m_owned_windows.rbegin(),m_owned_windows.rend(),widgetDestroy);
 	if(r_owner!=nullptr)
 		{r_owner->windowRemove(*this);}
-
 	gtk_widget_destroy(m_window);
-	delete this;
 	}
 
 

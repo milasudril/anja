@@ -31,6 +31,7 @@ class SliderGtk:public Slider
 	{
 	public:
 		SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal);
+		~SliderGtk();
 
 		void destroy();
 
@@ -71,7 +72,8 @@ Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
 	,bool horizontal)
 	{return new SliderGtk(parent,handler,horizontal);}
 
-
+void SliderGtk::destroy()
+	{delete this;}
 
 void SliderGtk::sliderMoved(GtkRange* range,void* slidergtk)
 	{
@@ -124,12 +126,11 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	parent.componentAdd(*this);
 	}
 
-void SliderGtk::destroy()
+SliderGtk::~SliderGtk()
 	{
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_slider);
 	gtk_widget_destroy(m_box);
 	gtk_widget_destroy(m_text);
-	delete this;
 	}
 

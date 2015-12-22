@@ -42,13 +42,12 @@ InputEntry::InputEntry(GuiContainer& parent,const char* label
 	m_button=Button::create(*m_box,text_button,EventHandlerInternal::COMMAND_ACTION);
 	}
 
-void InputEntry::destroy()
+InputEntry::~InputEntry()
 	{
 	m_button->destroy();
 	m_textbox->destroy();
 	m_label->destroy();
 	m_box->slaveRelease();
-	delete this;
 	}
 
 const GuiHandle& InputEntry::handleNativeGet() const

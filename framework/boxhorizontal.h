@@ -22,6 +22,7 @@ class BoxHorizontal:public GuiContainer
 		static constexpr uint32_t INSERTMODE_END=1;
 		static constexpr uint32_t INSERTMODE_EXPAND=2;
 		static constexpr uint32_t INSERTMODE_FILL=4;
+		static constexpr uint32_t INSERTMODE_TOP=8;
 
 		virtual void insertModeSet(uint32_t mode)=0;
 	};

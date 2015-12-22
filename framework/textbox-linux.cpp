@@ -26,12 +26,8 @@ class TextboxGtk:public Textbox
 	{
 	public:
 		TextboxGtk(GuiContainer& parent,unsigned int element_id);
-		void destroy()
-			{
-			r_parent.componentRemove(*this);
-			gtk_widget_destroy(m_textbox);
-			delete this;
-			}
+		~TextboxGtk();
+		void destroy();
 
 		const GuiHandle& handleNativeGet() const
 			{return m_textbox;}
@@ -66,6 +62,9 @@ gboolean TextboxGtk::onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 Textbox* Textbox::create(GuiContainer& parent,unsigned int element_id)
 	{return new TextboxGtk(parent,element_id);}
 
+void TextboxGtk::destroy()
+	{delete this;}
+
 TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 	r_parent(parent),m_element_id(element_id)
 	{
@@ -76,4 +75,10 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 	m_textbox=widget;
 	g_object_ref(widget);
 	parent.componentAdd(*this);
+	}
+
+TextboxGtk::~TextboxGtk()
+	{
+	r_parent.componentRemove(*this);
+	gtk_widget_destroy(m_textbox);
 	}

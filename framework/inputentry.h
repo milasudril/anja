@@ -35,7 +35,8 @@ class InputEntry:public Widget
 
 		const char* textGet() const;
 		void textSet(const char* text);
-		void destroy();
+		void destroy()
+			{delete this;}
 		unsigned int idGet() const
 			{return m_id;}
 
@@ -45,7 +46,7 @@ class InputEntry:public Widget
 	private:
 		InputEntry(GuiContainer& parent,const char* label
 			,const char* text_button,EventHandler& handler,unsigned int id);
-		~InputEntry()=default;
+		~InputEntry();
 
 		class EventHandlerInternal:public BoxHorizontal::EventHandler
 			{

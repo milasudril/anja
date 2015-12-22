@@ -27,6 +27,7 @@ class BoxHorizontalGtk:public BoxHorizontal
 	{
 	public:
 		BoxHorizontalGtk(GuiContainer& parent,EventHandler* event_handler);
+		~BoxHorizontalGtk();
 
 		void destroy();
 
@@ -67,6 +68,9 @@ class BoxHorizontalGtk:public BoxHorizontal
 BoxHorizontal* BoxHorizontal::create(GuiContainer& parent,EventHandler* handler)
 	{return new BoxHorizontalGtk(parent,handler);}
 
+void BoxHorizontalGtk::destroy()
+	{delete this;}
+
 BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)
 	{
@@ -77,7 +81,7 @@ BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler* handler):
 	gtk_widget_show(box);
 	}
 
-void BoxHorizontalGtk::destroy()
+BoxHorizontalGtk::~BoxHorizontalGtk()
 	{
 	if(r_slave!=nullptr)
 		{r_slave->destroy();}
@@ -85,7 +89,6 @@ void BoxHorizontalGtk::destroy()
 	std::for_each(m_widgets.rbegin(),m_widgets.rend(),widgetDestroy);
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_box);
-	delete this;
 	}
 
 void BoxHorizontalGtk::componentAdd(Widget& widget)
@@ -109,6 +112,8 @@ void BoxHorizontalGtk::componentAdd(Widget& widget)
 		gtk_box_pack_start((GtkBox*)box,h,insert_mode&INSERTMODE_EXPAND
 			,insert_mode&INSERTMODE_FILL,0);
 		}
+	if(insert_mode&INSERTMODE_TOP)
+		{gtk_widget_set_valign(h,GTK_ALIGN_START);}
 	gtk_widget_show(h);
 	}
 

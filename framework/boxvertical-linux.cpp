@@ -27,6 +27,7 @@ class BoxVerticalGtk:public BoxVertical
 	{
 	public:
 		BoxVerticalGtk(GuiContainer& parent,EventHandler* event_handler);
+		~BoxVerticalGtk();
 
 		void destroy();
 
@@ -67,6 +68,9 @@ class BoxVerticalGtk:public BoxVertical
 BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
 	{return new BoxVerticalGtk(parent,handler);}
 
+void BoxVerticalGtk::destroy()
+	{delete this;}
+
 BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)
 	{
@@ -77,14 +81,13 @@ BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
 	gtk_widget_show(box);
 	}
 
-void BoxVerticalGtk::destroy()
+BoxVerticalGtk::~BoxVerticalGtk()
 	{
 	if(r_slave!=nullptr)
 		{r_slave->destroy();}
 	std::for_each(m_widgets.rbegin(),m_widgets.rend(),widgetDestroy);
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_box);
-	delete this;
 	}
 
 void BoxVerticalGtk::componentAdd(Widget& widget)

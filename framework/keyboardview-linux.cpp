@@ -34,6 +34,8 @@ class KeyboardViewGtk:public KeyboardView
 		KeyboardViewGtk(GuiContainer& parent,const KeyboardLayout& keyboard
 			,EventHandler& handler);
 
+		~KeyboardViewGtk();
+
 		void update()
 			{gtk_widget_queue_draw(m_canvas);}
 
@@ -101,6 +103,9 @@ KeyboardViewGtk::KeyboardViewGtk
 	}
 
 void KeyboardViewGtk::destroy()
+	{delete this;}
+
+KeyboardViewGtk::~KeyboardViewGtk()
 	{
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_canvas);

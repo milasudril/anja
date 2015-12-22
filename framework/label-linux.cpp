@@ -26,13 +26,8 @@ class LabelGtk:public Label
 	{
 	public:
 		LabelGtk(GuiContainer& parent,const char* title);
-		void destroy()
-			{
-			r_parent.componentRemove(*this);
-			gtk_widget_destroy(m_label);
-			delete this;
-			}
-
+		~LabelGtk();
+		void destroy();
 		const GuiHandle& handleNativeGet() const
 			{return m_label;}
 
@@ -44,10 +39,19 @@ class LabelGtk:public Label
 Label* Label::create(GuiContainer& parent,const char* title)
 	{return new LabelGtk(parent,title);}
 
+void LabelGtk::destroy()
+	{delete this;}
+
 LabelGtk::LabelGtk(GuiContainer& parent,const char* title):r_parent(parent)
 	{
 	GtkWidget* widget=gtk_label_new(title);
 	m_label=widget;
 	g_object_ref(widget);
 	parent.componentAdd(*this);
+	}
+
+LabelGtk::~LabelGtk()
+	{
+	r_parent.componentRemove(*this);
+	gtk_widget_destroy(m_label);
 	}

@@ -33,6 +33,7 @@ class XYPlotGtk:public XYPlot
 	{
 	public:
 		XYPlotGtk(GuiContainer& parent,EventHandler& handler);
+		~XYPlotGtk();
 
 		void update()
 			{gtk_widget_queue_draw(m_canvas);}
@@ -198,6 +199,9 @@ XYPlot::EventHandler XYPlot::s_default_handler;
 XYPlot* XYPlot::create(GuiContainer& parent,EventHandler& handler)
 	{return new XYPlotGtk(parent,handler);}
 
+void XYPlotGtk::destroy()
+	{delete this;}
+
 void XYPlotGtk::onSizeChange(GtkWidget* widget,GtkAllocation* allocation
 	,void* xyplotgtk)
 	{
@@ -333,11 +337,10 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	backgroundSet(1);
 	}
 
-void XYPlotGtk::destroy()
+XYPlotGtk::~XYPlotGtk()
 	{
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_canvas);
-	delete this;
 	}
 
 void XYPlotGtk::curveAdd(const Curve& curve)
