@@ -28,6 +28,7 @@ target
 #include <gtk/gtk.h>
 
 #include <vector>
+#include <algorithm>
 #include <cmath>
 
 class XYPlotGtk:public XYPlot
@@ -359,19 +360,21 @@ XYPlotGtk::~XYPlotGtk()
 
 void XYPlotGtk::curveAdd(const Curve& curve)
 	{
+	Curve::Domain domain_new=curve.domainGet();
+	if(m_curves.size()!=0)
+		{
+		auto d_max=m_domain_max;
+		d_max.min.x=std::min(domain_new.min.x,d_max.min.x);
+		d_max.min.y=std::min(domain_new.min.y,d_max.min.y);
+		d_max.max.x=std::max(domain_new.max.x,d_max.max.x);
+		d_max.max.y=std::max(domain_new.max.y,d_max.max.y);
+		domain_new=d_max;
+		m_domain_max=d_max;
+		}
+	else
+		{m_domain_max=domain_new;}
+
 	m_curves.push_back(curve);
-	auto d=curve.domainGet();
-	Curve::Domain domain_new=m_domain_max;
-
-	domain_new.min.x = d.min.x < domain_new.min.x?
-		d.min.x : domain_new.min.x;
-	domain_new.min.y = d.min.y < domain_new.min.y?
-		d.min.y : domain_new.min.y;
-	domain_new.max.x = d.max.x > domain_new.max.x?
-		d.max.x : domain_new.max.x;
-	domain_new.max.y = d.max.y > domain_new.max.y?
-		d.max.y : domain_new.max.y;
-
 	domainSet(domain_new);
 	}
 

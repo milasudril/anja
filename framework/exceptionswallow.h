@@ -5,13 +5,15 @@ target[name[exceptionswallow.h] type[include]]
 #ifndef EXCEPTIONSWALLOW_H
 #define EXCEPTIONSWALLOW_H
 
-#include <cstdio>
+#include "messagedisplay.h"
 
 #define EXCEPTION_SWALLOW(_statements,_context) do\
 	{ \
 	try { _statements }\
 	catch(...)\
-		{printf("An exception occured\n");} \
+		{\
+		messageDisplay(*_context,"Unkonwn exception","Anja",MESSAGE_TYPE_ERROR);\
+		} \
 	} \
 	while(0)
 
