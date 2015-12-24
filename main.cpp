@@ -2,14 +2,19 @@
 target[name[anja] type[application]]
 #endif
 
-#include "framework/window.h"
 #include "waveformrangeview.h"
-
-#include "framework/array_simple.h"
+#include "waveformdataview.h"
 #include "waveformrange.h"
 #include "meansquare.h"
 #include "units.h"
+
+#include "framework/window.h"
+#include "framework/boxvertical.h"
+#include "framework/keyboardlayout.h"
+#include "framework/keyboardview.h"
+
 #include "framework/array_simple.h"
+
 #include <cmath>
 
 class RangeAction:public WaveformRangeView::EventHandler
@@ -77,10 +82,6 @@ class RangeAction:public WaveformRangeView::EventHandler
 			MeanSquare(secondsToFrames(1e-3,range.sampleRateGet()))
 				.compute(range.beginFull(),buffer_out,length);
 			}
-
-
-
-
 	private:
 	};
 
@@ -105,14 +106,21 @@ int main()
 		}
 
 	WaveformRange range{test_data.begin(),uint32_t(N),float(fs)};
+	KeyboardLayout layout;
 
 	auto event_loop=EventLoop::create();
 	auto mainwin=Window::create(*event_loop);
 	mainwin->titleSet("Anja - New session");
 
+	auto box=BoxVertical::create(*mainwin);
+	box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+		|BoxVertical::INSERTMODE_FILL);
+	auto keyview=KeyboardView::create(*box,layout);
+
 	RangeAction actions;
-	auto waveformview=WaveformRangeView::create(*mainwin,actions);
-	waveformview->waveformRangeSet(range);
+	box->insertModeSet(BoxVertical::INSERTMODE_END);
+	auto waveformdata=WaveformDataView::create(*box,actions);
+//	waveformview->waveformRangeSet(range);
 
 	return 0;
 	}

@@ -350,6 +350,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	r_parent.componentAdd(*this);
 	domainSet({-1,-1,1,1});
 	backgroundSet(1);
+	gtk_widget_set_size_request(m_canvas,512,128);
 	}
 
 XYPlotGtk::~XYPlotGtk()

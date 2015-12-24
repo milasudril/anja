@@ -110,7 +110,6 @@ KeyboardViewGtk::~KeyboardViewGtk()
 	{
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_canvas);
-	delete this;
 	}
 
 gboolean KeyboardViewGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
