@@ -49,6 +49,7 @@ class KeyboardView:public Widget
 		virtual void update()=0;
 		virtual void eventHandlerSet(EventHandler& eh)=0;
 		virtual void keyboardLayoutSet(const KeyboardLayout& layout)=0;
+		void keyboardLayoutSet(KeyboardLayout&& layout)=delete;
 
 	protected:
 		virtual ~KeyboardView()=default;

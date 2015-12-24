@@ -54,9 +54,9 @@ class Curve
 
 		void colorSet(const ColorRGBA& color);
 
-	private:
 		void domainUpdate();
 
+	private:
 		const Point* r_points;
 		size_t m_n_points;
 		float m_hue;

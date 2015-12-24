@@ -237,11 +237,11 @@ gboolean XYPlotGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 	if(belongsTo(point,_this->m_domain_current_active))
 		{
 		auto x_min=mapToDomainX(0,_this->m_domain_window,_this->m_domain_current_active);
-		auto x_max=mapToDomainX(4,_this->m_domain_window,_this->m_domain_current_active);
+		auto x_max=mapToDomainX(8,_this->m_domain_window,_this->m_domain_current_active);
 		auto tol_x=x_max-x_min;
 
 		auto y_min=mapToDomainY(0,_this->m_domain_window,_this->m_domain_current_active);
-		auto y_max=mapToDomainY(4,_this->m_domain_window,_this->m_domain_current_active);
+		auto y_max=mapToDomainY(8,_this->m_domain_window,_this->m_domain_current_active);
 		auto tol_y=y_max-y_min;
 
 		auto cursor=_this->cursorXAtPoint(point,tol_x);
