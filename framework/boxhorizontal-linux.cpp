@@ -20,7 +20,7 @@ target
 
 #include "boxhorizontal.h"
 #include "guihandle.h"
-#include <vector>
+#include "array_dynamic_short.h"
 #include <algorithm>
 
 class BoxHorizontalGtk:public BoxHorizontal
@@ -61,8 +61,8 @@ class BoxHorizontalGtk:public BoxHorizontal
 		Widget* r_slave;
 		uint32_t m_insert_mode;
 
-		std::vector<Widget*> m_widgets;
-		void componentRemoveAt(const std::vector<Widget*>::iterator& i);
+		ArrayDynamicShort<Widget*> m_widgets;
+		void componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i);
 	};
 
 BoxHorizontal* BoxHorizontal::create(GuiContainer& parent,EventHandler* handler)
@@ -76,7 +76,7 @@ BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler* handler):
 	{
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,4);
 	m_box=box;
-	g_object_ref(box);
+	g_object_ref_sink(box);
 	r_parent.componentAdd(*this);
 	gtk_widget_show(box);
 	}
@@ -99,7 +99,7 @@ void BoxHorizontalGtk::componentAdd(Widget& widget)
 	auto i=std::find(begin,end,&widget);
 	if(i!=m_widgets.end())
 		{return;}
-	m_widgets.push_back(&widget);
+	m_widgets.append(&widget);
 	auto insert_mode=m_insert_mode;
 	GtkWidget* box=m_box;
 	if(insert_mode&INSERTMODE_END)
@@ -128,7 +128,7 @@ void BoxHorizontalGtk::componentRemove(Widget& widget)
 		}
 	}
 
-void BoxHorizontalGtk::componentRemoveAt(const std::vector<Widget*>::iterator& i)
+void BoxHorizontalGtk::componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i)
 	{
 	GtkWidget* widget=m_box;
 	auto object=*i;

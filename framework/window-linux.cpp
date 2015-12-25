@@ -21,6 +21,7 @@ target
 #include "window.h"
 #include "guihandle.h"
 #include "exceptionswallow.h"
+#include "array_dynamic_short.h"
 #include <algorithm>
 
 class WindowGtk:public Window
@@ -79,7 +80,7 @@ class WindowGtk:public Window
 		Widget* r_widget;
 		Widget* r_slave;
 		WindowGtk* r_owner;
-		std::vector<WindowGtk*> m_owned_windows;
+		ArrayDynamicShort<WindowGtk*> m_owned_windows;
 		GuiHandle m_window;
 	};
 
@@ -164,7 +165,7 @@ WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owne
 		GtkWidget* window_parent=owner->m_window;
 		gtk_window_set_transient_for((GtkWindow*)window_this
 			,(GtkWindow*)window_parent);
-		owner->m_owned_windows.push_back(this);
+		owner->m_owned_windows.append(this);
 		}
 	m_window=window_this;
 	}
@@ -174,7 +175,7 @@ void WindowGtk::windowRemove(WindowGtk& window)
 	auto begin=m_owned_windows.begin();
 	auto end=m_owned_windows.end();
 	auto i=std::find(begin,end,&window);
-	if(i!=m_owned_windows.end())
+		if(i!=m_owned_windows.end())
 		{m_owned_windows.erase(i);}
 	}
 

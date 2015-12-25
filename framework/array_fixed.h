@@ -11,22 +11,16 @@ template<class T,size_t N>
 class ArrayFixed
 	{
 	public:
-		constexpr ArrayFixed():data{T(0)}{}
-
-		template<typename... U>
-		constexpr ArrayFixed(U... ts):data{ts...}
-			{}
-
-		const T& operator[](size_t i) const
+		constexpr const T& operator[](size_t i) const
 			{return data[i];}
 
 		T& operator[](size_t i)
 			{return data[i];}
 
-		const T* begin() const
+		constexpr const T* begin() const
 			{return data;}
 
-		const T* end() const
+		constexpr const T* end() const
 			{return data+N;}
 
 		T* begin()
@@ -41,7 +35,6 @@ class ArrayFixed
 		constexpr size_t size()
 			{return N*sizeof(T);}
 
-	private:
 		T data[N];
 	};
 

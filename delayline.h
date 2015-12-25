@@ -14,7 +14,7 @@ class DelayLine:private ArraySimple<T>
 	public:
 		using ArraySimple<T>::length;
 
-		DelayLine(size_t N):ArraySimple<T>(N),m_offset_read(0),m_offset_write(N-1)
+		explicit DelayLine(size_t N):ArraySimple<T>(N),m_offset_read(0),m_offset_write(N-1)
 			{}
 
 		void fill(const T& x)

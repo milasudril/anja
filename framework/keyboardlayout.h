@@ -22,7 +22,8 @@ class KeyboardLayout
 			friend class KeyboardLayout;
 			public:
 				constexpr KeyDescriptor(const KeyDescriptor& key)=default;
-				constexpr KeyDescriptor()=default;
+				constexpr KeyDescriptor():label{0}
+					{}
 				constexpr KeyDescriptor(char x):label{x}{}
 
 				struct Vertex

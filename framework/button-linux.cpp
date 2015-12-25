@@ -44,7 +44,7 @@ class ButtonGtk:public Button
 
 void ButtonGtk::onClick(GtkWidget* widget,void* buttongtk)
 	{
-	ButtonGtk* _this=(ButtonGtk*)buttongtk;
+	ButtonGtk* _this=reinterpret_cast<ButtonGtk*>(buttongtk);
 	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_command_id);
 		,_this);
 	}
@@ -62,7 +62,7 @@ ButtonGtk::ButtonGtk(GuiContainer& parent,const char* title,unsigned int command
 	GtkWidget* widget=gtk_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(onClick),this);
 	m_button=widget;
-	g_object_ref(widget);
+	g_object_ref_sink(widget);
 	parent.componentAdd(*this);
 	}
 

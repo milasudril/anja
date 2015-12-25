@@ -1,36 +1,51 @@
 #ifdef __WAND__
 target[name[session.h] type[include]]
+dependency[session.o]
 #endif
 
 #ifndef SESSION_H
 #define SESSION_H
 
+#include "framework/array_fixed.h"
+#include "waveformdata.h"
+#include "waveformstorage.h"
+
 class Session
 	{
 	public:
-		class WaveformData
-			{
-			private:
-				std::string m_filename;
-				std::string m_description;
-				uint64_t m_position_start;
-				uint64_t m_position_stop;
-				float m_playback_gain;
-				uint32_t m_flags;
-				uint8_t m_scancode;
-				uint8_t m_midi_note;
+		Session()
+			{waveformsClear();}
 
-				static constexpr uint32_t READONLY=1;
-				static constexpr uint32_t GAIN_RANDOMIZE=2;
-				static constexpr uint32_t PITCH_RANDOMIZE=4;
-				static constexpr uint32_t LOOP=8;
-				static constexpr uint32_t SUSTAIN=16;
-			};
+		void waveformsClear();
+
+		void waveformDataSave(const WaveformData& data,uint8_t slot);
+
+		WaveformData& waveformDataGet(uint8_t slot)
+			{return m_waveform_data[slot];}
+
+		const WaveformData& waveformDataGet(uint8_t slot) const
+			{return m_waveform_data[slot];}
+
+		WaveformData& waveformDataFromScancode(uint8_t scancode)
+			{return m_waveform_data[m_scancode_to_slot[scancode]];}
+
+		const WaveformData& waveformDataFromScancode(uint8_t scancode) const
+			{return m_waveform_data[m_scancode_to_slot[scancode]];}
+
+		WaveformData& waveformDataFromMIDI(uint8_t midikey)
+			{return m_waveform_data[m_midikey_to_slot[midikey]];}
+
+		const WaveformData& waveformDataFromMIDI(uint8_t midikey) const
+			{return m_waveform_data[m_midikey_to_slot[midikey]];}
+
 
 	private:
-		std::string m_directory;
+		ArrayFixed<uint8_t,128> m_scancode_to_slot;
+		ArrayFixed<uint8_t,128> m_midikey_to_slot;
+		ArrayFixed<WaveformStorage,128> m_waveforms;
+		ArrayFixed<WaveformData,128> m_waveform_data;
+
 		float m_gain;
-		std::vector<WaveformData> keylist;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;
 		static constexpr uint32_t MODE_RECORD=2;

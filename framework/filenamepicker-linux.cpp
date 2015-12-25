@@ -72,5 +72,5 @@ FilenamePicker* FilenamePicker::instanceCreate(const Widget& owner
 
 void FilenamePicker::destroy(FilenamePicker* picker)
 	{
-	delete (FilenamePickerGtk*)picker;
+	delete dynamic_cast<FilenamePickerGtk*>(picker);
 	}

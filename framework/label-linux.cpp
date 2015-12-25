@@ -46,7 +46,7 @@ LabelGtk::LabelGtk(GuiContainer& parent,const char* title):r_parent(parent)
 	{
 	GtkWidget* widget=gtk_label_new(title);
 	m_label=widget;
-	g_object_ref(widget);
+	g_object_ref_sink(widget);
 	parent.componentAdd(*this);
 	}
 

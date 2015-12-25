@@ -14,7 +14,7 @@ class ArraySimple
 		ArraySimple(const ArraySimple&)=delete;
 		ArraySimple& operator=(const ArraySimple&)=delete;
 
-		ArraySimple(size_t N):m_data(new T[N]),m_N(N)
+		explicit ArraySimple(size_t N):m_data(new T[N]),m_N(N)
 			{}
 
 		const T* begin() const

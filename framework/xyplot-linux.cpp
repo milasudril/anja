@@ -27,7 +27,7 @@ target
 
 #include <gtk/gtk.h>
 
-#include <vector>
+#include "array_dynamic_short.h"
 #include <algorithm>
 #include <cmath>
 
@@ -64,9 +64,9 @@ class XYPlotGtk:public XYPlot
 
 		size_t cursorXAdd(const Cursor& cursor)
 			{
-			m_cursors_x.push_back(cursor);
+			m_cursors_x.append(cursor);
 			update();
-			return m_cursors_x.size()-1;
+			return m_cursors_x.length()-1;
 			}
 
 		void cursorXRemove(size_t n)
@@ -87,9 +87,9 @@ class XYPlotGtk:public XYPlot
 
 		size_t cursorYAdd(const Cursor& cursor)
 			{
-			m_cursors_y.push_back(cursor);
+			m_cursors_y.append(cursor);
 			update();
-			return m_cursors_y.size()-1;
+			return m_cursors_y.length()-1;
 			}
 
 		void cursorYRemove(size_t n)
@@ -169,11 +169,11 @@ class XYPlotGtk:public XYPlot
 		GuiContainer& r_parent;
 		EventHandler* r_handler;
 
-		std::vector<Curve> m_curves;
-		std::vector<Cursor> m_cursors_x;
-		std::vector<Cursor> m_cursors_y;
-		std::vector<TicMark> m_axis_x;
-		std::vector<TicMark> m_axis_y;
+		ArrayDynamicShort<Curve> m_curves;
+		ArrayDynamicShort<Cursor> m_cursors_x;
+		ArrayDynamicShort<Cursor> m_cursors_y;
+		ArrayDynamicShort<TicMark> m_axis_x;
+		ArrayDynamicShort<TicMark> m_axis_y;
 		GuiHandle m_canvas;
 
 		double m_width;
@@ -301,7 +301,7 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)
 	{
 	auto ptr_cursor=m_cursors_x.data();
-	auto ptr_cursors_end=ptr_cursor+m_cursors_x.size();
+	auto ptr_cursors_end=ptr_cursor+m_cursors_x.length();
 	while(ptr_cursor!=ptr_cursors_end)
 		{
 		if(std::abs(ptr_cursor->position - p.x) < tol)
@@ -314,7 +314,7 @@ XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)
 XYPlot::Cursor* XYPlotGtk::cursorYAtPoint(const Curve::Point& p,double tol)
 	{
 	auto ptr_cursor=m_cursors_y.data();
-	auto ptr_cursors_end=ptr_cursor+m_cursors_y.size();
+	auto ptr_cursors_end=ptr_cursor+m_cursors_y.length();
 
 	while(ptr_cursor!=ptr_cursors_end)
 		{
@@ -346,7 +346,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(onSizeChange),this);
 
-	g_object_ref(m_canvas);
+	g_object_ref_sink(m_canvas);
 	r_parent.componentAdd(*this);
 	domainSet({-1,-1,1,1});
 	backgroundSet(1);
@@ -362,7 +362,7 @@ XYPlotGtk::~XYPlotGtk()
 void XYPlotGtk::curveAdd(const Curve& curve)
 	{
 	Curve::Domain domain_new=curve.domainGet();
-	if(m_curves.size()!=0)
+	if(m_curves.length()!=0)
 		{
 		auto d_max=m_domain_max;
 		d_max.min.x=std::min(domain_new.min.x,d_max.min.x);
@@ -375,7 +375,7 @@ void XYPlotGtk::curveAdd(const Curve& curve)
 	else
 		{m_domain_max=domain_new;}
 
-	m_curves.push_back(curve);
+	m_curves.append(curve);
 	domainSet(domain_new);
 	}
 
@@ -413,13 +413,13 @@ void XYPlotGtk::axisXExtents(cairo_t* cr,double x_0,size_t N,double delta_x)
 		tm.extent_x=extents_in.width;
 		tm.extent_y=extents_in.height;
 
-		m_axis_x.push_back(tm);
+		m_axis_x.append(tm);
 		max_extent.x=tm.extent_x>max_extent.x?
 			tm.extent_x : max_extent.x;
 		max_extent.y=tm.extent_y>max_extent.y?
 			tm.extent_y : max_extent.y;
 		}
-	m_axis_x.push_back({0,float(max_extent.x),float(max_extent.y)});
+	m_axis_x.append({0,float(max_extent.x),float(max_extent.y)});
 	}
 
 void XYPlotGtk::axisYExtents(cairo_t* cr,double y_0,size_t N,double delta_y)
@@ -437,15 +437,18 @@ void XYPlotGtk::axisYExtents(cairo_t* cr,double y_0,size_t N,double delta_y)
 		tm.extent_x=extents_in.width;
 		tm.extent_y=extents_in.height;
 
-		m_axis_y.push_back(tm);
+		m_axis_y.append(tm);
 		max_extent=tm.extent_x>max_extent?
 			tm.extent_x : max_extent;
 		}
-	m_axis_y.push_back({0,max_extent,0});
+	m_axis_y.append({0,max_extent,0});
 	}
 
 void XYPlotGtk::ticksUpdate()
 	{
+/*	static unsigned int count=0;
+	++count;
+	printf("%u\n",count);*/
 	auto domain_new=m_domain_current;
 	auto cr=gdk_cairo_create(gtk_widget_get_window(m_canvas));
 
@@ -531,7 +534,7 @@ void XYPlotGtk::axisYDraw(cairo_t* cr) const
 	{
 	auto max_extent=m_axis_y.back().extent_x;
 	auto ptr=m_axis_y.data();
-	size_t N=m_axis_y.size()-1;
+	size_t N=m_axis_y.length()-1;
 	auto ptr_end=ptr+N;
 	size_t k=0;
 	while(ptr!=ptr_end)
@@ -550,7 +553,7 @@ void XYPlotGtk::axisXDraw(cairo_t* cr) const
 	{
 	auto max_extent=m_axis_x.back().extent_y;
 	auto ptr=m_axis_x.data();
-	size_t N=m_axis_x.size();
+	size_t N=m_axis_x.length();
 	auto ptr_end=ptr+N-1;
 	auto domain=m_domain_current_active;
 	size_t k=0;
@@ -623,7 +626,7 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 	// Draw all curves
 		{
 		auto ptr_curve=_this->m_curves.data();
-		auto ptr_curves_end=ptr_curve+_this->m_curves.size();
+		auto ptr_curves_end=ptr_curve+_this->m_curves.length();
 		while(ptr_curve!=ptr_curves_end)
 			{
 		//	TODO: Do not plot points outside view? Showing points outside range
@@ -636,7 +639,7 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 	//	Draw all X cursors
 		{
 		auto ptr_cursor=_this->m_cursors_x.data();
-		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_x.size();
+		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_x.length();
 		while(ptr_cursor!=ptr_cursors_end)
 			{
 			auto cursor=*ptr_cursor;
@@ -654,7 +657,7 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 	//	Draw all Y cursors
 		{
 		auto ptr_cursor=_this->m_cursors_y.data();
-		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_y.size();
+		auto ptr_cursors_end=ptr_cursor+_this->m_cursors_y.length();
 		while(ptr_cursor!=ptr_cursors_end)
 			{
 			auto cursor=*ptr_cursor;

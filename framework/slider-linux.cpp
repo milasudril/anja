@@ -102,7 +102,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	auto orientation=horizontal?
 		GTK_ORIENTATION_HORIZONTAL:GTK_ORIENTATION_VERTICAL;
 	m_box=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-	g_object_ref(m_box);
+	g_object_ref_sink(m_box);
 	GtkWidget* box=m_box;
 	gtk_box_set_homogeneous((GtkBox*)box,FALSE);
 

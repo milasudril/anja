@@ -25,6 +25,10 @@ class Curve
 			Point max;
 			};
 
+		constexpr Curve():r_points(nullptr),m_n_points(0),m_hue(0)
+			,m_domain{{-1,-1},{1,1}}
+			{}
+
 		Curve(const Point* points,size_t n_points):
 			r_points(points),m_n_points(n_points),m_hue(0)
 			{domainUpdate();}

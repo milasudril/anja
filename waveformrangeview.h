@@ -40,7 +40,7 @@ class WaveformRangeView:public Widget
 		static WaveformRangeView* create(GuiContainer& parent,EventHandler& handler);
 
 		void waveformRangeSet(WaveformRange& range);
-		
+
 		WaveformRange& waveformRangeGet()
 			{return *r_range;}
 
@@ -57,8 +57,6 @@ class WaveformRangeView:public Widget
 		friend class EventHandlerEntry;
 
 		WaveformRangeView(GuiContainer& parent,EventHandler& handler);
-		void initCurve();
-
 		~WaveformRangeView();
 
 		class EventHandlerPlot:public XYPlot::EventHandler

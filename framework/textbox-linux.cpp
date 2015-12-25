@@ -75,7 +75,7 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(onBlur),this);
 	m_textbox=widget;
-	g_object_ref(widget);
+	g_object_ref_sink(widget);
 	parent.componentAdd(*this);
 	}
 

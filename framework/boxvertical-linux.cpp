@@ -20,7 +20,7 @@ target
 
 #include "boxvertical.h"
 #include "guihandle.h"
-#include <vector>
+#include "array_dynamic_short.h"
 #include <algorithm>
 
 class BoxVerticalGtk:public BoxVertical
@@ -61,8 +61,8 @@ class BoxVerticalGtk:public BoxVertical
 		Widget* r_slave;
 		uint32_t m_insert_mode;
 
-		std::vector<Widget*> m_widgets;
-		void componentRemoveAt(const std::vector<Widget*>::iterator& i);
+		ArrayDynamicShort<Widget*> m_widgets;
+		void componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i);
 	};
 
 BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
@@ -76,7 +76,7 @@ BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
 	{
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
 	m_box=box;
-	g_object_ref(box);
+	g_object_ref_sink(box);
 	r_parent.componentAdd(*this);
 	gtk_widget_show(box);
 	}
@@ -99,7 +99,7 @@ void BoxVerticalGtk::componentAdd(Widget& widget)
 	if(i!=m_widgets.end())
 		{return;}
 
-	m_widgets.push_back(&widget);
+	m_widgets.append(&widget);
 	auto insert_mode=m_insert_mode;
 	GtkWidget* box=m_box;
 	if(insert_mode&INSERTMODE_END)
@@ -126,7 +126,7 @@ void BoxVerticalGtk::componentRemove(Widget& widget)
 		}
 	}
 
-void BoxVerticalGtk::componentRemoveAt(const std::vector<Widget*>::iterator& i)
+void BoxVerticalGtk::componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i)
 	{
 	GtkWidget* widget=m_box;
 	auto object=*i;

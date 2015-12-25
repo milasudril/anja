@@ -101,6 +101,7 @@ KeyboardViewGtk::KeyboardViewGtk
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
 	g_object_ref(m_canvas);
 	parent.componentAdd(*this);
+	gtk_widget_set_size_request(m_canvas,15*32,5*32);
 	}
 
 void KeyboardViewGtk::destroy()
@@ -115,7 +116,7 @@ KeyboardViewGtk::~KeyboardViewGtk()
 gboolean KeyboardViewGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
 	,void* keyboardviewgtk)
 	{
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 	auto width = gtk_widget_get_allocated_width (object);
 	auto n_cols=_this->r_keyboard->typingAreaCols();
 
@@ -130,7 +131,7 @@ gboolean KeyboardViewGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 	,void* keyboardviewgtk)
 	{
 	gtk_widget_grab_focus(object);
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 	auto width = gtk_widget_get_allocated_width (object);
 	auto n_cols=_this->r_keyboard->typingAreaCols();
 
@@ -144,7 +145,7 @@ gboolean KeyboardViewGtk::onMouseDown(GtkWidget* object,GdkEventButton* event
 gboolean KeyboardViewGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 	,void* keyboardviewgtk)
 	{
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 	auto width = gtk_widget_get_allocated_width (object);
 	auto n_cols=_this->r_keyboard->typingAreaCols();
 
@@ -160,7 +161,7 @@ gboolean KeyboardViewGtk::onMouseUp(GtkWidget* object,GdkEventButton* event
 gboolean KeyboardViewGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 		,_this);
 	return TRUE;
@@ -169,7 +170,7 @@ gboolean KeyboardViewGtk::onKeyDown(GtkWidget *widget, GdkEventKey *event
 gboolean KeyboardViewGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	,void* keyboardviewgtk)
 	{
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
 		,_this);
 	return TRUE;
@@ -179,7 +180,7 @@ gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 	,void* keyboardviewgtk)
 	{
 //	This function needs some clean-up
-	KeyboardViewGtk* _this=(KeyboardViewGtk*)keyboardviewgtk;
+	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 
 	auto width = gtk_widget_get_allocated_width (object);
 	auto n_cols=_this->r_keyboard->typingAreaCols();

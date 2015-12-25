@@ -148,34 +148,28 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	m_entries[1]=InputEntry::create(*m_box_positions,"End:","Auto"
 		,entry_handler,1);
 
-	initCurve();
+	auto c_begin=m_plot->cursorXAdd({-0.5,1.0f/3});
+	m_plot->cursorXAdd({0.5,0});
+	m_plot->cursorYAdd({-100,0.16f});
+	plot_handler.cursorsRefSet(m_plot->cursorXGet(c_begin));
+	m_plot->eventHandlerSet(plot_handler);
 
+	waveformRangeSet(WaveformRange::s_null);
 	m_plot->curveAdd(
 		{
 		 m_waveform_curve.begin()
 		,m_waveform_curve.length()
 		,COLORS[ColorID::BLUE]
 		});
-	m_plot->domainSet({{0,-145},{1,0}});
-	auto c_begin=m_plot->cursorXAdd({-0.5,1.0f/3});
-	m_plot->cursorXAdd({0.5,0});
-	m_plot->cursorYAdd({-100,0.16f});
-	plot_handler.cursorsRefSet(m_plot->cursorXGet(c_begin));
-	m_plot->eventHandlerSet(plot_handler);
-	}
-
-void WaveformRangeView::initCurve()
-	{
-	auto ptr_begin=m_waveform_curve.begin();
-	auto ptr_end=m_waveform_curve.end();
-	auto k=size_t(0);
-	auto N=m_waveform_curve.length();
-	while(ptr_begin!=ptr_end)
+	m_plot->domainSet(
 		{
-		*ptr_begin={double(k)/N,-144.0};
-		++k;
-		++ptr_begin;
-		}
+			 {0,-145}
+			,{
+				framesToSeconds(WaveformRange::s_null.lengthFull()
+					,WaveformRange::s_null.sampleRateGet())
+				,0
+			 }
+		});
 	}
 
 WaveformRangeView::~WaveformRangeView()
