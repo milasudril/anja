@@ -2,23 +2,28 @@
 target[name[anja] type[application]]
 #endif
 
-#include "waveformdataview.h"
-#include "waveformdata.h"
-#include "waveformrangetrimmer.h"
+//#include "waveformdataview.h"
+//#include "waveformdata.h"
+//#include "waveformrangetrimmer.h"
 #include "session.h"
+#include "sessionfilereader.h"
 
-#include "framework/window.h"
-#include "framework/boxvertical.h"
-#include "framework/keyboardlayout.h"
-#include "framework/keyboardview.h"
+//#include "framework/window.h"
+//#include "framework/boxvertical.h"
+//#include "framework/keyboardlayout.h"
+//#include "framework/keyboardview.h"
 
 #include <cmath>
 
 int main()
 	{
-	KeyboardLayout layout;
+	try
+		{
+		Session session;
+		auto reader=SessionFileReader::create("testbank/testbank.txt",session);
+
+/*	KeyboardLayout layout;
 	WaveformRangeTrimmer trimmer;
-	Session session;
 
 	auto event_loop=EventLoop::create();
 	auto mainwin=Window::create(*event_loop);
@@ -31,7 +36,9 @@ int main()
 
 
 	box->insertModeSet(BoxVertical::INSERTMODE_END);
-	auto waveformdata=WaveformDataView::create(*box,trimmer);
-
+	auto waveformdata=WaveformDataView::create(*box,trimmer);*/
+		}
+	catch(const char* msg)
+		{printf("Error: %s\n",msg);}
 	return 0;
 	}

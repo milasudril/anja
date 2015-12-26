@@ -7,6 +7,7 @@ dependency[session.o]
 #define SESSION_H
 
 #include "framework/array_fixed.h"
+#include "framework/keyboardlayout.h"
 #include "waveformdata.h"
 #include "waveformstorage.h"
 
@@ -44,7 +45,7 @@ class Session
 		ArrayFixed<uint8_t,128> m_midikey_to_slot;
 		ArrayFixed<WaveformStorage,128> m_waveforms;
 		ArrayFixed<WaveformData,128> m_waveform_data;
-
+		KeyboardLayout m_keyboard;
 		float m_gain;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;

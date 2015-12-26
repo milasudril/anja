@@ -243,7 +243,7 @@ void KeyboardLayout::KeyDescriptor::labelSet(const char* text)
 	*(label.end()-1)=0;
 	}
 
-uint8_t KeyboardLayout::scancodeFromCoordinates(float x,float y) const
+uint8_t KeyboardLayout::scancodeFromCoordinates(float x,float y)
 	{
 	uint8_t row=uint8_t(y);
 	uint8_t col=uint8_t(x-0.4f*row+2);
@@ -251,6 +251,12 @@ uint8_t KeyboardLayout::scancodeFromCoordinates(float x,float y) const
 		{return 0;}
 	return s_typing_area[col+row*s_ncols_keymap];
 	}
+
+const uint8_t* KeyboardLayout::typingAreaScancodesBegin()
+	{return s_typing_area;}
+
+const uint8_t* KeyboardLayout::typingAreaScancodesEnd()
+	{return s_typing_area+sizeof(s_typing_area);}
 
 KeyboardLayout::KeyboardLayout()
 	{

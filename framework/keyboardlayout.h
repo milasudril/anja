@@ -147,7 +147,11 @@ class KeyboardLayout
 		KeyDescriptor* keyFromScancode(uint8_t scancode)
 			{return m_from_scancode[scancode];}
 
-		uint8_t scancodeFromCoordinates(float x,float y) const;
+		static uint8_t scancodeFromCoordinates(float x,float y);
+
+		static const uint8_t* typingAreaScancodesBegin();
+
+		static const uint8_t* typingAreaScancodesEnd();
 
 	private:
 		static constexpr uint8_t TYPING_AREA_COLS=15;

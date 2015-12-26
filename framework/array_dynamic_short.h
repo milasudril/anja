@@ -10,7 +10,7 @@ target[name[array_dynamic_short.h] type[include]]
 #include <algorithm>
 
 template<class T>
-class ArrayDynamicShort
+class alignas(16) ArrayDynamicShort
 	{
 	public:
 		typedef T* iterator;
@@ -123,6 +123,9 @@ class ArrayDynamicShort
 
 		void clear()
 			{m_length=0;}
+
+		void truncate()
+			{--m_length;}
 
 	private:
 		T* m_data;
