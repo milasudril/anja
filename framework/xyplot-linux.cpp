@@ -27,7 +27,7 @@ target
 
 #include <gtk/gtk.h>
 
-#include "array_dynamic_short.h"
+#include "arraydynamicshort.h"
 #include <algorithm>
 #include <cmath>
 

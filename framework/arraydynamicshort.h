@@ -1,13 +1,14 @@
 #ifdef __WAND__
-target[name[array_dynamic_short.h] type[include]]
+target[name[arraydynamicshort.h] type[include]]
 #endif
 
-#ifndef ARRAY_DYNAMIC_SHORT_H
-#define ARRAY_DYNAMIC_SHORT_H
+#ifndef ARRAYDYNAMICSHORT_H
+#define ARRAYDYNAMICSHORT_H
 
 #include <iterator>
 #include <cstdint>
 #include <algorithm>
+#include <cassert>
 
 template<class T>
 class alignas(16) ArrayDynamicShort
@@ -29,8 +30,20 @@ class alignas(16) ArrayDynamicShort
 		ArrayDynamicShort():m_data(new T[1]),m_length(0),m_capacity(1)
 			{}
 
-		ArrayDynamicShort(const ArrayDynamicShort& obj)=delete;
-		ArrayDynamicShort& operator=(const ArrayDynamicShort& obj)=delete;
+		ArrayDynamicShort(const ArrayDynamicShort& obj):
+			m_data(new T[obj.length()]),m_length(0),m_capacity(obj.length())
+			{
+			assert(&obj!=this);
+			append(obj.begin(),obj.length());
+			}
+
+		ArrayDynamicShort& operator=(const ArrayDynamicShort& obj)
+			{
+			assert(&obj!=this);
+			clear();
+			append(obj.begin(),obj.length());
+			return *this;
+			}
 
 		~ArrayDynamicShort()
 			{delete[] m_data;}

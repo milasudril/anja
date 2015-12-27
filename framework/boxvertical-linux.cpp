@@ -20,7 +20,7 @@ target
 
 #include "boxvertical.h"
 #include "guihandle.h"
-#include "array_dynamic_short.h"
+#include "arraydynamicshort.h"
 #include <algorithm>
 
 class BoxVerticalGtk:public BoxVertical

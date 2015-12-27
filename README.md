@@ -12,11 +12,12 @@ Dependencies
 * libgtk-3-dev
 * g++
 * libjack-jackd2-dev
+* libsndfile-dev
 * https://github.com/milasudril/gabi/archive/5.77.tar.gz
 
 Build instructions (ubuntu)
 ---------------------------
-* $ sudo apt-get install libgtk-3-dev g++ libjack-jackd2-dev
+* $ sudo apt-get install libgtk-3-dev g++ libjack-jackd2-dev libsndfile-dev
 * Download and configure gabi
 * $ wand
 

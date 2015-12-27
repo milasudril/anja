@@ -8,8 +8,7 @@ dependency[sessionfilereader.o]
 
 #include <memory>
 
-class Session;
-class WaveformData;
+class SessionFileRecord;
 
 class SessionFileReader
 	{
@@ -18,10 +17,10 @@ class SessionFileReader
 
 	public:
 		static std::unique_ptr<SessionFileReader,Destructor>
-			create(const char* filename,Session& session_data)
-			{return {instanceCreate(filename,session_data),destroy};}
+			create(const char* filename)
+			{return {instanceCreate(filename),destroy};}
 
-		virtual bool nextSlotGet(WaveformData& slot)=0;
+		virtual bool recordNextGet(SessionFileRecord& slot)=0;
 
 
 	protected:
@@ -29,8 +28,7 @@ class SessionFileReader
 
 	private:
 		static void destroy(SessionFileReader* reader);
-		static SessionFileReader* instanceCreate(const char*filename
-			,Session& session_data);
+		static SessionFileReader* instanceCreate(const char*filename);
 	};
 
 #endif

@@ -6,7 +6,7 @@ target[name[waveform_storage.h] type[include]]
 #define WAVEFORMSTORAGE_H
 
 #include "waveform.h"
-#include "framework/array_dynamic_short.h"
+#include "framework/arraydynamicshort.h"
 
 class WaveformStorage:public Waveform< ArrayDynamicShort<float> >
 	{

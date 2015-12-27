@@ -21,7 +21,7 @@ target
 #include "window.h"
 #include "guihandle.h"
 #include "exceptionswallow.h"
-#include "array_dynamic_short.h"
+#include "arraydynamicshort.h"
 #include <algorithm>
 
 class WindowGtk:public Window

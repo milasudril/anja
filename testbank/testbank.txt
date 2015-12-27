@@ -3,34 +3,39 @@
 Description: This is a test file that demonstrates how Anja works. The sound
              files are from pdsounds.org, which claims that the sounds are in
              public domain. Omitted keys take their default value.
-               
-Licence:     CC0 1.0 Universal, or equivalent
+
+License:     CC0 1.0 Universal, or equivalent
 
 Master gain: 1
 
 --------------------------------------Slot 1------------------------------------
 
-Description: Sci-fi effect
+Description: [Sci-fi] effect
 
 Filename:    alien_scanner.mp3
+
+Foobar:  value
 
 
 --------------------------------------Slot 2------------------------------------
 
-Description: Rooster
+Description: [Rooster]
 
 Filename:    medium rooster crowing.mp3
 
 
 --------------------------------------Slot 3------------------------------------
 
-Description: Some sort of electric pump
+Description: Some sort of electric [pump]
 
 Filename:    pump_im.mp3
 
 
 --------------------------------------Slot 4------------------------------------
 
-Description: Thunderbolts
+Description: [Thunder]bolts
 
 Filename:    thunderstorm.flac
+
+
+

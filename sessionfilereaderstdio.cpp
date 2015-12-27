@@ -3,7 +3,8 @@ target[name[sessionfilereader.o] type[object]]
 #endif
 
 #include "sessionfilereader.h"
-#include "framework/array_dynamic_short.h"
+#include "sessionfilerecord.h"
+#include "framework/arraydynamicshort.h"
 #include <cstdint>
 #include <cstdio>
 #include <cassert>
@@ -11,29 +12,36 @@ target[name[sessionfilereader.o] type[object]]
 class SessionFileReaderStdio:public SessionFileReader
 	{
 	public:
-		SessionFileReaderStdio(const char* filename,Session& session_data);
+		SessionFileReaderStdio(const char* filename);
 		~SessionFileReaderStdio();
 
-		bool nextSlotGet(WaveformData& slot);
+		bool recordNextGet(SessionFileRecord& record);
 
 	private:
-		FILE* m_source;
+		std::unique_ptr<FILE,decltype(&fclose)> m_source;
 
 		enum class State:uint8_t
 			{
 			 NORMAL,DATA_BEFORE,DATA,DATA_AFTER,WHITESPACE
 			};
-		enum class TokenType:uint8_t{TITLE,SLOT_TITLE,KEY,VALUE,INVALID};
-		ArrayDynamicShort<char> m_buffer;
-		ArrayDynamicShort<char> m_title;
-		State m_state_current;
-		bool runToState();
+		enum class TokenType:uint8_t{TITLE,SECTION_TITLE,KEY,VALUE,INVALID};
+
+		struct Token
+			{
+			ArrayDynamicShort<char> buffer;
+			TokenType type;
+			};
+
+		TokenType m_token_type;
+		State m_state;
+		State m_state_old;
+		Token m_tok;
+		bool tokenGet(Token& tok);
 	};
 
-SessionFileReader* SessionFileReader::instanceCreate(
-	const char* filename,Session& session_data)
+SessionFileReader* SessionFileReader::instanceCreate(const char* filename)
 	{
-	return new SessionFileReaderStdio(filename,session_data);
+	return new SessionFileReaderStdio(filename);
 	}
 
 void SessionFileReader::destroy(SessionFileReader* reader)
@@ -41,49 +49,89 @@ void SessionFileReader::destroy(SessionFileReader* reader)
 	delete reinterpret_cast<SessionFileReaderStdio*>(reader);
 	}
 
-SessionFileReaderStdio::SessionFileReaderStdio(const char* filename,Session& session_data)
+SessionFileReaderStdio::SessionFileReaderStdio(const char* filename):
+	m_source{fopen(filename,"rb"),fclose},m_token_type{TokenType::INVALID}
+	,m_state{State::NORMAL},m_state_old{State::NORMAL}
 	{
-	m_source=fopen(filename,"rb");
-	if(m_source==NULL)
+	if(m_source.get()==NULL)
 		{
 	//	TODO throw something better than "const char*"
-		throw "Could not open session file";
+		throw "Could not open session file.";
 		}
-
-	if(!runToState())
-		{throw "Invalid session file";}
+	if(!tokenGet(m_tok))
+		{throw "Invalid session file.";}
 	}
 
 SessionFileReaderStdio::~SessionFileReaderStdio()
 	{
-	fclose(m_source);
 	}
 
-bool SessionFileReaderStdio::runToState()
+bool SessionFileReaderStdio::recordNextGet(SessionFileRecord& record)
 	{
-	int ch_in;
-	auto state=State::NORMAL;
-	auto state_old=state;
-	ArrayDynamicShort<char> buffer;
-	auto token_type=TokenType::INVALID;
+	record.clear();
+	ArrayDynamicShort<char> key_temp;
 
-	while( (ch_in=getc(m_source)) != EOF)
+	do
+		{
+		switch(m_tok.type)
+			{
+			case TokenType::TITLE:
+				record.sectionTitleSet(m_tok.buffer);
+				record.sectionLevelSet(0);
+				break;
+
+			case TokenType::SECTION_TITLE:
+				record.sectionTitleSet(m_tok.buffer);
+				record.sectionLevelSet(1);
+				break;
+
+			case TokenType::KEY:
+				key_temp=m_tok.buffer;
+				break;
+
+			case TokenType::VALUE:
+				record.propertyReplace(key_temp,m_tok.buffer);
+				break;
+
+			default:
+				return 0;
+			}
+		if(!tokenGet(m_tok))
+			{return 0;}
+		}
+	while(m_tok.type!=TokenType::SECTION_TITLE);
+	return 1;
+	}
+
+bool SessionFileReaderStdio::tokenGet(Token& tok)
+	{
+	if(feof(m_source.get()))
+		{return 0;}
+
+	int ch_in;
+	auto state=m_state;
+	auto state_old=m_state_old;
+	auto token_type=m_token_type;
+	tok.buffer.clear();
+
+	while( (ch_in=getc(m_source.get())) != EOF)
 		{
 		switch(state)
 			{
 			case State::WHITESPACE:
-				if(ch_in=='\n' && buffer.length()!=0)
+				if(ch_in=='\n' && tok.buffer.length()!=0)
 					{
 					switch(token_type)
 						{
 						case TokenType::VALUE:
-							buffer.truncate();
-							buffer.append('\0');
-							printf("Value: [%s]\n",buffer.begin());
-							buffer.clear();
-							token_type=TokenType::INVALID;
-							state_old=State::NORMAL;
-							break;
+							tok.buffer.truncate();
+							tok.buffer.append('\0');
+							tok.type=token_type;
+							m_token_type=TokenType::INVALID;
+							m_state_old=State::NORMAL;
+							m_state=state;
+							return 1;
+
 						default:
 							break;
 						}
@@ -93,7 +141,7 @@ bool SessionFileReaderStdio::runToState()
 				if(!(ch_in>=0 && ch_in<=' '))
 					{
 					if(state_old!=State::NORMAL)
-						{buffer.append(ch_in);}
+						{tok.buffer.append(ch_in);}
 					state=state_old;
 					}
 				else
@@ -111,13 +159,13 @@ bool SessionFileReaderStdio::runToState()
 
 						case '-':
 							state=State::DATA_BEFORE;
-							token_type=TokenType::SLOT_TITLE;
+							token_type=TokenType::SECTION_TITLE;
 							break;
 
 						default:
 							state=State::DATA;
 							token_type=TokenType::KEY;
-							buffer.append(ch_in);
+							tok.buffer.append(ch_in);
 							break;
 						}
 					}
@@ -137,12 +185,12 @@ bool SessionFileReaderStdio::runToState()
 							else
 								{
 								state=State::DATA;
-								buffer.append(ch_in);
+								tok.buffer.append(ch_in);
 								}
 							}
 						break;
 
-					case TokenType::SLOT_TITLE:
+					case TokenType::SECTION_TITLE:
 						if(ch_in!='-')
 							{
 							if(ch_in>=0 && ch_in<=' ')
@@ -153,7 +201,7 @@ bool SessionFileReaderStdio::runToState()
 							else
 								{
 								state=State::DATA;
-								buffer.append(ch_in);
+								tok.buffer.append(ch_in);
 								}
 							}
 						break;
@@ -169,14 +217,15 @@ bool SessionFileReaderStdio::runToState()
 					case TokenType::TITLE:
 						if(ch_in=='=')
 							{
-							buffer.append('\0');
-							printf("Title: [%s]\n",buffer.begin());
-							buffer.clear();
-							state=State::DATA_AFTER;
+							tok.type=token_type;
+							tok.buffer.append('\0');
+							m_state=State::DATA_AFTER;
+							m_token_type=token_type;
+							return 1;
 							}
 						else
 							{
-							buffer.append(ch_in);
+							tok.buffer.append(ch_in);
 							if(ch_in>=0 && ch_in<=' ')
 								{
 								state=State::WHITESPACE;
@@ -188,14 +237,15 @@ bool SessionFileReaderStdio::runToState()
 					case TokenType::KEY:
 						if(ch_in==':')
 							{
-							buffer.append('\0');
-							printf("Key: [%s]\n",buffer.begin());
-							buffer.clear();
-							state=State::DATA_AFTER;
+							tok.type=token_type;
+							tok.buffer.append('\0');
+							m_state=State::DATA_AFTER;
+							m_token_type=token_type;
+							return 1;
 							}
 						else
 							{
-							buffer.append(ch_in);
+							tok.buffer.append(ch_in);
 							if(ch_in>=0 && ch_in<=' ')
 								{
 								state=State::WHITESPACE;
@@ -207,13 +257,13 @@ bool SessionFileReaderStdio::runToState()
 					case TokenType::VALUE:
 						if(ch_in=='\n')
 							{
-							buffer.append(' ');
+							tok.buffer.append(' ');
 							state=State::WHITESPACE;
 							state_old=State::DATA;
 							}
 						else
 							{
-							buffer.append(ch_in);
+							tok.buffer.append(ch_in);
 							if(ch_in>=0 && ch_in<=' ')
 								{
 								state=State::WHITESPACE;
@@ -223,17 +273,18 @@ bool SessionFileReaderStdio::runToState()
 
 						break;
 
-					case TokenType::SLOT_TITLE:
+					case TokenType::SECTION_TITLE:
 						if(ch_in=='-')
 							{
-							buffer.append('\0');
-							printf("Slot title: [%s]\n",buffer.begin());
-							buffer.clear();
-							state=State::DATA_AFTER;
+							tok.type=token_type;
+							tok.buffer.append('\0');
+							m_state=State::DATA_AFTER;
+							m_token_type=token_type;
+							return 1;
 							}
 						else
 							{
-							buffer.append(ch_in);
+							tok.buffer.append(ch_in);
 							if(ch_in>=0 && ch_in<=' ')
 								{
 								state=State::WHITESPACE;
@@ -273,7 +324,7 @@ bool SessionFileReaderStdio::runToState()
 							}
 						break;
 
-					case TokenType::SLOT_TITLE:
+					case TokenType::SECTION_TITLE:
 						if(ch_in!='-')
 							{
 							if(ch_in=='\n')
@@ -283,7 +334,7 @@ bool SessionFileReaderStdio::runToState()
 								token_type=TokenType::INVALID;
 								}
 							else
-								{throw "Junk after slot title";}
+								{throw "Junk after section title";}
 							}
 						break;
 
@@ -293,11 +344,7 @@ bool SessionFileReaderStdio::runToState()
 				break;
 			}
 		}
-	return 0;
+	tok.type=token_type;
+	tok.buffer.append('\0');
+	return 1;
 	}
-
-bool SessionFileReaderStdio::nextSlotGet(WaveformData& slot)
-	{
-	return 0;
-	}
-

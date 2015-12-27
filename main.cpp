@@ -5,7 +5,8 @@ target[name[anja] type[application]]
 //#include "waveformdataview.h"
 //#include "waveformdata.h"
 //#include "waveformrangetrimmer.h"
-#include "session.h"
+
+#include "sessionfilerecordimpl.h"
 #include "sessionfilereader.h"
 
 //#include "framework/window.h"
@@ -13,14 +14,32 @@ target[name[anja] type[application]]
 //#include "framework/keyboardlayout.h"
 //#include "framework/keyboardview.h"
 
-#include <cmath>
+class PropsEnumerator:public SessionFileRecord::PropertyEnumerator
+	{
+	public:
+		void propertyVisit(const ArrayDynamicShort<char>& name
+			,const ArrayDynamicShort<char>& value)
+			{
+			printf("%s=%s\n",name.begin(),value.begin());
+			}
+	};
 
 int main()
 	{
 	try
 		{
-		Session session;
-		auto reader=SessionFileReader::create("testbank/testbank.txt",session);
+		auto reader=SessionFileReader::create("testbank/testbank.txt");
+		SessionFileRecordImpl record;
+		PropsEnumerator enumerator;
+		while(reader->recordNextGet(record))
+			{
+			printf("\n%s\n",record.titleGet().begin());
+			if(record.sectionLevelGet()==0)
+				{printf("====================================\n");}
+			else
+				{printf("------------------------------------\n");}
+			record.propertiesEnum(enumerator);
+			}
 
 /*	KeyboardLayout layout;
 	WaveformRangeTrimmer trimmer;
