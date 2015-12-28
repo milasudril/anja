@@ -20,6 +20,8 @@ class alignas(16) ArrayDynamicShort
 		typedef std::reverse_iterator<iterator> reverse_iterator;
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
+		ArrayDynamicShort(const T* source);
+
 		ArrayDynamicShort(const T* source,uint32_t N):
 			m_data(new T[N]),m_length(0),m_capacity(N)
 			{
@@ -130,6 +132,12 @@ class alignas(16) ArrayDynamicShort
 
 		ArrayDynamicShort& append(T* buffer,uint32_t N);
 
+		ArrayDynamicShort& append(const ArrayDynamicShort& source)
+			{return append(source.begin(),source.length());}
+
+		ArrayDynamicShort& append(ArrayDynamicShort&& source)
+			{return append(source.begin(),source.length());}
+
  		ArrayDynamicShort& erase(T* location);
 
 		void capacitySet(uint32_t capacity_new);
@@ -137,8 +145,11 @@ class alignas(16) ArrayDynamicShort
 		void clear()
 			{m_length=0;}
 
-		void truncate()
-			{--m_length;}
+		ArrayDynamicShort& truncate()
+			{
+			--m_length;
+			return *this;
+			}
 
 	private:
 		T* m_data;
@@ -152,6 +163,20 @@ class alignas(16) ArrayDynamicShort
 
 
 	};
+
+template<class T>
+ArrayDynamicShort<T>::ArrayDynamicShort(const T* source)
+	:m_data(new T[1]),m_length(0),m_capacity(1)
+	{
+	T nullobj(0);
+	while(*source!=nullobj)
+		{
+		append(*source);
+		++source;
+		}
+	append(std::move(nullobj));
+	}
+
 
 template<class T>
 ArrayDynamicShort<T>& ArrayDynamicShort<T>::erase(T* location)

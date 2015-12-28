@@ -35,6 +35,9 @@ class Waveform
 		constexpr float sampleRateGet() const
 			{return m_fs;}
 
+		void sampleRateSet(float fs)
+			{m_fs=fs;}
+
 		Waveform& offsetBeginSet(uint32_t value_new)
 			{
 			m_offset_begin=std::min(value_new,m_data.length());

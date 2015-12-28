@@ -3,6 +3,7 @@ target[name[waveformdataview.o] type[object]]
 #endif
 
 #include "waveformdataview.h"
+#include "waveformdata.h"
 #include "waveformrangeview.h"
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
@@ -12,18 +13,25 @@ target[name[waveformdataview.o] type[object]]
 #include "framework/slider.h"
 #include "framework/messagedisplay.h"
 
+#include <unistd.h>
+#include <cstdio>
+
 void WaveformDataView::SourceEventHandler::onButtonClick(InputEntry& source)
 	{
 	auto picker=FilenamePicker::create(source,source.textGet()
 		,FilenamePicker::MODE_OPEN);
 	auto result=picker->filenameGet();
 	if(result!=nullptr)
-		{source.textSet(result);}
+		{
+		source.textSet(result);
+		}
 	}
 
 void WaveformDataView::SourceEventHandler::onTextChanged(InputEntry& source)
 	{
 	}
+
+
 
 WaveformDataView* WaveformDataView::create(GuiContainer& parent
 	,WaveformRangeView::EventHandler& handler_range)
@@ -109,3 +117,12 @@ void WaveformDataView::destroy()
 
 const GuiHandle& WaveformDataView::handleNativeGet() const
 	{return m_box_main->handleNativeGet();}
+
+
+void WaveformDataView::waveformDataSet(WaveformData& wd)
+	{
+	r_data=&wd;
+	m_trim_input->waveformRangeSet(wd.waveformRangeGet());
+	m_description_textbox->textSet(wd.descriptionGet().begin());
+	m_source->textSet(wd.filenameGet().begin());
+	}

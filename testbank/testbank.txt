@@ -12,7 +12,7 @@ Master gain: 1
 
 Description: [Sci-fi] effect
 
-Filename:    alien_scanner.mp3
+Filename:    alien_scanner.wav
 
 Foobar:  value
 
@@ -21,14 +21,14 @@ Foobar:  value
 
 Description: [Rooster]
 
-Filename:    medium rooster crowing.mp3
+Filename:    medium rooster crowing.aiff
 
 
 --------------------------------------Slot 3------------------------------------
 
 Description: Some sort of electric [pump]
 
-Filename:    pump_im.mp3
+Filename:    pump_im.ogg
 
 
 --------------------------------------Slot 4------------------------------------
@@ -36,6 +36,3 @@ Filename:    pump_im.mp3
 Description: [Thunder]bolts
 
 Filename:    thunderstorm.flac
-
-
-

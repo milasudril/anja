@@ -16,6 +16,7 @@ class BoxHorizontal;
 class Label;
 class Textbox;
 class Slider;
+class WaveformData;
 
 class WaveformDataView:public Widget
 	{
@@ -24,6 +25,7 @@ class WaveformDataView:public Widget
 			,WaveformRangeView::EventHandler& handler_range);
 		void destroy();
 		const GuiHandle& handleNativeGet() const;
+		void waveformDataSet(WaveformData& wd);
 
 	private:
 		WaveformDataView(GuiContainer& parent
@@ -31,6 +33,7 @@ class WaveformDataView:public Widget
 		~WaveformDataView();
 
 		GuiContainer& r_parent;
+		WaveformData* r_data;
 
 		class SourceEventHandler:public InputEntry::EventHandler
 			{

@@ -175,7 +175,7 @@ void WindowGtk::windowRemove(WindowGtk& window)
 	auto begin=m_owned_windows.begin();
 	auto end=m_owned_windows.end();
 	auto i=std::find(begin,end,&window);
-		if(i!=m_owned_windows.end())
+	if(i!=m_owned_windows.end())
 		{m_owned_windows.erase(i);}
 	}
 

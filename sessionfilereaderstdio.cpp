@@ -97,24 +97,28 @@ bool SessionFileReaderStdio::recordNextGet(SessionFileRecord& record)
 				return 0;
 			}
 		if(!tokenGet(m_tok))
-			{return 0;}
+			{return 1;}
 		}
-	while(m_tok.type!=TokenType::SECTION_TITLE);
+	while(m_tok.type!=TokenType::SECTION_TITLE
+			&& m_tok.type!=TokenType::INVALID);
 	return 1;
 	}
 
 bool SessionFileReaderStdio::tokenGet(Token& tok)
 	{
-	if(feof(m_source.get()))
-		{return 0;}
+	auto fptr=m_source.get();
+	if(feof(fptr))
+		{
+		tok.type=TokenType::INVALID;
+		return 0;
+		}
 
 	int ch_in;
 	auto state=m_state;
 	auto state_old=m_state_old;
 	auto token_type=m_token_type;
 	tok.buffer.clear();
-
-	while( (ch_in=getc(m_source.get())) != EOF)
+	while( (ch_in=getc(fptr)) != EOF)
 		{
 		switch(state)
 			{

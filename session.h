@@ -13,23 +13,51 @@ dependency[session.o]
 #include "waveformdata.h"
 #include "waveformstorage.h"
 
-#include <map>
-
 class Session
 	{
 	public:
-		Session():m_keys(compareLexicographical< ArrayDynamicShort<char> >)
+		Session& operator=(const Session&)=delete;
+		Session(const Session&)=delete;
+
+		Session()
 			{waveformsClear();}
+
+		Session(const char* filename)
+			{
+			waveformsClear();
+			load(filename);
+			}
+
+		void load(const char* filename);
 
 		void waveformsClear();
 
-		void waveformDataSave(const WaveformData& data,uint8_t slot);
-
-		WaveformData& waveformDataGet(uint8_t slot)
-			{return m_waveform_data[slot];}
+		void waveformDataSet(const WaveformData& data,uint8_t slot)
+			{
+			m_waveform_data[slot]=data;
+			m_waveform_data[slot].waveformSet(m_waveforms[slot]);
+			}
 
 		const WaveformData& waveformDataGet(uint8_t slot) const
 			{return m_waveform_data[slot];}
+
+
+
+		void titleSet(const ArrayDynamicShort<char>& title_new)
+			{m_title=title_new;}
+
+		const ArrayDynamicShort<char>& titleGet() const
+			{return m_title;}
+
+
+
+		KeyboardLayout& keyboardLayoutGet()
+			{return m_keyboard;}
+
+		const KeyboardLayout& keyboardLayoutGet() const
+			{return m_keyboard;}
+
+
 
 		WaveformData& waveformDataFromScancode(uint8_t scancode)
 			{return m_waveform_data[m_scancode_to_slot[scancode]];}
@@ -43,18 +71,7 @@ class Session
 		const WaveformData& waveformDataFromMIDI(uint8_t midikey) const
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
 
-		void titleSet(const ArrayDynamicShort<char>& title)
-			{
-			m_title.clear();
-			m_title.append(title.begin(),title.length());
-			}
 
-		const char* titleGet() const
-			{return m_title.begin();}
-
-		void keySet(const ArrayDynamicShort<char>& key
-			, const ArrayDynamicShort<char>& value)
-			{m_keys[key]=value;}
 
 	private:
 		ArrayFixed<uint8_t,128> m_scancode_to_slot;
@@ -63,11 +80,8 @@ class Session
 		ArrayFixed<WaveformData,128> m_waveform_data;
 		KeyboardLayout m_keyboard;
 
+		ArrayDynamicShort<char> m_filename;
 		ArrayDynamicShort<char> m_title;
-		std::map< ArrayDynamicShort<char>, ArrayDynamicShort<char>
-			,decltype(&compareLexicographical< ArrayDynamicShort<char> >) > m_keys;
-
-		float m_gain;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;
 		static constexpr uint32_t MODE_RECORD=2;

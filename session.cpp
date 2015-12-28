@@ -4,6 +4,11 @@ target[name[session.o] type[object]]
 
 #include "session.h"
 #include "waveformrange.h"
+#include "sessionfilereader.h"
+#include "sessionfilerecordimpl.h"
+#include "framework/localeguard.h"
+
+#include <cstring>
 
 void Session::waveformsClear()
 	{
@@ -15,6 +20,7 @@ void Session::waveformsClear()
 			{
 			ptr->clear();
 			ptr->append(WaveformRange::s_null.beginFull(),WaveformRange::s_null.lengthFull());
+			ptr->sampleRateSet(1000.0);
 			++ptr;
 			}
 		}
@@ -26,7 +32,7 @@ void Session::waveformsClear()
 		auto ptr_waveform=m_waveforms.begin();
 		while(ptr!=ptr_end)
 			{
-			ptr->waveformRangeSet(*ptr_waveform);
+			ptr->waveformSet(*ptr_waveform);
 			++ptr;
 			++ptr_waveform;
 			}
@@ -35,6 +41,7 @@ void Session::waveformsClear()
 
 	//	Reset scancodes
 		{
+		memset(m_scancode_to_slot.begin(),-1,sizeof(m_scancode_to_slot));
 		auto ptr=m_keyboard.typingAreaScancodesBegin();
 		auto ptr_end=m_keyboard.typingAreaScancodesEnd();
 		uint8_t scancode_prev=0;
@@ -44,7 +51,7 @@ void Session::waveformsClear()
 			auto val=*ptr;
 			if(val!=scancode_prev && val!=0)
 				{
-				m_scancode_to_slot[k]=val;
+				m_scancode_to_slot[val]=k;
 				++k;
 				}
 			scancode_prev=val;
@@ -54,9 +61,47 @@ void Session::waveformsClear()
 
 	//	Reset MIDI keys
 		{
+		memset(m_midikey_to_slot.begin(),-1,sizeof(m_midikey_to_slot));
 		for(uint8_t k=36;k<128;++k)
 			{
-			m_midikey_to_slot[36]=k-36;
+			m_midikey_to_slot[k]=k-36;
+			}
+		}
+	}
+
+void Session::load(const char* filename)
+	{
+	auto reader=SessionFileReader::create(filename);
+	SessionFileRecordImpl record;
+
+	if(!reader->recordNextGet(record))
+		{throw "Invalid session file";}
+
+	if(record.sectionLevelGet()!=0)
+		{throw "Invalid session file";}
+
+	m_filename=filename;
+	titleSet(record.titleGet());
+
+	while(reader->recordNextGet(record))
+		{
+		if(record.sectionLevelGet()==0)
+			{break;}
+
+		auto title_ptr=record.titleGet().begin();
+		if(strncmp(title_ptr,"Slot ",5)==0)
+			{
+			title_ptr+=5;
+			int slot_num;
+				{
+				LocaleGuard locale("C");
+				slot_num=atol(title_ptr);
+				}
+			if(slot_num<1 || slot_num>128)
+				{throw "Invalid slot number";}
+			slot_num-=1;
+
+			waveformDataSet({record,m_filename},slot_num);
 			}
 		}
 	}
