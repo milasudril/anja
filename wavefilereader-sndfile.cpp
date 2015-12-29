@@ -18,7 +18,6 @@ class WavefileReaderSndfile:public WavefileReader
 	private:
 		SF_INFO m_info;
 		SNDFILE* m_handle;
-	//
 	};
 
 WavefileReader* WavefileReader::instanceCreate(const char* path,WavefileInfo& info)
@@ -51,7 +50,8 @@ unsigned int WavefileReaderSndfile::dataRead(float* buffer, unsigned int n_frame
 	{
 	auto n_channels=m_info.channels;
 	ArraySimple<float> buffer_tmp(n_frames*n_channels);
-	auto N=sf_read_float(m_handle,buffer_tmp.begin(),buffer_tmp.length());
+	auto N=sf_read_float(m_handle,buffer_tmp.begin(),buffer_tmp.length())
+		/n_channels;
 	auto N_ret=N;
 	auto ptr_buffer=buffer_tmp.begin();
 	while(N!=0)

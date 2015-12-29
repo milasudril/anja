@@ -31,19 +31,15 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 	,m_color{0.0f,0.0f,0.0f,1},m_waveform_range(nullptr,0,0)
 	{}
 
-void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
-	,const ArrayDynamicShort<char>& load_path)
+void WaveformData::fileLoad(const char* filename)
 	{
-	m_filename=filename;
-	auto fullpath=load_path;
-	fullpath.truncate().append(filename).append('\0');
 	WavefileInfo info;
-	auto reader=WavefileReader::create(fullpath.begin(),info);
+	auto reader=WavefileReader::create(filename,info);
 
 	r_waveform->clear();
 	r_waveform->sampleRateSet(info.fs);
 	r_waveform->capacitySet(info.n_frames);
-	const uint32_t buffer_size=1024;
+	const uint32_t buffer_size=480/3;
 	ArraySimple<float> buffer_tmp(buffer_size);
 	uint32_t n_read=0;
 	do
@@ -54,24 +50,29 @@ void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
 	while(n_read==buffer_size);
 	r_waveform->offsetsReset();
 	m_waveform_range=*r_waveform;
+	m_filename=filename;
 	}
 
-void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
+void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
+	,const ArrayDynamicShort<char>& load_path)
+	{
+	auto fullpath=load_path;
+	fullpath.truncate().append(filename).append('\0');
+	fileLoad(fullpath.begin());
+	}
+
+void WaveformData::descriptionSet(const char* description)
 	{
 	m_description=description;
 	m_key_label.clear();
-	auto ptr=description.begin();
-	auto ptr_end=description.end();
 	auto state=0;
-	while(ptr!=ptr_end)
+	auto ptr=description;
+	while(*ptr!='\0' && *ptr!=']')
 		{
 		switch(*ptr)
 			{
 			case '[':
 				state=1;
-				break;
-			case ']':
-				ptr=ptr_end-1;
 				break;
 			default:
 				switch(state)
@@ -85,5 +86,20 @@ void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
 			}
 		++ptr;
 		}
+
+	if(m_key_label.length()==0)
+		{
+		auto ptr=description;
+		while(*ptr!=' ' && *ptr!='\0')
+			{
+			m_key_label.append(*ptr);
+			++ptr;
+			}
+		}
 	m_key_label.append('\0');
+	}
+
+void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
+	{
+	descriptionSet(description.begin());
 	}

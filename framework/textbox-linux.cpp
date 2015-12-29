@@ -58,7 +58,7 @@ gboolean TextboxGtk::onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 	TextboxGtk* _this=(TextboxGtk*)textboxgtk;
 	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_element_id);
 		,_this);
-	return TRUE;
+	return FALSE;
 	}
 
 Textbox* Textbox::create(GuiContainer& parent,unsigned int element_id)

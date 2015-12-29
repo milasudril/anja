@@ -301,7 +301,7 @@ void ColorPickerGtk::sliderChange(GtkRange* range, void* colorpickergtk)
 	ColorPickerGtk* _this=(ColorPickerGtk*)colorpickergtk;
 	ColorHSLA color=*(_this->r_color_active);
 	color.hue=gtk_range_get_value((GtkRange*)_this->m_h_slider);
-	color.saturation=std::max(gtk_range_get_value((GtkRange*)_this->m_s_slider),1e-7);
+	color.saturation=gtk_range_get_value((GtkRange*)_this->m_s_slider);
 	color.lightness=gtk_range_get_value((GtkRange*)_this->m_l_slider);
 	*(_this->r_color_active)=color;
 	_this->colorSamlpesUpdate();

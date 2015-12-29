@@ -8,6 +8,7 @@ dependency[sessionview.o]
 
 #include "framework/widget.h"
 #include "waveformrangetrimmer.h"
+#include "waveformdataview.h"
 #include "framework/keyboardview.h"
 #include "framework/keyboardlayout.h"
 
@@ -32,6 +33,8 @@ class SessionView:public Widget
 
 		void sessionSet(Session& session);
 
+		void keyCurrentLabelSet(const char* label);
+
 	private:
 		class KeyboardEventHandler:public KeyboardView::EventHandler
 			{
@@ -52,6 +55,20 @@ class SessionView:public Widget
 				SessionView* r_view;
 			};
 
+		class WaveformDataEventHandler:public WaveformDataView::EventHandler
+			{
+			public:
+				WaveformDataEventHandler(SessionView& view):r_view(&view){}
+				void onSourceChange(WaveformDataView& source
+					,const char* filename_new);
+				void onDescriptionChange(WaveformDataView& source
+					,const char* description_new);
+				void onColorChange(WaveformDataView& source
+					,const ColorRGBA& color_new);
+			private:
+				SessionView* r_view;
+			};
+
 		SessionView(GuiContainer& parent,Session& session);
 		~SessionView();
 
@@ -62,6 +79,7 @@ class SessionView:public Widget
 
 		WaveformRangeTrimmer m_trimmer;
 		KeyboardEventHandler m_keyboardevents;
+		WaveformDataEventHandler m_waveformevents;
 		KeyboardLayout::KeyDescriptor* r_key_current;
 	};
 

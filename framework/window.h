@@ -22,31 +22,26 @@ class Window:public GuiContainer
 			};
 
 		static Window* create(EventLoop& event_loop)
-			{return create(event_loop,s_default_handler,nullptr);}
+			{return create(event_loop,s_default_handler);}
 
-		static Window* create(EventLoop& event_loop,EventHandler& handler)
-			{return create(event_loop,handler,nullptr);}
+		static Window* create(EventLoop& event_loop,EventHandler& handler);
 
-		static Window* create(Window& owner)
-			{return create(owner.r_event_loop,s_default_handler,&owner);}
+		static Window* create(Widget& owner)
+			{return create(owner,s_default_handler,nullptr);}
 
-		static Window* create(Window& owner,EventHandler& handler)
-			{return create(owner.r_event_loop,handler,&owner);}
+		static Window* create(Widget& owner,void** lifetime_cookie)
+			{return create(owner,s_default_handler,lifetime_cookie);}
+
+		static Window* create(Widget& owner,EventHandler& handler)
+			{return create(owner,s_default_handler,nullptr);}
+
+		static Window* create(Widget& owner,EventHandler& handler
+			,void** lifetime_cookie);
 
 		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void titleSet(const char* title_new)=0;
 
-	protected:
-		Window(EventLoop& event_loop):r_event_loop(event_loop)
-			{r_event_loop.windowRegister();}
-
-		~Window()
-			{r_event_loop.windowUnregister();}
-
 	private:
-		static Window* create(EventLoop& event_loop,EventHandler& handler,Window* owner);
-
-		EventLoop& r_event_loop;
 		static EventHandler s_default_handler;
 	};
 

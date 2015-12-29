@@ -470,7 +470,10 @@ void XYPlotGtk::ticksUpdate()
 	auto height=m_domain_window.max.y-m_domain_window.min.y;
 	N_y=height/(4*m_axis_y.front().extent_y);
 	if(N_y==0)
-		{return;}
+		{
+		cairo_destroy(cr);
+		return;
+		}
 	delta_y=(domain_new.max.y - domain_new.min.y)/N_y;
 	m_delta_y=pow(10,round(log10(delta_y)));
 

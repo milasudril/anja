@@ -27,7 +27,8 @@ target
 class WindowGtk:public Window
 	{
 	public:
-		WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner);
+		WindowGtk(EventLoop& event_loop,EventHandler& handler);
+		WindowGtk(Widget& owner,EventHandler& handler,void** lifetime_cookie);
 		~WindowGtk();
 
 		void destroy();
@@ -76,9 +77,12 @@ class WindowGtk:public Window
 
 		void windowRemove(WindowGtk& window);
 
+		EventLoop* r_event_loop;
 		EventHandler* r_handler;
+		void** r_cookie;
 		Widget* r_widget;
 		Widget* r_slave;
+
 		WindowGtk* r_owner;
 		ArrayDynamicShort<WindowGtk*> m_owned_windows;
 		GuiHandle m_window;
@@ -86,8 +90,11 @@ class WindowGtk:public Window
 
 Window::EventHandler Window::s_default_handler;
 
-Window* Window::create(EventLoop& event_loop,EventHandler& handler,Window* owner)
-	{return new WindowGtk(event_loop,handler,dynamic_cast<WindowGtk*>(owner));}
+Window* Window::create(EventLoop& event_loop,EventHandler& handler)
+	{return new WindowGtk(event_loop,handler);}
+
+Window* Window::create(Widget& owner,EventHandler& handler,void** lifetime_cookie)
+	{return new WindowGtk(owner,handler,lifetime_cookie);}
 
 void WindowGtk::destroy()
 	{delete this;}
@@ -147,9 +154,9 @@ gboolean WindowGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
 	return FALSE;
 	}
 
-WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owner):
-	Window(event_loop),r_handler(&handler),r_widget(nullptr)
-	,r_slave(nullptr),r_owner(owner)
+WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler):
+	r_event_loop(&event_loop),r_handler(&handler),r_cookie(nullptr)
+	,r_widget(nullptr),r_slave(nullptr),r_owner(nullptr)
 	{
 	GtkWidget* window_this=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_object_ref_sink(G_OBJECT(window_this));
@@ -160,13 +167,35 @@ WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler,WindowGtk* owne
 	g_signal_connect(window_this,"key_press_event",G_CALLBACK(onKeyDown),this);
 	g_signal_connect(window_this,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(window_this,"delete-event",G_CALLBACK(onClose),this);
-	if(owner!=nullptr)
+	g_object_set_data(G_OBJECT(window_this),"anja_window",this);
+	event_loop.windowRegister();
+	m_window=window_this;
+	}
+
+WindowGtk::WindowGtk(Widget& owner,EventHandler& handler,void** lifetime_cookie):
+	r_handler(&handler),r_cookie(lifetime_cookie),r_widget(nullptr)
+	,r_slave(nullptr),r_owner(nullptr)
+	{
+	GtkWidget* window_this=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	g_object_ref_sink(G_OBJECT(window_this));
+	gtk_widget_show(window_this);
+	g_signal_connect(window_this,"button-release-event",G_CALLBACK(onMouseUp),this);
+	g_signal_connect(window_this,"button-press-event",G_CALLBACK(onMouseDown),this);
+	g_signal_connect(window_this,"motion-notify-event",G_CALLBACK(onMouseMove),this);
+	g_signal_connect(window_this,"key_press_event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect(window_this,"key_release_event",G_CALLBACK(onKeyUp),this);
+	g_signal_connect(window_this,"delete-event",G_CALLBACK(onClose),this);
+	GtkWidget* window_parent=gtk_widget_get_toplevel(owner.handleNativeGet());
+	if(gtk_widget_is_toplevel(window_parent))
 		{
-		GtkWidget* window_parent=owner->m_window;
+		r_owner=(WindowGtk*)g_object_get_data(G_OBJECT(window_parent),"anja_window");
 		gtk_window_set_transient_for((GtkWindow*)window_this
 			,(GtkWindow*)window_parent);
-		owner->m_owned_windows.append(this);
+		r_owner->m_owned_windows.append(this);
+		r_event_loop=r_owner->r_event_loop;
+		r_event_loop->windowRegister();
 		}
+	g_object_set_data(G_OBJECT(window_this),"anja_window",this);
 	m_window=window_this;
 	}
 
@@ -181,6 +210,8 @@ void WindowGtk::windowRemove(WindowGtk& window)
 
 WindowGtk::~WindowGtk()
 	{
+	if(r_cookie!=nullptr)
+		{*r_cookie=nullptr;}
 	if(r_slave!=nullptr)
 		{r_slave->destroy();}
 	if(r_widget!=nullptr)
@@ -188,6 +219,10 @@ WindowGtk::~WindowGtk()
 	std::for_each(m_owned_windows.rbegin(),m_owned_windows.rend(),widgetDestroy);
 	if(r_owner!=nullptr)
 		{r_owner->windowRemove(*this);}
+	GtkWidget* me=m_window;
+	WindowGtk* _this=(WindowGtk*)g_object_get_data(G_OBJECT(me),"anja_window");
+	if(_this->r_event_loop!=nullptr)
+		{_this->r_event_loop->windowUnregister();}
 	gtk_widget_destroy(m_window);
 	}
 

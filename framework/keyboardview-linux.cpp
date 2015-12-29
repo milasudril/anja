@@ -49,13 +49,14 @@ class KeyboardViewGtk:public KeyboardView
 		void destroy();
 
 		const GuiHandle& handleNativeGet() const
-			{return m_canvas;}
+			{return m_frame;}
 
 	private:
 		const KeyboardLayout* r_keyboard;
 		GuiContainer& r_parent;
 		EventHandler* r_handler;
-		GuiHandle m_canvas;
+		GuiHandle m_frame;
+		GtkWidget* m_canvas;
 
 		static gboolean onMouseMove(GtkWidget* object,GdkEventMotion* event
 			,void* keyboardviewgtk);
@@ -86,6 +87,14 @@ KeyboardViewGtk::KeyboardViewGtk
 	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler):
 	r_keyboard(&keyboard),r_parent(parent),r_handler(&handler)
 	{
+	GtkWidget* frame=gtk_aspect_frame_new(NULL,0.5f,0.5f,16.0f/4.0f,TRUE);
+	m_frame=frame;
+	g_object_ref_sink(frame);
+	gtk_frame_set_shadow_type ((GtkFrame*)frame,GTK_SHADOW_NONE);
+	gtk_frame_set_label_align ((GtkFrame*)frame,0.0f,1.0f);
+	gtk_widget_show(frame);
+	parent.componentAdd(*this);
+
 	m_canvas=gtk_drawing_area_new();
 	gtk_widget_set_can_focus(m_canvas,TRUE);
 	gtk_widget_add_events(m_canvas
@@ -100,7 +109,8 @@ KeyboardViewGtk::KeyboardViewGtk
 	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(onPaint),this);
 	g_object_ref(m_canvas);
-	parent.componentAdd(*this);
+	gtk_container_add((GtkContainer*)frame,m_canvas);
+	gtk_widget_show(m_canvas);
 	gtk_widget_set_size_request(m_canvas,15*32,5*32);
 	}
 
@@ -109,8 +119,9 @@ void KeyboardViewGtk::destroy()
 
 KeyboardViewGtk::~KeyboardViewGtk()
 	{
-	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_canvas);
+	r_parent.componentRemove(*this);
+	gtk_widget_destroy(m_frame);
 	}
 
 gboolean KeyboardViewGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event

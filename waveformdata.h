@@ -43,10 +43,14 @@ class WaveformData
 		void fileLoad(const ArrayDynamicShort<char>& filename
 			,const ArrayDynamicShort<char>& load_path);
 
+		void fileLoad(const char* filename);
+
 		const ArrayDynamicShort<char>& descriptionGet() const
 			{return m_description;}
 
 		void descriptionSet(const ArrayDynamicShort<char>& description);
+
+		void descriptionSet(const char* description);
 
 		const ArrayDynamicShort<char>& keyLabelGet() const
 			{return m_key_label;}

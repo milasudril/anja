@@ -10,6 +10,10 @@ target[name[exceptionswallow.h] type[include]]
 #define EXCEPTION_SWALLOW(_statements,_context) do\
 	{ \
 	try { _statements }\
+	catch(const char* message)\
+		{\
+		messageDisplay(*_context,message,"Anja",MESSAGE_TYPE_ERROR);\
+		}\
 	catch(...)\
 		{\
 		messageDisplay(*_context,"Unkonwn exception","Anja",MESSAGE_TYPE_ERROR);\

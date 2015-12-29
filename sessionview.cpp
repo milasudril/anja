@@ -19,15 +19,15 @@ const GuiHandle& SessionView::handleNativeGet() const
 	return m_box->handleNativeGet();
 	}
 
-SessionView::SessionView(GuiContainer& parent,Session& session):m_keyboardevents(*this)
-	,r_key_current(nullptr)
+SessionView::SessionView(GuiContainer& parent,Session& session):
+	m_keyboardevents(*this),m_waveformevents(*this),r_key_current(nullptr)
 	{
 	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),m_keyboardevents);
 	m_box->insertModeSet(BoxVertical::INSERTMODE_END|BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
-	m_dataview=WaveformDataView::create(*m_box,m_trimmer);
+	m_dataview=WaveformDataView::create(*m_box,m_waveformevents,m_trimmer);
 
 	sessionSet(session);
 	}
@@ -62,7 +62,7 @@ void SessionView::sessionSet(Session& session)
 			}
 		++scancode_ptr;
 		}
-	m_keyboard->update();
+	slotDisplayFromScancode(41);
 	}
 
 void SessionView::slotDisplayFromScancode(uint8_t scancode)
@@ -81,4 +81,37 @@ void SessionView::slotDisplayFromScancode(uint8_t scancode)
 	m_keyboard->update();
 	m_dataview->waveformDataSet(r_session->waveformDataFromScancode(scancode));
 	r_key_current=key_new;
+	}
+
+void SessionView::keyCurrentLabelSet(const char* label)
+	{
+	if(r_key_current!=nullptr)
+		{
+		r_key_current->labelSet(label);
+		m_keyboard->update();
+		}
+	}
+
+
+
+void SessionView::WaveformDataEventHandler::onSourceChange(WaveformDataView& source
+	,const char* filename_new)
+	{
+	auto& wd=source.waveformDataGet();
+	wd.fileLoad(filename_new);
+	source.update();
+	}
+
+void SessionView::WaveformDataEventHandler::onDescriptionChange(WaveformDataView& source
+	,const char* description_new)
+	{
+	auto& wd=source.waveformDataGet();
+	wd.descriptionSet(description_new);
+	source.update();
+	r_view->keyCurrentLabelSet(wd.keyLabelGet().begin());
+	}
+
+void SessionView::WaveformDataEventHandler::onColorChange(WaveformDataView& source
+	,const ColorRGBA& color_new)
+	{
 	}
