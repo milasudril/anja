@@ -26,6 +26,12 @@ class WaveformStorage:public Waveform< ArrayDynamicShort<float> >
 			return *this;
 			}
 
+		WaveformStorage& capacitySet(uint32_t capacity_new)
+			{
+			m_data.capacitySet(capacity_new);
+			return *this;
+			}
+
 		void clear()
 			{m_data.clear();}
 	};

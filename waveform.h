@@ -53,6 +53,14 @@ class Waveform
 			return *this;
 			}
 
+		Waveform& offsetsReset()
+			{
+			m_offset_end=m_data.length();
+			m_offset_begin=0;
+			return *this;
+			}
+
+
 		constexpr uint32_t length() const
 			{return m_offset_end-m_offset_begin;}
 

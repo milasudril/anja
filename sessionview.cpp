@@ -26,7 +26,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session):m_keyboardevents
 	m_box->slaveAssign(*this);
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),m_keyboardevents);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_END);
+	m_box->insertModeSet(BoxVertical::INSERTMODE_END|BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
 	m_dataview=WaveformDataView::create(*m_box,m_trimmer);
 
 	sessionSet(session);
@@ -67,6 +67,9 @@ void SessionView::sessionSet(Session& session)
 
 void SessionView::slotDisplayFromScancode(uint8_t scancode)
 	{
+	if(scancode==0)
+		{return;}
+
 	auto key_new=r_session->keyboardLayoutGet().keyFromScancode(scancode);
 	if(key_new==nullptr)
 		{return;}

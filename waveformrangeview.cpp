@@ -241,6 +241,8 @@ void WaveformRangeView::waveformRangeSet(WaveformRange& range)
 			}
 		if(y_max!=y_min)
 			{m_plot->domainSet({{0,y_min},{framesToSeconds(length_in,fs),y_max}});}
+		else
+			{m_plot->domainSet({{0,-145},{framesToSeconds(length_in,fs),0}});}
 		}
 
 	cursorsUpdate();

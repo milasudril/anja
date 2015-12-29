@@ -23,12 +23,17 @@ class Session
 			{waveformsClear();}
 
 		Session(const char* filename)
-			{
-			waveformsClear();
-			load(filename);
-			}
+			{load(filename);}
 
 		void load(const char* filename);
+
+		const ArrayDynamicShort<char>& filenameGet() const
+			{return m_filename;}
+
+		const ArrayDynamicShort<char>& directoryGet() const
+			{return m_directory;}
+
+
 
 		void waveformsClear();
 
@@ -81,6 +86,7 @@ class Session
 		KeyboardLayout m_keyboard;
 
 		ArrayDynamicShort<char> m_filename;
+		ArrayDynamicShort<char> m_directory;
 		ArrayDynamicShort<char> m_title;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;

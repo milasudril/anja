@@ -7,6 +7,7 @@ target[name[session.o] type[object]]
 #include "sessionfilereader.h"
 #include "sessionfilerecordimpl.h"
 #include "framework/localeguard.h"
+#include "framework/pathutils.h"
 
 #include <cstring>
 
@@ -80,7 +81,10 @@ void Session::load(const char* filename)
 	if(record.sectionLevelGet()!=0)
 		{throw "Invalid session file";}
 
+	waveformsClear();
+
 	m_filename=filename;
+	m_directory=parentDirectory(realpath(m_filename));
 	titleSet(record.titleGet());
 
 	while(reader->recordNextGet(record))
@@ -101,7 +105,7 @@ void Session::load(const char* filename)
 				{throw "Invalid slot number";}
 			slot_num-=1;
 
-			waveformDataSet({record,m_filename},slot_num);
+			waveformDataSet({record,m_directory,m_waveforms[slot_num]},slot_num);
 			}
 		}
 	}

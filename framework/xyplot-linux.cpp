@@ -331,7 +331,7 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	m_canvas=gtk_drawing_area_new();
 
 	gtk_widget_set_can_focus(m_canvas,TRUE);
-		gtk_widget_add_events(m_canvas
+	gtk_widget_add_events(m_canvas
 		,GDK_POINTER_MOTION_MASK
 		|GDK_BUTTON_PRESS_MASK
 		|GDK_BUTTON_RELEASE_MASK
@@ -451,6 +451,8 @@ void XYPlotGtk::ticksUpdate()
 	printf("%u\n",count);*/
 	auto domain_new=m_domain_current;
 	auto cr=gdk_cairo_create(gtk_widget_get_window(m_canvas));
+	if(cr==NULL)
+		{return;}
 
 //	Compute extents for axes given two ticks
 	auto N_x=2;

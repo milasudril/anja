@@ -39,7 +39,7 @@ constexpr ColorRGBA COLORS[]=
 	,{1.0f,0.0f,0.0f,1.0f}    //RED
 	,{1.0f,0.5f,0.0f,1.0f}    //ORANGE
 	,{1.0f,1.0f,0.0f,1.0f}    //YELLOW
-	,{0.5f,0.1f,0.0f,1.0f}    //LIME
+	,{0.5f,1.0f,0.0f,1.0f}    //LIME
 	,{0.0f,1.0f,0.0f,1.0f}    //GREEN
 	,{0.0f,1.0f,0.5f,1.0f}    //TURQUOISE
 	,{0.0f,1.0f,1.0f,1.0f}    //CYAN

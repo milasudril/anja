@@ -16,11 +16,11 @@ class SessionFileRecord;
 class WaveformData
 	{
 	public:
-		WaveformData():m_waveform_range(nullptr,0,0)
-			{}
+		WaveformData();
 
 		WaveformData(const SessionFileRecord& record
-			,const ArrayDynamicShort<char>& load_path);
+			,const ArrayDynamicShort<char>& load_path
+			,WaveformStorage& storage);
 
 		void waveformRangeUpdate()
 			{
@@ -64,7 +64,6 @@ class WaveformData
 		ColorRGBA m_color;
 		WaveformRange m_waveform_range;
 		WaveformStorage* r_waveform;
-		uint8_t m_scancode;
 		uint8_t m_midi_note;
 	};
 

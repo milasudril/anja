@@ -107,7 +107,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	gtk_box_set_homogeneous((GtkBox*)box,FALSE);
 
 	m_slider=gtk_scale_new_with_range(orientation,0,1,1e-3);
-	g_object_ref(m_slider);
+	g_object_ref_sink(m_slider);
 	gtk_scale_set_has_origin((GtkScale*)m_slider,FALSE);
 	gtk_scale_set_draw_value((GtkScale*)m_slider,FALSE);
 	gtk_range_set_inverted((GtkRange*)m_slider,invert);
@@ -115,7 +115,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	gtk_widget_show(m_slider);
 
 	m_text=gtk_entry_new();
-	g_object_ref(m_text);
+	g_object_ref_sink(m_text);
 	gtk_box_pack_end((GtkBox*)box,m_text,FALSE,FALSE,0);
 	gtk_widget_show(m_text);
 	gtk_entry_set_width_chars((GtkEntry*)m_text,5);
