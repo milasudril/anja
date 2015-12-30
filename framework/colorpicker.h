@@ -16,7 +16,7 @@ class ColorPicker:public Widget
 	{
 	public:
 		static ColorPicker* create(GuiContainer& parent,ColorRGBA& color_current
-			,const ColorRGBA* presets,size_t N_presets);
+			,ColorRGBA* presets,size_t N_presets);
 
 		virtual void update()=0;
 

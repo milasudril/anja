@@ -45,7 +45,10 @@ WaveformDataView::ColorEventHandler::ColorEventHandler(WaveformDataView& view):
 WaveformDataView::ColorEventHandler::~ColorEventHandler()
 	{
 	if(m_colordlg!=nullptr)
-		{m_colordlg->destroy();}
+		{
+		m_picker->destroy();
+		m_colordlg->destroy();
+		}
 	}
 
 void WaveformDataView::ColorEventHandler::onButtonClick(InputEntry& source)

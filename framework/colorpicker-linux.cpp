@@ -34,7 +34,7 @@ class ColorPickerGtk:public ColorPicker
 	{
 	public:
 		ColorPickerGtk(GuiContainer& parent,ColorRGBA& color
-			,const ColorRGBA* presets,size_t N_presets);
+			,ColorRGBA* presets,size_t N_presets);
 
 		~ColorPickerGtk();
 
@@ -77,6 +77,7 @@ class ColorPickerGtk:public ColorPicker
 			GtkWidget* m_cancel;
 
 		ArraySimple<ColorRGBA> m_presets;
+		ColorRGBA* r_presets;
 		ColorRGBA* r_color;
 		ColorRGBA* r_color_active;
 		GuiContainer& r_parent;
@@ -107,16 +108,16 @@ class ColorPickerGtk:public ColorPicker
 	};
 
 ColorPicker* ColorPicker::create(GuiContainer& parent,ColorRGBA& color
-	,const ColorRGBA* presets,size_t N_presets)
+	,ColorRGBA* presets,size_t N_presets)
 	{
 	return new ColorPickerGtk(parent,color,presets,N_presets);
 	}
 
 
 ColorPickerGtk::ColorPickerGtk(GuiContainer& parent,ColorRGBA& color
-	,const ColorRGBA* presets,size_t N_presets):
-	m_presets(std::max(N_presets,size_t(64))),
- 	r_color(&color),r_color_active(&color),r_parent(parent)
+	,ColorRGBA* presets,size_t N_presets):
+	m_presets(std::max(N_presets,size_t(64))),r_presets(presets)
+ 	,r_color(&color),r_color_active(&color),r_parent(parent)
 	{
 	memcpy(m_presets.begin(),presets,N_presets*sizeof(ColorRGBA));
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
@@ -312,7 +313,6 @@ gboolean ColorPickerGtk::tabOnPaint(GtkWidget* object,cairo_t* cr,void* colorpic
 	ColorPickerGtk* _this=(ColorPickerGtk*)colorpickergtk;
 
 	auto width = gtk_widget_get_allocated_width (object);
-//	auto height = gtk_widget_get_allocated_height (object);
 	const uint32_t N=16;
 	auto size=width/N;
 	_this->m_size_colorbox=size;
@@ -361,6 +361,7 @@ gboolean ColorPickerGtk::sMaxOnPaint(GtkWidget* object,cairo_t* cr,void* colorpi
 	cairo_rectangle(cr,0,0,size,size);
 	ColorHSLA color_tmp=*(_this->r_color_active);
 	color_tmp.saturation=1.0f;
+	color_tmp.hue=gtk_range_get_value((GtkRange*)_this->m_h_slider);
 	gdk_cairo_set_source_rgba(cr,ColorSystem{color_tmp});
 	cairo_fill_preserve(cr);
 	cairo_set_source_rgb(cr,0,0,0);
@@ -429,6 +430,9 @@ gboolean ColorPickerGtk::onPresetActivate(GtkWidget* object
 void ColorPickerGtk::saveAndExit(GtkButton* button,void* colorpickergtk)
 	{
 	ColorPickerGtk* _this=(ColorPickerGtk*)colorpickergtk;
+	*(_this->r_color)=*(_this->r_color_active);
+	memcpy(_this->r_presets,_this->m_presets.begin()
+		,_this->m_presets.length()*sizeof(ColorRGBA));
 	_this->r_parent.destroy();
 	}
 
