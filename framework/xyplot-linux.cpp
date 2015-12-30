@@ -190,9 +190,9 @@ class XYPlotGtk:public XYPlot
 		Curve::Domain m_domain_current_active;
 		Curve::Domain m_domain_window;
 
-		Color m_background_color;
-		Color m_text_color;
-		Color m_canvas_color;
+		ColorRGBA m_background_color;
+		ColorRGBA m_text_color;
+		ColorRGBA m_canvas_color;
 		float m_curve_luma;
 	};
 

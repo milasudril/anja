@@ -13,7 +13,7 @@ class LocaleGuard
 		~LocaleGuard();
 
 	private:
-		const char* r_locale_old;
+		char* m_locale_old;
 	};
 
 #endif

@@ -6,9 +6,11 @@ dependency[waveformdata.o]
 #ifndef WAVEFORMDATA_H
 #define WAVEFORMDATA_H
 
-#include "framework/color.h"
 #include "waveformrange.h"
 #include "waveformstorage.h"
+
+#include "framework/color.h"
+#include "framework/array_fixed.h"
 #include <string>
 
 class SessionFileRecord;
@@ -45,6 +47,8 @@ class WaveformData
 
 		void fileLoad(const char* filename);
 
+
+
 		const ArrayDynamicShort<char>& descriptionGet() const
 			{return m_description;}
 
@@ -55,11 +59,19 @@ class WaveformData
 		const ArrayDynamicShort<char>& keyLabelGet() const
 			{return m_key_label;}
 
+
+
 		const ColorRGBA& keyColorGet() const
 			{return m_color;}
 
-		ColorRGBA& keyColorGet()
-			{return m_color;}
+		typedef ArrayFixed<char,64> ColorString;
+		void keyColorGet(ColorString& buffer);
+
+		void keyColorSet(const ColorRGBA& color_new)
+			{m_color=color_new;}
+
+		void keyColorSet(const char* colorstring);
+
 
 	private:
 		ArrayDynamicShort<char> m_filename;

@@ -34,7 +34,7 @@ class ColorPickerGtk:public ColorPicker
 	{
 	public:
 		ColorPickerGtk(GuiContainer& parent,ColorRGBA& color
-			,ColorRGBA* presets,size_t N_presets);
+			,ColorRGBA* presets,size_t N_presets,EventHandler& handler);
 
 		~ColorPickerGtk();
 
@@ -51,6 +51,14 @@ class ColorPickerGtk:public ColorPicker
 			}
 
 	private:
+		GuiContainer& r_parent;
+		EventHandler* r_handler;
+		ArraySimple<ColorRGBA> m_presets;
+		ColorRGBA* r_presets;
+		ColorRGBA* r_color;
+		ColorRGBA* r_color_active;
+		double m_size_colorbox;
+
 		GuiHandle m_handle;
 
 		GtkWidget* m_aspect_box;
@@ -75,13 +83,6 @@ class ColorPickerGtk:public ColorPicker
 		GtkWidget* m_exit_box;
 			GtkWidget* m_ok;
 			GtkWidget* m_cancel;
-
-		ArraySimple<ColorRGBA> m_presets;
-		ColorRGBA* r_presets;
-		ColorRGBA* r_color;
-		ColorRGBA* r_color_active;
-		GuiContainer& r_parent;
-		double m_size_colorbox;
 
 		static gboolean tabOnPaint(GtkWidget* object,cairo_t* cr
 			,void* colorpickergtk);
@@ -108,16 +109,18 @@ class ColorPickerGtk:public ColorPicker
 	};
 
 ColorPicker* ColorPicker::create(GuiContainer& parent,ColorRGBA& color
-	,ColorRGBA* presets,size_t N_presets)
+	,ColorRGBA* presets,size_t N_presets,EventHandler& handler)
 	{
-	return new ColorPickerGtk(parent,color,presets,N_presets);
+	return new ColorPickerGtk(parent,color,presets,N_presets,handler);
 	}
+
+ColorPicker::EventHandler ColorPicker::s_default_handler;
 
 
 ColorPickerGtk::ColorPickerGtk(GuiContainer& parent,ColorRGBA& color
-	,ColorRGBA* presets,size_t N_presets):
-	m_presets(std::max(N_presets,size_t(64))),r_presets(presets)
- 	,r_color(&color),r_color_active(&color),r_parent(parent)
+	,ColorRGBA* presets,size_t N_presets,EventHandler& handler):
+	r_parent(parent),r_handler(&handler),m_presets(std::max(N_presets,size_t(64)))
+	,r_presets(presets),r_color(&color),r_color_active(&color)
 	{
 	memcpy(m_presets.begin(),presets,N_presets*sizeof(ColorRGBA));
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
@@ -291,7 +294,7 @@ void ColorPickerGtk::colorSamlpesUpdate()
 	gtk_widget_queue_draw(m_result_sample);
 
 	char buffer[64];
-	sprintf(buffer,"%.7f;\n%.7f;\n%.7f",r_color_active->red
+	sprintf(buffer,"%.7f\n%.7f\n%.7f",r_color_active->red
 		,r_color_active->green
 		,r_color_active->blue);
 	gtk_label_set_text((GtkLabel*)m_result_rgb,buffer);
@@ -434,10 +437,12 @@ void ColorPickerGtk::saveAndExit(GtkButton* button,void* colorpickergtk)
 	memcpy(_this->r_presets,_this->m_presets.begin()
 		,_this->m_presets.length()*sizeof(ColorRGBA));
 	_this->r_parent.destroy();
+	_this->r_handler->onConfirmed(Tag{});
 	}
 
 void ColorPickerGtk::exit(GtkButton* button,void* colorpickergtk)
 	{
 	ColorPickerGtk* _this=(ColorPickerGtk*)colorpickergtk;
 	_this->r_parent.destroy();
+	_this->r_handler->onCanceled(Tag{});
 	}

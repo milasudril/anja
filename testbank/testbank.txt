@@ -14,7 +14,7 @@ Description: [Sci-fi] effect
 
 Filename:    alien_scanner.wav
 
-Foobar:  value
+Color:       1; 0,534 678; 0.75
 
 
 --------------------------------------Slot 2------------------------------------
@@ -23,6 +23,8 @@ Description: [Rooster]
 
 Filename:    medium rooster crowing.aiff
 
+Color:       0.65;1;0
+
 
 --------------------------------------Slot 3------------------------------------
 
@@ -30,10 +32,15 @@ Description: Some sort of electric [pump]
 
 Filename:    pump_im.ogg
 
+Color:       1;0.25;0
+
 
 --------------------------------------Slot 4------------------------------------
 
 Description: [Thunder]bolts
 
 Filename:    thunderstorm.flac
+
+Color:       0,25;1;1
+
 

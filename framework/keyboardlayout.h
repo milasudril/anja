@@ -32,7 +32,7 @@ class KeyboardLayout
 					float y;
 					};
 
-				Color colorGet() const
+				ColorRGBA colorGet() const
 					{
 					return
 						{
@@ -43,7 +43,7 @@ class KeyboardLayout
 						};
 					}
 
-				Color colorBorderGet() const
+				ColorRGBA colorBorderGet() const
 					{
 					return
 						{
@@ -63,7 +63,7 @@ class KeyboardLayout
 					m_color.a=color.alpha*255;
 					}
 
-				void colorBorderSet(const Color& color)
+				void colorBorderSet(const ColorRGBA& color)
 					{
 					m_color_border.r=color.red*255;
 					m_color_border.g=color.green*255;

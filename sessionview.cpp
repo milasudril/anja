@@ -85,13 +85,15 @@ void SessionView::slotDisplayFromScancode(uint8_t scancode)
 
 void SessionView::keyCurrentLabelSet(const char* label)
 	{
-	if(r_key_current!=nullptr)
-		{
-		r_key_current->labelSet(label);
-		m_keyboard->update();
-		}
+	r_key_current->labelSet(label);
+	m_keyboard->update();
 	}
 
+void SessionView::keyCurrentColorSet(const ColorRGBA& color_new)
+	{
+	r_key_current->colorSet(color_new);
+	m_keyboard->update();
+	}
 
 
 void SessionView::WaveformDataEventHandler::onSourceChange(WaveformDataView& source
@@ -114,4 +116,17 @@ void SessionView::WaveformDataEventHandler::onDescriptionChange(WaveformDataView
 void SessionView::WaveformDataEventHandler::onColorChange(WaveformDataView& source
 	,const ColorRGBA& color_new)
 	{
+	auto& wd=source.waveformDataGet();
+	wd.keyColorSet(color_new);
+	source.update();
+	r_view->keyCurrentColorSet(color_new);
+	}
+
+void SessionView::WaveformDataEventHandler::onColorChange(WaveformDataView& source
+	,const char* colorstr)
+	{
+	auto& wd=source.waveformDataGet();
+	wd.keyColorSet(colorstr);
+	source.update();
+	r_view->keyCurrentColorSet(wd.keyColorGet());
 	}

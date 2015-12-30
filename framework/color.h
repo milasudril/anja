@@ -7,10 +7,18 @@ dependency[color.o]
 #define COLOR_H
 
 #include <cstdint>
+#include <algorithm>
 
 struct ColorHSLA;
 struct ColorHSVA;
 struct ColorRGBA;
+
+constexpr float clamp(float x,float a,float b)
+	{
+	return x<a?
+		a:(b<x?
+			b:x);
+	}
 
 struct alignas(16) ColorRGBA
 	{
@@ -18,7 +26,10 @@ struct alignas(16) ColorRGBA
 		{}
 
 	constexpr ColorRGBA(float r,float g,float b,float a):
-		red(r),green(g),blue(b),alpha(a)
+		 red(clamp(r,0.0f,1.0f))
+		,green(clamp(g,0.0f,1.0f))
+		,blue(clamp(b,0.0f,1.0f))
+		,alpha(clamp(a,0.0f,1.0f))
 		{}
 
 	ColorRGBA(const ColorHSLA& hsla);
@@ -106,9 +117,5 @@ struct alignas(16) ColorHSVA
 	float value;
 	float alpha;
 	};
-
-
-
-typedef ColorRGBA Color;
 
 #endif

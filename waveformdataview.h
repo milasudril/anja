@@ -11,6 +11,7 @@ dependency[waveformdataview.o]
 #include "waveformrangeview.h"
 #include "framework/inputentry.h"
 #include "framework/color.h"
+#include "framework/colorpicker.h"
 
 class GuiContainer;
 class BoxVertical;
@@ -20,7 +21,6 @@ class Textbox;
 class Slider;
 class WaveformData;
 class Window;
-class ColorPicker;
 
 class WaveformDataView:public Widget
 	{
@@ -34,6 +34,8 @@ class WaveformDataView:public Widget
 					,const char* description_new)=0;
 				virtual void onColorChange(WaveformDataView& source
 					,const ColorRGBA& color_new)=0;
+				virtual void onColorChange(WaveformDataView& source
+					,const char* colorstr)=0;
 			};
 
 		static WaveformDataView* create(GuiContainer& parent
@@ -88,18 +90,21 @@ class WaveformDataView:public Widget
 			} m_command_handler;
 
 		class ColorEventHandler:public InputEntry::EventHandler
+			,public ColorPicker::EventHandler
 			{
 			public:
 				ColorEventHandler(WaveformDataView& view);
 				~ColorEventHandler();
 				void onButtonClick(InputEntry& source);
 				void onTextChanged(InputEntry& source);
+				void onConfirmed(ColorPicker::Tag x);
 
 			private:
 				WaveformDataView* r_view;
 				Window* m_colordlg;
 				ColorPicker* m_picker;
-				ArraySimple<Color> m_color_presets;
+				ColorRGBA m_color;
+				ArraySimple<ColorRGBA> m_color_presets;
 			} m_color_events;
 
 		friend class SourceEventHandler;
@@ -107,6 +112,8 @@ class WaveformDataView:public Widget
 
 		void waveformLoad(const char* filename);
 		void descriptionUpdate();
+		void colorUpdate(const ColorRGBA& color_new);
+		void colorUpdate(const char* colorstr);
 
 		BoxVertical* m_box_main;
 			InputEntry* m_source;

@@ -35,6 +35,10 @@ class SessionView:public Widget
 
 		void keyCurrentLabelSet(const char* label);
 
+		void keyCurrentColorSet(const ColorRGBA& color_new);
+
+		void keyCurrentColorSet(const char* colorstr);
+
 	private:
 		class KeyboardEventHandler:public KeyboardView::EventHandler
 			{
@@ -65,6 +69,8 @@ class SessionView:public Widget
 					,const char* description_new);
 				void onColorChange(WaveformDataView& source
 					,const ColorRGBA& color_new);
+				void onColorChange(WaveformDataView& source
+					,const char* colorstr);
 			private:
 				SessionView* r_view;
 			};

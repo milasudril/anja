@@ -57,14 +57,21 @@ void WaveformDataView::ColorEventHandler::onButtonClick(InputEntry& source)
 		{
 		m_colordlg=Window::create(source,reinterpret_cast<void**>(&m_colordlg));
 		m_colordlg->titleSet("Choose a color");
+		m_color=r_view->waveformDataGet().keyColorGet();
 		m_picker=ColorPicker::create(*m_colordlg
-			,r_view->waveformDataGet().keyColorGet()
-			,m_color_presets.begin(),m_color_presets.length());
+			,m_color
+			,m_color_presets.begin(),m_color_presets.length(),*this);
 		}
 	}
 
 void WaveformDataView::ColorEventHandler::onTextChanged(InputEntry& source)
 	{
+	r_view->colorUpdate(source.textGet());
+	}
+
+void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
+	{
+	r_view->colorUpdate(m_color);
 	}
 
 
@@ -187,6 +194,10 @@ void WaveformDataView::update()
 	m_trim_input->waveformRangeSet(r_data->waveformRangeGet());
 	m_description_textbox->textSet(r_data->descriptionGet().begin());
 	m_source->textSet(r_data->filenameGet().begin());
+
+	WaveformData::ColorString string;
+	r_data->keyColorGet(string);
+	m_color->textSet(string.begin());
 	}
 
 void WaveformDataView::waveformLoad(const char* filename)
@@ -197,4 +208,14 @@ void WaveformDataView::waveformLoad(const char* filename)
 void WaveformDataView::descriptionUpdate()
 	{
 	r_handler->onDescriptionChange(*this,m_description_textbox->textGet());
+	}
+
+void WaveformDataView::colorUpdate(const ColorRGBA& color_new)
+	{
+	r_handler->onColorChange(*this,color_new);
+	}
+
+void WaveformDataView::colorUpdate(const char* colorstr)
+	{
+	r_handler->onColorChange(*this,colorstr);
 	}
