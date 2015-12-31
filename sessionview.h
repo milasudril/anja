@@ -17,6 +17,7 @@ class Session;
 class KeyboardView;
 class WaveformDataView;
 class BoxVertical;
+class AudioConnection;
 
 class SessionView:public Widget
 	{
@@ -43,7 +44,8 @@ class SessionView:public Widget
 		class KeyboardEventHandler:public KeyboardView::EventHandler
 			{
 			public:
-				KeyboardEventHandler(SessionView& view):r_view(&view){}
+				KeyboardEventHandler(SessionView& view):r_view(&view)
+					,r_connection(nullptr){}
 
 				void onMouseUp(KeyboardView& source,uint8_t scancode
 					,keymask_t key_mask)
@@ -52,11 +54,14 @@ class SessionView:public Widget
 					source.update();
 					}
 
-				void onKeyDown(KeyboardView& source,uint8_t scancode)
-					{}
+				void onKeyDown(KeyboardView& source,uint8_t scancode);
+
+				void audioConnectionSet(AudioConnection* connection)
+					{r_connection=connection;}
 
 			private:
 				SessionView* r_view;
+				AudioConnection* r_connection;
 			};
 
 		class WaveformDataEventHandler:public WaveformDataView::EventHandler

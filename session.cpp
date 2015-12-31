@@ -6,6 +6,7 @@ target[name[session.o] type[object]]
 #include "waveformrange.h"
 #include "sessionfilereader.h"
 #include "sessionfilerecordimpl.h"
+#include "audioconnection.h"
 #include "framework/localeguard.h"
 #include "framework/pathutils.h"
 
@@ -108,4 +109,17 @@ void Session::load(const char* filename)
 			waveformDataSet({record,m_directory,m_waveforms[slot_num]},slot_num);
 			}
 		}
+	}
+
+void Session::audioServerConnect()
+	{
+	audioServerDisconnect();
+	m_connection=AudioConnection::create(m_title.begin());
+	}
+
+void Session::audioServerDisconnect()
+	{
+	if(m_connection!=nullptr)
+		{m_connection->destroy();}
+	m_connection=nullptr;
 	}

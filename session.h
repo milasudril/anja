@@ -13,17 +13,29 @@ dependency[session.o]
 #include "waveformdata.h"
 #include "waveformstorage.h"
 
+class AudioConnection;
+
 class Session
 	{
 	public:
 		Session& operator=(const Session&)=delete;
 		Session(const Session&)=delete;
 
-		Session()
-			{waveformsClear();}
+		Session():m_connection(nullptr)
+			{
+			waveformsClear();
+			}
 
-		Session(const char* filename)
-			{load(filename);}
+		Session(const char* filename):m_connection(nullptr)
+			{
+			load(filename);
+			audioServerConnect();
+			}
+
+		~Session()
+			{
+			audioServerDisconnect();
+			}
 
 		void load(const char* filename);
 
@@ -78,7 +90,17 @@ class Session
 
 
 
+		void audioServerConnect();
+
+		void audioServerDisconnect();
+
+		AudioConnection* audioConnectionGet()
+			{return m_connection;}
+
+
+
 	private:
+		AudioConnection* m_connection;
 		ArrayFixed<uint8_t,128> m_scancode_to_slot;
 		ArrayFixed<uint8_t,128> m_midikey_to_slot;
 		ArrayFixed<WaveformStorage,128> m_waveforms;

@@ -6,7 +6,7 @@ target[name[units.h] type[include]]
 #define UINTS_H
 
 #include <cmath>
-#include <cstddef>
+#include <cstdint>
 
 template<class T>
 T amplitudeToDb(const T& x)
@@ -24,14 +24,14 @@ template<class T>
 T dBToAmplitude(const T& x)
 	{return pow(T(10),x/T(20));}
 
-constexpr double framesToSeconds(size_t n_frames,double fs)
+constexpr double framesToSeconds(uint64_t n_frames,double fs)
 	{
 	return n_frames/fs;
 	}
 
-constexpr size_t secondsToFrames(double seconds,double fs)
+constexpr uint64_t secondsToFrames(double seconds,double fs)
 	{
-	return size_t(seconds*fs+0.5);
+	return uint64_t(seconds*fs+0.5);
 	}
 
 

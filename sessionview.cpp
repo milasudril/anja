@@ -5,6 +5,7 @@ target[name[sessionview.o] type[object]]
 #include "sessionview.h"
 #include "session.h"
 #include "waveformdataview.h"
+#include "audioconnection.h"
 #include "framework/boxvertical.h"
 #include "framework/keyboardview.h"
 
@@ -63,6 +64,7 @@ void SessionView::sessionSet(Session& session)
 		++scancode_ptr;
 		}
 	slotDisplayFromScancode(41);
+	m_keyboardevents.audioConnectionSet(session.audioConnectionGet());
 	}
 
 void SessionView::slotDisplayFromScancode(uint8_t scancode)
@@ -93,6 +95,14 @@ void SessionView::keyCurrentColorSet(const ColorRGBA& color_new)
 	{
 	r_key_current->colorSet(color_new);
 	m_keyboard->update();
+	}
+
+
+
+void SessionView::KeyboardEventHandler::onKeyDown(KeyboardView& source,uint8_t scancode)
+	{
+	if(r_connection!=nullptr)
+		{r_connection->eventPost(scancode,0);}
 	}
 
 
