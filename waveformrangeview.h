@@ -15,7 +15,7 @@ dependency[waveformrangeview.o]
 
 class BoxVertical;
 class BoxHorizontal;
-class WaveformRange;
+class Waveform;
 
 class WaveformRangeView:public Widget
 	{
@@ -39,9 +39,9 @@ class WaveformRangeView:public Widget
 
 		static WaveformRangeView* create(GuiContainer& parent,EventHandler& handler);
 
-		void waveformRangeSet(WaveformRange& range);
+		void waveformSet(Waveform& range);
 
-		WaveformRange& waveformRangeGet()
+		Waveform& waveformGet()
 			{return *r_range;}
 
 		void cursorsUpdate();
@@ -97,7 +97,7 @@ class WaveformRangeView:public Widget
 		void autotrim(unsigned int index);
 		void rangeUpdate(unsigned int index, double position);
 
-		WaveformRange* r_range;
+		Waveform* r_range;
 		EventHandler* r_handler;
 
 		GuiContainer& r_parent;

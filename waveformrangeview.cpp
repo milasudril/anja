@@ -3,7 +3,7 @@ target[name[waveformrangeview.o] type[object]]
 #endif
 
 #include "waveformrangeview.h"
-#include "waveformrange.h"
+#include "waveform.h"
 #include "meansquare.h"
 #include "units.h"
 #include "framework/boxvertical.h"
@@ -154,7 +154,8 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	plot_handler.cursorsRefSet(m_plot->cursorXGet(c_begin));
 	m_plot->eventHandlerSet(plot_handler);
 
-	waveformRangeSet(WaveformRange::s_null);
+	auto nullsignal=Waveform::nullGet();
+	waveformSet(nullsignal);
 	m_plot->curveAdd(
 		{
 		 m_waveform_curve.begin()
@@ -165,8 +166,8 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 		{
 			 {0,-145}
 			,{
-				framesToSeconds(WaveformRange::s_null.lengthFull()
-					,WaveformRange::s_null.sampleRateGet())
+				framesToSeconds(nullsignal.lengthFull()
+					,nullsignal.sampleRateGet())
 				,0
 			 }
 		});
@@ -204,7 +205,7 @@ void WaveformRangeView::cursorSet(unsigned int index,double x)
 	m_plot->update();
 	}
 
-void WaveformRangeView::waveformRangeSet(WaveformRange& range)
+void WaveformRangeView::waveformSet(Waveform& range)
 	{
 	r_range=&range;
 	double fs=r_range->sampleRateGet();
@@ -221,11 +222,12 @@ void WaveformRangeView::waveformRangeSet(WaveformRange& range)
 		auto value=std::max(-145.0f,powerToDb(meansquare_full[0]));
 		auto y_min=value;
 		auto y_max=value;
+
 		while(i!=length_out)
 			{
 			auto index_mapped=uint32_t(i*ratio);
 
-			auto value=std::max(-145.0f,powerToDb(meansquare_full[index_mapped]));
+			value=std::max(-145.0f,powerToDb(meansquare_full[index_mapped]));
 			y_max=std::max(y_max,value);
 			y_min=std::min(y_min,value);
 
@@ -239,11 +241,13 @@ void WaveformRangeView::waveformRangeSet(WaveformRange& range)
 			++i;
 			++ptr_dest_begin;
 			}
+
 		if(std::abs(y_max-y_min)<1e-7)
 			{
 			y_min=-145;
 			y_max=0;
 			}
+
 		m_plot->cursorYGet(0).position=0.25*y_max+0.75*y_min;
 		m_plot->domainSet({{0,y_min},{framesToSeconds(length_in,fs),y_max}});
 		}

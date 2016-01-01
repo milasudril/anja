@@ -6,8 +6,7 @@ dependency[waveformdata.o]
 #ifndef WAVEFORMDATA_H
 #define WAVEFORMDATA_H
 
-#include "waveformrange.h"
-#include "waveformstorage.h"
+#include "waveform.h"
 
 #include "framework/color.h"
 #include "framework/array_fixed.h"
@@ -22,21 +21,16 @@ class WaveformData
 
 		WaveformData(const SessionFileRecord& record
 			,const ArrayDynamicShort<char>& load_path
-			,WaveformStorage& storage);
+			,Waveform& storage);
 
-		void waveformRangeUpdate()
-			{
-			r_waveform->offsetBeginSet(m_waveform_range.offsetBeginGet());
-			r_waveform->offsetEndSet(m_waveform_range.offsetEndGet());
-			}
-
-		WaveformRange& waveformRangeGet()
-			{return m_waveform_range;}
-
-		void waveformSet(WaveformStorage& waveform_new)
+		void waveformSet(Waveform& waveform_new)
 			{
 			r_waveform=&waveform_new;
-			m_waveform_range=*r_waveform;
+			}
+
+		Waveform& waveformGet()
+			{
+			return *r_waveform;
 			}
 
 		const ArrayDynamicShort<char>& filenameGet() const
@@ -78,8 +72,7 @@ class WaveformData
 		ArrayDynamicShort<char> m_description;
 		ArrayDynamicShort<char> m_key_label;
 		ColorRGBA m_color;
-		WaveformRange m_waveform_range;
-		WaveformStorage* r_waveform;
+		Waveform* r_waveform;
 		uint8_t m_midi_note;
 	};
 

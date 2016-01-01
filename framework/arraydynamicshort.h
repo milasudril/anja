@@ -158,7 +158,7 @@ class alignas(16) ArrayDynamicShort
 
 		void capacityIncrease()
 			{
-			capacitySet(m_capacity);
+			capacitySet(1+m_capacity);
 			}
 
 
@@ -194,15 +194,19 @@ ArrayDynamicShort<T>& ArrayDynamicShort<T>::erase(T* location)
 template<class T>
 void ArrayDynamicShort<T>::capacitySet(uint32_t capacity)
 	{
-	uint64_t capacity_new=std::max(uint64_t(capacity),uint64_t(m_capacity) << 1);
-	if(capacity_new>0xffffffffllu)
-		{throw "Internal array capacity exceeded";}
+	if(capacity>m_capacity) // Do not reallocate buffer if it already is large enougth
+		{
+		uint64_t capacity_new=std::max(uint64_t(capacity),uint64_t(m_capacity) << 1);
 
-	m_capacity=capacity_new;
-	auto data_new=new T[capacity_new];
-	std::move(begin(),end(),data_new);
-	delete[] m_data;
-	m_data=data_new;
+		if(capacity_new>0xffffffffllu)
+			{throw "Internal array capacity exceeded";}
+
+		m_capacity=capacity_new;
+		auto data_new=new T[capacity_new];
+		std::move(begin(),end(),data_new);
+		delete[] m_data;
+		m_data=data_new;
+		}
 	}
 
 template<class T>

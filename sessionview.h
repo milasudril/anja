@@ -9,12 +9,12 @@ dependency[sessionview.o]
 #include "framework/widget.h"
 #include "waveformrangetrimmer.h"
 #include "waveformdataview.h"
-#include "framework/keyboardview.h"
 #include "framework/keyboardlayout.h"
 
 class GuiContainer;
 class Session;
 class KeyboardView;
+class KeyboardController;
 class WaveformDataView;
 class BoxVertical;
 class AudioConnection;
@@ -22,7 +22,9 @@ class AudioConnection;
 class SessionView:public Widget
 	{
 	public:
-		static SessionView* create(GuiContainer& parent,Session& session);
+		static SessionView* create(GuiContainer& parent,Session& session
+			,KeyboardController& keyboard_input
+			,WaveformRangeView::EventHandler& rangeview_handler);
 
 		void destroy();
 
@@ -41,29 +43,6 @@ class SessionView:public Widget
 		void keyCurrentColorSet(const char* colorstr);
 
 	private:
-		class KeyboardEventHandler:public KeyboardView::EventHandler
-			{
-			public:
-				KeyboardEventHandler(SessionView& view):r_view(&view)
-					,r_connection(nullptr){}
-
-				void onMouseUp(KeyboardView& source,uint8_t scancode
-					,keymask_t key_mask)
-					{
-					r_view->slotDisplayFromScancode(scancode);
-					source.update();
-					}
-
-				void onKeyDown(KeyboardView& source,uint8_t scancode);
-
-				void audioConnectionSet(AudioConnection* connection)
-					{r_connection=connection;}
-
-			private:
-				SessionView* r_view;
-				AudioConnection* r_connection;
-			};
-
 		class WaveformDataEventHandler:public WaveformDataView::EventHandler
 			{
 			public:
@@ -80,7 +59,9 @@ class SessionView:public Widget
 				SessionView* r_view;
 			};
 
-		SessionView(GuiContainer& parent,Session& session);
+		SessionView(GuiContainer& parent,Session& session
+			,KeyboardController& keyboard_input
+			,WaveformRangeView::EventHandler& rangeview_handler);
 		~SessionView();
 
 		Session* r_session;
@@ -88,8 +69,6 @@ class SessionView:public Widget
 			KeyboardView* m_keyboard;
 			WaveformDataView* m_dataview;
 
-		WaveformRangeTrimmer m_trimmer;
-		KeyboardEventHandler m_keyboardevents;
 		WaveformDataEventHandler m_waveformevents;
 		KeyboardLayout::KeyDescriptor* r_key_current;
 	};

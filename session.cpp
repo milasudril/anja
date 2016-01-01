@@ -3,7 +3,6 @@ target[name[session.o] type[object]]
 #endif
 
 #include "session.h"
-#include "waveformrange.h"
 #include "sessionfilereader.h"
 #include "sessionfilerecordimpl.h"
 #include "audioconnection.h"
@@ -21,7 +20,8 @@ void Session::waveformsClear()
 		while(ptr!=ptr_end)
 			{
 			ptr->clear();
-			ptr->append(WaveformRange::s_null.beginFull(),WaveformRange::s_null.lengthFull());
+			float vals[2]={1e-7f,1e-7f};
+			ptr->append(vals,2);
 			ptr->sampleRateSet(1000.0);
 			++ptr;
 			}

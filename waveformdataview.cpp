@@ -191,7 +191,8 @@ void WaveformDataView::waveformDataSet(WaveformData& wd)
 
 void WaveformDataView::update()
 	{
-	m_trim_input->waveformRangeSet(r_data->waveformRangeGet());
+	m_trim_input->waveformSet(r_data->waveformGet());
+
 	m_description_textbox->textSet(r_data->descriptionGet().begin());
 	m_source->textSet(r_data->filenameGet().begin());
 

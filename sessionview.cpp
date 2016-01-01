@@ -6,11 +6,14 @@ target[name[sessionview.o] type[object]]
 #include "session.h"
 #include "waveformdataview.h"
 #include "audioconnection.h"
+#include "keyboardcontroller.h"
 #include "framework/boxvertical.h"
 #include "framework/keyboardview.h"
 
-SessionView* SessionView::create(GuiContainer& parent,Session& session)
-	{return new SessionView(parent,session);}
+SessionView* SessionView::create(GuiContainer& parent,Session& session
+	,KeyboardController& keyboard_input
+	,WaveformRangeView::EventHandler& rangeview_handler)
+	{return new SessionView(parent,session,keyboard_input,rangeview_handler);}
 
 void SessionView::destroy()
 	{delete this;}
@@ -20,15 +23,22 @@ const GuiHandle& SessionView::handleNativeGet() const
 	return m_box->handleNativeGet();
 	}
 
-SessionView::SessionView(GuiContainer& parent,Session& session):
-	m_keyboardevents(*this),m_waveformevents(*this),r_key_current(nullptr)
+SessionView::SessionView(GuiContainer& parent,Session& session
+	,KeyboardController& keyboard_input
+	,WaveformRangeView::EventHandler& rangeview_handler):
+	m_waveformevents(*this),r_key_current(nullptr)
 	{
+	keyboard_input.sessionViewSet(this);
+
 	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
-	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),m_keyboardevents);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_END|BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
-	m_dataview=WaveformDataView::create(*m_box,m_waveformevents,m_trimmer);
+	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+		|BoxVertical::INSERTMODE_FILL);
+	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
+
+	m_box->insertModeSet(BoxVertical::INSERTMODE_END
+		|BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
+	m_dataview=WaveformDataView::create(*m_box,m_waveformevents,rangeview_handler);
 
 	sessionSet(session);
 	}
@@ -64,7 +74,6 @@ void SessionView::sessionSet(Session& session)
 		++scancode_ptr;
 		}
 	slotDisplayFromScancode(41);
-	m_keyboardevents.audioConnectionSet(session.audioConnectionGet());
 	}
 
 void SessionView::slotDisplayFromScancode(uint8_t scancode)
@@ -96,15 +105,6 @@ void SessionView::keyCurrentColorSet(const ColorRGBA& color_new)
 	r_key_current->colorSet(color_new);
 	m_keyboard->update();
 	}
-
-
-
-void SessionView::KeyboardEventHandler::onKeyDown(KeyboardView& source,uint8_t scancode)
-	{
-	if(r_connection!=nullptr)
-		{r_connection->eventPost(scancode,0);}
-	}
-
 
 void SessionView::WaveformDataEventHandler::onSourceChange(WaveformDataView& source
 	,const char* filename_new)

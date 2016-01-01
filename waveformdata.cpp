@@ -11,9 +11,9 @@ target[name[waveformdata.o] type[object]]
 
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path
-	,WaveformStorage& storage):
+	,Waveform& waveform):
 	m_description(""),m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
-	,m_waveform_range(nullptr,0,0),r_waveform(&storage)
+	,r_waveform(&waveform)
 	{
 	auto value=record.propertyGet("Filename");
 	if(value==nullptr)
@@ -35,7 +35,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
-	,m_color{0.0f,0.0f,0.0f,1},m_waveform_range(nullptr,0,0)
+	,m_color{0.0f,0.0f,0.0f,1},r_waveform(nullptr)
 	{}
 
 void WaveformData::fileLoad(const char* filename)
@@ -56,7 +56,6 @@ void WaveformData::fileLoad(const char* filename)
 		}
 	while(n_read==buffer_size);
 	r_waveform->offsetsReset();
-	m_waveform_range=*r_waveform;
 	m_filename=filename;
 	}
 

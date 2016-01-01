@@ -81,6 +81,8 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 
 TextboxGtk::~TextboxGtk()
 	{
+	GtkWidget* w=m_textbox;
+	g_signal_handlers_disconnect_by_func(w, (void*)onBlur, this);
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_textbox);
 	}

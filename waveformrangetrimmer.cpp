@@ -3,25 +3,25 @@ target[name[waveformrangetrimmer.o] type[object]]
 #endif
 
 #include "waveformrangetrimmer.h"
-#include "waveformrange.h"
+#include "waveform.h"
 #include "meansquare.h"
 #include "units.h"
 
 void WaveformRangeTrimmer::beginUpdate(WaveformRangeView& view,uint32_t position)
 	{
-	view.waveformRangeGet().offsetBeginSet(position);
+	view.waveformGet().offsetBeginSet(position);
 	view.cursorsUpdate();
 	}
 
 void WaveformRangeTrimmer::endUpdate(WaveformRangeView& view,uint32_t position)
 	{
-	view.waveformRangeGet().offsetEndSet(position);
+	view.waveformGet().offsetEndSet(position);
 	view.cursorsUpdate();
 	}
 
 void WaveformRangeTrimmer::beginAutotrim(WaveformRangeView& view,float threshold)
 	{
-	auto& range=view.waveformRangeGet();
+	auto& range=view.waveformGet();
 	auto length=range.lengthFull();
 	ArraySimple<float> meansquare(length);
 	waveformRenderPrepare(view,meansquare.begin(),length);
@@ -41,7 +41,7 @@ void WaveformRangeTrimmer::beginAutotrim(WaveformRangeView& view,float threshold
 
 void WaveformRangeTrimmer::endAutotrim(WaveformRangeView& view,float threshold)
 	{
-	auto& range=view.waveformRangeGet();
+	auto& range=view.waveformGet();
 	auto length=range.lengthFull();
 	ArraySimple<float> meansquare(length);
 	waveformRenderPrepare(view,meansquare.begin(),length);
@@ -62,7 +62,7 @@ void WaveformRangeTrimmer::endAutotrim(WaveformRangeView& view,float threshold)
 void WaveformRangeTrimmer::waveformRenderPrepare(WaveformRangeView& view
 	,float* buffer_out,size_t length)
 	{
-	auto& range=view.waveformRangeGet();
+	auto& range=view.waveformGet();
 	MeanSquare(secondsToFrames(1e-3,range.sampleRateGet()))
 		.compute(range.beginFull(),buffer_out,length);
 	}

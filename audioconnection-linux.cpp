@@ -5,10 +5,12 @@ target[name[audioconnection.o] type[object] platform[;GNU/Linux] dependency[jack
 #include "audioconnection.h"
 #include "units.h"
 #include "ringbuffer.h"
+#include "framework/array_fixed.h"
 #include <jack/jack.h>
 #include <time.h>
 #include <memory>
 #include <cassert>
+#include <cstring>
 
 typedef std::unique_ptr<jack_client_t,decltype(&jack_client_close)>
 	ConnectionHandle;
@@ -18,6 +20,7 @@ static ConnectionHandle connectionCreate(const char* name)
 	auto N_max=jack_client_name_size();
 	ArraySimple<char> client_name(N_max);
 	auto ptr_name=client_name.begin();
+	memset(ptr_name,0,N_max*sizeof(char));
 	while(N_max!=0 && *name!='\0')
 		{
 		auto ch_in=*name;
@@ -27,7 +30,9 @@ static ConnectionHandle connectionCreate(const char* name)
 		--N_max;
 		}
 	*ptr_name='\0';
-	auto connection=jack_client_open(client_name.begin(),JackNoStartServer,NULL);
+	jack_status_t status;
+	auto connection=jack_client_open(client_name.begin(),JackNoStartServer
+		,&status,"default");
 	if(connection==NULL)
 		{throw "Could not connect to JACK";}
 	return {connection,jack_client_close};
@@ -71,6 +76,7 @@ class AudioConnectionJack:public AudioConnection
 	public:
 		struct alignas(4) SlotEvent
 			{
+			SlotEvent():frames_delay(0),slot(0),flags(0){}
 			uint16_t frames_delay;
 			uint8_t slot;
 			uint8_t flags;
@@ -91,11 +97,10 @@ class AudioConnectionJack:public AudioConnection
 		uint64_t m_frames_processed;
 		RingBuffer<SlotEvent> m_event_queue;
 		SlotEvent m_event_next;
+	//	ArraySimple<WaveformRange> m_buffers;
 
 		jack_nframes_t m_fs;
 
-		SlotEvent* r_event_read;
-		size_t offset_read;
 		static int dataProcess(jack_nframes_t n_frames,void* audioconnectionjack);
 	};
 
@@ -108,6 +113,7 @@ AudioConnectionJack::AudioConnectionJack(const char* name):
 	m_connection{connectionCreate(name)}
 	,m_output(m_connection.get(),"Audio output",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput)
 	,m_event_queue(64)
+//	,m_buffers(32)
 	{
 	m_fs=jack_get_sample_rate(m_connection.get());
 	m_frames_processed=clockGet(m_fs);
@@ -123,7 +129,7 @@ void AudioConnectionJack::eventPost(uint8_t slot,uint8_t flags)
 	{
 	if(!m_event_queue.full())
 		{
-		m_event_queue.push_back({timeOffsetGet(),slot,uint8_t(flags|0x80)});
+	//	m_event_queue.push_back({timeOffsetGet(),slot,uint8_t(flags|0x80)});
 		}
 	}
 

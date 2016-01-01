@@ -11,7 +11,6 @@ dependency[session.o]
 #include "framework/keyboardlayout.h"
 #include "framework/range.h"
 #include "waveformdata.h"
-#include "waveformstorage.h"
 
 class AudioConnection;
 
@@ -29,7 +28,7 @@ class Session
 		Session(const char* filename):m_connection(nullptr)
 			{
 			load(filename);
-			audioServerConnect();
+		//	audioServerConnect();
 			}
 
 		~Session()
@@ -103,7 +102,7 @@ class Session
 		AudioConnection* m_connection;
 		ArrayFixed<uint8_t,128> m_scancode_to_slot;
 		ArrayFixed<uint8_t,128> m_midikey_to_slot;
-		ArrayFixed<WaveformStorage,128> m_waveforms;
+		ArrayFixed<Waveform,128> m_waveforms;
 		ArrayFixed<WaveformData,128> m_waveform_data;
 		KeyboardLayout m_keyboard;
 

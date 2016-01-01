@@ -5,34 +5,39 @@ target[name[waveform.h] type[include]]
 #ifndef WAVEFORM_H
 #define WAVEFORM_H
 
+#include "framework/arraydynamicshort.h"
+
 #include <algorithm>
 #include <cstdint>
 
-template< class ArrayDescriptor >
 class Waveform
 	{
 	public:
-		constexpr Waveform(const float* buffer,uint32_t buffer_size,float fs):
+		Waveform():m_offset_begin(0),m_offset_end(0)
+			,m_gain(1.0f),m_fs(0),m_flags(0)
+			{}
+
+		Waveform(const float* buffer,uint32_t buffer_size,float fs):
 			m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
 			,m_gain(1.0f),m_fs(fs),m_flags(0)
 			{}
 
-		constexpr const float* begin() const
+		const float* begin() const
 			{return m_data.begin() + m_offset_begin;}
 
-		constexpr const float* beginFull() const
+		const float* beginFull() const
 			{return m_data.begin();}
 
-		constexpr const float* end() const
+		const float* end() const
 			{return m_data.begin() + m_offset_end;}
 
-		constexpr const float* endFull() const
+		const float* endFull() const
 			{return m_data.end();}
 
-		constexpr uint32_t offsetBeginGet() const
+		uint32_t offsetBeginGet() const
 			{return m_offset_begin;}
 
-		constexpr float sampleRateGet() const
+		float sampleRateGet() const
 			{return m_fs;}
 
 		void sampleRateSet(float fs)
@@ -44,7 +49,7 @@ class Waveform
 			return *this;
 			}
 
-		constexpr uint32_t offsetEndGet() const
+		uint32_t offsetEndGet() const
 			{return m_offset_end;}
 
 		Waveform& offsetEndSet(uint32_t value_new)
@@ -61,16 +66,16 @@ class Waveform
 			}
 
 
-		constexpr uint32_t length() const
+		uint32_t length() const
 			{return m_offset_end-m_offset_begin;}
 
-		constexpr uint32_t lengthFull() const
+		uint32_t lengthFull() const
 			{return m_data.length();}
 
-		constexpr bool reversedIs() const
+		bool reversedIs() const
 			{return m_offset_begin > m_offset_end;}
 
-		constexpr float gainGet() const
+		float gainGet() const
 			{return m_gain;}
 
 		Waveform& gainSet(float gain)
@@ -85,7 +90,7 @@ class Waveform
 		static constexpr uint32_t LOOP=8;
 		static constexpr uint32_t SUSTAIN=16;
 
-		constexpr uint32_t flagsGet() const
+		uint32_t flagsGet() const
 			{return m_flags;}
 
 		Waveform& flagsSet(uint32_t flags)
@@ -94,10 +99,36 @@ class Waveform
 			return *this;
 			}
 
-	protected:
-		ArrayDescriptor m_data;
+
+		Waveform& append(float x)
+			{
+			m_data.append(x);
+			return *this;
+			}
+
+		Waveform& append(const float* x,uint32_t n)
+			{
+			m_data.append(x,n);
+			return *this;
+			}
+
+		Waveform& capacitySet(uint32_t capacity_new)
+			{
+			m_data.capacitySet(capacity_new);
+			return *this;
+			}
+
+		void clear()
+			{m_data.clear();}
+
+		static Waveform nullGet()
+			{
+			float vals[2]={1.0e-7f,1.0e-7f};
+			return Waveform(vals,2,1000.0f);
+			}
 
 	private:
+		ArrayDynamicShort<float> m_data;
 		uint32_t m_offset_begin;
 		uint32_t m_offset_end;
 		float m_gain;
