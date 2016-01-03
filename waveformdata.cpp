@@ -11,9 +11,10 @@ target[name[waveformdata.o] type[object]]
 
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path
-	,Waveform& waveform):
+	,Waveform& waveform
+	,KeyboardLayout::KeyDescriptor& key):
 	m_description(""),m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
-	,r_waveform(&waveform)
+	,r_key(&key),r_waveform(&waveform)
 	{
 	auto value=record.propertyGet("Filename");
 	if(value==nullptr)
@@ -35,7 +36,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
-	,m_color{0.0f,0.0f,0.0f,1},r_waveform(nullptr)
+	,m_color{0.0f,0.0f,0.0f,1},r_key(nullptr),r_waveform(nullptr)
 	{}
 
 void WaveformData::fileLoad(const char* filename)
@@ -103,6 +104,9 @@ void WaveformData::descriptionSet(const char* description)
 			}
 		}
 	m_key_label.append('\0');
+
+	if(r_key!=nullptr)
+		{r_key->labelSet(m_key_label.begin());}
 	}
 
 void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
@@ -137,6 +141,13 @@ void WaveformData::keyColorSet(const char* colorstring)
 		values[count]=convert(buffer.begin());
 		}
 	keyColorSet({values[0],values[1],values[2],values[3]});
+	}
+
+void WaveformData::keyColorSet(const ColorRGBA& color)
+	{
+	if(r_key!=nullptr)
+		{r_key->colorBackgroundSet(color);}
+	m_color=color;
 	}
 
 void WaveformData::keyColorGet(ColorString& buffer)

@@ -10,6 +10,7 @@ dependency[waveformdata.o]
 
 #include "framework/color.h"
 #include "framework/array_fixed.h"
+#include "framework/keyboardlayout.h"
 #include <string>
 
 class SessionFileRecord;
@@ -21,7 +22,8 @@ class WaveformData
 
 		WaveformData(const SessionFileRecord& record
 			,const ArrayDynamicShort<char>& load_path
-			,Waveform& storage);
+			,Waveform& storage
+			,KeyboardLayout::KeyDescriptor& key);
 
 		void waveformSet(Waveform& waveform_new)
 			{
@@ -40,6 +42,9 @@ class WaveformData
 			,const ArrayDynamicShort<char>& load_path);
 
 		void fileLoad(const char* filename);
+
+		void keySet(KeyboardLayout::KeyDescriptor* key)
+			{r_key=key;}
 
 
 
@@ -61,10 +66,10 @@ class WaveformData
 		typedef ArrayFixed<char,64> ColorString;
 		void keyColorGet(ColorString& buffer);
 
-		void keyColorSet(const ColorRGBA& color_new)
-			{m_color=color_new;}
+		void keyColorSet(const ColorRGBA& color_new);
 
 		void keyColorSet(const char* colorstring);
+
 
 
 	private:
@@ -72,6 +77,7 @@ class WaveformData
 		ArrayDynamicShort<char> m_description;
 		ArrayDynamicShort<char> m_key_label;
 		ColorRGBA m_color;
+		KeyboardLayout::KeyDescriptor* r_key;
 		Waveform* r_waveform;
 		uint8_t m_midi_note;
 	};

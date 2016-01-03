@@ -38,25 +38,21 @@ class KeyboardView:public Widget
 					{}
 			};
 
-		static KeyboardView* create(GuiContainer& parent
-			,const KeyboardLayout& keyboard,EventHandler& handler)
-			{return instanceCreate(parent,keyboard,handler);}
+		static KeyboardView* create(GuiContainer& parent,KeyboardLayout& keyboard)
+			{return create(parent,keyboard,s_default_handler);}
 
-		static KeyboardView* create(GuiContainer& parent,const KeyboardLayout& keyboard)
-			{return instanceCreate(parent,keyboard,s_default_handler);}
+		static KeyboardView* create(GuiContainer& parent
+			,KeyboardLayout& keyboard,EventHandler& handler);
 
 		virtual void destroy()=0;
 		virtual void update()=0;
 		virtual void eventHandlerSet(EventHandler& eh)=0;
-		virtual void keyboardLayoutSet(const KeyboardLayout& layout)=0;
-		void keyboardLayoutSet(KeyboardLayout&& layout)=delete;
+		virtual void keyboardLayoutSet(KeyboardLayout& layout)=0;
+		virtual const KeyboardLayout& keyboardLayoutGet() const=0;
+		virtual KeyboardLayout& keyboardLayoutGet()=0;
 
 	protected:
 		virtual ~KeyboardView()=default;
-
-	private:
-		static KeyboardView* instanceCreate(GuiContainer& parent,const KeyboardLayout& keyboard
-			,EventHandler& handler);
 
 		static EventHandler s_default_handler;
 	};

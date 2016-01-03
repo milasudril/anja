@@ -32,7 +32,7 @@ target
 class KeyboardViewGtk:public KeyboardView
 	{
 	public:
-		KeyboardViewGtk(GuiContainer& parent,const KeyboardLayout& keyboard
+		KeyboardViewGtk(GuiContainer& parent,KeyboardLayout& keyboard
 			,EventHandler& handler);
 
 		~KeyboardViewGtk();
@@ -43,8 +43,17 @@ class KeyboardViewGtk:public KeyboardView
 		void eventHandlerSet(EventHandler& handler)
 			{r_handler=&handler;}
 
-		void keyboardLayoutSet(const KeyboardLayout& keyboard)
-			{r_keyboard=&keyboard;}
+		void keyboardLayoutSet(KeyboardLayout& keyboard)
+			{
+			r_keyboard=&keyboard;
+			update();
+			}
+
+		const KeyboardLayout& keyboardLayoutGet() const
+			{return *r_keyboard;}
+
+		KeyboardLayout& keyboardLayoutGet()
+			{return *r_keyboard;}
 
 		void destroy();
 
@@ -52,7 +61,7 @@ class KeyboardViewGtk:public KeyboardView
 			{return m_frame;}
 
 	private:
-		const KeyboardLayout* r_keyboard;
+		KeyboardLayout* r_keyboard;
 		GuiContainer& r_parent;
 		EventHandler* r_handler;
 		GuiHandle m_frame;
@@ -79,12 +88,12 @@ class KeyboardViewGtk:public KeyboardView
 
 KeyboardView::EventHandler KeyboardView::s_default_handler;
 
-KeyboardView* KeyboardView::instanceCreate
-	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler)
+KeyboardView* KeyboardView::create
+	(GuiContainer& parent,KeyboardLayout& keyboard,EventHandler& handler)
 	{return new KeyboardViewGtk(parent,keyboard,handler);}
 
 KeyboardViewGtk::KeyboardViewGtk
-	(GuiContainer& parent,const KeyboardLayout& keyboard,EventHandler& handler):
+	(GuiContainer& parent,KeyboardLayout& keyboard,EventHandler& handler):
 	r_keyboard(&keyboard),r_parent(parent),r_handler(&handler)
 	{
 	GtkWidget* frame=gtk_aspect_frame_new(NULL,0.5f,0.5f,16.0f/4.0f,TRUE);

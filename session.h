@@ -44,17 +44,12 @@ class Session
 		const ArrayDynamicShort<char>& directoryGet() const
 			{return m_directory;}
 
-
-
 		void waveformsClear();
 
-		void waveformDataSet(const WaveformData& data,uint8_t slot)
-			{
-			m_waveform_data[slot]=data;
-			m_waveform_data[slot].waveformSet(m_waveforms[slot]);
-			}
-
 		const WaveformData& waveformDataGet(uint8_t slot) const
+			{return m_waveform_data[slot];}
+
+		WaveformData& waveformDataGet(uint8_t slot)
 			{return m_waveform_data[slot];}
 
 
@@ -73,13 +68,22 @@ class Session
 		const KeyboardLayout& keyboardLayoutGet() const
 			{return m_keyboard;}
 
-
-
 		WaveformData& waveformDataFromScancode(uint8_t scancode)
 			{return m_waveform_data[m_scancode_to_slot[scancode]];}
 
 		const WaveformData& waveformDataFromScancode(uint8_t scancode) const
 			{return m_waveform_data[m_scancode_to_slot[scancode]];}
+
+		uint8_t scancodeToSlot(uint8_t scancode) const
+			{return m_scancode_to_slot[scancode];}
+
+		uint8_t slotActiveGet() const
+			{return m_slot_active;}
+
+		void slotActiveSet(uint8_t slot);
+
+
+
 
 		WaveformData& waveformDataFromMIDI(uint8_t midikey)
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
@@ -96,12 +100,12 @@ class Session
 		AudioConnection* audioConnectionGet()
 			{return m_connection;}
 
-
-
 	private:
 		AudioConnection* m_connection;
-		ArrayFixed<uint8_t,128> m_scancode_to_slot;
+
+		ArrayFixed<uint8_t,128> m_slot_to_scancode;
 		ArrayFixed<uint8_t,128> m_midikey_to_slot;
+		ArrayFixed<uint8_t,128> m_scancode_to_slot;
 		ArrayFixed<Waveform,128> m_waveforms;
 		ArrayFixed<WaveformData,128> m_waveform_data;
 		KeyboardLayout m_keyboard;
@@ -109,6 +113,7 @@ class Session
 		ArrayDynamicShort<char> m_filename;
 		ArrayDynamicShort<char> m_directory;
 		ArrayDynamicShort<char> m_title;
+		uint8_t m_slot_active;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;
 		static constexpr uint32_t MODE_RECORD=2;

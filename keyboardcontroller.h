@@ -7,15 +7,18 @@ dependency[keyboardcontroller.o]
 #define KEYBOARDCONTROLLER_H
 
 #include "framework/keyboardview.h"
+#include "framework/keyboardlayout.h"
 #include "framework/array_fixed.h"
 
-class AudioConnection;
 class SessionView;
+class Session;
 
 class KeyboardController:public KeyboardView::EventHandler
 	{
 	public:
-		KeyboardController():r_view(nullptr),r_connection(nullptr){}
+		KeyboardController(Session& session):
+			 r_session(&session),r_view(nullptr)
+			{}
 
 		void onMouseUp(KeyboardView& source,uint8_t scancode,keymask_t key_mask);
 
@@ -23,15 +26,15 @@ class KeyboardController:public KeyboardView::EventHandler
 
 		void onKeyUp(KeyboardView& source,uint8_t scancode);
 
-		void audioConnectionSet(AudioConnection* connection)
-			{r_connection=connection;}
+		void sessionSet(Session& session)
+			{r_session=&session;}
 
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}
 
 	private:
+		Session* r_session;
 		SessionView* r_view;
-		AudioConnection* r_connection;
 		ArrayFixed<bool,256> m_keystates;
 	};
 

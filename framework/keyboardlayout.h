@@ -55,7 +55,7 @@ class KeyboardLayout
 					}
 
 
-				void colorSet(const ColorRGBA& color)
+				void colorBackgroundSet(const ColorRGBA& color)
 					{
 					m_color.r=color.red*255;
 					m_color.g=color.green*255;
