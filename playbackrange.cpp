@@ -4,15 +4,24 @@ target[name[playbackrange.o] type[object]]
 
 #include "playbackrange.h"
 #include "waveform.h"
+#include <cstring>
+
+#include <cstdio>
+
+PlaybackRange::PlaybackRange()
+	{memset(this,0,sizeof(*this));}
 
 PlaybackRange::PlaybackRange(const Waveform& waveform):
-	 r_begin(waveform.begin()),r_current(nullptr),r_end(waveform.end())
+	 r_begin(waveform.begin()),r_current(waveform.begin()),r_end(waveform.end())
 	,m_fs(waveform.sampleRateGet()),m_gain(waveform.gainGet())
-	{}
+	{
+	printf("In CTOR: %p %p %.7f\n",r_begin,r_end,m_gain);
+	}
 
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	,unsigned int n_frames_out,double fs_out)
 	{
+//	printf("In outputBufferGenerate: %p %p\n",r_begin,r_end);
 	auto gain=m_gain;
 	auto ptr_current=r_current;
 	auto ptr_end=r_end;

@@ -9,7 +9,6 @@ dependency[sessionview.o]
 #include "framework/widget.h"
 #include "waveformrangeview.h"
 #include "waveformdataview.h"
-#include "framework/keyboardlayout.h"
 #include "framework/keyboardview.h"
 
 class GuiContainer;
@@ -42,7 +41,6 @@ class SessionView:public Widget
 		~SessionView();
 
 		Session* r_session;
-		KeyboardLayout::KeyDescriptor* r_key_current;
 		BoxVertical* m_box;
 			KeyboardView* m_keyboard;
 			WaveformDataView* m_dataview;

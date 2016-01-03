@@ -42,12 +42,13 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 void WaveformData::fileLoad(const char* filename)
 	{
 	WavefileInfo info;
+	printf("%s\n",filename);
 	auto reader=WavefileReader::create(filename,info);
 
 	r_waveform->clear();
 	r_waveform->sampleRateSet(info.fs);
 	r_waveform->capacitySet(info.n_frames);
-	const uint32_t buffer_size=480/3;
+	const uint32_t buffer_size=1024;
 	ArraySimple<float> buffer_tmp(buffer_size);
 	uint32_t n_read=0;
 	do

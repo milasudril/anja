@@ -19,7 +19,7 @@ class RingBuffer:private ArraySimple<T>
 			,m_offset_read(0),m_offset_write(0)
 			{}
 
-		void push_back(T x)
+		void push_back(const T& x)
 			{
 			auto owr=m_offset_write;
 			uint32_t N=ArraySimple<T>::m_N;
@@ -48,8 +48,8 @@ class RingBuffer:private ArraySimple<T>
 			}
 
 	private:
-		uint32_t m_offset_read;
-		uint32_t m_offset_write;
+		volatile uint32_t m_offset_read;
+		volatile uint32_t m_offset_write;
 	};
 
 #endif

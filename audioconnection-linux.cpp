@@ -5,12 +5,16 @@ target[name[audioconnection.o] type[object] platform[;GNU/Linux] dependency[jack
 #include "audioconnection.h"
 #include "units.h"
 #include "ringbuffer.h"
+#include "playbackrange.h"
+#include "session.h"
 #include "framework/array_fixed.h"
 #include <jack/jack.h>
 #include <time.h>
 #include <memory>
 #include <cassert>
 #include <cstring>
+
+#include <random>
 
 typedef std::unique_ptr<jack_client_t,decltype(&jack_client_close)>
 	ConnectionHandle;
@@ -55,6 +59,9 @@ class Port
 
 		~Port();
 
+		void* bufferGet(jack_nframes_t n_frames) const
+			{return jack_port_get_buffer(m_port,n_frames);}
+
 	private:
 		jack_client_t* r_client;
 		jack_port_t* m_port;
@@ -74,32 +81,38 @@ Port::~Port()
 class AudioConnectionJack:public AudioConnection
 	{
 	public:
-		struct alignas(4) SlotEvent
+		struct SlotEvent
 			{
-			SlotEvent():frames_delay(0),slot(0),flags(0){}
-			uint16_t frames_delay;
-			uint8_t slot;
-			uint8_t flags;
+			SlotEvent(const SlotEvent&)=default;
+			SlotEvent& operator=(const SlotEvent&)=default;
+			SlotEvent():delay(0){}
+			SlotEvent(const Waveform& waveform,uint64_t d):
+				data(waveform),delay(d){}
+			PlaybackRange data;
+			uint64_t delay;
 			};
 
 		AudioConnectionJack(const char* name);
 		~AudioConnectionJack();
 		void destroy()
 			{delete this;}
-		uint16_t timeOffsetGet() const
-			{return clockGet(m_fs) - m_frames_processed;}
+		uint64_t timeOffsetGet() const
+			{return clockGet(m_fs) - m_time_start;}
 
-		void eventPost(uint8_t slot,uint8_t flags);
+		void eventPost(Session& session,uint8_t slot,uint8_t flags);
 
 	private:
 		ConnectionHandle m_connection;
 		Port m_output;
-		uint64_t m_frames_processed;
+		uint64_t m_time_start;
+		uint64_t m_now;
 		RingBuffer<SlotEvent> m_event_queue;
 		SlotEvent m_event_next;
-	//	ArraySimple<WaveformRange> m_buffers;
+		ArraySimple<SlotEvent> m_buffers;
 
 		jack_nframes_t m_fs;
+
+		std::mt19937 m_randgen;
 
 		static int dataProcess(jack_nframes_t n_frames,void* audioconnectionjack);
 	};
@@ -113,10 +126,11 @@ AudioConnectionJack::AudioConnectionJack(const char* name):
 	m_connection{connectionCreate(name)}
 	,m_output(m_connection.get(),"Audio output",JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput)
 	,m_event_queue(64)
-//	,m_buffers(32)
+	,m_buffers(32)
 	{
 	m_fs=jack_get_sample_rate(m_connection.get());
-	m_frames_processed=clockGet(m_fs);
+	m_time_start=clockGet(m_fs);
+	m_now=m_time_start;
 	jack_set_process_callback(m_connection.get(),dataProcess,this);
 	jack_activate(m_connection.get());
 	}
@@ -125,40 +139,64 @@ AudioConnectionJack::~AudioConnectionJack()
 	{
 	}
 
-void AudioConnectionJack::eventPost(uint8_t slot,uint8_t flags)
+void AudioConnectionJack::eventPost(Session& session,uint8_t slot,uint8_t flags)
 	{
-	if(!m_event_queue.full())
+	if(!m_event_queue.full() && flags==0x90)
 		{
-	//	m_event_queue.push_back({timeOffsetGet(),slot,uint8_t(flags|0x80)});
+		m_event_queue.push_back(
+			{session.waveformGet(slot),timeOffsetGet()});
 		}
 	}
 
 int AudioConnectionJack::dataProcess(jack_nframes_t n_frames,void* audioconnectionjack)
 	{
 	auto _this=reinterpret_cast<AudioConnectionJack*>(audioconnectionjack);
-	jack_nframes_t n=0;
 	auto& queue=_this->m_event_queue;
 	SlotEvent event_next=_this->m_event_next;
-	while(n!=n_frames)
+	auto now=_this->m_now;
+	auto buffer=reinterpret_cast<float*>(_this->m_output.bufferGet(n_frames));
+	auto buffer_0=buffer;
+	auto n_frames_in=n_frames;
+	std::uniform_real_distribution<float> U(-1,1);
+	while(n_frames!=0)
 		{
-		if(event_next.flags&0x80 && n>=event_next.frames_delay)
+		if(event_next.data.valid() && now>=event_next.delay)
 			{
 		//	Trigg event
-			while(!queue.empty())
-				{
-				event_next=queue.pop_front();
-				if(n>=event_next.frames_delay)
-					{
-				//Trigg event
-					}
-				else
-					{break;}
-				}
+		//	printf("Got event %u\n",__LINE__);
+			event_next.delay=buffer-buffer_0;
+			_this->m_buffers[0]=event_next;
+			event_next.data.reset();
 			}
-		++n;
+
+		while(!queue.empty())
+			{
+			event_next=queue.pop_front();
+			if(now>=event_next.delay && event_next.data.valid())
+				{
+			//	printf("Got event %u\n",__LINE__);
+				event_next.delay=buffer-buffer_0;
+				_this->m_buffers[0]=event_next;
+				event_next.data.reset();
+				}
+			else
+				{break;}
+			}
+		++now;
+		++buffer;
+		--n_frames;
 		}
-	__sync_add_and_fetch(&_this->m_frames_processed,n_frames);
-	event_next.frames_delay-=n_frames;
+
+	memset(buffer_0,0,n_frames_in*sizeof(float));
+	if(_this->m_buffers[0].data.valid())
+		{
+		auto delay=_this->m_buffers[0].delay;
+		_this->m_buffers[0].data.outputBufferGenerate(
+			buffer_0+delay,n_frames_in-delay,_this->m_fs);
+		_this->m_buffers[0].delay=0;
+		}
+
+	_this->m_now=now;
 	_this->m_event_next=event_next;
 	return 0;
 	};

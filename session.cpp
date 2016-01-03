@@ -80,24 +80,22 @@ void Session::waveformsClear()
 
 void Session::load(const char* filename)
 	{
-	//	Read session file
+	auto reader=SessionFileReader::create(filename);
+	SessionFileRecordImpl record;
+
+	if(!reader->recordNextGet(record))
+		{throw "Invalid session file";}
+
+	if(record.sectionLevelGet()!=0)
+		{throw "Invalid session file";}
+
+	waveformsClear();
+
+//	Get data from file header
 		{
-		auto reader=SessionFileReader::create(filename);
-		SessionFileRecordImpl record;
-
-		if(!reader->recordNextGet(record))
-			{throw "Invalid session file";}
-
-		if(record.sectionLevelGet()!=0)
-			{throw "Invalid session file";}
-
-		waveformsClear();
-
-	//	Get data from file header
 		m_filename=filename;
 		m_directory=parentDirectory(realpath(m_filename));
 		titleSet(record.titleGet());
-
 		auto slot_num_str=record.propertyGet("Active slot");
 		if(slot_num_str!=nullptr)
 			{
@@ -107,55 +105,34 @@ void Session::load(const char* filename)
 				{throw "Invalid slot number";}
 			slotActiveSet(slot_num-1);
 			}
-
-		while(reader->recordNextGet(record))
-			{
-			if(record.sectionLevelGet()==0)
-				{break;}
-
-			auto title_ptr=record.titleGet().begin();
-			if(strncmp(title_ptr,"Slot ",5)==0)
-				{
-				title_ptr+=5;
-				int slot_num;
-					{
-					LocaleGuard locale("C");
-					slot_num=atol(title_ptr);
-					}
-				if(slot_num<1 || slot_num>128)
-					{throw "Invalid slot number";}
-				slot_num-=1;
-
-				auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
-				if(key==nullptr)
-					{throw "Slot has no scancode";}
-
-				m_waveform_data[slot_num]={record,m_directory,m_waveforms[slot_num],*key};
-				}
-			}
 		}
 
-	/*	Configure keybaord
+//	Read records
+	while(reader->recordNextGet(record))
 		{
-		auto scancode_ptr=m_keyboard.typingAreaScancodesBegin();
-		auto scancode_ptr_end=m_keyboard.typingAreaScancodesEnd();
-		while(scancode_ptr!=scancode_ptr_end)
+		if(record.sectionLevelGet()==0)
+			{break;}
+
+		auto title_ptr=record.titleGet().begin();
+		if(strncmp(title_ptr,"Slot ",5)==0)
 			{
-			auto scancode=*scancode_ptr;
-			if(scancode!=0)
+			title_ptr+=5;
+			int slot_num;
 				{
-				auto key=m_keyboard.keyFromScancode(scancode);
-				auto& wd=waveformDataFromScancode(scancode);
-				auto& key_label_new=wd.keyLabelGet();
-
-				if(key_label_new.length()!=0)
-					{key->labelSet(key_label_new.begin());}
-
-				key->colorSet(wd.keyColorGet());
+				LocaleGuard locale("C");
+				slot_num=atol(title_ptr);
 				}
-			++scancode_ptr;
+			if(slot_num<1 || slot_num>128)
+				{throw "Invalid slot number";}
+			slot_num-=1;
+
+			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
+			if(key==nullptr)
+				{throw "Slot has no scancode";}
+
+			m_waveform_data[slot_num]={record,m_directory,m_waveforms[slot_num],*key};
 			}
-		}*/
+		}
 	}
 
 void Session::slotActiveSet(uint8_t slot)

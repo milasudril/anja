@@ -17,7 +17,8 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 		{
 		printf("%u\n",scancode);
 		m_keystates[scancode]=1;
-		connection->eventPost(scancode,0);
+		connection->eventPost(*r_session,r_session->scancodeToSlot(scancode)
+			,AudioConnection::ACTION_PLAY);
 		}
 	}
 
@@ -27,7 +28,8 @@ void KeyboardController::onKeyUp(KeyboardView& source,uint8_t scancode)
 	auto connection=r_session->audioConnectionGet();
 	if(connection!=nullptr)
 		{
-		connection->eventPost(scancode,1);
+		connection->eventPost(*r_session,r_session->scancodeToSlot(scancode)
+			,AudioConnection::ACTION_STOP);
 		}
 	}
 

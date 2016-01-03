@@ -11,10 +11,18 @@ class Waveform;
 class alignas(32) PlaybackRange
 	{
 	public:
+		PlaybackRange();
+
 		PlaybackRange(const Waveform& waveform);
 
 		unsigned int outputBufferGenerate(float* buffer_out
 			,unsigned int n_frames_out,double fs_out);
+
+		bool valid() const
+			{return r_begin!=r_end;}
+
+		void reset()
+			{r_end=r_begin;}
 
 	private:
 		const float* r_begin;

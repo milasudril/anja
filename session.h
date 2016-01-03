@@ -28,7 +28,7 @@ class Session
 		Session(const char* filename):m_connection(nullptr)
 			{
 			load(filename);
-		//	audioServerConnect();
+			audioServerConnect();
 			}
 
 		~Session()
@@ -52,6 +52,9 @@ class Session
 		WaveformData& waveformDataGet(uint8_t slot)
 			{return m_waveform_data[slot];}
 
+		const Waveform& waveformGet(uint8_t slot)
+			{return m_waveforms[slot];}
+
 
 
 		void titleSet(const ArrayDynamicShort<char>& title_new)
@@ -67,12 +70,6 @@ class Session
 
 		const KeyboardLayout& keyboardLayoutGet() const
 			{return m_keyboard;}
-
-		WaveformData& waveformDataFromScancode(uint8_t scancode)
-			{return m_waveform_data[m_scancode_to_slot[scancode]];}
-
-		const WaveformData& waveformDataFromScancode(uint8_t scancode) const
-			{return m_waveform_data[m_scancode_to_slot[scancode]];}
 
 		uint8_t scancodeToSlot(uint8_t scancode) const
 			{return m_scancode_to_slot[scancode];}
