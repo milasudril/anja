@@ -115,6 +115,7 @@ class AudioConnectionJack:public AudioConnection
 		std::mt19937 m_randgen;
 
 		static int dataProcess(jack_nframes_t n_frames,void* audioconnectionjack);
+		static int bufferAllocate(jack_nframes_t nframes,void* audioconnectionjack);
 	};
 
 AudioConnection* AudioConnection::create(const char* name)
@@ -132,6 +133,7 @@ AudioConnectionJack::AudioConnectionJack(const char* name):
 	m_time_start=clockGet(m_fs);
 	m_now=m_time_start;
 	jack_set_process_callback(m_connection.get(),dataProcess,this);
+	jack_set_buffer_size_callback(m_connection.get(),bufferAllocate,this);
 	jack_activate(m_connection.get());
 	}
 
@@ -146,6 +148,12 @@ void AudioConnectionJack::eventPost(Session& session,uint8_t slot,uint8_t flags)
 		m_event_queue.push_back(
 			{session.waveformGet(slot),timeOffsetGet()});
 		}
+	}
+
+int AudioConnectionJack::bufferAllocate(jack_nframes_t n_frames,void* audioconnectionjack)
+	{
+	printf("Hello\n");
+	return 0;
 	}
 
 int AudioConnectionJack::dataProcess(jack_nframes_t n_frames,void* audioconnectionjack)
