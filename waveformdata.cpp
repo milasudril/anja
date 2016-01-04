@@ -6,6 +6,7 @@ target[name[waveformdata.o] type[object]]
 #include "sessionfilerecord.h"
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
+#include "framework/pathutils.h"
 #include "framework/array_simple.h"
 #include "framework/floatconv.h"
 
@@ -64,9 +65,16 @@ void WaveformData::fileLoad(const char* filename)
 void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
 	,const ArrayDynamicShort<char>& load_path)
 	{
-	auto fullpath=load_path;
-	fullpath.truncate().append(filename).append('\0');
-	fileLoad(fullpath.begin());
+	if(absoluteIs(filename))
+		{
+		fileLoad(filename.begin());
+		}
+	else
+		{
+		auto fullpath=load_path;
+		fullpath.truncate().append(filename).append('\0');
+		fileLoad(fullpath.begin());
+		}
 	}
 
 void WaveformData::descriptionSet(const char* description)

@@ -28,3 +28,8 @@ ArrayDynamicShort<char> parentDirectory(const ArrayDynamicShort<char>& path)
 	ret.append("/");
 	return ret;
 	}
+
+bool absoluteIs(const ArrayDynamicShort<char>& path)
+	{
+	return *(path.begin())=='/';
+	}

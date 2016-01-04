@@ -43,4 +43,3 @@ Filename:    thunderstorm.flac
 
 Color:       0,25;1;1
 
-
