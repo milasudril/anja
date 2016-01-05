@@ -20,12 +20,12 @@ class Session
 		Session& operator=(const Session&)=delete;
 		Session(const Session&)=delete;
 
-		Session():m_connection(nullptr)
+		Session():m_connection(nullptr),m_slot_active(0)
 			{
 			waveformsClear();
 			}
 
-		Session(const char* filename):m_connection(nullptr)
+		Session(const char* filename):m_connection(nullptr),m_slot_active(0)
 			{
 			load(filename);
 			audioServerConnect();
