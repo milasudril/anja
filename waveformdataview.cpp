@@ -116,9 +116,9 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 				|BoxHorizontal::INSERTMODE_FILL
 				|BoxHorizontal::INSERTMODE_EXPAND);
 			m_description_textbox=Textbox::create(*m_description_box,DESCRIPTION);
-		m_box_main->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
-					|BoxHorizontal::INSERTMODE_FILL
-					|BoxHorizontal::INSERTMODE_END);
+		m_box_main->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+					|BoxVertical::INSERTMODE_FILL
+					|BoxVertical::INSERTMODE_END);
 		m_box_details=BoxHorizontal::create(*m_box_main);
 			m_box_left=BoxVertical::create(*m_box_details);
 				m_color=InputEntry::create(*m_box_left,"Color:","...",m_color_events,0);
@@ -143,10 +143,11 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 					|BoxHorizontal::INSERTMODE_END);
 
 			m_trim_box=BoxVertical::create(*m_box_details);
+				m_trim_box->insertModeSet(BoxVertical::INSERTMODE_LEFT);
 				m_trim_label=Label::create(*m_trim_box,"Trim:");
-				m_trim_box->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
-					|BoxHorizontal::INSERTMODE_FILL
-					|BoxHorizontal::INSERTMODE_END);
+				m_trim_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+					|BoxVertical::INSERTMODE_FILL
+					|BoxVertical::INSERTMODE_END);
 				m_trim_input=WaveformRangeView::create(*m_trim_box,handler_range);
 	}
 

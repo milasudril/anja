@@ -19,7 +19,7 @@ int main()
 		KeyboardController keyboardevents(session);
 		WaveformDataUpdater waveform_updater;
 
-		auto event_loop=EventLoop::create();
+		auto event_loop=EventLoop::create(0);
 		auto mainwin=Window::create(*event_loop);
 
 		ArrayDynamicShort<char> title("Anja - ");

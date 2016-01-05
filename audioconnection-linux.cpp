@@ -152,7 +152,7 @@ void AudioConnectionJack::eventPost(Session& session,uint8_t slot,uint8_t flags)
 
 int AudioConnectionJack::bufferAllocate(jack_nframes_t n_frames,void* audioconnectionjack)
 	{
-	printf("Hello\n");
+
 	return 0;
 	}
 

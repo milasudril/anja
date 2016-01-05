@@ -65,9 +65,19 @@ class Waveform
 			return *this;
 			}
 
+		Waveform& reverse()
+			{
+			std::swap(m_offset_end,m_offset_begin);
+			return *this;
+			}
+
+
 
 		uint32_t length() const
-			{return m_offset_end-m_offset_begin;}
+			{
+			return reversedIs()?
+				m_offset_begin-m_offset_end:m_offset_end-m_offset_begin;
+			}
 
 		uint32_t lengthFull() const
 			{return m_data.length();}

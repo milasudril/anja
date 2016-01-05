@@ -24,7 +24,7 @@ target
 class EventLoopGtk:public EventLoop
 	{
 	public:
-		EventLoopGtk();
+		EventLoopGtk(bool background_light);
 		void run();
 
 	private:
@@ -33,11 +33,13 @@ class EventLoopGtk:public EventLoop
 
 bool EventLoopGtk::s_init=0;
 
-EventLoopGtk::EventLoopGtk()
+EventLoopGtk::EventLoopGtk(bool background_light)
 	{
 	if(!s_init)
 		{
 		gtk_init(0,NULL);
+		g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
+			,!background_light,NULL);
 		s_init=1;
 		}
 	}
@@ -51,7 +53,7 @@ void EventLoopGtk::run()
 	delete this;
 	}
 
-EventLoop* EventLoop::instanceCreate()
+EventLoop* EventLoop::instanceCreate(bool background_light)
 	{
-	return new EventLoopGtk();
+	return new EventLoopGtk(background_light);
 	}

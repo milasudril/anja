@@ -112,6 +112,10 @@ void BoxVerticalGtk::componentAdd(Widget& widget)
 		gtk_box_pack_start((GtkBox*)box,h,insert_mode&INSERTMODE_EXPAND
 			,insert_mode&INSERTMODE_FILL,0);
 		}
+
+	if(insert_mode&INSERTMODE_LEFT)
+		{gtk_widget_set_halign(h,GTK_ALIGN_START);}
+
 	gtk_widget_show(h);
 	}
 

@@ -10,6 +10,7 @@ target[name[waveformrangeview.o] type[object]]
 #include "framework/boxhorizontal.h"
 #include "framework/color.h"
 #include "framework/curve.h"
+#include "framework/button.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -121,6 +122,17 @@ void WaveformRangeView::EventHandlerEntry::onTextChanged(InputEntry& source)
 		{r_view.rangeUpdate(source.idGet(),x);}
 	}
 
+void WaveformRangeView::EventHandlerEntry::onCommand(BoxVertical& source
+	,unsigned int command_id)
+	{
+	switch(command_id)
+		{
+		case COMMAND_REVERSE:
+			r_view.reverse();
+			break;
+		}
+	}
+
 
 
 WaveformRangeView* WaveformRangeView::create(GuiContainer& parent
@@ -129,9 +141,9 @@ WaveformRangeView* WaveformRangeView::create(GuiContainer& parent
 
 WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler):
 	r_range(nullptr),r_handler(&handler),r_parent(parent)
-	,plot_handler(*this),entry_handler(*this),m_waveform_curve(512),m_fs(48000)
+	,m_plot_handler(*this),m_entry_handler(*this),m_waveform_curve(1024),m_fs(48000)
 	{
-	m_box_main=BoxVertical::create(parent);
+	m_box_main=BoxVertical::create(parent,&m_entry_handler);
 	m_box_main->slaveAssign(*this);
 
 	m_box_main->insertModeSet(BoxVertical::INSERTMODE_FILL
@@ -142,17 +154,22 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	m_box_positions=BoxHorizontal::create(*m_box_main);
 
 	m_entries[0]=InputEntry::create(*m_box_positions,"Begin:","Auto"
-		,entry_handler,0);
+		,m_entry_handler,0);
 
-	m_box_positions->insertModeSet(BoxVertical::INSERTMODE_END);
+	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_FILL
+		|BoxHorizontal::INSERTMODE_EXPAND);
+	m_swap=Button::create(*m_box_positions,"⇌",EventHandlerEntry::COMMAND_REVERSE);
+
+	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_END);
 	m_entries[1]=InputEntry::create(*m_box_positions,"End:","Auto"
-		,entry_handler,1);
+		,m_entry_handler,1);
+
 
 	auto c_begin=m_plot->cursorXAdd({-0.5,1.0f/3});
 	m_plot->cursorXAdd({0.5,0});
 	m_plot->cursorYAdd({-100,0.16f});
-	plot_handler.cursorsRefSet(m_plot->cursorXGet(c_begin));
-	m_plot->eventHandlerSet(plot_handler);
+	m_plot_handler.cursorsRefSet(m_plot->cursorXGet(c_begin));
+	m_plot->eventHandlerSet(m_plot_handler);
 
 	auto nullsignal=Waveform::nullGet();
 	waveformSet(nullsignal);
@@ -171,11 +188,13 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 				,0
 			 }
 		});
+	m_plot->backgroundSet(0);
 	}
 
 WaveformRangeView::~WaveformRangeView()
 	{
 	m_entries[0]->destroy();
+	m_swap->destroy();
 	m_entries[1]->destroy();
 	m_box_positions->destroy();
 	m_plot->destroy();
@@ -203,6 +222,11 @@ void WaveformRangeView::cursorSet(unsigned int index,double x)
 	{
 	m_plot->cursorXGet(index).position=x;
 	m_plot->update();
+	}
+
+void WaveformRangeView::reverse()
+	{
+	r_handler->reverse(*this);
 	}
 
 void WaveformRangeView::waveformSet(Waveform& range)

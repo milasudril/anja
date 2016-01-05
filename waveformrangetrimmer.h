@@ -19,6 +19,8 @@ class WaveformRangeTrimmer:public WaveformRangeView::EventHandler
 
 		void endUpdate(WaveformRangeView& view,uint32_t position);
 
+		void reverse(WaveformRangeView& view);
+
 		void beginAutotrim(WaveformRangeView& view,float threshold);
 
 		void endAutotrim(WaveformRangeView& view,float threshold);

@@ -13,11 +13,8 @@ class EventLoop
 	private:
 		typedef void (*Destructor)(EventLoop* eventloop);
 	public:
-		EventLoop() noexcept:m_n_windows(0)
-			{}
-
-		static std::unique_ptr<EventLoop,Destructor> create()
-			{return {instanceCreate(),destroy};}
+		static std::unique_ptr<EventLoop,Destructor> create(bool background_light=true)
+			{return {instanceCreate(background_light),destroy};}
 
 		virtual void run()=0;
 
@@ -31,10 +28,13 @@ class EventLoop
 			{return m_n_windows!=0;}
 
 	protected:
+		EventLoop() noexcept:m_n_windows(0)
+			{}
+
 		virtual ~EventLoop()=default;
 
 	private:
-		static EventLoop* instanceCreate();
+		static EventLoop* instanceCreate(bool background_light);
 		static void destroy(EventLoop* eventloop)
 			{eventloop->run();}
 		size_t m_n_windows;

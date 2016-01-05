@@ -29,6 +29,8 @@ class WaveformRangeView:public Widget
 				virtual void endUpdate(WaveformRangeView& view
 					,uint32_t position)=0;
 
+				virtual void reverse(WaveformRangeView& view)=0;
+
 				virtual void beginAutotrim(WaveformRangeView& view,float threshold)=0;
 
 				virtual void endAutotrim(WaveformRangeView& view,float threshold)=0;
@@ -82,11 +84,15 @@ class WaveformRangeView:public Widget
 			};
 
 		class EventHandlerEntry:public InputEntry::EventHandler
+			,public BoxVertical::EventHandler
 			{
 			public:
+				static constexpr unsigned int COMMAND_REVERSE=0;
+
 				EventHandlerEntry(WaveformRangeView& view);
 				void onButtonClick(InputEntry& source);
 				void onTextChanged(InputEntry& source);
+				void onCommand(BoxVertical& source,unsigned int command_id);
 
 			private:
 				WaveformRangeView& r_view;
@@ -96,18 +102,20 @@ class WaveformRangeView:public Widget
 		void cursorSet(unsigned int index,double x);
 		void autotrim(unsigned int index);
 		void rangeUpdate(unsigned int index, double position);
+		void reverse();
 
 		Waveform* r_range;
 		EventHandler* r_handler;
 
 		GuiContainer& r_parent;
 
-		EventHandlerPlot plot_handler;
-		EventHandlerEntry entry_handler;
+		EventHandlerPlot m_plot_handler;
+		EventHandlerEntry m_entry_handler;
 		BoxVertical* m_box_main;
 		XYPlot* m_plot;
 		BoxHorizontal* m_box_positions;
 		InputEntry* m_entries[2];
+		Button* m_swap;
 
 		ArraySimple<Curve::Point> m_waveform_curve;
 		double m_fs;

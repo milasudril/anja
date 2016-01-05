@@ -19,6 +19,12 @@ void WaveformRangeTrimmer::endUpdate(WaveformRangeView& view,uint32_t position)
 	view.cursorsUpdate();
 	}
 
+void WaveformRangeTrimmer::reverse(WaveformRangeView& view)
+	{
+	view.waveformGet().reverse();
+	view.cursorsUpdate();
+	}
+
 void WaveformRangeTrimmer::beginAutotrim(WaveformRangeView& view,float threshold)
 	{
 	auto& range=view.waveformGet();
