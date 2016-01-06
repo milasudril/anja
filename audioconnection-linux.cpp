@@ -54,10 +54,36 @@ static uint64_t clockGet(jack_nframes_t fs)
 class Port
 	{
 	public:
-		Port(jack_client_t* client,const char* name
-			,const char* type,unsigned long flags);
+		Port():r_client(nullptr),m_port(nullptr)
+			{}
 
-		~Port();
+		Port(const Port& port)=delete;
+
+		Port& operator=(const Port& port)=delete;
+
+		Port(Port&& port):r_client(port.r_client),m_port(port.m_port)
+			{port.m_port=nullptr;}
+
+		Port& operator=(Port&& port)
+			{
+			std::swap(port.m_port,m_port);
+			std::swap(port.r_client,r_client);
+			return *this;
+			}
+
+		Port(jack_client_t* client,const char* name
+			,const char* type,unsigned long flags):r_client(client)
+			{
+			m_port=jack_port_register(client,name,type,flags,0);
+			if(m_port==NULL)
+				{throw "Could not register a new JACK port";}
+			}
+
+		~Port()
+			{
+			if(m_port!=nullptr)
+				{jack_port_unregister(r_client,m_port);}
+			}
 
 		void* bufferGet(jack_nframes_t n_frames) const
 			{return jack_port_get_buffer(m_port,n_frames);}
@@ -67,16 +93,7 @@ class Port
 		jack_port_t* m_port;
 	};
 
-Port::Port(jack_client_t* client,const char* name
-	,const char* type,unsigned long flags):r_client(client)
-	{
-	m_port=jack_port_register(client,name,type,flags,0);
-	if(m_port==NULL)
-		{throw "Could not register another JACK port";}
-	}
 
-Port::~Port()
-	{jack_port_unregister(r_client,m_port);}
 
 class AudioConnectionJack:public AudioConnection
 	{
@@ -94,16 +111,68 @@ class AudioConnectionJack:public AudioConnection
 
 		AudioConnectionJack(const char* name);
 		~AudioConnectionJack();
+
+		void activate()
+			{jack_activate(m_connection.get());}
+
+		void deactivate()
+			{jack_deactivate(m_connection.get());}
+
+		const float* audioBufferInputGet(unsigned int index,unsigned int n_frames) const
+			{return static_cast<const float*>(m_audio_in_ports[index].bufferGet(n_frames));}
+
+		AudioConnection& audioPortInputAdd(const char* name)
+			{
+			m_audio_in_ports.append(
+				{
+				 m_connection.get()
+				,name
+				,JACK_DEFAULT_AUDIO_TYPE
+				,JackPortIsInput
+				});
+			return *this;
+			}
+
+		unsigned int audioPortsInputCount() const
+			{return m_audio_in_ports.length();}
+
+		float* audioBufferOutputGet(unsigned int index,unsigned int n_frames) const
+			{return static_cast<float*>(m_audio_out_ports[index].bufferGet(n_frames));}
+
+		AudioConnection& audioPortOutputAdd(const char* name)
+			{
+			m_audio_out_ports.append(
+				{
+				 m_connection.get()
+				,name
+				,JACK_DEFAULT_AUDIO_TYPE
+				,JackPortIsInput
+				});
+			return *this;
+			}
+
+		unsigned int audioPortsOutputCount() const
+			{return m_audio_out_ports.length();}
+
+
+
 		void destroy()
 			{delete this;}
+
 		uint64_t timeOffsetGet() const
 			{return clockGet(m_fs) - m_time_start;}
 
 		void eventPost(Session& session,uint8_t slot,uint8_t flags);
 
+
+
+
 	private:
 		ConnectionHandle m_connection;
 		Port m_output;
+		ArrayDynamicShort<Port> m_audio_in_ports;
+		ArrayDynamicShort<Port> m_audio_out_ports;
+
 		uint64_t m_time_start;
 		uint64_t m_now;
 		RingBuffer<SlotEvent> m_event_queue;
@@ -139,6 +208,7 @@ AudioConnectionJack::AudioConnectionJack(const char* name):
 
 AudioConnectionJack::~AudioConnectionJack()
 	{
+	jack_deactivate(m_connection.get());
 	}
 
 void AudioConnectionJack::eventPost(Session& session,uint8_t slot,uint8_t flags)

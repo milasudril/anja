@@ -39,6 +39,14 @@ class alignas(16) ArrayDynamicShort
 			append(obj.begin(),obj.length());
 			}
 
+		ArrayDynamicShort(ArrayDynamicShort&& obj):
+			m_data(obj.m_data),m_length(obj.m_length),m_capacity(obj.m_capacity)
+			{
+			obj.m_data=nullptr;
+			obj.m_length=0;
+			obj.m_capacity=0;
+			}
+
 		ArrayDynamicShort& operator=(const ArrayDynamicShort& obj)
 			{
 			assert(&obj!=this);
@@ -47,8 +55,19 @@ class alignas(16) ArrayDynamicShort
 			return *this;
 			}
 
+		ArrayDynamicShort& operator=(ArrayDynamicShort&& obj)
+			{
+			std::swap(obj.m_data,m_data);
+			std::swap(obj.m_length,m_length);
+			std::swap(obj.m_capacity,m_capacity);
+			return *this;
+			}
+
 		~ArrayDynamicShort()
-			{delete[] m_data;}
+			{
+			if(m_data!=nullptr)
+				{delete[] m_data;}
+			}
 
 		uint32_t length() const
 			{return m_length;}

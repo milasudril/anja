@@ -4,11 +4,16 @@ target[name[slider_test] type[application] platform[;GNU/Linux]]
 
 #include "slider.h"
 #include "window.h"
+#include "boxhorizontal.h"
 
 int main()
 	{
-	auto event_loop=EventLoop::create();
+	auto event_loop=EventLoop::create(0);
 	auto mainwin=Window::create(*event_loop);
-	auto slider=Slider::create(*mainwin,true);
+	auto box=BoxHorizontal::create(*mainwin);
+	Slider* sliders[16];
+	for(size_t k=0;k<16;++k)
+		{sliders[k]=Slider::create(*box,false);}
+
 	return 0;
 	}
