@@ -17,7 +17,7 @@ class AudioConnection
 		class AudioEngine
 			{
 			public:
-				virtual void audioProcess(AudioConnection& source,unsigned int n_frames)=0;
+				virtual void audioProcess(AudioConnection& source,unsigned int n_frames) noexcept=0;
 
 				virtual void buffersAllocate(AudioConnection& source,unsigned int n_frames)
 					{}
@@ -45,6 +45,8 @@ class AudioConnection
 
 		virtual void activate()=0;
 		virtual void deactivate()=0;
+
+		virtual uint64_t timeGet() const=0;
 
 
 	protected:

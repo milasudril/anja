@@ -162,6 +162,9 @@ class AudioConnectionJack:public AudioConnection
 		uint64_t timeOffsetGet() const
 			{return clockGet(m_fs) - m_time_start;}
 
+		uint64_t timeGet() const
+			{return clockGet(m_fs) - m_time_start;}
+
 		void eventPost(Session& session,uint8_t slot,uint8_t flags);
 
 
