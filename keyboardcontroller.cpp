@@ -17,7 +17,6 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 	if(keystate==0)
 		{
 		m_keystates[scancode]=1;
-
 	//	TODO add randomized velocity
 		engine.eventPost( MIDIConstants::StatusCodes::NOTE_ON
 			,r_session->scancodeToSlot(scancode)
