@@ -79,7 +79,6 @@ class WaveformData
 		ColorRGBA m_color;
 		KeyboardLayout::KeyDescriptor* r_key;
 		Waveform* r_waveform;
-		uint8_t m_midi_note;
 	};
 
 #endif

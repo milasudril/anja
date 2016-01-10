@@ -22,7 +22,6 @@ PlaybackRange::PlaybackRange(const Waveform& waveform,uint32_t start_delay):
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	,unsigned int n_frames_out)
 	{
-//	printf("In outputBufferGenerate: %p %p\n",r_begin,r_end);
 	buffer_out+=m_delay;
 	n_frames_out-=m_delay;
 	auto gain=m_gain;

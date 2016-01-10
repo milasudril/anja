@@ -14,6 +14,7 @@ target[name[waveformdataview.o] type[object]]
 #include "framework/messagedisplay.h"
 #include "framework/window.h"
 #include "framework/colorpicker.h"
+#include "framework/optionbox.h"
 
 #include <cstring>
 
@@ -128,15 +129,9 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
 					m_playback_gain_input=Slider::create(*m_playback_gain_box,3);
 
-				m_scancode_box=BoxHorizontal::create(*m_box_left);
-					m_scancode_label=Label::create(*m_scancode_box,"Scancode:");
-					m_scancode_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
-					m_scancode_textbox=Textbox::create(*m_scancode_box,3);
-
-				m_midi_box=BoxHorizontal::create(*m_box_left);
-					m_midi_label=Label::create(*m_midi_box,"MIDI note number:");
-					m_midi_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
-					m_midi_textbox=Textbox::create(*m_midi_box,4);
+				const char* options[]={"Loop","Sustain","Randomize gain"
+					,"Randomize pitch","Readonly",nullptr};
+				m_options=OptionBox::create(*m_box_left,"Options:",options);
 
 			m_box_details->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
 					|BoxHorizontal::INSERTMODE_FILL
@@ -156,14 +151,7 @@ WaveformDataView::~WaveformDataView()
 				m_trim_input->destroy();
 				m_trim_label->destroy();
 			m_trim_box->destroy();
-					m_midi_textbox->destroy();
-					m_midi_label->destroy();
-				m_midi_box->destroy();
-					m_scancode_textbox->destroy();
-					m_scancode_label->destroy();
-				m_scancode_box->destroy();
-					m_playback_gain_input->destroy();
-					m_playback_gain_label->destroy();
+				m_options->destroy();
 				m_playback_gain_box->destroy();
 				m_color->destroy();
 			m_box_left->destroy();

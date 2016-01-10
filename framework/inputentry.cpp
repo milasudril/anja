@@ -8,6 +8,8 @@ target[name[inputentry.o] type[object]]
 #include "label.h"
 #include "boxhorizontal.h"
 
+#include <cstdio>
+
 InputEntry::EventHandlerInternal::EventHandlerInternal(InputEntry& object
 	,InputEntry::EventHandler& handler):
 	r_handler(handler),r_object(object)
@@ -30,7 +32,7 @@ InputEntry::EventHandler InputEntry::s_default_handler;
 
 InputEntry::InputEntry(GuiContainer& parent,const char* label
 	,const char* text_button,EventHandler& handler,unsigned int id):
-	r_parent(parent),m_handler(*this,handler),m_id(id)
+	m_handler(*this,handler),m_id(id)
 	{
 	m_box=BoxHorizontal::create(parent,&m_handler);
 	m_box->slaveAssign(*this);
@@ -51,7 +53,9 @@ InputEntry::~InputEntry()
 	}
 
 const GuiHandle& InputEntry::handleNativeGet() const
-	{return r_parent.handleNativeGet();}
+	{
+	return m_box->handleNativeGet();
+	}
 
 const char* InputEntry::textGet() const
 	{return m_textbox->textGet();}

@@ -21,6 +21,7 @@ class Textbox;
 class Slider;
 class WaveformData;
 class Window;
+class OptionBox;
 
 class WaveformDataView:public Widget
 	{
@@ -128,13 +129,8 @@ class WaveformDataView:public Widget
 						Label* m_playback_gain_label;
 						Slider* m_playback_gain_input;
 
-					BoxHorizontal* m_scancode_box;
-						Label* m_scancode_label;
-						Textbox* m_scancode_textbox;
+					OptionBox* m_options;
 
-					BoxHorizontal* m_midi_box;
-						Label* m_midi_label;
-						Textbox* m_midi_textbox;
 				BoxVertical* m_trim_box;
 					Label* m_trim_label;
 					WaveformRangeView* m_trim_input;

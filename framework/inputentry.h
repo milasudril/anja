@@ -64,7 +64,6 @@ class InputEntry:public Widget
 				InputEntry& r_object;
 			};
 
-		GuiContainer& r_parent;
 		EventHandlerInternal m_handler;
 		BoxHorizontal* m_box;
 		Label* m_label;
