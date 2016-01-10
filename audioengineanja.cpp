@@ -32,8 +32,8 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
 	source.audioPortOutputAdd("Audio out");
 	m_sample_rate=source.sampleRateGet();
+	m_now=0;
 	m_time_start=secondsToFrames(clockGet(),m_sample_rate);
-	m_now=m_time_start;
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
@@ -100,8 +100,6 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		while(!queue.empty())
 			{
 			event_next=queue.pop_front();
-			printf("Delay: %llu.  Now: %llu (%x,%x)\n",event_next.delay,now
-				,event_next.status_word[0],event_next.status_word[1]);
 			if(now>=event_next.delay)
 				{
 				eventProcess(event_next,now-now_in);

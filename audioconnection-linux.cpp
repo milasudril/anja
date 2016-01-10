@@ -163,6 +163,7 @@ AudioConnectionJack::AudioConnectionJack(const char* name,AudioEngine& engine):
 	{
 	jack_set_process_callback(m_connection.get(),dataProcess,this);
 	jack_set_buffer_size_callback(m_connection.get(),bufferAllocate,this);
+	m_fs=jack_get_sample_rate(m_connection.get());
 	r_engine->onActivate(*this);
 	jack_activate(m_connection.get());
 	}
