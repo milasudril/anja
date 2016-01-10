@@ -6,11 +6,12 @@ dependency[session.o]
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "framework/array_fixed.h"
+#include "wavetable.h"
+#include "waveformdata.h"
+#include "audioengineanja.h"
 #include "framework/arraydynamicshort.h"
 #include "framework/keyboardlayout.h"
 #include "framework/range.h"
-#include "waveformdata.h"
 
 class AudioConnection;
 
@@ -20,12 +21,13 @@ class Session
 		Session& operator=(const Session&)=delete;
 		Session(const Session&)=delete;
 
-		Session():m_connection(nullptr),m_slot_active(0)
+		Session():m_engine(m_waveforms),m_connection(nullptr),m_slot_active(0)
 			{
 			waveformsClear();
 			}
 
-		Session(const char* filename):m_connection(nullptr),m_slot_active(0)
+		Session(const char* filename):m_engine(m_waveforms)
+			,m_connection(nullptr),m_slot_active(0)
 			{
 			load(filename);
 			audioServerConnect();
@@ -97,13 +99,18 @@ class Session
 		AudioConnection* audioConnectionGet()
 			{return m_connection;}
 
+
+		AudioEngineAnja& audioEngineGet()
+			{return m_engine;}
+
 	private:
+		AudioEngineAnja m_engine;
 		AudioConnection* m_connection;
 
 		ArrayFixed<uint8_t,128> m_slot_to_scancode;
 		ArrayFixed<uint8_t,128> m_midikey_to_slot;
 		ArrayFixed<uint8_t,128> m_scancode_to_slot;
-		ArrayFixed<Waveform,128> m_waveforms;
+		Wavetable m_waveforms;
 		ArrayFixed<WaveformData,128> m_waveform_data;
 		KeyboardLayout m_keyboard;
 

@@ -56,8 +56,8 @@ namespace MIDIConstants
 		constexpr uint8_t EFFECT5_DEPTH=91;
 		constexpr uint8_t DATA_INCREMENT=96;
 		constexpr uint8_t DATA_DECREMENT=97;
-		constexpr uint8_t PARAMETER_NUMBER_REG=100;
-		constexpr uint8_t PARAMETER_NUMBER_REG=101;
+		constexpr uint8_t PARAMETER_NUMBER_REG_LSB=100;
+		constexpr uint8_t PARAMETER_NUMBER_REG_MSB=101;
 		constexpr uint8_t SOUND_OFF=120;
 		constexpr uint8_t CONTROLLERS_RESET=121;
 		constexpr uint8_t LOCAL_SWITCH=122;

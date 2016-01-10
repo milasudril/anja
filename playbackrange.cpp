@@ -11,17 +11,20 @@ target[name[playbackrange.o] type[object]]
 PlaybackRange::PlaybackRange()
 	{memset(this,0,sizeof(*this));}
 
-PlaybackRange::PlaybackRange(const Waveform& waveform):
-	 r_begin(waveform.begin()),r_current(waveform.begin()),r_end(waveform.end())
+PlaybackRange::PlaybackRange(const Waveform& waveform,uint32_t start_delay):
+	 m_delay(start_delay)
+	,r_begin(waveform.begin()),r_current(waveform.begin()),r_end(waveform.end())
 	,m_fs(waveform.sampleRateGet()),m_gain(waveform.gainGet())
 	{
 	printf("In CTOR: %p %p %.7f\n",r_begin,r_end,m_gain);
 	}
 
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
-	,unsigned int n_frames_out,double fs_out)
+	,unsigned int n_frames_out)
 	{
 //	printf("In outputBufferGenerate: %p %p\n",r_begin,r_end);
+	buffer_out+=m_delay;
+	n_frames_out-=m_delay;
 	auto gain=m_gain;
 	auto ptr_current=r_current;
 	auto ptr_end=r_end;
@@ -35,5 +38,6 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 		}
 	auto N=dir*(ptr_current-r_current);
 	r_current=ptr_current;
+	delayReset();
 	return N;
 	}

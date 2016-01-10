@@ -8,33 +8,51 @@ dependency[audioengineanja.o]
 
 #include "audioconnection.h"
 #include "ringbuffer.h"
+#include "framework/array_simple.h"
 
 class Session;
+class PlaybackRange;
+class Wavetable;
 
 class AudioEngineAnja:public AudioConnection::AudioEngine
 	{
 	public:
-		AudioEngineAnja();
+		AudioEngineAnja(Wavetable& waveforms);
+		~AudioEngineAnja();
+
+		void onActivate(AudioConnection& source);
+		void onDeactivate(AudioConnection& source);
 
 		void audioProcess(AudioConnection& source,unsigned int n_frames) noexcept;
 		void buffersAllocate(AudioConnection& source,unsigned int n_frames);
-		void buffersFree();
 
-		void eventMIDIPost(uint8_t status,uint8_t value_0
-			,uint8_t value_1);
-
-		void eventChannelVolumePost(float value);
+		void eventPost(uint8_t status,uint8_t value_0,uint8_t value_1) noexcept;
+		void eventPost(uint8_t status,uint8_t value_0,float value_1) noexcept;
 
 	private:
 		struct alignas(16) Event
 			{
-			uint64_t time;
+			static constexpr uint8_t VALUE_1_FLOAT=1;
+
+			uint64_t delay;
 			uint8_t status_word[4];
 			float value;
 			};
 
+		Wavetable* r_waveforms;
+
+		double m_sample_rate;
 		uint64_t m_time_start;
+		uint64_t m_now;
+
 		RingBuffer<Event> m_event_queue;
+		Event m_event_next;
+
+		uint8_t m_voice_current;
+		ArraySimple<PlaybackRange> m_playback_buffers;
+
+
+		void eventProcess(const Event& event,unsigned int time_offset);
 	};
 
 #endif

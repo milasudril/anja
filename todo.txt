@@ -1,5 +1,0 @@
-WaveformRange -> ArrayNonOwning + playback data
-WaveformData has a WaveformStorage
-WaveformData knows WaveformRange
-WaveformRange copied to array in playback thread
-

@@ -150,7 +150,7 @@ void Session::slotActiveSet(uint8_t slot)
 void Session::audioServerConnect()
 	{
 	audioServerDisconnect();
-	m_connection=AudioConnection::create(m_title.begin());
+	m_connection=AudioConnection::create(m_title.begin(),m_engine);
 	}
 
 void Session::audioServerDisconnect()
