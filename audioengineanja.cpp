@@ -14,7 +14,7 @@ target[name[audioengineanja.o] type[object]]
 
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	r_waveforms(&waveforms),m_event_queue(32),m_voice_current(0)
-	,m_playback_buffers(32)
+	,m_playback_buffers(32),r_playback_buffers(waveforms.length())
 	{
 /*	size_t N=m_event_queue.length();
 	while(N!=0)
@@ -70,13 +70,23 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 	switch(event.status_word[0]&0xf0)
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
-			printf("Note on\n");
+			{
+			auto slot=event.status_word[1];
 		//	TODO Add polyphony
-			m_playback_buffers[0]={(*r_waveforms)[event.status_word[1]],time_offset};
+			m_playback_buffers[0]={(*r_waveforms)[slot],time_offset};
+			r_playback_buffers[slot]=0;
+			}
 			break;
 
 		case MIDIConstants::StatusCodes::NOTE_OFF:
-			printf("Note off\n");
+			{
+			auto slot=event.status_word[1];
+			auto& playback_buffer=m_playback_buffers[ r_playback_buffers[slot] ];
+			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
+				{playback_buffer.flagsUnset(Waveform::LOOP);}
+			else
+				{m_playback_buffers[ r_playback_buffers[slot] ].stop();}
+			}
 			break;
 		}
 	}

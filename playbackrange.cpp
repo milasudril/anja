@@ -15,8 +15,8 @@ PlaybackRange::PlaybackRange(const Waveform& waveform,uint32_t start_delay):
 	 m_delay(start_delay)
 	,r_begin(waveform.begin()),r_current(waveform.begin()),r_end(waveform.end())
 	,m_fs(waveform.sampleRateGet()),m_gain(waveform.gainGet())
+	,m_flags(waveform.flagsGet())
 	{
-	printf("In CTOR: %p %p %.7f\n",r_begin,r_end,m_gain);
 	}
 
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out

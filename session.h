@@ -24,19 +24,19 @@ class Session
 		Session():m_engine(m_waveforms),m_connection(nullptr),m_slot_active(0)
 			{
 			waveformsClear();
-		//	audioServerConnect();
+			audioServerConnect();
 			}
 
 		Session(const char* filename):m_engine(m_waveforms)
 			,m_connection(nullptr),m_slot_active(0)
 			{
 			load(filename);
-		//	audioServerConnect();
+			audioServerConnect();
 			}
 
 		~Session()
 			{
-		//	audioServerDisconnect();
+			audioServerDisconnect();
 			}
 
 		void load(const char* filename);

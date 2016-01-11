@@ -50,6 +50,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		uint8_t m_voice_current;
 		ArraySimple<PlaybackRange> m_playback_buffers;
+		ArraySimple<uint8_t> r_playback_buffers;
 
 
 		void eventProcess(const Event& event,unsigned int time_offset);

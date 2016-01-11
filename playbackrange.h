@@ -23,11 +23,30 @@ class alignas(32) PlaybackRange
 		bool valid() const
 			{return r_begin!=r_end;}
 
-		void delayReset()
-			{m_delay=0;}
+		PlaybackRange& delayReset()
+			{
+			m_delay=0;
+			return *this;
+			}
 
-		void reset()
-			{r_end=r_begin;}
+		void stop()
+			{r_current=r_end;}
+
+		uint32_t flagsGet() const
+			{return m_flags;}
+
+		PlaybackRange& flagsSet(uint32_t flags)
+			{
+			m_flags|=flags;
+			return *this;
+			}
+
+		PlaybackRange& flagsUnset(uint32_t flags)
+			{
+			m_flags&=~flags;
+			return *this;
+			}
+
 
 	private:
 		uint32_t m_delay;
@@ -36,6 +55,7 @@ class alignas(32) PlaybackRange
 		const float* r_end;
 		float m_fs;
 		float m_gain;
+		uint32_t m_flags;
 	};
 
 #endif
