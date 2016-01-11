@@ -28,12 +28,15 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	auto ptr_current=r_current;
 	auto ptr_end=r_end;
 	auto dir=ptr_current<ptr_end?1:-1;
+	auto flags=m_flags;
 	while(n_frames_out!=0 && ptr_current!=ptr_end)
 		{
 		*buffer_out=gain*(*ptr_current);
 		ptr_current+=dir;
 		++buffer_out;
 		--n_frames_out;
+		ptr_current=(m_flags&Waveform::LOOP && ptr_current==ptr_end)?
+			r_begin:ptr_current;
 		}
 	auto N=dir*(ptr_current-r_current);
 	r_current=ptr_current;
