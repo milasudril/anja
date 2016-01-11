@@ -10,7 +10,10 @@ OptionBox::EventHandler OptionBox::s_default_handler;
 
 void OptionBox::EventHandlerCheckbox::onCommand(BoxVertical& source,unsigned int command_id)
 	{
-	printf("Hello %u is %u\n",command_id,r_box.stateGet(command_id));
+	if(r_box.stateGet(command_id))
+		{r_handler.onSet(r_box,command_id);}
+	else
+		{r_handler.onUnset(r_box,command_id);}
 	}
 
 OptionBox::OptionBox(GuiContainer& parent,EventHandler& handler

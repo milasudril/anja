@@ -28,6 +28,10 @@ class WaveformDataUpdater:public WaveformDataView::EventHandler
 		void onColorChange(WaveformDataView& source
 			,const char* colorstr);
 
+		void onOptionSet(WaveformDataView& source,uint32_t option);
+
+		void onOptionUnset(WaveformDataView& source,uint32_t option);
+
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}
 

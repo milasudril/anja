@@ -12,16 +12,15 @@ dependency[waveformdataview.o]
 #include "framework/inputentry.h"
 #include "framework/color.h"
 #include "framework/colorpicker.h"
+#include "framework/optionbox.h"
 
 class GuiContainer;
 class BoxVertical;
 class BoxHorizontal;
 class Label;
-class Textbox;
 class Slider;
 class WaveformData;
 class Window;
-class OptionBox;
 
 class WaveformDataView:public Widget
 	{
@@ -37,6 +36,10 @@ class WaveformDataView:public Widget
 					,const ColorRGBA& color_new)=0;
 				virtual void onColorChange(WaveformDataView& source
 					,const char* colorstr)=0;
+				virtual void onOptionSet(WaveformDataView& source
+					,uint32_t option)=0;
+				virtual void onOptionUnset(WaveformDataView& source
+					,uint32_t option)=0;
 			};
 
 		static WaveformDataView* create(GuiContainer& parent
@@ -79,12 +82,16 @@ class WaveformDataView:public Widget
 			} m_source_events;
 
 		class CommandHandler:public BoxVertical::EventHandler
+			,public OptionBox::EventHandler
 			{
 			public:
 				CommandHandler(WaveformDataView& view):r_view(&view)
 					{}
 
 				void onCommand(BoxVertical& source,unsigned int command_id);
+
+				void onSet(OptionBox& source,unsigned int option_id);
+				void onUnset(OptionBox& source,unsigned int option_id);
 
 			private:
 				WaveformDataView* r_view;
@@ -115,6 +122,9 @@ class WaveformDataView:public Widget
 		void descriptionUpdate();
 		void colorUpdate(const ColorRGBA& color_new);
 		void colorUpdate(const char* colorstr);
+		void optionSet(uint32_t option);
+		void optionUnset(uint32_t option);
+
 
 		BoxVertical* m_box_main;
 			InputEntry* m_source;

@@ -13,27 +13,25 @@ target[name[waveformdata.o] type[object]]
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path
 	,Waveform& waveform
-	,KeyboardLayout::KeyDescriptor& key):
-	m_description(""),m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
+	,KeyboardLayout::KeyDescriptor& key):m_filename(""),m_description("")
+	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
 	,r_key(&key),r_waveform(&waveform)
 	{
 	auto value=record.propertyGet("Filename");
-	if(value==nullptr)
-		{throw "Filename is mandatory";}
-
-	fileLoad(*value,load_path);
+	if(value!=nullptr)
+		{fileLoad(*value,load_path);}
 
 	value=record.propertyGet("Description");
 	if(value!=nullptr)
-		{
-		descriptionSet(*value);
-		}
+		{descriptionSet(*value);}
 
 	value=record.propertyGet("Color");
 	if(value!=nullptr)
-		{
-		keyColorSet(value->begin());
-		}
+		{keyColorSet(value->begin());}
+
+	value=record.propertyGet("Options");
+	if(value!=nullptr)
+		{r_waveform->flagsSet(*value);}
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
@@ -59,6 +57,7 @@ void WaveformData::fileLoad(const char* filename)
 		}
 	while(n_read==buffer_size);
 	r_waveform->offsetsReset();
+	r_waveform->flagsSet(Waveform::READONLY);
 	m_filename=filename;
 	}
 

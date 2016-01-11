@@ -92,6 +92,18 @@ void WaveformDataView::CommandHandler::onCommand(BoxVertical& source
 		}
 	}
 
+void WaveformDataView::CommandHandler::onSet(OptionBox& source
+	,unsigned int index)
+	{
+	r_view->optionSet(index);
+	}
+
+void WaveformDataView::CommandHandler::onUnset(OptionBox& source
+	,unsigned int index)
+	{
+	r_view->optionUnset(index);
+	}
+
 
 
 WaveformDataView* WaveformDataView::create(GuiContainer& parent
@@ -129,9 +141,8 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
 					m_playback_gain_input=Slider::create(*m_playback_gain_box,3);
 
-				const char* options[]={"Loop","Sustain","Randomize gain"
-					,"Randomize pitch","Readonly",nullptr};
-				m_options=OptionBox::create(*m_box_left,"Options:",options);
+				m_options=OptionBox::create(*m_box_left,m_command_handler
+					,"Options:",Waveform::FLAG_NAMES);
 
 			m_box_details->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
 					|BoxHorizontal::INSERTMODE_FILL
@@ -180,7 +191,8 @@ void WaveformDataView::waveformDataSet(WaveformData& wd)
 
 void WaveformDataView::update()
 	{
-	m_trim_input->waveformSet(r_data->waveformGet());
+	auto& waveform=r_data->waveformGet();
+	m_trim_input->waveformSet(waveform);
 
 	m_description_textbox->textSet(r_data->descriptionGet().begin());
 	m_source->textSet(r_data->filenameGet().begin());
@@ -188,6 +200,12 @@ void WaveformDataView::update()
 	WaveformData::ColorString string;
 	r_data->keyColorGet(string);
 	m_color->textSet(string.begin());
+
+	auto N_options=m_options->nOptionsGet();
+	for(uint32_t k=0;k<N_options;++k)
+		{
+		m_options->stateSet(k,waveform.flagGet(k));
+		}
 	}
 
 void WaveformDataView::waveformLoad(const char* filename)
@@ -208,4 +226,14 @@ void WaveformDataView::colorUpdate(const ColorRGBA& color_new)
 void WaveformDataView::colorUpdate(const char* colorstr)
 	{
 	r_handler->onColorChange(*this,colorstr);
+	}
+
+void WaveformDataView::optionUnset(uint32_t option)
+	{
+	r_handler->onOptionUnset(*this,option);
+	}
+
+void WaveformDataView::optionSet(uint32_t option)
+	{
+	r_handler->onOptionSet(*this,option);
 	}

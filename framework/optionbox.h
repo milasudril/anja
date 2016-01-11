@@ -19,10 +19,10 @@ class OptionBox:public Widget
 		class EventHandler
 			{
 			public:
-				virtual void onOptionEnable(OptionBox& source,unsigned int option_id)
+				virtual void onSet(OptionBox& source,unsigned int option_id)
 					{}
 
-				virtual void onOptionDisable(OptionBox& source,unsigned int option_id)
+				virtual void onUnset(OptionBox& source,unsigned int option_id)
 					{}
 			};
 
@@ -50,7 +50,7 @@ class OptionBox:public Widget
 		class EventHandlerCheckbox:public BoxVertical::EventHandler
 			{
 			public:
-				EventHandlerCheckbox(OptionBox& box,OptionBox::EventHandler handler):
+				EventHandlerCheckbox(OptionBox& box,OptionBox::EventHandler& handler):
 					r_handler(handler),r_box(box)
 					{}
 

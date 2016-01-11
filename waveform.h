@@ -1,5 +1,6 @@
 #ifdef __WAND__
 target[name[waveform.h] type[include]]
+dependency[waveform.o]
 #endif
 
 #ifndef WAVEFORM_H
@@ -96,13 +97,15 @@ class Waveform
 
 		static constexpr uint32_t LOOP=0x1;
 		static constexpr uint32_t SUSTAIN=0x2;
-		static constexpr uint32_t GAIN_RANDOMIZE=0x4;
-		static constexpr uint32_t PITCH_RANDOMIZE=0x8;
-		static constexpr uint32_t READONLY=0x10;
+		static constexpr uint32_t READONLY=0x4;
 
+		static const char* FLAG_NAMES[];
 
 		uint32_t flagsGet() const
 			{return m_flags;}
+
+		uint32_t flagGet(uint32_t flag_index) const
+			{return m_flags&(1<<flag_index);}
 
 		Waveform& flagsSet(uint32_t flags)
 			{
@@ -110,11 +113,22 @@ class Waveform
 			return *this;
 			}
 
+		Waveform& flagSet(uint32_t flag_index)
+			{return flagsSet(1<<flag_index);}
+
+		Waveform& flagSet(const ArrayDynamicShort<char>& flagname);
+
+		Waveform& flagsSet(const ArrayDynamicShort<char>& flagstring);
+
+		Waveform& flagUnset(uint32_t flag_index)
+			{return flagsUnset(1<<flag_index);}
+
 		Waveform& flagsUnset(uint32_t flags)
 			{
 			m_flags&=~flags;
 			return *this;
 			}
+
 
 
 		Waveform& append(float x)

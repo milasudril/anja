@@ -40,3 +40,17 @@ void WaveformDataUpdater::onColorChange(WaveformDataView& source
 	source.update();
 	r_view->keyboardViewUpdate();
 	}
+
+void WaveformDataUpdater::onOptionSet(WaveformDataView& source,uint32_t option)
+	{
+	auto& waveform=source.waveformDataGet().waveformGet();
+	waveform.flagSet(option);
+	source.update();
+	}
+
+void WaveformDataUpdater::onOptionUnset(WaveformDataView& source,uint32_t option)
+	{
+	auto& waveform=source.waveformDataGet().waveformGet();
+	waveform.flagUnset(option);
+	source.update();
+	}
