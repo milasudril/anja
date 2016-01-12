@@ -28,7 +28,6 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	source.audioPortOutputAdd("Audio out");
 	m_sample_rate=source.sampleRateGet();
 	m_now=0;
-	m_time_start=secondsToFrames(clockGet(),m_sample_rate);
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
@@ -58,7 +57,7 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) no
 	QueueElement tmp;
 	tmp.event=
 		{
-			secondsToFrames(clockGet(),m_sample_rate)-m_time_start
+		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
 		,{status,value_0,0,Event::VALUE_1_FLOAT}
 		,value_1
 		};
@@ -108,6 +107,8 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 	auto& queue=m_event_queue;
 	Event event_next=m_event_next;
 	auto now=m_now;
+	if(now==0)
+		{m_time_start=secondsToFrames(clockGet(),m_sample_rate);}
 	const auto now_in=now;
 	const auto n_frames_in=n_frames;
 
