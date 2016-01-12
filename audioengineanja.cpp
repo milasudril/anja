@@ -58,7 +58,7 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) no
 	QueueElement tmp;
 	tmp.event=
 		{
-		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
+			secondsToFrames(clockGet(),m_sample_rate)-m_time_start
 		,{status,value_0,0,Event::VALUE_1_FLOAT}
 		,value_1
 		};
@@ -74,10 +74,14 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 			{
 			auto voice=m_voice_current;
 			auto slot=event.status_word[1];
-		//	BUG If user tries to load a new waveform in slot while it is playing
+
+			auto& waveform=(*r_waveforms)[slot];
+
+		//	If user tries to load a new waveform in slot while it is playing
 		//	a SIGSEGV will occur. Therefore, the waveform object needs to be
-		//	marked as locked.
-			m_source_buffers[voice].waveformSet((*r_waveforms)[slot],time_offset);
+		//	marked as locked before we continue.
+			waveform.flagsSet(Waveform::LOCKED);
+			m_source_buffers[voice].waveformSet(waveform,time_offset);
 			r_source_buffers[slot]=voice;
 			m_voice_current=(voice+1)%m_source_buffers.length();
 			}
@@ -85,6 +89,9 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 
 		case MIDIConstants::StatusCodes::NOTE_OFF:
 			{
+		//	The replace lock cannot be released here, due to the possible
+		//	sustain flag. Instead, it has to be done in audioProcess, when
+		//	the rendering loop detects that the clip should not continue.
 			auto slot=event.status_word[1];
 			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
 			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
@@ -155,7 +162,10 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 					}
 				}
 			else
-				{m_voice_current=src_current-src_begin;}
+				{
+				m_voice_current=src_current-src_begin;
+			//	FIXME Reset LOCKED flag for corresponding waveform.
+				}
 			ptr_voice+=n_frames_in;
 			++src_current;
 			}

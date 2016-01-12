@@ -32,6 +32,10 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	value=record.propertyGet("Options");
 	if(value!=nullptr)
 		{r_waveform->flagsSet(*value);}
+
+	value=record.propertyGet("Gain");
+	if(value!=nullptr)
+		{r_waveform->gainSet(convert(value->begin()));}
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
@@ -40,10 +44,11 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 
 void WaveformData::fileLoad(const char* filename)
 	{
+	if(r_waveform->flagsGet() & Waveform::LOCKED)
+		{throw "Slot is busy";}
 	WavefileInfo info;
 	printf("%s\n",filename);
 	auto reader=WavefileReader::create(filename,info);
-
 	r_waveform->clear();
 	r_waveform->sampleRateSet(info.fs);
 	r_waveform->capacitySet(info.n_frames);
@@ -160,6 +165,6 @@ void WaveformData::keyColorSet(const ColorRGBA& color)
 
 void WaveformData::keyColorGet(ColorString& buffer)
 	{
-	sprintf(buffer.begin(),"%.7f;%.7f;%.7f;%.7f"
+	sprintf(buffer.begin(),"%.7g; %.7g; %.7g; %.7g"
 		,m_color.red,m_color.green,m_color.blue,m_color.alpha);
 	}

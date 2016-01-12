@@ -112,6 +112,7 @@ class WaveformRangeView:public Widget
 		EventHandlerPlot m_plot_handler;
 		EventHandlerEntry m_entry_handler;
 		BoxVertical* m_box_main;
+		Label* m_label;
 		XYPlot* m_plot;
 		BoxHorizontal* m_box_positions;
 		InputEntry* m_entries[2];

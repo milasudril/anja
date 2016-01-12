@@ -19,7 +19,6 @@ void WaveformDataUpdater::onDescriptionChange(WaveformDataView& source
 	{
 	auto& wd=source.waveformDataGet();
 	wd.descriptionSet(description_new);
-	source.update();
 	r_view->keyboardViewUpdate();
 	}
 
@@ -28,7 +27,6 @@ void WaveformDataUpdater::onColorChange(WaveformDataView& source
 	{
 	auto& wd=source.waveformDataGet();
 	wd.keyColorSet(color_new);
-	source.update();
 	r_view->keyboardViewUpdate();
 	}
 
@@ -37,20 +35,24 @@ void WaveformDataUpdater::onColorChange(WaveformDataView& source
 	{
 	auto& wd=source.waveformDataGet();
 	wd.keyColorSet(colorstr);
-	source.update();
 	r_view->keyboardViewUpdate();
+	}
+
+void WaveformDataUpdater::onGainChange(WaveformDataView& source
+	,float value)
+	{
+	auto& waveform=source.waveformDataGet().waveformGet();
+	waveform.gainSet(value);
 	}
 
 void WaveformDataUpdater::onOptionSet(WaveformDataView& source,uint32_t option)
 	{
 	auto& waveform=source.waveformDataGet().waveformGet();
 	waveform.flagSet(option);
-	source.update();
 	}
 
 void WaveformDataUpdater::onOptionUnset(WaveformDataView& source,uint32_t option)
 	{
 	auto& waveform=source.waveformDataGet().waveformGet();
 	waveform.flagUnset(option);
-	source.update();
 	}

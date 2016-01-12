@@ -15,6 +15,7 @@ target[name[waveformdataview.o] type[object]]
 #include "framework/window.h"
 #include "framework/colorpicker.h"
 #include "framework/optionbox.h"
+#include "framework/floatconv.h"
 
 #include <cstring>
 
@@ -77,6 +78,34 @@ void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
 
 
 
+double WaveformDataView::PlaybackGainHandler::valueGet(Slider& source,const char* text)
+	{
+	auto gain=pow(10,convert(text)/20);
+	r_view->gainSet(gain);
+	return gain;
+	}
+
+void WaveformDataView::PlaybackGainHandler::textGet(Slider& source,double value,TextBuffer& buffer)
+	{
+	r_view->gainSet(value);
+	auto gain_dB=20.0*log10(value);
+	sprintf(buffer.begin(),"%.7g",gain_dB);
+	}
+
+double WaveformDataView::PlaybackGainHandler::valueMap(Slider& source,double x)
+const noexcept
+	{
+	return (2.0 - 5.5e-8)*x + 5.5e-8;
+	}
+
+double WaveformDataView::PlaybackGainHandler::valueMapInverse(Slider& source,double y)
+const noexcept
+	{
+	return (y - 5.5e-8)/(2.0 - 5.5e-8);
+	}
+
+
+
 static constexpr unsigned int DESCRIPTION=10;
 
 void WaveformDataView::CommandHandler::onCommand(BoxVertical& source
@@ -116,6 +145,7 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 	,WaveformRangeView::EventHandler& handler_range):r_parent(parent)
 	,r_handler(&handler),m_source_events(*this),m_command_handler(*this)
 	,m_color_events(*this)
+	,m_pbgain_events(*this)
 	{
 	m_box_main=BoxVertical::create(parent,&m_command_handler);
 	m_box_main->slaveAssign(*this);
@@ -137,9 +167,10 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 				m_color=InputEntry::create(*m_box_left,"Color:","...",m_color_events,0);
 
 				m_playback_gain_box=BoxHorizontal::create(*m_box_left);
-					m_playback_gain_label=Label::create(*m_playback_gain_box,"Playback gain:");
+					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_TOP);
+					m_playback_gain_label=Label::create(*m_playback_gain_box,"Playback gain/dB:");
 					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
-					m_playback_gain_input=Slider::create(*m_playback_gain_box,3);
+					m_playback_gain_input=Slider::create(*m_playback_gain_box,m_pbgain_events,1);
 
 				m_options=OptionBox::create(*m_box_left,m_command_handler
 					,"Options:",Waveform::FLAG_NAMES);
@@ -148,20 +179,12 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 					|BoxHorizontal::INSERTMODE_FILL
 					|BoxHorizontal::INSERTMODE_END);
 
-			m_trim_box=BoxVertical::create(*m_box_details);
-				m_trim_box->insertModeSet(BoxVertical::INSERTMODE_LEFT);
-				m_trim_label=Label::create(*m_trim_box,"Trim:");
-				m_trim_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
-					|BoxVertical::INSERTMODE_FILL
-					|BoxVertical::INSERTMODE_END);
-				m_trim_input=WaveformRangeView::create(*m_trim_box,handler_range);
+			m_trim_input=WaveformRangeView::create(*m_box_details,handler_range);
 	}
 
 WaveformDataView::~WaveformDataView()
 	{
-				m_trim_input->destroy();
-				m_trim_label->destroy();
-			m_trim_box->destroy();
+			m_trim_input->destroy();
 				m_options->destroy();
 				m_playback_gain_box->destroy();
 				m_color->destroy();
@@ -194,12 +217,13 @@ void WaveformDataView::update()
 	auto& waveform=r_data->waveformGet();
 	m_trim_input->waveformSet(waveform);
 
-	m_description_textbox->textSet(r_data->descriptionGet().begin());
 	m_source->textSet(r_data->filenameGet().begin());
-
+	m_description_textbox->textSet(r_data->descriptionGet().begin());
 	WaveformData::ColorString string;
 	r_data->keyColorGet(string);
 	m_color->textSet(string.begin());
+
+	m_playback_gain_input->valueSet(waveform.gainGet());
 
 	auto N_options=m_options->nOptionsGet();
 	for(uint32_t k=0;k<N_options;++k)
@@ -226,6 +250,11 @@ void WaveformDataView::colorUpdate(const ColorRGBA& color_new)
 void WaveformDataView::colorUpdate(const char* colorstr)
 	{
 	r_handler->onColorChange(*this,colorstr);
+	}
+
+void WaveformDataView::gainSet(float gain)
+	{
+	r_handler->onGainChange(*this,gain);
 	}
 
 void WaveformDataView::optionUnset(uint32_t option)

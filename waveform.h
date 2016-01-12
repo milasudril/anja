@@ -98,6 +98,7 @@ class Waveform
 		static constexpr uint32_t LOOP=0x1;
 		static constexpr uint32_t SUSTAIN=0x2;
 		static constexpr uint32_t READONLY=0x4;
+		static constexpr uint32_t LOCKED=0x80000000;
 
 		static const char* FLAG_NAMES[];
 

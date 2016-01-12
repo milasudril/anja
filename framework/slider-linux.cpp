@@ -22,6 +22,7 @@ target
 #include "guicontainer.h"
 #include "guihandle.h"
 #include "array_fixed.h"
+#include "exceptionswallow.h"
 #include <gtk/gtk.h>
 
 #include <cstdlib>
@@ -38,6 +39,8 @@ class SliderGtk:public Slider
 		const GuiHandle& handleNativeGet() const
 			{return m_box;}
 
+		void valueSet(double x);
+
 	private:
 		static void sliderMoved(GtkRange* range,void* slidergtk);
 		static gint textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk);
@@ -50,18 +53,28 @@ class SliderGtk:public Slider
 		GtkWidget* m_text;
 	};
 
-void Slider::EventHandler::textGet(double value,TextBuffer& buffer)
+void Slider::EventHandler::textGet(Slider& source,double value,TextBuffer& buffer)
 	{
 	sprintf(buffer.begin(),"%.3f",value);
 	}
 
-double Slider::EventHandler::valueGet(const char* text)
+double Slider::EventHandler::valueGet(Slider& source,const char* text)
 	{
 	char* result;
 	double v=strtod(text,&result);
 	if(result==text)
 		{return -1;}
 	return v;
+	}
+
+double Slider::EventHandler::valueMap(Slider& source,double x) const noexcept
+	{
+	return x;
+	}
+
+double Slider::EventHandler::valueMapInverse(Slider& source,double y) const noexcept
+	{
+	return y;
 	}
 
 Slider::EventHandler Slider::s_default_handler;
@@ -78,9 +91,9 @@ void SliderGtk::destroy()
 void SliderGtk::sliderMoved(GtkRange* range,void* slidergtk)
 	{
 	SliderGtk* _this=(SliderGtk*)slidergtk;
-	double v=gtk_range_get_value(range);
+	double v=_this->r_handler.valueMap(*_this, gtk_range_get_value(range) );
 	EventHandler::TextBuffer buffer;
-	_this->r_handler.textGet(v,buffer);
+	EXCEPTION_SWALLOW(_this->r_handler.textGet(*_this,v,buffer);,_this);
 	gtk_entry_set_text((GtkEntry*)_this->m_text,buffer.begin());
 	}
 
@@ -88,7 +101,10 @@ gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk
 	{
 	SliderGtk* _this=(SliderGtk*)slidergtk;
 	GtkEntry* text=(GtkEntry*)entry;
-	auto v=_this->r_handler.valueGet(gtk_entry_get_text(text));
+	double v=0;
+	EXCEPTION_SWALLOW(v=_this->r_handler.valueGet(*_this,gtk_entry_get_text(text));
+		,_this);
+	v=_this->r_handler.valueMapInverse(*_this,v);
 	if(v>=0 && v<=1)
 		{gtk_range_set_value((GtkRange*)_this->m_slider,v);}
 	return 1;
@@ -122,7 +138,6 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 
 	g_signal_connect(m_slider,"value-changed",G_CALLBACK(sliderMoved),this);
 	g_signal_connect(m_text,"focus-out-event",G_CALLBACK(textChanged),this);
-
 	parent.componentAdd(*this);
 	}
 
@@ -130,7 +145,13 @@ SliderGtk::~SliderGtk()
 	{
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_slider);
-	gtk_widget_destroy(m_box);
 	gtk_widget_destroy(m_text);
+	gtk_widget_destroy(m_box);
 	}
 
+void SliderGtk::valueSet(double x)
+	{
+	auto v=r_handler.valueMapInverse(*this,x);
+	if(v>=0 && v<=1)
+		{gtk_range_set_value((GtkRange*)m_slider,v);}
+	}

@@ -13,6 +13,7 @@ dependency[waveformdataview.o]
 #include "framework/color.h"
 #include "framework/colorpicker.h"
 #include "framework/optionbox.h"
+#include "framework/slider.h"
 
 class GuiContainer;
 class BoxVertical;
@@ -36,6 +37,8 @@ class WaveformDataView:public Widget
 					,const ColorRGBA& color_new)=0;
 				virtual void onColorChange(WaveformDataView& source
 					,const char* colorstr)=0;
+				virtual void onGainChange(WaveformDataView& source
+					,float value)=0;
 				virtual void onOptionSet(WaveformDataView& source
 					,uint32_t option)=0;
 				virtual void onOptionUnset(WaveformDataView& source
@@ -115,6 +118,23 @@ class WaveformDataView:public Widget
 				ArraySimple<ColorRGBA> m_color_presets;
 			} m_color_events;
 
+		class PlaybackGainHandler:public Slider::EventHandler
+			{
+			public:
+				PlaybackGainHandler(WaveformDataView& view):r_view(&view)
+					{}
+
+				double valueGet(Slider& source,const char* text);
+				void textGet(Slider& source,double value,TextBuffer& buffer);
+
+				double valueMap(Slider& source,double x) const noexcept;
+				double valueMapInverse(Slider& source,double y) const noexcept;
+
+			private:
+				WaveformDataView* r_view;
+			} m_pbgain_events;
+
+
 		friend class SourceEventHandler;
 		friend class CommandHandler;
 
@@ -122,6 +142,7 @@ class WaveformDataView:public Widget
 		void descriptionUpdate();
 		void colorUpdate(const ColorRGBA& color_new);
 		void colorUpdate(const char* colorstr);
+		void gainSet(float gain);
 		void optionSet(uint32_t option);
 		void optionUnset(uint32_t option);
 
@@ -141,9 +162,7 @@ class WaveformDataView:public Widget
 
 					OptionBox* m_options;
 
-				BoxVertical* m_trim_box;
-					Label* m_trim_label;
-					WaveformRangeView* m_trim_input;
+				WaveformRangeView* m_trim_input;
 	};
 
 #endif

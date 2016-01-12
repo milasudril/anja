@@ -22,11 +22,11 @@ class WaveformDataUpdater:public WaveformDataView::EventHandler
 		void onDescriptionChange(WaveformDataView& source
 			,const char* description_new);
 
-		void onColorChange(WaveformDataView& source
-			,const ColorRGBA& color_new);
+		void onColorChange(WaveformDataView& source,const ColorRGBA& color_new);
 
-		void onColorChange(WaveformDataView& source
-			,const char* colorstr);
+		void onColorChange(WaveformDataView& source,const char* colorstr);
+
+		void onGainChange(WaveformDataView& source,float value);
 
 		void onOptionSet(WaveformDataView& source,uint32_t option);
 

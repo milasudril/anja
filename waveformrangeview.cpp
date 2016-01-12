@@ -11,6 +11,7 @@ target[name[waveformrangeview.o] type[object]]
 #include "framework/color.h"
 #include "framework/curve.h"
 #include "framework/button.h"
+#include "framework/label.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -145,6 +146,8 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	{
 	m_box_main=BoxVertical::create(parent,&m_entry_handler);
 	m_box_main->slaveAssign(*this);
+	m_box_main->insertModeSet(BoxVertical::INSERTMODE_LEFT);
+	m_label=Label::create(*m_box_main,"Trim:");
 
 	m_box_main->insertModeSet(BoxVertical::INSERTMODE_FILL
 		| BoxVertical::INSERTMODE_EXPAND);
@@ -198,6 +201,7 @@ WaveformRangeView::~WaveformRangeView()
 	m_entries[1]->destroy();
 	m_box_positions->destroy();
 	m_plot->destroy();
+	m_label->destroy();
 	m_box_main->slaveRelease();
 	}
 
