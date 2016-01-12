@@ -22,8 +22,8 @@ class RingBuffer:private ArraySimple<T>
 		void push_back(const T& x)
 			{
 			auto owr=m_offset_write;
-			uint32_t N=ArraySimple<T>::m_N;
 			ArraySimple<T>::m_data[owr]=x;
+			uint32_t N=ArraySimple<T>::m_N;
 			owr=(owr+1)%N;
 			m_offset_write=owr;
 			}

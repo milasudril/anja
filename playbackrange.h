@@ -15,7 +15,7 @@ class alignas(32) PlaybackRange
 	public:
 		PlaybackRange();
 
-		PlaybackRange(const Waveform& waveform,uint32_t start_delay);
+		void waveformSet(const Waveform& waveform,uint32_t start_delay);
 
 		unsigned int outputBufferGenerate(float* buffer_out
 			,unsigned int n_frames_out);
@@ -30,7 +30,7 @@ class alignas(32) PlaybackRange
 			}
 
 		void stop()
-			{r_current=r_end;}
+			{r_begin=r_end;}
 
 		uint32_t flagsGet() const
 			{return m_flags;}

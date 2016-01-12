@@ -14,14 +14,9 @@ target[name[audioengineanja.o] type[object]]
 
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	r_waveforms(&waveforms),m_event_queue(32),m_voice_current(0)
-	,m_playback_buffers(32),r_playback_buffers(waveforms.length())
+	,m_source_buffers(32),r_source_buffers(waveforms.length())
+	,m_voice_channels(m_source_buffers.length())
 	{
-/*	size_t N=m_event_queue.length();
-	while(N!=0)
-		{
-		m_event_queue.push_back({0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f});
-		--N;
-		}*/
 	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
 	}
 
@@ -41,27 +36,33 @@ void AudioEngineAnja::onDeactivate(AudioConnection& source)
 
 
 void AudioEngineAnja::buffersAllocate(AudioConnection& source,unsigned int n_frames)
-	{}
+	{
+	m_voice_channels=ArraySimple<float>(n_frames*m_source_buffers.length());
+	}
 
 
 void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,uint8_t value_1) noexcept
 	{
-	m_event_queue.push_back(
+	QueueElement tmp;
+	tmp.event=
 		{
 		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
 		,{status,value_0,value_1,0}
 		,0.0f
-		});
+		};
+	m_event_queue.push_back(tmp.vector);
 	}
 
 void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) noexcept
 	{
-	m_event_queue.push_back(
+	QueueElement tmp;
+	tmp.event=
 		{
 		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
 		,{status,value_0,0,Event::VALUE_1_FLOAT}
 		,value_1
-		});
+		};
+	m_event_queue.push_back(tmp.vector);
 	}
 
 void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
@@ -71,21 +72,25 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
 			{
+			auto voice=m_voice_current;
 			auto slot=event.status_word[1];
-		//	TODO Add polyphony
-			m_playback_buffers[0]={(*r_waveforms)[slot],time_offset};
-			r_playback_buffers[slot]=0;
+		//	BUG If user tries to load a new waveform in slot while it is playing
+		//	a SIGSEGV will occur. Therefore, the waveform object needs to be
+		//	marked as locked.
+			m_source_buffers[voice].waveformSet((*r_waveforms)[slot],time_offset);
+			r_source_buffers[slot]=voice;
+			m_voice_current=(voice+1)%m_source_buffers.length();
 			}
 			break;
 
 		case MIDIConstants::StatusCodes::NOTE_OFF:
 			{
 			auto slot=event.status_word[1];
-			auto& playback_buffer=m_playback_buffers[ r_playback_buffers[slot] ];
+			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
 			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
 				{playback_buffer.flagsUnset(Waveform::LOOP);}
 			else
-				{m_playback_buffers[ r_playback_buffers[slot] ].stop();}
+				{playback_buffer.stop();}
 			}
 			break;
 		}
@@ -96,38 +101,64 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 	auto& queue=m_event_queue;
 	Event event_next=m_event_next;
 	auto now=m_now;
-	auto now_in=now;
-	auto n_frames_in=n_frames;
+	const auto now_in=now;
+	const auto n_frames_in=n_frames;
 
+//	Fetch events
 	while(n_frames!=0)
 		{
-		if(now>=event_next.delay)
+		if(now>=event_next.delay) // If next event has passed
 			{
 			eventProcess(event_next,now-now_in);
 			event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
-			}
 
-		while(!queue.empty())
-			{
-			event_next=queue.pop_front();
-			if(now>=event_next.delay)
+			while(!queue.empty())
 				{
-				eventProcess(event_next,now-now_in);
-				event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
+				QueueElement tmp;
+				tmp.vector=queue.pop_front();
+				event_next=tmp.event;
+				if(now>=event_next.delay)
+					{
+					eventProcess(event_next,now-now_in);
+					event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
+					}
+				else
+					{break;}
 				}
-			else
-				{break;}
 			}
-
 		++now;
 		--n_frames;
 		}
 
-	auto buffer=source.audioBufferOutputGet(0,n_frames_in);
-	memset(buffer,0,n_frames_in*sizeof(float));
-	if(m_playback_buffers[0].valid())
+	auto buffer_out=source.audioBufferOutputGet(0,n_frames_in);
+	memset(buffer_out,0,n_frames_in*sizeof(float));
+
+//	Render voices
 		{
-		m_playback_buffers[0].outputBufferGenerate(buffer,n_frames_in);
+		auto src_begin=m_source_buffers.begin();
+		auto src_current=src_begin;
+		auto src_end=m_source_buffers.end();
+		auto ptr_voice=m_voice_channels.begin();
+		while(src_current!=src_end)
+			{
+			if(src_current->valid())
+				{
+				auto N=src_current->outputBufferGenerate(ptr_voice,n_frames_in);
+				auto ptr_buffer_out=buffer_out;
+				auto ptr_buffer_in=ptr_voice;
+				while(N!=0)
+					{
+					*ptr_buffer_out+=(0.25f) * (*ptr_buffer_in);
+					--N;
+					++ptr_buffer_in;
+					++ptr_buffer_out;
+					}
+				}
+			else
+				{m_voice_current=src_current-src_begin;}
+			ptr_voice+=n_frames_in;
+			++src_current;
+			}
 		}
 	m_now=now;
 	m_event_next=event_next;

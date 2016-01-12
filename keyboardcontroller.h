@@ -16,9 +16,7 @@ class Session;
 class KeyboardController:public KeyboardView::EventHandler
 	{
 	public:
-		KeyboardController(Session& session):
-			 r_session(&session),r_view(nullptr)
-			{}
+		KeyboardController(Session& session);
 
 		void onMouseUp(KeyboardView& source,uint8_t scancode,keymask_t key_mask);
 

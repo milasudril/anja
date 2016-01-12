@@ -45,13 +45,21 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		uint64_t m_time_start;
 		uint64_t m_now;
 
-		RingBuffer<Event> m_event_queue;
+	//	Force vectorized instructions to pop elements form the event queue
+		typedef int QueueVector __attribute__((vector_size(16)));
+		union QueueElement
+			{
+			Event event;
+			QueueVector vector;
+			};
+		RingBuffer<QueueVector> m_event_queue;
+
 		Event m_event_next;
 
 		uint8_t m_voice_current;
-		ArraySimple<PlaybackRange> m_playback_buffers;
-		ArraySimple<uint8_t> r_playback_buffers;
-
+		ArraySimple<PlaybackRange> m_source_buffers;
+		ArraySimple<uint8_t> r_source_buffers;
+		ArraySimple<float> m_voice_channels;
 
 		void eventProcess(const Event& event,unsigned int time_offset);
 	};

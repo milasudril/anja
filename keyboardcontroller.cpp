@@ -10,6 +10,12 @@ target[name[keyboardcontroller.o] type[object]]
 
 #include <cstring>
 
+KeyboardController::KeyboardController(Session& session):
+	r_session(&session),r_view(nullptr)
+	{
+	memset(m_keystates.begin(),0,256*sizeof(uint8_t));
+	}
+
 void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 	{
 	auto keystate=m_keystates[scancode];
@@ -17,10 +23,11 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 	if(keystate==0)
 		{
 		m_keystates[scancode]=1;
-	//	TODO add randomized velocity
-		engine.eventPost( MIDIConstants::StatusCodes::NOTE_ON
-			,r_session->scancodeToSlot(scancode)
-			,1.0f);
+		auto slot=r_session->scancodeToSlot(scancode);
+		if(slot!=255)
+			{
+			engine.eventPost(MIDIConstants::StatusCodes::NOTE_ON,slot,1.0f);
+			}
 		}
 	}
 
@@ -28,16 +35,21 @@ void KeyboardController::onKeyUp(KeyboardView& source,uint8_t scancode)
 	{
 	m_keystates[scancode]=0;
 	auto& engine=r_session->audioEngineGet();
-	engine.eventPost( MIDIConstants::StatusCodes::NOTE_OFF
-		,r_session->scancodeToSlot(scancode)
-		,1.0f);
+	auto slot=r_session->scancodeToSlot(scancode);
+	if(slot!=255)
+		{
+		engine.eventPost(MIDIConstants::StatusCodes::NOTE_OFF,slot,1.0f);
+		}
 	}
 
 void KeyboardController::onMouseUp(KeyboardView& source,uint8_t scancode
 	,keymask_t key_mask)
 	{
 	auto slot=r_session->scancodeToSlot(scancode);
-	r_session->slotActiveSet(slot);
-	r_view->slotDisplay(slot);
-	source.update();
+	if(slot!=255)
+		{
+		r_session->slotActiveSet(slot);
+		r_view->slotDisplay(slot);
+		source.update();
+		}
 	}
