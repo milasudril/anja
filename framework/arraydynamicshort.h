@@ -1,5 +1,6 @@
 #ifdef __WAND__
 target[name[arraydynamicshort.h] type[include]]
+dependency[new.o]
 #endif
 
 #ifndef ARRAYDYNAMICSHORT_H

@@ -46,7 +46,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		uint64_t m_now;
 
 	//	Force vectorized instructions to pop elements form the event queue
-		typedef int QueueVector __attribute__((vector_size(16)));
+		typedef float QueueVector __attribute__((vector_size(16)));
 		union QueueElement
 			{
 			Event event;

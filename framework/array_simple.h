@@ -1,5 +1,6 @@
 #ifdef __WAND__
 target[name[array_simple.h] type[include]]
+dependency[new.o]
 #endif
 
 #ifndef ARRAYSIMPLE_H
