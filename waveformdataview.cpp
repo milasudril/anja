@@ -166,7 +166,9 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 			m_box_left=BoxVertical::create(*m_box_details);
 				m_color=InputEntry::create(*m_box_left,"Color:","...",m_color_events,0);
 				m_playback_gain=Slider::create(*m_box_left,m_pbgain_events
-					,"Playback gain/dB:",1);
+					,"Playback gain/dB:",0,1);
+				m_pbgain_randomize=Slider::create(*m_box_left,m_pbgain_events
+					,"Random level/dB:",1,1);
 				m_options=OptionBox::create(*m_box_left,m_command_handler
 					,"Options:",Waveform::FLAG_NAMES);
 
@@ -181,6 +183,7 @@ WaveformDataView::~WaveformDataView()
 	{
 			m_trim_input->destroy();
 				m_options->destroy();
+				m_pbgain_randomize->destroy();
 				m_playback_gain->destroy();
 				m_color->destroy();
 			m_box_left->destroy();

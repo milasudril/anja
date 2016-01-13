@@ -156,6 +156,7 @@ class WaveformDataView:public Widget
 				BoxVertical* m_box_left;
 					InputEntry* m_color;
 					Slider* m_playback_gain;
+					Slider* m_pbgain_randomize;
 					OptionBox* m_options;
 
 				WaveformRangeView* m_trim_input;

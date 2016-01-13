@@ -32,7 +32,7 @@ class SliderGtk:public Slider
 	{
 	public:
 		SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
-			,bool horizontal);
+			,unsigned int id,bool horizontal);
 		~SliderGtk();
 
 		void destroy();
@@ -42,13 +42,16 @@ class SliderGtk:public Slider
 
 		void valueSet(double x);
 
+		unsigned int idGet() const
+			{return m_id;}
+
 	private:
 		static void sliderMoved(GtkRange* range,void* slidergtk);
 		static gint textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk);
 
 		GuiContainer& r_parent;
 		EventHandler& r_handler;
-
+		unsigned int m_id;
 		GuiHandle m_box;
 		GtkWidget* m_title;
 		GtkWidget* m_slider;
@@ -84,8 +87,8 @@ Slider::EventHandler Slider::s_default_handler;
 
 
 Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
-	,const char* title,bool horizontal)
-	{return new SliderGtk(parent,handler,title,horizontal);}
+	,const char* title,unsigned int id,bool horizontal)
+	{return new SliderGtk(parent,handler,title,id,horizontal);}
 
 void SliderGtk::destroy()
 	{delete this;}
@@ -113,7 +116,7 @@ gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk
 	}
 
 SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
-	,bool horizontal):
+	,unsigned int id,bool horizontal):
 	r_parent(parent),r_handler(handler)
 	{
 	gboolean invert=horizontal?

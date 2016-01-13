@@ -13,7 +13,7 @@ int main()
 	auto box=BoxHorizontal::create(*mainwin);
 	Slider* sliders[16];
 	for(size_t k=0;k<16;++k)
-		{sliders[k]=Slider::create(*box,"Level",0);}
+		{sliders[k]=Slider::create(*box,"Level",0,0);}
 
 	return 0;
 	}

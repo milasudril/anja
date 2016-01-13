@@ -29,17 +29,19 @@ class Slider:public Widget
 			};
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler
-			,const char* title)
-			{return create(parent,handler,title,0);}
+			,const char* title,unsigned int id)
+			{return create(parent,handler,title,0,id);}
 
 		static Slider* create(GuiContainer& parent,const char* title
-			,bool horizontal)
-			{return create(parent,s_default_handler,title,horizontal);}
+			,unsigned int id,bool horizontal)
+			{return create(parent,s_default_handler,title,id,horizontal);}
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler
-			,const char* title,bool horizontal);
+			,const char* title,unsigned int id,bool horizontal);
 
 		virtual void valueSet(double y)=0;
+
+		virtual unsigned int idGet() const=0;
 
 	private:
 		static EventHandler s_default_handler;
