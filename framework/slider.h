@@ -28,16 +28,16 @@ class Slider:public Widget
 				virtual double valueMapInverse(Slider& source,double y) const noexcept;
 			};
 
-		static Slider* create(GuiContainer& parent)
-			{return create(parent,s_default_handler);}
+		static Slider* create(GuiContainer& parent,EventHandler& handler
+			,const char* title)
+			{return create(parent,handler,title,0);}
 
-		static Slider* create(GuiContainer& parent,EventHandler& handler)
-			{return create(parent,handler,0);}
+		static Slider* create(GuiContainer& parent,const char* title
+			,bool horizontal)
+			{return create(parent,s_default_handler,title,horizontal);}
 
-		static Slider* create(GuiContainer& parent,bool horizontal)
-			{return create(parent,s_default_handler,horizontal);}
-
-		static Slider* create(GuiContainer& parent,EventHandler& handler,bool horizontal);
+		static Slider* create(GuiContainer& parent,EventHandler& handler
+			,const char* title,bool horizontal);
 
 		virtual void valueSet(double y)=0;
 

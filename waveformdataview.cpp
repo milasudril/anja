@@ -165,13 +165,8 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 		m_box_details=BoxHorizontal::create(*m_box_main);
 			m_box_left=BoxVertical::create(*m_box_details);
 				m_color=InputEntry::create(*m_box_left,"Color:","...",m_color_events,0);
-
-				m_playback_gain_box=BoxHorizontal::create(*m_box_left);
-					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_TOP);
-					m_playback_gain_label=Label::create(*m_playback_gain_box,"Playback gain/dB:");
-					m_playback_gain_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
-					m_playback_gain_input=Slider::create(*m_playback_gain_box,m_pbgain_events,1);
-
+				m_playback_gain=Slider::create(*m_box_left,m_pbgain_events
+					,"Playback gain/dB:",1);
 				m_options=OptionBox::create(*m_box_left,m_command_handler
 					,"Options:",Waveform::FLAG_NAMES);
 
@@ -186,7 +181,7 @@ WaveformDataView::~WaveformDataView()
 	{
 			m_trim_input->destroy();
 				m_options->destroy();
-				m_playback_gain_box->destroy();
+				m_playback_gain->destroy();
 				m_color->destroy();
 			m_box_left->destroy();
 		m_box_details->destroy();
@@ -223,7 +218,7 @@ void WaveformDataView::update()
 	r_data->keyColorGet(string);
 	m_color->textSet(string.begin());
 
-	m_playback_gain_input->valueSet(amplitudeToDb(waveform.gainGet()));
+	m_playback_gain->valueSet(amplitudeToDb(waveform.gainGet()));
 
 	auto N_options=m_options->nOptionsGet();
 	for(uint32_t k=0;k<N_options;++k)

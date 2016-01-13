@@ -31,7 +31,8 @@ target
 class SliderGtk:public Slider
 	{
 	public:
-		SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal);
+		SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
+			,bool horizontal);
 		~SliderGtk();
 
 		void destroy();
@@ -49,6 +50,7 @@ class SliderGtk:public Slider
 		EventHandler& r_handler;
 
 		GuiHandle m_box;
+		GtkWidget* m_title;
 		GtkWidget* m_slider;
 		GtkWidget* m_text;
 	};
@@ -82,8 +84,8 @@ Slider::EventHandler Slider::s_default_handler;
 
 
 Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
-	,bool horizontal)
-	{return new SliderGtk(parent,handler,horizontal);}
+	,const char* title,bool horizontal)
+	{return new SliderGtk(parent,handler,title,horizontal);}
 
 void SliderGtk::destroy()
 	{delete this;}
@@ -110,7 +112,8 @@ gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk
 	return 1;
 	}
 
-SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal):
+SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
+	,bool horizontal):
 	r_parent(parent),r_handler(handler)
 	{
 	gboolean invert=horizontal?
@@ -121,6 +124,13 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 	g_object_ref_sink(m_box);
 	GtkWidget* box=m_box;
 	gtk_box_set_homogeneous((GtkBox*)box,FALSE);
+
+	m_title=gtk_label_new(title);
+	g_object_ref_sink(m_title);
+	gtk_box_pack_start((GtkBox*)box,m_title,FALSE,FALSE,0);
+	if(horizontal)
+		{gtk_widget_set_halign(m_title,GTK_ALIGN_START);}
+	gtk_widget_show(m_title);
 
 	m_slider=gtk_scale_new_with_range(orientation,0,1,1e-3);
 	g_object_ref_sink(m_slider);
@@ -144,8 +154,9 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,bool horizontal)
 SliderGtk::~SliderGtk()
 	{
 	r_parent.componentRemove(*this);
-	gtk_widget_destroy(m_slider);
 	gtk_widget_destroy(m_text);
+	gtk_widget_destroy(m_slider);
+	gtk_widget_destroy(m_title);
 	gtk_widget_destroy(m_box);
 	}
 
