@@ -34,5 +34,4 @@ constexpr uint64_t secondsToFrames(double seconds,double fs)
 	return uint64_t(seconds*fs+0.5);
 	}
 
-
 #endif

@@ -5,6 +5,7 @@ target[name[waveformdataview.o] type[object]]
 #include "waveformdataview.h"
 #include "waveformdata.h"
 #include "waveformrangeview.h"
+#include "units.h"
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
 #include "framework/label.h"
@@ -80,28 +81,27 @@ void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
 
 double WaveformDataView::PlaybackGainHandler::valueGet(Slider& source,const char* text)
 	{
-	auto gain=pow(10,convert(text)/20);
-	r_view->gainSet(gain);
-	return gain;
+	auto v=convert(text);
+	r_view->gainSet(dBToAmplitude(v));
+	return v;
 	}
 
 void WaveformDataView::PlaybackGainHandler::textGet(Slider& source,double value,TextBuffer& buffer)
 	{
-	r_view->gainSet(value);
-	auto gain_dB=20.0*log10(value);
-	sprintf(buffer.begin(),"%.7g",gain_dB);
+	r_view->gainSet(dBToAmplitude(value));
+	sprintf(buffer.begin(),"%.3f",value);
 	}
 
 double WaveformDataView::PlaybackGainHandler::valueMap(Slider& source,double x)
 const noexcept
 	{
-	return (2.0 - 5.5e-8)*x + 5.5e-8;
+	return 145.0*(x - 1.0) + 6.0*x;
 	}
 
 double WaveformDataView::PlaybackGainHandler::valueMapInverse(Slider& source,double y)
 const noexcept
 	{
-	return (y - 5.5e-8)/(2.0 - 5.5e-8);
+	return (y+145.0)/151;
 	}
 
 
@@ -223,7 +223,7 @@ void WaveformDataView::update()
 	r_data->keyColorGet(string);
 	m_color->textSet(string.begin());
 
-	m_playback_gain_input->valueSet(waveform.gainGet());
+	m_playback_gain_input->valueSet(amplitudeToDb(waveform.gainGet()));
 
 	auto N_options=m_options->nOptionsGet();
 	for(uint32_t k=0;k<N_options;++k)
