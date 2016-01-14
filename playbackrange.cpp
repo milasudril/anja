@@ -57,7 +57,7 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 		if(ptr_current==ptr_end)
 			{
 			ptr_current=(flags&Waveform::LOOP)? ptr_begin : ptr_current;
-			gain=(flags&Waveform::SET_GAIN_ON_LOOP)?
+			gain=(flags&Waveform::GAIN_SET_ON_LOOP)?
 				dBToAmplitude(m_gain_init + r_rng->drawUniform(gain_random)):gain;
 			}
 		}
