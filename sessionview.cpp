@@ -37,7 +37,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
 
 	m_box->insertModeSet(BoxVertical::INSERTMODE_END
-		|BoxVertical::INSERTMODE_EXPAND|BoxVertical::INSERTMODE_FILL);
+		|BoxVertical::INSERTMODE_FILL);
 	m_dataview=WaveformDataView::create(*m_box,data_eventhandler,rangeview_handler);
 
 	sessionSet(session);
