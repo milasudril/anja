@@ -76,10 +76,6 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 
 			auto& waveform=(*r_waveforms)[slot];
 
-		//	If user tries to load a new waveform in slot while it is playing
-		//	a SIGSEGV will occur. Therefore, the waveform object needs to be
-		//	marked as locked before we continue.
-			waveform.flagsSet(Waveform::LOCKED);
 			m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset);
 			r_source_buffers[slot]=voice;
 			m_voice_current=(voice+1)%m_source_buffers.length();
@@ -161,11 +157,11 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 					++ptr_buffer_in;
 					++ptr_buffer_out;
 					}
-				}
-			else
-				{
-				m_voice_current=src_current-src_begin;
-			//	FIXME Reset LOCKED flag for corresponding waveform.
+				if(src_current->done())
+					{
+					src_current->release();
+					m_voice_current=src_current-src_begin;
+					}
 				}
 			ptr_voice+=n_frames_in;
 			++src_current;

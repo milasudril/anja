@@ -14,36 +14,41 @@ class RandomGenerator;
 class alignas(32) PlaybackRange
 	{
 	public:
-		PlaybackRange();
+		PlaybackRange() noexcept;
 
-		void waveformSet(RandomGenerator& rng,const Waveform& waveform
-			,uint32_t start_delay);
+		void waveformSet(RandomGenerator& rng,Waveform& waveform
+			,uint32_t start_delay) noexcept;
+
+		bool valid() const noexcept
+			{return r_waveform!=nullptr;}
+
+		void release();
 
 		unsigned int outputBufferGenerate(float* buffer_out
-			,unsigned int n_frames_out);
+			,unsigned int n_frames_out) noexcept;
 
-		bool valid() const
-			{return r_begin!=r_end;}
+		bool done() const noexcept
+			{return r_current==r_end;}
 
-		PlaybackRange& delayReset()
+		void stop() noexcept
+			{r_begin=r_end;}
+
+		PlaybackRange& delayReset() noexcept
 			{
 			m_delay=0;
 			return *this;
 			}
 
-		void stop()
-			{r_begin=r_end;}
-
-		uint32_t flagsGet() const
+		uint32_t flagsGet() const noexcept
 			{return m_flags;}
 
-		PlaybackRange& flagsSet(uint32_t flags)
+		PlaybackRange& flagsSet(uint32_t flags) noexcept
 			{
 			m_flags|=flags;
 			return *this;
 			}
 
-		PlaybackRange& flagsUnset(uint32_t flags)
+		PlaybackRange& flagsUnset(uint32_t flags) noexcept
 			{
 			m_flags&=~flags;
 			return *this;
@@ -51,16 +56,14 @@ class alignas(32) PlaybackRange
 
 
 	private:
+		RandomGenerator* r_rng;
+		Waveform* r_waveform;
 		uint32_t m_delay;
 		const float* r_begin;
 		const float* r_current;
 		const float* r_end;
-		RandomGenerator* r_rng;
-		float m_fs;
-		float m_gain_init;
-		float m_gain;
-		float m_gain_random;
 		uint32_t m_flags;
+		float m_gain_current;
 	};
 
 #endif

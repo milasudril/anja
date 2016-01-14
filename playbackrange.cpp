@@ -12,26 +12,41 @@ target[name[playbackrange.o] type[object]]
 #include <cstring>
 #include <cstdio>
 
-PlaybackRange::PlaybackRange()
+PlaybackRange::PlaybackRange() noexcept
 	{memset(this,0,sizeof(*this));}
 
-void PlaybackRange::waveformSet(RandomGenerator& rng,const Waveform& waveform
-	,uint32_t start_delay)
+void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
+	,uint32_t start_delay) noexcept
 	{
 	r_rng=&rng;
+	r_waveform=&waveform;
+
 	m_delay=start_delay;
+//	If user tries to load a new waveform in slot while it is playing
+//	a SIGSEGV will occur. Therefore, the waveform object needs to be
+//	marked as locked before we continue.
+	waveform.flagsSet(Waveform::LOCKED);
+
 	r_begin=waveform.begin();
 	r_current=waveform.begin();
 	r_end=waveform.end();
-	m_fs=waveform.sampleRateGet();
-	m_gain_init=waveform.gainGet();
-	m_gain_random=waveform.gainRandomGet();
-	m_gain=dBToAmplitude( m_gain_init + rng.drawUniform( m_gain_random ) );
 	m_flags=waveform.flagsGet();
+
+	auto gain_init=waveform.gainGet();
+	auto gain_random=waveform.gainRandomGet();
+	m_gain_current=dBToAmplitude(gain_init + r_rng->drawUniform(gain_random));
 	}
 
+void PlaybackRange::release()
+	{
+//	Clear lock flag
+	r_waveform->flagsUnset(Waveform::LOCKED);
+	r_waveform=nullptr;
+	}
+
+
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
-	,unsigned int n_frames_out)
+	,unsigned int n_frames_out) noexcept
 	{
 	auto ptr_begin=r_begin;
 	auto ptr_end=r_end;
@@ -44,8 +59,10 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 
 	auto flags=m_flags;
 	auto ptr_current=r_current;
-	auto gain=m_gain;
-	auto gain_random=m_gain_random;
+
+	auto gain=m_gain_current;
+	auto gain_init=r_waveform->gainGet();
+	auto gain_random=r_waveform->gainRandomGet();
 
 	auto dir=ptr_current<ptr_end?1:-1;
 	while(n_frames_out!=0 && ptr_current!=ptr_end)
@@ -58,11 +75,11 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 			{
 			ptr_current=(flags&Waveform::LOOP)? ptr_begin : ptr_current;
 			gain=(flags&Waveform::GAIN_ONLOOP_SET)?
-				dBToAmplitude(m_gain_init + r_rng->drawUniform(gain_random)):gain;
+				dBToAmplitude(gain_init + r_rng->drawUniform(gain_random)):gain;
 			}
 		}
 	r_current=ptr_current;
-	m_gain=gain;
+	m_gain_current=gain;
 	delayReset();
 	return buffer_out-buffer_out_in;
 	}
