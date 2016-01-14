@@ -6,7 +6,7 @@ target[name[waveform.o] type[object]]
 #include <cstring>
 
 const char* Waveform::FLAG_NAMES[]=
-	{"Loop","Sustain","Readonly",nullptr};
+	{"Loop","Sustain","Readonly","Set gain on loop",nullptr};
 
 Waveform& Waveform::flagsSet(const ArrayDynamicShort<char>& flags)
 	{

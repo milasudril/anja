@@ -5,7 +5,6 @@ target[name[waveformdataview.o] type[object]]
 #include "waveformdataview.h"
 #include "waveformdata.h"
 #include "waveformrangeview.h"
-#include "units.h"
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
 #include "framework/label.h"
@@ -81,27 +80,57 @@ void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
 
 double WaveformDataView::PlaybackGainHandler::valueGet(Slider& source,const char* text)
 	{
-	auto v=convert(text);
-	r_view->gainSet(dBToAmplitude(v));
-	return v;
+	auto value=convert(text);
+	switch(source.idGet())
+		{
+		case 0:
+			r_view->gainSet(value);
+			break;
+		case 1:
+			r_view->gainRandomSet(value);
+			break;
+		}
+	return value;
 	}
 
 void WaveformDataView::PlaybackGainHandler::textGet(Slider& source,double value,TextBuffer& buffer)
 	{
-	r_view->gainSet(dBToAmplitude(value));
+	switch(source.idGet())
+		{
+		case 0:
+			r_view->gainSet(value);
+			break;
+		case 1:
+			r_view->gainRandomSet(value);
+			break;
+		}
 	sprintf(buffer.begin(),"%.3f",value);
 	}
 
 double WaveformDataView::PlaybackGainHandler::valueMap(Slider& source,double x)
 const noexcept
 	{
-	return 145.0*(x - 1.0) + 6.0*x;
+	switch(source.idGet())
+		{
+		case 0:
+			return 120.0*(x - 1.0) + 6.0*x;
+		case 1:
+			return 6.0*x;
+		}
+	return x;
 	}
 
 double WaveformDataView::PlaybackGainHandler::valueMapInverse(Slider& source,double y)
 const noexcept
 	{
-	return (y+145.0)/151;
+	switch(source.idGet())
+		{
+		case 0:
+			return (y+120.0)/126;
+		case 1:
+			return y/6.0;
+		}
+	return y;
 	}
 
 
@@ -168,7 +197,7 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 				m_playback_gain=Slider::create(*m_box_left,m_pbgain_events
 					,"Playback gain/dB:",0,1);
 				m_pbgain_randomize=Slider::create(*m_box_left,m_pbgain_events
-					,"Random level/dB:",1,1);
+					,"Playback gain random level/dB:",1,1);
 				m_options=OptionBox::create(*m_box_left,m_command_handler
 					,"Options:",Waveform::FLAG_NAMES);
 
@@ -221,7 +250,8 @@ void WaveformDataView::update()
 	r_data->keyColorGet(string);
 	m_color->textSet(string.begin());
 
-	m_playback_gain->valueSet(amplitudeToDb(waveform.gainGet()));
+	m_playback_gain->valueSet(waveform.gainGet());
+	m_pbgain_randomize->valueSet(waveform.gainRandomGet());
 
 	auto N_options=m_options->nOptionsGet();
 	for(uint32_t k=0;k<N_options;++k)
@@ -253,6 +283,11 @@ void WaveformDataView::colorUpdate(const char* colorstr)
 void WaveformDataView::gainSet(float gain)
 	{
 	r_handler->onGainChange(*this,gain);
+	}
+
+void WaveformDataView::gainRandomSet(float value)
+	{
+	r_handler->onGainRandomChange(*this,value);
 	}
 
 void WaveformDataView::optionUnset(uint32_t option)

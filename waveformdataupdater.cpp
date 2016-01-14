@@ -45,6 +45,13 @@ void WaveformDataUpdater::onGainChange(WaveformDataView& source
 	waveform.gainSet(value);
 	}
 
+void WaveformDataUpdater::onGainRandomChange(WaveformDataView& source
+	,float value)
+	{
+	auto& waveform=source.waveformDataGet().waveformGet();
+	waveform.gainRandomSet(value);
+	}
+
 void WaveformDataUpdater::onOptionSet(WaveformDataView& source,uint32_t option)
 	{
 	auto& waveform=source.waveformDataGet().waveformGet();
@@ -56,3 +63,4 @@ void WaveformDataUpdater::onOptionUnset(WaveformDataView& source,uint32_t option
 	auto& waveform=source.waveformDataGet().waveformGet();
 	waveform.flagUnset(option);
 	}
+

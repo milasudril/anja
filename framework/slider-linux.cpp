@@ -117,7 +117,7 @@ gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk
 
 SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
 	,unsigned int id,bool horizontal):
-	r_parent(parent),r_handler(handler)
+	r_parent(parent),r_handler(handler),m_id(id)
 	{
 	gboolean invert=horizontal?
 		FALSE:1;
@@ -165,6 +165,9 @@ SliderGtk::~SliderGtk()
 
 void SliderGtk::valueSet(double x)
 	{
+	EventHandler::TextBuffer text;
+	r_handler.textGet(*this,x,text);
+	gtk_entry_set_text((GtkEntry*)m_text,text.begin());
 	auto v=r_handler.valueMapInverse(*this,x);
 	if(v>=0 && v<=1)
 		{gtk_range_set_value((GtkRange*)m_slider,v);}

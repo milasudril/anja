@@ -14,7 +14,6 @@ target[name[audioconnection.o] type[object] platform[;GNU/Linux] dependency[jack
 #include <memory>
 #include <cassert>
 #include <cstring>
-#include <random>
 
 typedef std::unique_ptr<jack_client_t,decltype(&jack_client_close)>
 	ConnectionHandle;

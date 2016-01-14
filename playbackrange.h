@@ -9,13 +9,15 @@ dependency[playbackrange.o]
 #include <cstdint>
 
 class Waveform;
+class RandomGenerator;
 
 class alignas(32) PlaybackRange
 	{
 	public:
 		PlaybackRange();
 
-		void waveformSet(const Waveform& waveform,uint32_t start_delay);
+		void waveformSet(RandomGenerator& rng,const Waveform& waveform
+			,uint32_t start_delay);
 
 		unsigned int outputBufferGenerate(float* buffer_out
 			,unsigned int n_frames_out);
@@ -53,8 +55,11 @@ class alignas(32) PlaybackRange
 		const float* r_begin;
 		const float* r_current;
 		const float* r_end;
+		RandomGenerator* r_rng;
 		float m_fs;
+		float m_gain_init;
 		float m_gain;
+		float m_gain_random;
 		uint32_t m_flags;
 	};
 

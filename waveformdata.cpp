@@ -29,13 +29,17 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	if(value!=nullptr)
 		{keyColorSet(value->begin());}
 
+	value=record.propertyGet("Playback gain/dB");
+	if(value!=nullptr)
+		{r_waveform->gainSet(convert(value->begin()));}
+
+	value=record.propertyGet("Playback gain random level/dB");
+	if(value!=nullptr)
+		{r_waveform->gainRandomSet(convert(value->begin()));}
+
 	value=record.propertyGet("Options");
 	if(value!=nullptr)
 		{r_waveform->flagsSet(*value);}
-
-	value=record.propertyGet("Gain");
-	if(value!=nullptr)
-		{r_waveform->gainSet(convert(value->begin()));}
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")

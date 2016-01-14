@@ -15,12 +15,12 @@ class Waveform
 	{
 	public:
 		Waveform():m_offset_begin(0),m_offset_end(0)
-			,m_gain(1.0f),m_fs(0),m_flags(0)
+			,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
 			{}
 
 		Waveform(const float* buffer,uint32_t buffer_size,float fs):
 			m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
-			,m_gain(1.0f),m_fs(fs),m_flags(READONLY)
+			,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 			{}
 
 		const float* begin() const
@@ -95,9 +95,19 @@ class Waveform
 			return *this;
 			}
 
+		float gainRandomGet() const
+			{return m_gain_random;}
+
+		Waveform& gainRandomSet(float value)
+			{
+			m_gain_random=value;
+			return *this;
+			}
+
 		static constexpr uint32_t LOOP=0x1;
 		static constexpr uint32_t SUSTAIN=0x2;
 		static constexpr uint32_t READONLY=0x4;
+		static constexpr uint32_t SET_GAIN_ON_LOOP=0x8;
 		static constexpr uint32_t LOCKED=0x80000000;
 
 		static const char* FLAG_NAMES[];
@@ -164,6 +174,7 @@ class Waveform
 		uint32_t m_offset_begin;
 		uint32_t m_offset_end;
 		float m_gain;
+		float m_gain_random;
 		float m_fs;
 		uint32_t m_flags;
 	};

@@ -39,6 +39,8 @@ class WaveformDataView:public Widget
 					,const char* colorstr)=0;
 				virtual void onGainChange(WaveformDataView& source
 					,float value)=0;
+				virtual void onGainRandomChange(WaveformDataView& source
+					,float value)=0;
 				virtual void onOptionSet(WaveformDataView& source
 					,uint32_t option)=0;
 				virtual void onOptionUnset(WaveformDataView& source
@@ -143,6 +145,7 @@ class WaveformDataView:public Widget
 		void colorUpdate(const ColorRGBA& color_new);
 		void colorUpdate(const char* colorstr);
 		void gainSet(float gain);
+		void gainRandomSet(float value);
 		void optionSet(uint32_t option);
 		void optionUnset(uint32_t option);
 

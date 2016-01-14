@@ -80,7 +80,7 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		//	a SIGSEGV will occur. Therefore, the waveform object needs to be
 		//	marked as locked before we continue.
 			waveform.flagsSet(Waveform::LOCKED);
-			m_source_buffers[voice].waveformSet(waveform,time_offset);
+			m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset);
 			r_source_buffers[slot]=voice;
 			m_voice_current=(voice+1)%m_source_buffers.length();
 			}

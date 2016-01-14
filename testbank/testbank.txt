@@ -18,15 +18,17 @@ Color:       1; 0,534 678; 0.75
 
 --------------------------------------Slot 2------------------------------------
 
-Description: [Rooster] from pdsounds.org.
+Description:      [Rooster] from pdsounds.org.
 
-Filename:    medium rooster crowing.aiff
+Filename:         medium rooster crowing.aiff
 
-Color:       0.65;1;0
+Color:            0.65;1;0
 
-Options:     Sustain
+Options:          Sustain|Set gain on loop
 
-Gain:        0.5
+Playback gain/dB: -6
+
+Playback gain random level/dB: 3
 
 
 --------------------------------------Slot 3------------------------------------
@@ -48,7 +50,9 @@ Filename:    thunderstorm.flac
 
 Color:       0,25;1;1
 
-Options:     Sustain
+Options:     Sustain|Set gain on loop
+
+Playback gain random level/dB: 6
 
 
 --------------------------------------Slot 5------------------------------------

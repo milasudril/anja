@@ -28,6 +28,8 @@ class WaveformDataUpdater:public WaveformDataView::EventHandler
 
 		void onGainChange(WaveformDataView& source,float value);
 
+		void onGainRandomChange(WaveformDataView& source,float value);
+
 		void onOptionSet(WaveformDataView& source,uint32_t option);
 
 		void onOptionUnset(WaveformDataView& source,uint32_t option);
