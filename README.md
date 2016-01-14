@@ -1,7 +1,7 @@
 Anja med J -- A sample player for Jack
 ======================================
 
-![A screenshot illustrating the UI](https://raw.githubusercontent.com/milasudril/anja/master/doc/work-in-progress.png)
+![A screenshot illustrating the UI](https://raw.githubusercontent.com/milasudril/anja/master/doc/work-in-progress.png =400x)
 
 This project aims at building a live performance sample player/recorder for
 Jack. In contrast to Hydrogen, this will feature a virtual keyboard display as
