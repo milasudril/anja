@@ -63,7 +63,7 @@ class alignas(32) PlaybackRange
 		const float* r_current;
 		const float* r_end;
 		uint32_t m_flags;
-		float m_gain_current;
+		float m_gain_random_inst;
 	};
 
 #endif

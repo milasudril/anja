@@ -114,19 +114,21 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		if(now>=event_next.delay) // If next event has passed
 			{
 			eventProcess(event_next,now-now_in);
+		//	Set the status code to invalid so it does not do anything more
 			event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
 
+		//	Check if there are any more events
 			while(!queue.empty())
 				{
 				QueueElement tmp;
 				tmp.vector=queue.pop_front();
 				event_next=tmp.event;
-				if(now>=event_next.delay)
+				if(now>=event_next.delay) //Process next event now
 					{
 					eventProcess(event_next,now-now_in);
 					event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
 					}
-				else
+				else //	It is not time for current event yet. Exit the loop
 					{break;}
 				}
 			}

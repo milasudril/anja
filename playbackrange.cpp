@@ -2,8 +2,6 @@
 target[name[playbackrange.o] type[object]]
 #endif
 
-#define _GLIBCXX_DEBUG
-
 #include "playbackrange.h"
 #include "waveform.h"
 #include "units.h"
@@ -34,7 +32,7 @@ void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
 
 	auto gain_init=waveform.gainGet();
 	auto gain_random=waveform.gainRandomGet();
-	m_gain_current=dBToAmplitude(gain_init + r_rng->drawUniform(gain_random));
+	m_gain_random_inst=r_rng->drawUniform(gain_random);
 	}
 
 void PlaybackRange::release()
@@ -60,9 +58,11 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	auto flags=m_flags;
 	auto ptr_current=r_current;
 
-	auto gain=m_gain_current;
+	auto gain_random_inst=m_gain_random_inst;
 	auto gain_init=r_waveform->gainGet();
 	auto gain_random=r_waveform->gainRandomGet();
+
+	auto gain=dBToAmplitude(gain_random_inst + gain_init);
 
 	auto dir=ptr_current<ptr_end?1:-1;
 	while(n_frames_out!=0 && ptr_current!=ptr_end)
@@ -71,15 +71,18 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 		++buffer_out;
 		--n_frames_out;
 		ptr_current+=dir;
+
+	//	TODO Use a third cursor for loops, so there can be a separate decay
+	//	phase. The tricky part is to find space in the UI (WaveformRangeView)
 		if(ptr_current==ptr_end)
 			{
 			ptr_current=(flags&Waveform::LOOP)? ptr_begin : ptr_current;
-			gain=(flags&Waveform::GAIN_ONLOOP_SET)?
-				dBToAmplitude(gain_init + r_rng->drawUniform(gain_random)):gain;
+			gain_random_inst=(flags&Waveform::GAIN_ONLOOP_SET)?
+				r_rng->drawUniform(gain_random) : gain_random_inst;
 			}
 		}
 	r_current=ptr_current;
-	m_gain_current=gain;
+	m_gain_random_inst=gain_random_inst;
 	delayReset();
 	return buffer_out-buffer_out_in;
 	}
