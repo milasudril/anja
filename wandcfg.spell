@@ -9,6 +9,16 @@ config_set[
 ]
 
 config_set[
+	profile[release]
+	components[
+		Wand[
+			actions[makeexport]
+		]
+	]
+]
+
+
+config_set[
 	platforms[
 		target[;GNU/Linux]
 	]
@@ -40,6 +50,17 @@ config_set[
 					]
 				]
 			]
+			name_decorations[
+				dir_include[-I"%0"]
+				dir_lib[-L"%0"]
+				libname_external[-l"%0"]
+				libname_internal[-l:"%0"]
+			]
+		]
+		Makeexport[
+			copy[cp^ "%0"^ "%1"]
+			mkdir[mkdir^ "%0"]
+			filename[Makefile]
 		]
 	]
 ]
@@ -59,9 +80,34 @@ config_set[
 					]
 				]
 			]
+			commands[
+				compile_obj[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -O2^ -Wall^ -c^ -std=c++11^ -DNDEBUG^ %2-o^ "%1"^ "%0"]
+                compile_app[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
+				compile_dynlib[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -shared^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
+			]
 		]
 	]
 ]
+
+config_set[
+	platforms[
+		target[x86;GNU/Linux]
+	]
+
+	profile[release]
+
+	components[
+		Handler^ C++[
+			commands[
+				compile_obj[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -O2^ -Wall^ -c^ -std=c++11^ -DNDEBUG^ %2-o^ "%1"^ "%0"]
+                compile_app[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
+				compile_dynlib[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -shared^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
+			]
+		]
+	]
+]
+
+
 
 config_set[
 	platforms[
@@ -77,6 +123,24 @@ config_set[
 						/usr/lib/x86_64-linux-gnu/glib-2.0/include
 					]
 				]
+			]
+		]
+	]
+]
+
+config_set[
+	platforms[
+		target[x86_64;GNU/Linux]
+	]
+
+	profile[release]
+
+	components[
+		Handler^ C++[
+			commands[
+				compile_obj[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -fpic^ -O2^ -Wall^ -c^ -std=c++11^ -DNDEBUG^ %2-o^ "%1"^ "%0"]
+                compile_app[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -fpic^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
+				compile_dynlib[g++^ --fast-math^ -march=native^ -fno-stack-protector^ -fpic^ -shared^ -O2^ -Wall^ -std=c++11^ -DNDEBUG^ %2^ -o^ "%1"^ %3 "%0"^ %4]
 			]
 		]
 	]
