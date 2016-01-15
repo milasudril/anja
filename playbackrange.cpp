@@ -55,7 +55,7 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	buffer_out+=m_delay;
 	n_frames_out-=m_delay;
 
-	auto flags=m_flags;
+	auto flags=m_flags
 	auto ptr_current=r_current;
 
 	auto gain_random_inst=m_gain_random_inst;
