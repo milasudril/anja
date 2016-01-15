@@ -14,59 +14,59 @@ dependency[waveform.o]
 class Waveform
 	{
 	public:
-		Waveform():m_offset_begin(0),m_offset_end(0)
+		Waveform() noexcept:m_offset_begin(0),m_offset_end(0),m_channel(0)
 			,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
 			{}
 
-		Waveform(const float* buffer,uint32_t buffer_size,float fs):
+		Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
 			m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
 			,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 			{}
 
-		const float* begin() const
+		const float* begin() const noexcept
 			{return m_data.begin() + m_offset_begin;}
 
-		const float* beginFull() const
+		const float* beginFull() const noexcept
 			{return m_data.begin();}
 
-		const float* end() const
+		const float* end() const noexcept
 			{return m_data.begin() + m_offset_end;}
 
-		const float* endFull() const
+		const float* endFull() const noexcept
 			{return m_data.end();}
 
-		uint32_t offsetBeginGet() const
+		uint32_t offsetBeginGet() const noexcept
 			{return m_offset_begin;}
 
-		float sampleRateGet() const
+		float sampleRateGet() const noexcept
 			{return m_fs;}
 
-		void sampleRateSet(float fs)
+		void sampleRateSet(float fs) noexcept
 			{m_fs=fs;}
 
-		Waveform& offsetBeginSet(uint32_t value_new)
+		Waveform& offsetBeginSet(uint32_t value_new) noexcept
 			{
 			m_offset_begin=std::min(value_new,m_data.length());
 			return *this;
 			}
 
-		uint32_t offsetEndGet() const
+		uint32_t offsetEndGet() const noexcept
 			{return m_offset_end;}
 
-		Waveform& offsetEndSet(uint32_t value_new)
+		Waveform& offsetEndSet(uint32_t value_new) noexcept
 			{
 			m_offset_end=std::min(value_new,m_data.length());
 			return *this;
 			}
 
-		Waveform& offsetsReset()
+		Waveform& offsetsReset() noexcept
 			{
 			m_offset_end=m_data.length();
 			m_offset_begin=0;
 			return *this;
 			}
 
-		Waveform& reverse()
+		Waveform& reverse() noexcept
 			{
 			std::swap(m_offset_end,m_offset_begin);
 			return *this;
@@ -74,35 +74,50 @@ class Waveform
 
 
 
-		uint32_t length() const
+		uint32_t length() const noexcept
 			{
 			return reversedIs()?
 				m_offset_begin-m_offset_end:m_offset_end-m_offset_begin;
 			}
 
-		uint32_t lengthFull() const
+		uint32_t lengthFull() const noexcept
 			{return m_data.length();}
 
-		bool reversedIs() const
+		bool reversedIs() const noexcept
 			{return m_offset_begin > m_offset_end;}
 
-		float gainGet() const
+
+
+		uint32_t channelGet() const noexcept
+			{return m_channel;}
+
+		Waveform& channelSet(uint32_t x) noexcept
+			{
+			m_channel=x%16;
+			return *this;
+			}
+
+
+
+		float gainGet() const noexcept
 			{return m_gain;}
 
-		Waveform& gainSet(float gain)
+		Waveform& gainSet(float gain) noexcept
 			{
 			m_gain=gain;
 			return *this;
 			}
 
-		float gainRandomGet() const
+		float gainRandomGet() const noexcept
 			{return m_gain_random;}
 
-		Waveform& gainRandomSet(float value)
+		Waveform& gainRandomSet(float value) noexcept
 			{
 			m_gain_random=value;
 			return *this;
 			}
+
+
 
 		static constexpr uint32_t LOOP=0x1;
 		static constexpr uint32_t SUSTAIN=0x2;
@@ -112,29 +127,29 @@ class Waveform
 
 		static const char* FLAG_NAMES[];
 
-		uint32_t flagsGet() const
+		uint32_t flagsGet() const noexcept
 			{return m_flags;}
 
-		uint32_t flagGet(uint32_t flag_index) const
+		uint32_t flagGet(uint32_t flag_index) const noexcept
 			{return m_flags&(1<<flag_index);}
 
-		Waveform& flagsSet(uint32_t flags)
+		Waveform& flagsSet(uint32_t flags) noexcept
 			{
 			m_flags|=flags;
 			return *this;
 			}
 
-		Waveform& flagSet(uint32_t flag_index)
+		Waveform& flagSet(uint32_t flag_index) noexcept
 			{return flagsSet(1<<flag_index);}
 
-		Waveform& flagSet(const ArrayDynamicShort<char>& flagname);
+		Waveform& flagSet(const ArrayDynamicShort<char>& flagname) noexcept;
 
 		Waveform& flagsSet(const ArrayDynamicShort<char>& flagstring);
 
-		Waveform& flagUnset(uint32_t flag_index)
+		Waveform& flagUnset(uint32_t flag_index) noexcept
 			{return flagsUnset(1<<flag_index);}
 
-		Waveform& flagsUnset(uint32_t flags)
+		Waveform& flagsUnset(uint32_t flags) noexcept
 			{
 			m_flags&=~flags;
 			return *this;
@@ -142,7 +157,7 @@ class Waveform
 
 
 
-		Waveform& append(float x)
+ 		Waveform& append(float x)
 			{
 			m_data.append(x);
 			return *this;
@@ -173,6 +188,7 @@ class Waveform
 		ArrayDynamicShort<float> m_data;
 		uint32_t m_offset_begin;
 		uint32_t m_offset_end;
+		uint32_t m_channel;
 		float m_gain;
 		float m_gain_random;
 		float m_fs;

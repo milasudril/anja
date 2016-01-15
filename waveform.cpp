@@ -80,7 +80,7 @@ Waveform& Waveform::flagsSet(const ArrayDynamicShort<char>& flags)
 	return flagSet(buffer_temp);
 	}
 
-Waveform& Waveform::flagSet(const ArrayDynamicShort<char>& flagname)
+Waveform& Waveform::flagSet(const ArrayDynamicShort<char>& flagname) noexcept
 	{
 	auto ptr=FLAG_NAMES;
 
