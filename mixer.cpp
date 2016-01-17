@@ -3,12 +3,13 @@ target[name[mixer.o] type[object]]
 #endif
 
 #include "mixer.h"
+#include "channelstrip.h"
+#include "channeldata.h"
 #include "framework/boxhorizontal.h"
-#include "framework/slider.h"
-#include <cstdio>
 
-Mixer* Mixer::create(GuiContainer& parent)
-	{return new Mixer(parent);}
+Mixer* Mixer::create(GuiContainer& parent,ChannelData* channels
+	,unsigned int n_channels)
+	{return new Mixer(parent,channels,n_channels);}
 
 void Mixer::destroy()
 	{
@@ -18,26 +19,27 @@ void Mixer::destroy()
 const GuiHandle& Mixer::handleNativeGet() const
 	{return m_box->handleNativeGet();}
 
-Mixer::Mixer(GuiContainer& parent)
+Mixer::Mixer(GuiContainer& parent,ChannelData* channels,unsigned int n_channels):
+	m_strips(n_channels)
 	{
 	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
 	m_box->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
 		|BoxHorizontal::INSERTMODE_FILL);
 
-	for(unsigned int k=0;k<16;++k)
+	for(unsigned int k=0;k<n_channels;++k)
 		{
-		char buffer[16];
-		sprintf(buffer,"Ch %u",k+1);
-		m_sliders[k]=Slider::create(*m_box,buffer,k,0);
+		m_strips[k]=ChannelStrip::create(*m_box);
+		m_strips[k]->channelDataSet(channels[k]);
 		}
 	}
 
 Mixer::~Mixer()
 	{
-	for(unsigned int k=0;k<16;++k)
+	auto n_channels=m_strips.length();
+	for(unsigned int k=0;k<n_channels;++k)
 		{
-		m_sliders[k]->destroy();
+		m_strips[k]->destroy();
 		}
 	m_box->slaveRelease();
 	}

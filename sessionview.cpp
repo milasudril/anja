@@ -44,7 +44,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
 	m_tabs->tabTitleSet(0,"Waveform data");
 
-	m_mixer=Mixer::create(*m_tabs);
+	m_mixer=Mixer::create(*m_tabs,session.channelDataBegin(),session.nChannelsGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
 	sessionSet(session);

@@ -7,27 +7,29 @@ dependency[mixer.o]
 #define MIXER_H
 
 #include "framework/widget.h"
+#include "framework/array_simple.h"
 
 class GuiContainer;
 class BoxHorizontal;
-class Slider;
+class ChannelStrip;
+class ChannelData;
 
 class Mixer:public Widget
 	{
 	public:
-		static Mixer* create(GuiContainer& parent);
+		static Mixer* create(GuiContainer& parent,ChannelData* channels
+			,unsigned int n_channels);
 
 		void destroy();
 
 		const GuiHandle& handleNativeGet() const;
 
 	private:
-		Mixer(GuiContainer& parent);
+		Mixer(GuiContainer& parent,ChannelData* channels
+			,unsigned int n_channels);
 		~Mixer();
 		BoxHorizontal* m_box;
-
-	//	TODO The number should be fetched from the backend
-		Slider* m_sliders[16];
+		ArraySimple<ChannelStrip*> m_strips;
 	};
 
 #endif

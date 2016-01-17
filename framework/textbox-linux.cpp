@@ -45,6 +45,12 @@ class TextboxGtk:public Textbox
 			return gtk_entry_set_text((GtkEntry*)widget,text);
 			}
 
+		void widthMinSet(unsigned int nChars)
+			{
+			GtkWidget* widget=m_textbox;
+			gtk_entry_set_width_chars((GtkEntry*)widget,nChars);
+			}
+
 	private:
 		static gboolean onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
 

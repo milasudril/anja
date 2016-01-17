@@ -78,7 +78,7 @@ void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
 
 
 
-double WaveformDataView::PlaybackGainHandler::valueGet(Slider& source,const char* text)
+double WaveformDataView::PlaybackGainHandler::valueGet(ValueInput& source,const char* text)
 	{
 	auto value=convert(text);
 	switch(source.idGet())
@@ -93,7 +93,7 @@ double WaveformDataView::PlaybackGainHandler::valueGet(Slider& source,const char
 	return value;
 	}
 
-void WaveformDataView::PlaybackGainHandler::textGet(Slider& source,double value,TextBuffer& buffer)
+void WaveformDataView::PlaybackGainHandler::textGet(ValueInput& source,double value,TextBuffer& buffer)
 	{
 	switch(source.idGet())
 		{
@@ -107,7 +107,7 @@ void WaveformDataView::PlaybackGainHandler::textGet(Slider& source,double value,
 	sprintf(buffer.begin(),"%.3f",value);
 	}
 
-double WaveformDataView::PlaybackGainHandler::valueMap(Slider& source,double x)
+double WaveformDataView::PlaybackGainHandler::valueMap(ValueInput& source,double x)
 const noexcept
 	{
 	switch(source.idGet())
@@ -120,7 +120,7 @@ const noexcept
 	return x;
 	}
 
-double WaveformDataView::PlaybackGainHandler::valueMapInverse(Slider& source,double y)
+double WaveformDataView::PlaybackGainHandler::valueMapInverse(ValueInput& source,double y)
 const noexcept
 	{
 	switch(source.idGet())

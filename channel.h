@@ -11,7 +11,7 @@ class Channel
 		Channel& valuesInit()
 			{
 			m_gain=0.0f;
-			m_decay_time=1.0f;
+			m_fade_time=1.0f;
 			return *this;
 			}
 
@@ -24,15 +24,20 @@ class Channel
 			return *this;
 			}
 
-		Channel& decayTimeSet(float time)
+		float fadeTimeGet() const
 			{
-			m_decay_time=time;
+			return m_fade_time;
+			}
+
+		Channel& fadeTimeSet(float time)
+			{
+			m_fade_time=std::min(time,1e-3f);
 			return *this;
 			}
 
 	private:
 		float m_gain;
-		float m_decay_time;
+		float m_fade_time;
 	};
 
 #endif

@@ -23,7 +23,7 @@ ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel):
 	if(value!=nullptr)
 		{r_channel->gainSet(convert(value->begin()));}
 
-	value=record.propertyGet("Decay time/s");
+	value=record.propertyGet("Fade time/s");
 	if(value!=nullptr)
-		{r_channel->decayTimeSet(convert(value->begin()));}
+		{r_channel->fadeTimeSet(convert(value->begin()));}
 	}

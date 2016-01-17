@@ -22,12 +22,12 @@ double ValueInput::EventHandler::valueGet(ValueInput& source,const char* text)
 
 double ValueInput::EventHandler::valueMap(ValueInput& source,double x) const noexcept
 	{
-	return 2*x;
+	return x;
 	}
 
 double ValueInput::EventHandler::valueMapInverse(ValueInput& source,double y) const noexcept
 	{
-	return y/2;
+	return y;
 	}
 
 ValueInput::EventHandler ValueInput::s_default_handler;

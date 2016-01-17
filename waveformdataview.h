@@ -120,17 +120,17 @@ class WaveformDataView:public Widget
 				ArraySimple<ColorRGBA> m_color_presets;
 			} m_color_events;
 
-		class PlaybackGainHandler:public Slider::EventHandler
+		class PlaybackGainHandler:public ValueInput::EventHandler
 			{
 			public:
 				PlaybackGainHandler(WaveformDataView& view):r_view(&view)
 					{}
 
-				double valueGet(Slider& source,const char* text);
-				void textGet(Slider& source,double value,TextBuffer& buffer);
+				double valueGet(ValueInput& source,const char* text);
+				void textGet(ValueInput& source,double value,TextBuffer& buffer);
 
-				double valueMap(Slider& source,double x) const noexcept;
-				double valueMapInverse(Slider& source,double y) const noexcept;
+				double valueMap(ValueInput& source,double x) const noexcept;
+				double valueMapInverse(ValueInput& source,double y) const noexcept;
 
 			private:
 				WaveformDataView* r_view;
