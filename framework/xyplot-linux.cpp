@@ -286,7 +286,7 @@ gboolean XYPlotGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 		,_this);
-	return TRUE;
+	return FALSE;
 	}
 
 gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
@@ -295,7 +295,7 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
 		,_this);
-	return TRUE;
+	return FALSE;
 	}
 
 XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)

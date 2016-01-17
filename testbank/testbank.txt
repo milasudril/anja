@@ -1,6 +1,6 @@
 ==================================Anja testbank=================================
 
-Description: This is a test file that demonstrates how Anja works. Pdsounds.org<
+Description: This is a test file that demonstrates how Anja works. Pdsounds.org
              claims that files on this site is in public domain.
 
 License:     CC0 1.0 Universal, or equivalent

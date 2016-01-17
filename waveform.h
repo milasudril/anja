@@ -93,7 +93,7 @@ class Waveform
 
 		Waveform& channelSet(uint32_t x) noexcept
 			{
-			m_channel=x%16;
+			m_channel=x;
 			return *this;
 			}
 
@@ -182,6 +182,14 @@ class Waveform
 			{
 			float vals[2]={1.0e-7f,1.0e-7f};
 			return Waveform(vals,2,1000.0f);
+			}
+
+		Waveform& valuesInit()
+			{
+			m_gain=0.0f;
+			m_gain_random=0.0f;
+			m_flags=0.0f;
+			return *this;
 			}
 
 	private:

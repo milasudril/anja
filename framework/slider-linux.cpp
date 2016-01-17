@@ -25,9 +25,6 @@ target
 #include "exceptionswallow.h"
 #include <gtk/gtk.h>
 
-#include <cstdlib>
-#include <cstdio>
-
 class SliderGtk:public Slider
 	{
 	public:
@@ -57,32 +54,6 @@ class SliderGtk:public Slider
 		GtkWidget* m_slider;
 		GtkWidget* m_text;
 	};
-
-void Slider::EventHandler::textGet(Slider& source,double value,TextBuffer& buffer)
-	{
-	sprintf(buffer.begin(),"%.3f",value);
-	}
-
-double Slider::EventHandler::valueGet(Slider& source,const char* text)
-	{
-	char* result;
-	double v=strtod(text,&result);
-	if(result==text)
-		{return -1;}
-	return v;
-	}
-
-double Slider::EventHandler::valueMap(Slider& source,double x) const noexcept
-	{
-	return x;
-	}
-
-double Slider::EventHandler::valueMapInverse(Slider& source,double y) const noexcept
-	{
-	return y;
-	}
-
-Slider::EventHandler Slider::s_default_handler;
 
 
 
@@ -165,10 +136,12 @@ SliderGtk::~SliderGtk()
 
 void SliderGtk::valueSet(double x)
 	{
-	EventHandler::TextBuffer text;
-	r_handler.textGet(*this,x,text);
-	gtk_entry_set_text((GtkEntry*)m_text,text.begin());
 	auto v=r_handler.valueMapInverse(*this,x);
 	if(v>=0 && v<=1)
-		{gtk_range_set_value((GtkRange*)m_slider,v);}
+		{
+		EventHandler::TextBuffer text;
+		r_handler.textGet(*this,x,text);
+		gtk_entry_set_text((GtkEntry*)m_text,text.begin());
+		gtk_range_set_value((GtkRange*)m_slider,v);
+		}
 	}

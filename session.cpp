@@ -51,6 +51,7 @@ void Session::waveformsClear()
 		while(ptr!=ptr_end)
 			{
 			ptr->clear();
+			ptr->valuesInit();
 			float vals[2]={1e-7f,1e-7f};
 			ptr->append(vals,2);
 			ptr->sampleRateSet(1000.0);
@@ -78,6 +79,38 @@ void Session::waveformsClear()
 		slotActiveSet(0);
 	}
 
+void Session::channelsClear()
+	{
+	//	Reset channelsClear
+		{
+		auto ptr=m_mixer.begin();
+		auto ptr_end=m_mixer.end();
+		while(ptr!=ptr_end)
+			{
+			ptr->valuesInit();
+			++ptr;
+			}
+		}
+
+	//	Reset channel data
+		{
+		auto ptr=m_channel_data.begin();
+		auto ptr_channel=m_mixer.begin();
+		auto ptr_end=m_channel_data.end();
+		auto k=0;
+		while(ptr!=ptr_end)
+			{
+			char buffer[16];
+			sprintf(buffer,"Ch %u",k+1);
+			ptr->labelSet(buffer);
+			ptr->channelSet(*ptr_channel);
+			++ptr_channel;
+			++k;
+			++ptr;
+			}
+		}
+	}
+
 void Session::load(const char* filename)
 	{
 	auto reader=SessionFileReader::create(filename);
@@ -90,6 +123,7 @@ void Session::load(const char* filename)
 		{throw "Invalid session file";}
 
 	waveformsClear();
+	channelsClear();
 
 //	Get data from file header
 		{
@@ -123,7 +157,7 @@ void Session::load(const char* filename)
 				slot_num=atol(title_ptr);
 				}
 			if(slot_num<1 || slot_num>128)
-				{throw "Invalid slot number";}
+				{throw "The slot number has to be between 1 and 128 inclusive";}
 			slot_num-=1;
 
 			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
@@ -131,6 +165,20 @@ void Session::load(const char* filename)
 				{throw "Slot has no scancode";}
 
 			m_waveform_data[slot_num]={record,m_directory,m_waveforms[slot_num],*key};
+			}
+		else
+		if(strncmp(title_ptr,"Channel ",8)==0)
+			{
+			title_ptr+=8;
+			int ch;
+				{
+				LocaleGuard locale("C");
+				ch=atol(title_ptr);
+				}
+			if(ch<1 || ch>16)
+				{throw "The channel number has to be between 1 and 16 inclusive";}
+			--ch;
+			m_channel_data[ch]={record,m_mixer[ch]};
 			}
 		}
 	}

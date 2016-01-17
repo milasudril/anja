@@ -14,6 +14,8 @@ dependency[sessionview.o]
 class GuiContainer;
 class Session;
 class BoxVertical;
+class TabView;
+class Mixer;
 
 class SessionView:public Widget
 	{
@@ -43,7 +45,9 @@ class SessionView:public Widget
 		Session* r_session;
 		BoxVertical* m_box;
 			KeyboardView* m_keyboard;
-			WaveformDataView* m_dataview;
+			TabView* m_tabs;
+				WaveformDataView* m_dataview;
+				Mixer* m_mixer;
 	};
 
 #endif

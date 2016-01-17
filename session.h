@@ -7,7 +7,9 @@ dependency[session.o]
 #define SESSION_H
 
 #include "wavetable.h"
+#include "channelmixer.h"
 #include "waveformdata.h"
+#include "channeldata.h"
 #include "audioengineanja.h"
 #include "framework/arraydynamicshort.h"
 #include "framework/keyboardlayout.h"
@@ -24,7 +26,8 @@ class Session
 		Session():m_engine(m_waveforms),m_connection(nullptr),m_slot_active(0)
 			{
 			waveformsClear();
-		//	audioServerConnect();
+			channelsClear();
+			audioServerConnect();
 			}
 
 		Session(const char* filename):m_engine(m_waveforms)
@@ -46,6 +49,8 @@ class Session
 
 		const ArrayDynamicShort<char>& directoryGet() const
 			{return m_directory;}
+
+
 
 		void waveformsClear();
 
@@ -84,6 +89,16 @@ class Session
 
 
 
+		void channelsClear();
+
+		ChannelData* channelDataBegin()
+			{return m_channel_data.begin();}
+
+		unsigned int nChannelsGet()
+			{return m_channel_data.length();}
+
+
+
 
 		WaveformData& waveformDataFromMIDI(uint8_t midikey)
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
@@ -108,11 +123,13 @@ class Session
 		AudioEngineAnja m_engine;
 		AudioConnection* m_connection;
 
-		ArrayFixed<uint8_t,128> m_slot_to_scancode;
-		ArrayFixed<uint8_t,128> m_midikey_to_slot;
-		ArrayFixed<uint8_t,128> m_scancode_to_slot;
+		ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;
+		ArrayFixed<uint8_t,Wavetable::length()> m_midikey_to_slot;
+		ArrayFixed<uint8_t,Wavetable::length()> m_scancode_to_slot;
 		Wavetable m_waveforms;
-		ArrayFixed<WaveformData,128> m_waveform_data;
+		ChannelMixer m_mixer;
+		ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
+		ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
 		KeyboardLayout m_keyboard;
 
 		ArrayDynamicShort<char> m_filename;

@@ -29,10 +29,10 @@ class ArrayFixed
 		T* end()
 			{return data+N;}
 
-		constexpr size_t length() const
+		static constexpr size_t length()
 			{return N;}
 
-		constexpr size_t size() const
+		static constexpr size_t size()
 			{return N*sizeof(T);}
 
 		T data[N];

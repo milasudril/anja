@@ -30,7 +30,6 @@ void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
 	r_end=waveform.end();
 	m_flags=waveform.flagsGet();
 
-	auto gain_init=waveform.gainGet();
 	auto gain_random=waveform.gainRandomGet();
 	m_gain_random_inst=r_rng->drawUniform(gain_random);
 	}

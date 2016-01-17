@@ -6,9 +6,8 @@ dependency[playbackrange.o]
 #ifndef PLAYBACKRANGE_H
 #define PLAYBACKRANGE_H
 
-#include <cstdint>
+#include "waveform.h"
 
-class Waveform;
 class RandomGenerator;
 
 class alignas(32) PlaybackRange
@@ -53,6 +52,9 @@ class alignas(32) PlaybackRange
 			m_flags&=~flags;
 			return *this;
 			}
+
+		uint32_t channelGet() const noexcept
+			{return r_waveform->channelGet();}
 
 
 	private:

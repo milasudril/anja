@@ -10,6 +10,8 @@ target[name[waveformdata.o] type[object]]
 #include "framework/array_simple.h"
 #include "framework/floatconv.h"
 
+#include <cstring>
+
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path
 	,Waveform& waveform
@@ -17,6 +19,8 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
 	,r_key(&key),r_waveform(&waveform)
 	{
+	r_waveform->valuesInit();
+
 	auto value=record.propertyGet("Filename");
 	if(value!=nullptr)
 		{fileLoad(*value,load_path);}
@@ -48,8 +52,14 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 
 void WaveformData::fileLoad(const char* filename)
 	{
+	if(strcmp(m_filename.begin(),filename)==0)
+		{return;}
 	if(r_waveform->flagsGet() & Waveform::LOCKED)
-		{throw "Slot is busy";}
+		{
+		throw "The waveform loaded in current slot is currently in use. "
+			"Please wait for the waveform to be unlocked, or choose another "
+			"slot.";
+		}
 	WavefileInfo info;
 	printf("%s\n",filename);
 	auto reader=WavefileReader::create(filename,info);

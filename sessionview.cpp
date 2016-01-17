@@ -8,8 +8,10 @@ target[name[sessionview.o] type[object]]
 #include "audioconnection.h"
 #include "keyboardcontroller.h"
 #include "waveformdataupdater.h"
+#include "mixer.h"
 #include "framework/boxvertical.h"
 #include "framework/keyboardview.h"
+#include "framework/tabview.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
@@ -35,10 +37,15 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
-
-	m_box->insertModeSet(BoxVertical::INSERTMODE_END
+		m_box->insertModeSet(BoxVertical::INSERTMODE_END
 		|BoxVertical::INSERTMODE_FILL);
-	m_dataview=WaveformDataView::create(*m_box,data_eventhandler,rangeview_handler);
+	m_tabs=TabView::create(*m_box);
+
+	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
+	m_tabs->tabTitleSet(0,"Waveform data");
+
+	m_mixer=Mixer::create(*m_tabs);
+	m_tabs->tabTitleSet(1,"Channel mixer");
 
 	sessionSet(session);
 	}
