@@ -31,7 +31,7 @@ class Channel
 
 		Channel& fadeTimeSet(float time)
 			{
-			m_fade_time=std::min(time,1e-3f);
+			m_fade_time=std::max(time,1e-3f);
 			return *this;
 			}
 
