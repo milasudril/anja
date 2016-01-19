@@ -1,25 +1,28 @@
 #ifdef __WAND__
-target[name[mixer.o] type[object]]
+target[name[channelview.o] type[object]]
 #endif
 
-#include "mixer.h"
+#include "channelview.h"
 #include "channelstrip.h"
 #include "channeldata.h"
 #include "framework/boxhorizontal.h"
 
-Mixer* Mixer::create(GuiContainer& parent,ChannelData* channels
+ChannelView* ChannelView::create(GuiContainer& parent
+	,ChannelStrip::EventHandler& handler,ChannelData* channels
 	,unsigned int n_channels)
-	{return new Mixer(parent,channels,n_channels);}
+	{return new ChannelView(parent,handler,channels,n_channels);}
 
-void Mixer::destroy()
+void ChannelView::destroy()
 	{
 	delete this;
 	}
 
-const GuiHandle& Mixer::handleNativeGet() const
+const GuiHandle& ChannelView::handleNativeGet() const
 	{return m_box->handleNativeGet();}
 
-Mixer::Mixer(GuiContainer& parent,ChannelData* channels,unsigned int n_channels):
+ChannelView::ChannelView(GuiContainer& parent
+	,ChannelStrip::EventHandler& handler,ChannelData* channels
+	,unsigned int n_channels):
 	m_strips(n_channels)
 	{
 	m_box=BoxHorizontal::create(parent);
@@ -29,12 +32,12 @@ Mixer::Mixer(GuiContainer& parent,ChannelData* channels,unsigned int n_channels)
 
 	for(unsigned int k=0;k<n_channels;++k)
 		{
-		m_strips[k]=ChannelStrip::create(*m_box);
+		m_strips[k]=ChannelStrip::create(*m_box,handler,k);
 		m_strips[k]->channelDataSet(channels[k]);
 		}
 	}
 
-Mixer::~Mixer()
+ChannelView::~ChannelView()
 	{
 	auto n_channels=m_strips.length();
 	for(unsigned int k=0;k<n_channels;++k)

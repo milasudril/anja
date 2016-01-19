@@ -97,6 +97,18 @@ class Session
 		unsigned int nChannelsGet()
 			{return m_channel_data.length();}
 
+		const ChannelData& channelDataGet(unsigned int index) const
+			{return m_channel_data[index];}
+
+		ChannelData& channelDataGet(unsigned int index)
+			{return m_channel_data[index];}
+
+		const Channel& channelGet(unsigned int index) const
+			{return m_channels[index];}
+
+		Channel& channelGet(unsigned int index)
+			{return m_channels[index];}
+
 
 
 
@@ -127,7 +139,7 @@ class Session
 		ArrayFixed<uint8_t,Wavetable::length()> m_midikey_to_slot;
 		ArrayFixed<uint8_t,Wavetable::length()> m_scancode_to_slot;
 		Wavetable m_waveforms;
-		ChannelMixer m_mixer;
+		ChannelMixer m_channels;
 		ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 		ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
 		KeyboardLayout m_keyboard;

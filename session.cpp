@@ -83,8 +83,8 @@ void Session::channelsClear()
 	{
 	//	Reset channelsClear
 		{
-		auto ptr=m_mixer.begin();
-		auto ptr_end=m_mixer.end();
+		auto ptr=m_channels.begin();
+		auto ptr_end=m_channels.end();
 		while(ptr!=ptr_end)
 			{
 			ptr->valuesInit();
@@ -95,7 +95,7 @@ void Session::channelsClear()
 	//	Reset channel data
 		{
 		auto ptr=m_channel_data.begin();
-		auto ptr_channel=m_mixer.begin();
+		auto ptr_channel=m_channels.begin();
 		auto ptr_end=m_channel_data.end();
 		auto k=0;
 		while(ptr!=ptr_end)
@@ -178,7 +178,7 @@ void Session::load(const char* filename)
 			if(ch<1 || ch>16)
 				{throw "The channel number has to be between 1 and 16 inclusive";}
 			--ch;
-			m_channel_data[ch]={record,m_mixer[ch]};
+			m_channel_data[ch]={record,m_channels[ch]};
 			}
 		}
 	}

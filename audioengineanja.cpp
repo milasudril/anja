@@ -9,6 +9,7 @@ target[name[audioengineanja.o] type[object]]
 #include "playbackrange.h"
 #include "midiconstants/controlcodes.h"
 #include "midiconstants/statuscodes.h"
+#include "midiconstants/controlcodes.h"
 
 #include <cstring>
 
@@ -64,6 +65,18 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) no
 	m_event_queue.push_back(tmp.vector);
 	}
 
+void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
+	{
+	switch(event.status_word[1])
+		{
+		case MIDIConstants::ControlCodes::CHANNEL_VOLUME:
+		//	TODO store values in an array of 16 floats
+		//	printf("Volume changed on ch %u to %.7f\n"
+		//		,event.status_word[0]&0xf,event.value);
+			break;
+		}
+	}
+
 void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 	,unsigned int time_offset)
 	{
@@ -89,11 +102,18 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		//	the rendering loop detects that the clip should not continue.
 			auto slot=event.status_word[1];
 			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
+
+		//	When note is stopped in sustain mode, ensure that the LOOP flag is
+		//	is disabled to prevent infinite sound
 			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
 				{playback_buffer.flagsUnset(Waveform::LOOP);}
 			else
 				{playback_buffer.stop();}
 			}
+			break;
+
+		case MIDIConstants::StatusCodes::CONTROLLER:
+			eventControlProcess(event);
 			break;
 		}
 	}

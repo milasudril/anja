@@ -20,8 +20,8 @@ class Textbox:public Widget
 					{}
 			};
 
-		static Textbox* create(GuiContainer& parent,unsigned int id)
-			{return create(parent,s_default_handler,id);}
+		static Textbox* create(GuiContainer& parent)
+			{return create(parent,s_default_handler,0);}
 
 		static Textbox* create(GuiContainer& parent,EventHandler& handler
 			,unsigned int id);

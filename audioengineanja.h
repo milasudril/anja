@@ -64,6 +64,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		ArraySimple<float> m_voice_channels;
 
 		void eventProcess(const Event& event,unsigned int time_offset);
+		void eventControlProcess(const Event& event);
 	};
 
 #endif

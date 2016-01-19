@@ -8,7 +8,7 @@ target[name[sessionview.o] type[object]]
 #include "audioconnection.h"
 #include "keyboardcontroller.h"
 #include "waveformdataupdater.h"
-#include "mixer.h"
+#include "channelview.h"
 #include "framework/boxvertical.h"
 #include "framework/keyboardview.h"
 #include "framework/tabview.h"
@@ -16,8 +16,12 @@ target[name[sessionview.o] type[object]]
 SessionView* SessionView::create(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
-	,WaveformRangeView::EventHandler& rangeview_handler)
-	{return new SessionView(parent,session,keyboard_input,data_eventhandler,rangeview_handler);}
+	,WaveformRangeView::EventHandler& rangeview_handler
+	,ChannelStrip::EventHandler& channelstrip_handler)
+	{
+	return new SessionView(parent,session,keyboard_input,data_eventhandler
+		,rangeview_handler,channelstrip_handler);
+	}
 
 void SessionView::destroy()
 	{delete this;}
@@ -30,7 +34,8 @@ const GuiHandle& SessionView::handleNativeGet() const
 SessionView::SessionView(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
-	,WaveformRangeView::EventHandler& rangeview_handler)
+	,WaveformRangeView::EventHandler& rangeview_handler
+	,ChannelStrip::EventHandler& channelstrip_handler)
 	{
 	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
@@ -44,7 +49,8 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
 	m_tabs->tabTitleSet(0,"Waveform data");
 
-	m_mixer=Mixer::create(*m_tabs,session.channelDataBegin(),session.nChannelsGet());
+	m_mixer=ChannelView::create(*m_tabs,channelstrip_handler
+		,session.channelDataBegin(),session.nChannelsGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
 	sessionSet(session);

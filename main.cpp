@@ -6,6 +6,7 @@ target[name[anja] type[application]]
 #include "session.h"
 #include "sessionview.h"
 #include "keyboardcontroller.h"
+#include "channelcontroller.h"
 #include "waveformrangetrimmer.h"
 #include "waveformdataupdater.h"
 #include "framework/window.h"
@@ -17,6 +18,7 @@ int main()
 		Session session("testbank/testbank.txt");
 		WaveformRangeTrimmer trimmer;
 		KeyboardController keyboardevents(session);
+		ChannelController channelctrl(session);
 		WaveformDataUpdater waveform_updater;
 
 		auto event_loop=EventLoop::create(0);
@@ -26,8 +28,8 @@ int main()
 		title.truncate().append(session.titleGet());
 		mainwin->titleSet( title.begin() );
 
-		auto view=SessionView::create(*mainwin,session,keyboardevents,waveform_updater
-			,trimmer);
+		auto view=SessionView::create(*mainwin,session,keyboardevents
+			,waveform_updater,trimmer,channelctrl);
 		keyboardevents.sessionViewSet(view);
 		waveform_updater.sessionViewSet(view);
 		}

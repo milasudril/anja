@@ -12,8 +12,9 @@ target[name[channelstrip.o] type[object]]
 #include "framework/floatconv.h"
 #include <cmath>
 
-ChannelStrip* ChannelStrip::create(GuiContainer& parent)
-	{return new ChannelStrip(parent);}
+ChannelStrip* ChannelStrip::create(GuiContainer& parent,EventHandler& handler
+	,unsigned int id)
+	{return new ChannelStrip(parent,handler,id);}
 
 void ChannelStrip::destroy()
 	{
@@ -23,19 +24,20 @@ void ChannelStrip::destroy()
 const GuiHandle& ChannelStrip::handleNativeGet() const
 	{return m_box->handleNativeGet();}
 
-ChannelStrip::ChannelStrip(GuiContainer& parent):m_input_handler(*this)
+ChannelStrip::ChannelStrip(GuiContainer& parent,EventHandler& handler
+	,unsigned int id):r_handler(&handler),m_input_handler(*this),m_id(id)
 	{
-	m_box=BoxVertical::create(parent,&m_input_handler);
+	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
 
-	m_label=Textbox::create(*m_box,0);
+	m_label=Textbox::create(*m_box,m_input_handler,0);
 	m_label->widthMinSet(5);
 	m_fadetime=Knob::create(*m_box,m_input_handler,0,"Fade\ntime/s");
 
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL
 		|BoxVertical::INSERTMODE_END);
-	m_level=Slider::create(*m_box,m_input_handler,1,"Gain\n/dB",1);
+	m_level=Slider::create(*m_box,m_input_handler,1,"Gain\n/dB",0);
 
 	}
 
@@ -77,10 +79,10 @@ double ChannelStrip::ValueInputHandler::valueGet(ValueInput& source,const char* 
 	switch(source.idGet())
 		{
 		case 0:
-			r_strip.fadeTimeSet(value);
+			r_strip.doFadeTimeChange(value);
 			break;
 		case 1:
-			r_strip.gainSet(value);
+			r_strip.doGainChange(value);
 			break;
 		}
 	return value;
@@ -91,44 +93,26 @@ void ChannelStrip::ValueInputHandler::textGet(ValueInput& source,double value,Te
 	switch(source.idGet())
 		{
 		case 0:
-			r_strip.fadeTimeSet(value);
+			r_strip.doFadeTimeChange(value);
 			sprintf(buffer.begin(),"%.3f",value);
 			return;
 		case 1:
-			r_strip.gainSet(value);
+			r_strip.doGainChange(value);
 			sprintf(buffer.begin(),"%.3f",value);
 			return;
 		}
 	sprintf(buffer.begin(),"%.3f",value);
 	}
 
-void ChannelStrip::ValueInputHandler::onCommand(BoxVertical& source,unsigned int id)
+void ChannelStrip::ValueInputHandler::onLeave(Textbox& source)
 	{
-	switch(id)
-		{
-		case 0:
-		//	r_strip.labelSet(r_strip.m_label.textGet());
-			break;
-		}
+	r_strip.doLabelChange(source.textGet());
 	}
 
-
-void ChannelStrip::update()
+void ChannelStrip::channelDataSet(const ChannelData& data)
 	{
-	m_label->textSet(r_channel->labelGet().begin());
-	auto& channel=r_channel->channelGet();
+	m_label->textSet(data.labelGet().begin());
+	const auto& channel=data.channelGet();
 	m_fadetime->valueSet(channel.fadeTimeGet());
 	m_level->valueSet(channel.gainGet());
-	}
-
-void ChannelStrip::gainSet(double gain)
-	{
-	auto& channel=r_channel->channelGet();
-	channel.gainSet(gain);
-	}
-
-void ChannelStrip::fadeTimeSet(double time)
-	{
-	auto& channel=r_channel->channelGet();
-	channel.fadeTimeSet(time);
 	}

@@ -33,6 +33,9 @@ class ChannelData
 			return *this;
 			}
 
+		const Channel& channelGet() const
+			{return *r_channel;}
+
 		Channel& channelGet()
 			{return *r_channel;}
 

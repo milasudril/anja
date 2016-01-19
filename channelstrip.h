@@ -8,38 +8,56 @@ dependency[channelstrip.o]
 
 #include "framework/widget.h"
 #include "framework/valueinput.h"
-#include "framework/boxvertical.h"
+#include "framework/textbox.h"
 
 class ChannelData;
-class Textbox;
 class Knob;
 class Slider;
+class BoxVertical;
 
 class ChannelStrip:public Widget
 	{
 	public:
-		static ChannelStrip* create(GuiContainer& parent);
+		class EventHandler
+			{
+			public:
+				virtual void onLabelChange(ChannelStrip& source,const char* label)=0;
+				virtual void onFadeTimeChange(ChannelStrip& source,float time)=0;
+				virtual void onGainChange(ChannelStrip& source,float value)=0;
+			};
+
+		void doLabelChange(const char* label)
+			{r_handler->onLabelChange(*this,label);}
+
+		void doFadeTimeChange(float time)
+			{r_handler->onFadeTimeChange(*this,time);}
+
+		void doGainChange(float value)
+			{r_handler->onGainChange(*this,value);}
+
+		static ChannelStrip* create(GuiContainer& parent,EventHandler& handler
+			,unsigned int id);
 
 		void destroy();
 
 		const GuiHandle& handleNativeGet() const;
 
-		void channelDataSet(ChannelData& channel)
-			{
-			r_channel=&channel;
-			update();
-			}
+		void channelDataSet(const ChannelData& channel);
 
-		void update();
+		unsigned int idGet() const
+			{return m_id;}
 
 	private:
-		ChannelStrip(GuiContainer& parent);
+		ChannelStrip(GuiContainer& parent,EventHandler& handler
+			,unsigned int id);
 		~ChannelStrip();
+
+		EventHandler* r_handler;
 
 		friend class ValueInputHandler;
 
 		class ValueInputHandler:public ValueInput::EventHandler
-			,public BoxVertical::EventHandler
+			,public Textbox::EventHandler
 			{
 			public:
 				ValueInputHandler(ChannelStrip& strip):r_strip(strip)
@@ -50,20 +68,18 @@ class ChannelStrip:public Widget
 				double valueMap(ValueInput& source,double x) const noexcept;
 				double valueMapInverse(ValueInput& source,double y) const noexcept;
 
-				void onCommand(BoxVertical& source,unsigned int id);
+				void onLeave(Textbox& source);
 
 			private:
 				ChannelStrip& r_strip;
 			} m_input_handler;
 
-		ChannelData* r_channel;
 		BoxVertical* m_box;
 			Textbox* m_label;
 			Knob* m_fadetime;
 			Slider* m_level;
 
-		void gainSet(double gain);
-		void fadeTimeSet(double time);
+		unsigned int m_id;
 	};
 
 #endif
