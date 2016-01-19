@@ -8,10 +8,9 @@ dependency[channelstrip.o]
 
 #include "framework/widget.h"
 #include "framework/valueinput.h"
+#include "framework/boxvertical.h"
 
 class ChannelData;
-class GuiContainer;
-class BoxVertical;
 class Textbox;
 class Knob;
 class Slider;
@@ -37,14 +36,21 @@ class ChannelStrip:public Widget
 		ChannelStrip(GuiContainer& parent);
 		~ChannelStrip();
 
+		friend class ValueInputHandler;
+
 		class ValueInputHandler:public ValueInput::EventHandler
+			,public BoxVertical::EventHandler
 			{
 			public:
 				ValueInputHandler(ChannelStrip& strip):r_strip(strip)
 					{}
 
+				void textGet(ValueInput& source,double value,TextBuffer& buffer);
+				double valueGet(ValueInput& source,const char* text);
 				double valueMap(ValueInput& source,double x) const noexcept;
 				double valueMapInverse(ValueInput& source,double y) const noexcept;
+
+				void onCommand(BoxVertical& source,unsigned int id);
 
 			private:
 				ChannelStrip& r_strip;
@@ -55,6 +61,9 @@ class ChannelStrip:public Widget
 			Textbox* m_label;
 			Knob* m_fadetime;
 			Slider* m_level;
+
+		void gainSet(double gain);
+		void fadeTimeSet(double time);
 	};
 
 #endif

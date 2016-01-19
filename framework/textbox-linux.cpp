@@ -26,7 +26,8 @@ target
 class TextboxGtk:public Textbox
 	{
 	public:
-		TextboxGtk(GuiContainer& parent,unsigned int element_id);
+		TextboxGtk(GuiContainer& parent,EventHandler& handler
+			,unsigned int id);
 		~TextboxGtk();
 		void destroy();
 
@@ -51,35 +52,43 @@ class TextboxGtk:public Textbox
 			gtk_entry_set_width_chars((GtkEntry*)widget,nChars);
 			}
 
+		unsigned int idGet() const
+			{return m_id;}
+
 	private:
-		static gboolean onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
+		static gboolean onLeave(GtkWidget* entry,GdkEvent* event,void* textboxgtk);
 
 		GuiContainer& r_parent;
+		EventHandler* r_handler;
 		GuiHandle m_textbox;
-		unsigned int m_element_id;
+		unsigned int m_id;
 	};
 
-gboolean TextboxGtk::onBlur(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
+Textbox::EventHandler Textbox::s_default_handler;
+
+gboolean TextboxGtk::onLeave(GtkWidget* entry,GdkEvent* event,void* textboxgtk)
 	{
 	TextboxGtk* _this=(TextboxGtk*)textboxgtk;
-	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_element_id);
+	EXCEPTION_SWALLOW(_this->r_handler->onLeave(*_this);
 		,_this);
 	return FALSE;
 	}
 
-Textbox* Textbox::create(GuiContainer& parent,unsigned int element_id)
-	{return new TextboxGtk(parent,element_id);}
+Textbox* Textbox::create(GuiContainer& parent,EventHandler& handler
+	,unsigned int id)
+	{return new TextboxGtk(parent,handler,id);}
 
 void TextboxGtk::destroy()
 	{delete this;}
 
-TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
-	r_parent(parent),m_element_id(element_id)
+TextboxGtk::TextboxGtk(GuiContainer& parent,EventHandler& handler
+	,unsigned int id):
+	r_parent(parent),r_handler(&handler),m_id(id)
 	{
 	GtkWidget* widget=gtk_entry_new();
 	gtk_widget_add_events(widget,GDK_FOCUS_CHANGE_MASK);
 
-	g_signal_connect(widget,"focus-out-event",G_CALLBACK(onBlur),this);
+	g_signal_connect(widget,"focus-out-event",G_CALLBACK(onLeave),this);
 	m_textbox=widget;
 	g_object_ref_sink(widget);
 	parent.componentAdd(*this);
@@ -88,7 +97,7 @@ TextboxGtk::TextboxGtk(GuiContainer& parent,unsigned int element_id):
 TextboxGtk::~TextboxGtk()
 	{
 	GtkWidget* w=m_textbox;
-	g_signal_handlers_disconnect_by_func(w, (void*)onBlur, this);
+	g_signal_handlers_disconnect_by_func(w, (void*)onLeave, this);
 	r_parent.componentRemove(*this);
 	gtk_widget_destroy(m_textbox);
 	}

@@ -10,7 +10,7 @@ int main()
 	{
 	auto event_loop=EventLoop::create(0);
 	auto mainwin=Window::create(*event_loop);
-	Knob::create(*mainwin,"Level",0);
+	Knob::create(*mainwin,"Level");
 
 	return 0;
 	}

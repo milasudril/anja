@@ -43,14 +43,6 @@ class TabViewGtk:public TabView
 		void slaveRelease()
 			{r_slave=nullptr;}
 
-		void commandNotify(unsigned int command_id)
-			{
-			if(r_handler==nullptr)
-				{r_parent.commandNotify(command_id);}
-			else
-				{r_handler->onCommand(*this,command_id);}
-			}
-
 		void tabTitleSet(unsigned int tab,const char* title)
 			{
 			GtkWidget* handle=m_box;

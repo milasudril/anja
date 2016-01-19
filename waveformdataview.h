@@ -42,10 +42,35 @@ class WaveformDataView:public Widget
 				virtual void onGainRandomChange(WaveformDataView& source
 					,float value)=0;
 				virtual void onOptionSet(WaveformDataView& source
-					,uint32_t option)=0;
+					,unsigned int option)=0;
 				virtual void onOptionUnset(WaveformDataView& source
-					,uint32_t option)=0;
+					,unsigned int option)=0;
 			};
+
+		void doSourceChange(const char* filename_new)
+			{r_handler->onSourceChange(*this,filename_new);}
+
+		void doDescriptionChange(const char* description_new)
+			{r_handler->onDescriptionChange(*this,description_new);}
+
+		void doColorChange(const ColorRGBA& color_new);
+
+		void doColorChange(const char* colorstr)
+			{r_handler->onColorChange(*this,colorstr);}
+
+		void doGainChange(float value)
+			{r_handler->onGainChange(*this,value);}
+
+		void doGainRandomChange(float value)
+			{r_handler->onGainRandomChange(*this,value);}
+
+		void doOptionSet(unsigned int option)
+			{r_handler->onOptionSet(*this,option);}
+
+		void doOptionUnset(unsigned int option)
+			{r_handler->onOptionUnset(*this,option);}
+
+
 
 		static WaveformDataView* create(GuiContainer& parent
 			,EventHandler& handler
@@ -74,33 +99,30 @@ class WaveformDataView:public Widget
 		EventHandler* r_handler;
 		WaveformData* r_data;
 
-		class SourceEventHandler:public InputEntry::EventHandler
+		class EventHandlerInternal:public InputEntry::EventHandler
+			,public Textbox::EventHandler
+			,public OptionBox::EventHandler
+			,public ValueInput::EventHandler
 			{
 			public:
-				SourceEventHandler(WaveformDataView& view):r_view(&view)
-					{}
+				EventHandlerInternal(WaveformDataView& view);
+
 				void onButtonClick(InputEntry& source);
 				void onTextChanged(InputEntry& source);
 
-			private:
-				WaveformDataView* r_view;
-			} m_source_events;
-
-		class CommandHandler:public BoxVertical::EventHandler
-			,public OptionBox::EventHandler
-			{
-			public:
-				CommandHandler(WaveformDataView& view):r_view(&view)
-					{}
-
-				void onCommand(BoxVertical& source,unsigned int command_id);
+				void onLeave(Textbox& source);
 
 				void onSet(OptionBox& source,unsigned int option_id);
 				void onUnset(OptionBox& source,unsigned int option_id);
 
+				double valueGet(ValueInput& source,const char* text);
+				void textGet(ValueInput& source,double value,TextBuffer& buffer);
+				double valueMap(ValueInput& source,double x) const noexcept;
+				double valueMapInverse(ValueInput& source,double y) const noexcept;
+
 			private:
 				WaveformDataView* r_view;
-			} m_command_handler;
+			} m_handler;
 
 		class ColorEventHandler:public InputEntry::EventHandler
 			,public ColorPicker::EventHandler
@@ -119,36 +141,6 @@ class WaveformDataView:public Widget
 				ColorRGBA m_color;
 				ArraySimple<ColorRGBA> m_color_presets;
 			} m_color_events;
-
-		class PlaybackGainHandler:public ValueInput::EventHandler
-			{
-			public:
-				PlaybackGainHandler(WaveformDataView& view):r_view(&view)
-					{}
-
-				double valueGet(ValueInput& source,const char* text);
-				void textGet(ValueInput& source,double value,TextBuffer& buffer);
-
-				double valueMap(ValueInput& source,double x) const noexcept;
-				double valueMapInverse(ValueInput& source,double y) const noexcept;
-
-			private:
-				WaveformDataView* r_view;
-			} m_pbgain_events;
-
-
-		friend class SourceEventHandler;
-		friend class CommandHandler;
-
-		void waveformLoad(const char* filename);
-		void descriptionUpdate();
-		void colorUpdate(const ColorRGBA& color_new);
-		void colorUpdate(const char* colorstr);
-		void gainSet(float gain);
-		void gainRandomSet(float value);
-		void optionSet(uint32_t option);
-		void optionUnset(uint32_t option);
-
 
 		BoxVertical* m_box_main;
 			InputEntry* m_source;

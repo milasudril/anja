@@ -8,6 +8,8 @@ dependency[inputentry.o]
 
 #include "widget.h"
 #include "boxhorizontal.h"
+#include "textbox.h"
+#include "button.h"
 
 class Label;
 class Textbox;
@@ -26,12 +28,12 @@ class InputEntry:public Widget
 			};
 
 		static InputEntry* create(GuiContainer& parent,const char* label
-			,const char* text_button,unsigned int id)
-			{return create(parent,label,text_button,s_default_handler,id);}
+			,const char* text_button)
+			{return create(parent,s_default_handler,0,label,text_button);}
 
-		static InputEntry* create(GuiContainer& parent,const char* label
-			,const char* text_button,EventHandler& handler,unsigned int id)
-			{return new InputEntry(parent,label,text_button,handler,id);}
+		static InputEntry* create(GuiContainer& parent,EventHandler& handler
+			,unsigned int id,const char* label,const char* text_button)
+			{return new InputEntry(parent,handler,id,label,text_button);}
 
 		const char* textGet() const;
 		void textSet(const char* text);
@@ -42,28 +44,31 @@ class InputEntry:public Widget
 
 		const GuiHandle& handleNativeGet() const;
 
+		void doButtonClick()
+			{r_handler->onButtonClick(*this);}
+
+		void doTextChanged()
+			{r_handler->onTextChanged(*this);}
 
 	private:
-		InputEntry(GuiContainer& parent,const char* label
-			,const char* text_button,EventHandler& handler,unsigned int id);
+		InputEntry(GuiContainer& parent,EventHandler& handler
+			,unsigned int id,const char* label,const char* text_button);
 		~InputEntry();
 
-		class EventHandlerInternal:public BoxHorizontal::EventHandler
+		class EventHandlerInternal:public Textbox::EventHandler
+			,public Button::EventHandler
 			{
 			public:
-				EventHandlerInternal(InputEntry& object
-					,InputEntry::EventHandler& handler);
+				EventHandlerInternal(InputEntry& object);
 
-				static constexpr unsigned int COMMAND_ACTION=1;
-				static constexpr unsigned int COMMAND_TEXTCHANGED=2;
-
-				void onCommand(BoxHorizontal& source,unsigned int command_id);
+				void onActionPerform(Button& source);
+				void onLeave(Textbox& source);
 
 			private:
-				InputEntry::EventHandler& r_handler;
 				InputEntry& r_object;
 			};
 
+		EventHandler* r_handler;
 		EventHandlerInternal m_handler;
 		BoxHorizontal* m_box;
 		Label* m_label;

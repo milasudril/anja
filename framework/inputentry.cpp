@@ -10,38 +10,34 @@ target[name[inputentry.o] type[object]]
 
 #include <cstdio>
 
-InputEntry::EventHandlerInternal::EventHandlerInternal(InputEntry& object
-	,InputEntry::EventHandler& handler):
-	r_handler(handler),r_object(object)
+InputEntry::EventHandlerInternal::EventHandlerInternal(InputEntry& object):
+	r_object(object)
 	{}
 
-void InputEntry::EventHandlerInternal::onCommand(BoxHorizontal& source,unsigned int command_id)
+void InputEntry::EventHandlerInternal::onActionPerform(Button& source)
 	{
-	switch(command_id)
-		{
-		case COMMAND_ACTION:
-			r_handler.onButtonClick(r_object);
-			break;
-		case COMMAND_TEXTCHANGED:
-			r_handler.onTextChanged(r_object);
-			break;
-		}
+	r_object.doButtonClick();
+	}
+
+void InputEntry::EventHandlerInternal::onLeave(Textbox& source)
+	{
+	r_object.doTextChanged();
 	}
 
 InputEntry::EventHandler InputEntry::s_default_handler;
 
-InputEntry::InputEntry(GuiContainer& parent,const char* label
-	,const char* text_button,EventHandler& handler,unsigned int id):
-	m_handler(*this,handler),m_id(id)
+InputEntry::InputEntry(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* label,const char* text_button):
+	r_handler(&handler),m_handler(*this),m_id(id)
 	{
-	m_box=BoxHorizontal::create(parent,&m_handler);
+	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
 	m_box->insertModeSet(0);
 	m_label=Label::create(*m_box,label);
 	m_box->insertModeSet(BoxHorizontal::INSERTMODE_FILL|BoxHorizontal::INSERTMODE_EXPAND);
-	m_textbox=Textbox::create(*m_box,EventHandlerInternal::COMMAND_TEXTCHANGED);
+	m_textbox=Textbox::create(*m_box,m_handler,0);
 	m_box->insertModeSet(BoxHorizontal::INSERTMODE_END);
-	m_button=Button::create(*m_box,text_button,EventHandlerInternal::COMMAND_ACTION);
+	m_button=Button::create(*m_box,m_handler,0,text_button);
 	}
 
 InputEntry::~InputEntry()

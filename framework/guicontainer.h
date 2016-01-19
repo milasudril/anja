@@ -43,8 +43,6 @@ class GuiContainer:public Widget
 
 		virtual void slaveAssign(Widget& component)=0;
 		virtual void slaveRelease()=0;
-
-		virtual void commandNotify(unsigned int command_id)=0;
 	};
 
 #endif

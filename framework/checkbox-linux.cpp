@@ -26,7 +26,8 @@ target
 class CheckboxGtk:public Checkbox
 	{
 	public:
-		CheckboxGtk(GuiContainer& parent,const char* title,unsigned int command_id);
+		CheckboxGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
+			,const char* title);
 		~CheckboxGtk();
 
 		void destroy();
@@ -46,30 +47,41 @@ class CheckboxGtk:public Checkbox
 			return gtk_toggle_button_set_active((GtkToggleButton*)handle,state_new);
 			}
 
+		unsigned int idGet() const
+			{return m_id;}
+
 	private:
 		static void onClick(GtkWidget* widget,void* checkboxgtk);
 
 		GuiContainer& r_parent;
+		EventHandler* r_handler;
 		GuiHandle m_checkbox;
-		unsigned int m_command_id;
+		unsigned int m_id;
 	};
 
 void CheckboxGtk::onClick(GtkWidget* widget,void* checkboxgtk)
 	{
 	CheckboxGtk* _this=reinterpret_cast<CheckboxGtk*>(checkboxgtk);
-	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_command_id);
-		,_this);
+	EXCEPTION_SWALLOW(
+		if(_this->stateGet())
+			{_this->r_handler->onSet(*_this);}
+		else
+			{_this->r_handler->onUnset(*_this);}
+	,_this);
 	}
 
-Checkbox* Checkbox::create(GuiContainer& parent,const char* title
-	,unsigned int command_id)
-	{return new CheckboxGtk(parent,title,command_id);}
+Checkbox::EventHandler Checkbox::s_default_handler;
+
+Checkbox* Checkbox::create(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* title)
+	{return new CheckboxGtk(parent,handler,id,title);}
 
 void CheckboxGtk::destroy()
 	{delete this;}
 
-CheckboxGtk::CheckboxGtk(GuiContainer& parent,const char* title,unsigned int command_id):
-	r_parent(parent),m_command_id(command_id)
+CheckboxGtk::CheckboxGtk(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* title):
+	r_parent(parent),r_handler(&handler),m_id(id)
 	{
 	GtkWidget* widget=gtk_check_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(onClick),this);

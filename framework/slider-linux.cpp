@@ -28,8 +28,8 @@ target
 class SliderGtk:public Slider
 	{
 	public:
-		SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
-			,unsigned int id,bool horizontal);
+		SliderGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
+			,const char* title,bool horizontal);
 		~SliderGtk();
 
 		void destroy();
@@ -48,18 +48,18 @@ class SliderGtk:public Slider
 
 		GuiContainer& r_parent;
 		EventHandler& r_handler;
-		unsigned int m_id;
 		GuiHandle m_box;
 		GtkWidget* m_title;
 		GtkWidget* m_slider;
 		GtkWidget* m_text;
+		unsigned int m_id;
 	};
 
 
 
 Slider* Slider::create(GuiContainer& parent,Slider::EventHandler& handler
-	,const char* title,unsigned int id,bool horizontal)
-	{return new SliderGtk(parent,handler,title,id,horizontal);}
+	,unsigned int id,const char* title,bool horizontal)
+	{return new SliderGtk(parent,handler,id,title,horizontal);}
 
 void SliderGtk::destroy()
 	{delete this;}
@@ -86,8 +86,8 @@ gboolean SliderGtk::textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk
 	return 1;
 	}
 
-SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler,const char* title
-	,unsigned int id,bool horizontal):
+SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* title,bool horizontal):
 	r_parent(parent),r_handler(handler),m_id(id)
 	{
 	gboolean invert=horizontal?

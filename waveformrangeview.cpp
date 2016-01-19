@@ -123,15 +123,9 @@ void WaveformRangeView::EventHandlerEntry::onTextChanged(InputEntry& source)
 		{r_view.rangeUpdate(source.idGet(),x);}
 	}
 
-void WaveformRangeView::EventHandlerEntry::onCommand(BoxVertical& source
-	,unsigned int command_id)
+void WaveformRangeView::EventHandlerEntry::onActionPerform(Button& source)
 	{
-	switch(command_id)
-		{
-		case COMMAND_REVERSE:
-			r_view.reverse();
-			break;
-		}
+	r_view.reverse();
 	}
 
 
@@ -141,10 +135,10 @@ WaveformRangeView* WaveformRangeView::create(GuiContainer& parent
 	{return new WaveformRangeView(parent,handler);}
 
 WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler):
-	r_range(nullptr),r_handler(&handler),r_parent(parent)
+	r_range(nullptr),r_handler(&handler)
 	,m_plot_handler(*this),m_entry_handler(*this),m_waveform_curve(1024),m_fs(48000)
 	{
-	m_box_main=BoxVertical::create(parent,&m_entry_handler);
+	m_box_main=BoxVertical::create(parent);
 	m_box_main->slaveAssign(*this);
 	m_box_main->insertModeSet(BoxVertical::INSERTMODE_LEFT);
 	m_label=Label::create(*m_box_main,"Trim:");
@@ -156,16 +150,16 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	m_box_main->insertModeSet(BoxVertical::INSERTMODE_END);
 	m_box_positions=BoxHorizontal::create(*m_box_main);
 
-	m_entries[0]=InputEntry::create(*m_box_positions,"Begin:","Auto"
-		,m_entry_handler,0);
+	m_entries[0]=InputEntry::create(*m_box_positions,m_entry_handler,0
+		,"Begin:","Auto");
 
 	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_FILL
 		|BoxHorizontal::INSERTMODE_EXPAND);
-	m_swap=Button::create(*m_box_positions,"⇌",EventHandlerEntry::COMMAND_REVERSE);
+	m_swap=Button::create(*m_box_positions,m_entry_handler,0,"⇌");
 
 	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_END);
-	m_entries[1]=InputEntry::create(*m_box_positions,"End:","Auto"
-		,m_entry_handler,1);
+	m_entries[1]=InputEntry::create(*m_box_positions,m_entry_handler,1
+		,"End:","Auto");
 
 
 	auto c_begin=m_plot->cursorXAdd({-0.5,1.0f/3});

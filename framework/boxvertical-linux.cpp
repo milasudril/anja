@@ -46,14 +46,6 @@ class BoxVerticalGtk:public BoxVertical
 		void slaveRelease()
 			{r_slave=nullptr;}
 
-		void commandNotify(unsigned int command_id)
-			{
-			if(r_handler==nullptr)
-				{r_parent.commandNotify(command_id);}
-			else
-				{r_handler->onCommand(*this,command_id);}
-			}
-
 	private:
 		GuiContainer& r_parent;
 		EventHandler* r_handler;

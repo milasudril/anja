@@ -7,10 +7,10 @@ dependency[optionbox.o]
 #define OPTIONBOX_H
 
 #include "widget.h"
-#include "boxvertical.h"
+#include "checkbox.h"
 #include "arraydynamicshort.h"
 
-class Checkbox;
+class BoxVertical;
 class Label;
 
 class OptionBox:public Widget
@@ -26,13 +26,13 @@ class OptionBox:public Widget
 					{}
 			};
 
-		static OptionBox* create(GuiContainer& parent,EventHandler& handler
-			,const char* title
+		static OptionBox* create(GuiContainer& parent,const char* title
 			,const char* const* options)
-			{return new OptionBox(parent,handler,title,options);}
+			{return create(parent,s_default_handler,0,title,options);}
 
-		static OptionBox* create(GuiContainer& parent,const char* title,const char* const* options)
-			{return new OptionBox(parent,s_default_handler,title,options);}
+		static OptionBox* create(GuiContainer& parent,EventHandler& handler
+			,unsigned int id,const char* title,const char* const* options)
+			{return new OptionBox(parent,handler,id,title,options);}
 
 		unsigned int nOptionsGet() const
 			{return m_options.length();}
@@ -46,28 +46,37 @@ class OptionBox:public Widget
 
 		const GuiHandle& handleNativeGet() const;
 
+		void doSet(unsigned int id)
+			{r_handler->onSet(*this,id);}
+
+		void doUnset(unsigned int id)
+			{r_handler->onUnset(*this,id);}
+
+		unsigned int idGet() const
+			{return m_id;}
+
 	private:
-		class EventHandlerCheckbox:public BoxVertical::EventHandler
+		EventHandler* r_handler;
+
+		class EventHandlerCheckbox:public Checkbox::EventHandler
 			{
 			public:
-				EventHandlerCheckbox(OptionBox& box,OptionBox::EventHandler& handler):
-					r_handler(handler),r_box(box)
-					{}
+				EventHandlerCheckbox(OptionBox& box);
 
-				void onCommand(BoxVertical& source,unsigned int command_id);
+				void onSet(Checkbox& source);
+				void onUnset(Checkbox& source);
 
 			private:
-				OptionBox::EventHandler& r_handler;
 				OptionBox& r_box;
 			} m_handler_cbox;
 
 		BoxVertical* m_box;
 		Label* m_label;
 		ArrayDynamicShort<Checkbox*> m_options;
+		unsigned int m_id;
 
-		OptionBox(GuiContainer& parent,EventHandler& handler
-			,const char* title
-			,const char* const* options);
+		OptionBox(GuiContainer& parent,EventHandler& handler,unsigned int id
+			,const char* title,const char* const* options);
 		~OptionBox();
 
 		static EventHandler s_default_handler;

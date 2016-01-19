@@ -26,7 +26,8 @@ target
 class ButtonGtk:public Button
 	{
 	public:
-		ButtonGtk(GuiContainer& parent,const char* title,unsigned int command_id);
+		ButtonGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
+			,const char* title);
 		~ButtonGtk();
 
 		void destroy();
@@ -34,30 +35,37 @@ class ButtonGtk:public Button
 		const GuiHandle& handleNativeGet() const
 			{return m_button;}
 
+		unsigned int idGet() const
+			{return m_id;}
+
 	private:
 		static void onClick(GtkWidget* widget,void* buttongtk);
 
 		GuiContainer& r_parent;
+		EventHandler* r_handler;
 		GuiHandle m_button;
-		unsigned int m_command_id;
+		unsigned int m_id;
 	};
 
 void ButtonGtk::onClick(GtkWidget* widget,void* buttongtk)
 	{
 	ButtonGtk* _this=reinterpret_cast<ButtonGtk*>(buttongtk);
-	EXCEPTION_SWALLOW(_this->r_parent.commandNotify(_this->m_command_id);
+	EXCEPTION_SWALLOW(_this->r_handler->onActionPerform(*_this);
 		,_this);
 	}
 
-Button* Button::create(GuiContainer& parent,const char* title
-	,unsigned int command_id)
-	{return new ButtonGtk(parent,title,command_id);}
+Button* Button::create(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* title)
+	{return new ButtonGtk(parent,handler,id,title);}
+
+Button::EventHandler Button::s_default_handler;
 
 void ButtonGtk::destroy()
 	{delete this;}
 
-ButtonGtk::ButtonGtk(GuiContainer& parent,const char* title,unsigned int command_id):
-	r_parent(parent),m_command_id(command_id)
+ButtonGtk::ButtonGtk(GuiContainer& parent,EventHandler& handler
+	,unsigned int id,const char* title):
+	r_parent(parent),r_handler(&handler),m_id(id)
 	{
 	GtkWidget* widget=gtk_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(onClick),this);

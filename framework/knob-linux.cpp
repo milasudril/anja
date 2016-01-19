@@ -29,8 +29,8 @@ target
 class KnobGtk:public Knob
 	{
 	public:
-		KnobGtk(GuiContainer& parent,EventHandler& handler,const char* title
-			,unsigned int id);
+		KnobGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
+			,const char* title);
 		~KnobGtk();
 
 		void destroy();
@@ -70,7 +70,6 @@ class KnobGtk:public Knob
 
 		GuiContainer& r_parent;
 		EventHandler& r_handler;
-		unsigned int m_id;
 		GuiHandle m_box;
 		GtkWidget* m_title;
 		GtkWidget* m_knob;
@@ -80,13 +79,15 @@ class KnobGtk:public Knob
 		double m_o_y;
 		double m_value;
 		bool m_drag;
+
+		unsigned int m_id;
 	};
 
 
 
 Knob* Knob::create(GuiContainer& parent,Knob::EventHandler& handler
-	,const char* title,unsigned int id)
-	{return new KnobGtk(parent,handler,title,id);}
+	,unsigned int id,const char* title)
+	{return new KnobGtk(parent,handler,id,title);}
 
 void KnobGtk::destroy()
 	{delete this;}
@@ -263,9 +264,9 @@ gboolean KnobGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event,void* knobgtk)
 	return FALSE;
 	}
 
-KnobGtk::KnobGtk(GuiContainer& parent,EventHandler& handler,const char* title
-	,unsigned int id):
-	r_parent(parent),r_handler(handler),m_id(id),m_value(0.0),m_drag(0)
+KnobGtk::KnobGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
+	,const char* title):
+	r_parent(parent),r_handler(handler),m_value(0.0),m_drag(0),m_id(id)
 	{
 	m_box=gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 	g_object_ref_sink(m_box);

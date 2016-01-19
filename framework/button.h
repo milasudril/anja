@@ -13,7 +13,23 @@ class GuiContainer;
 class Button:public Widget
 	{
 	public:
-		static Button* create(GuiContainer& parent,const char* title,unsigned int command_id);
+		class EventHandler
+			{
+			public:
+				virtual void onActionPerform(Button& source)
+					{}
+			};
+
+		static Button* create(GuiContainer& parent,const char* title)
+			{return create(parent,s_default_handler,0,title);}
+
+		static Button* create(GuiContainer& parent,EventHandler& handler
+			,unsigned int id,const char* title);
+
+		virtual unsigned int idGet() const=0;
+
+	private:
+		static EventHandler s_default_handler;
 	};
 
 #endif

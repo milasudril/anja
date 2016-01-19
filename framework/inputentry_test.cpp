@@ -11,8 +11,8 @@ int main()
 	auto event_loop=EventLoop::create();
 	auto mainwin=Window::create(*event_loop);
 	auto box=BoxVertical::create(*mainwin);
-	auto inputentry=InputEntry::create(*box,"Begin:","Auto",0);
-	auto inputentry2=InputEntry::create(*box,"End:","Auto",1);
+	auto inputentry=InputEntry::create(*box,"Begin:","Auto");
+	auto inputentry2=InputEntry::create(*box,"End:","Auto");
 
 	return 0;
 	}

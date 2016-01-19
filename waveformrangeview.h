@@ -9,7 +9,6 @@ dependency[waveformrangeview.o]
 #include "framework/widget.h"
 #include "framework/xyplot.h"
 #include "framework/inputentry.h"
-#include "framework/boxvertical.h"
 #include "framework/array_simple.h"
 #include <valarray>
 
@@ -84,15 +83,13 @@ class WaveformRangeView:public Widget
 			};
 
 		class EventHandlerEntry:public InputEntry::EventHandler
-			,public BoxVertical::EventHandler
+			,public Button::EventHandler
 			{
 			public:
-				static constexpr unsigned int COMMAND_REVERSE=0;
-
 				EventHandlerEntry(WaveformRangeView& view);
 				void onButtonClick(InputEntry& source);
 				void onTextChanged(InputEntry& source);
-				void onCommand(BoxVertical& source,unsigned int command_id);
+				void onActionPerform(Button& source);
 
 			private:
 				WaveformRangeView& r_view;
@@ -106,8 +103,6 @@ class WaveformRangeView:public Widget
 
 		Waveform* r_range;
 		EventHandler* r_handler;
-
-		GuiContainer& r_parent;
 
 		EventHandlerPlot m_plot_handler;
 		EventHandlerEntry m_entry_handler;

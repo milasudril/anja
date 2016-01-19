@@ -12,15 +12,14 @@ class Slider:public ValueInput
 	{
 	public:
 		static Slider* create(GuiContainer& parent,EventHandler& handler
-			,const char* title,unsigned int id)
-			{return create(parent,handler,title,0,id);}
+			,unsigned int id,const char* title)
+			{return create(parent,handler,id,title,0);}
 
-		static Slider* create(GuiContainer& parent,const char* title
-			,unsigned int id,bool horizontal)
-			{return create(parent,s_default_handler,title,id,horizontal);}
+		static Slider* create(GuiContainer& parent,const char* title,bool horizontal)
+			{return create(parent,s_default_handler,0,title,horizontal);}
 
 		static Slider* create(GuiContainer& parent,EventHandler& handler
-			,const char* title,unsigned int id,bool horizontal);
+			,unsigned int id,const char* title,bool horizontal);
 	};
 #endif
 

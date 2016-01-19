@@ -11,12 +11,11 @@ dependency[knob.o]
 class Knob:public ValueInput
 	{
 	public:
-		static Knob* create(GuiContainer& parent,const char* title
-			,unsigned int id)
-			{return create(parent,s_default_handler,title,id);}
+		static Knob* create(GuiContainer& parent,const char* title)
+			{return create(parent,s_default_handler,0,title);}
 
 		static Knob* create(GuiContainer& parent,EventHandler& handler
-			,const char* title,unsigned int id);
+			,unsigned int id,const char* title);
 	};
 #endif
 
