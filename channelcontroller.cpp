@@ -4,6 +4,7 @@ target[name[channelcontroller.o] type[object]]
 
 #include "channelcontroller.h"
 #include "session.h"
+#include "sessionview.h"
 #include "units.h"
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
@@ -12,7 +13,7 @@ void ChannelController::onLabelChange(ChannelStrip& source,const char* label)
 	{
 	auto ch=source.idGet();
 	r_session->channelDataGet(ch).labelSet(label);
-//	TODO: Notify channel list once the list has been added to UI
+	r_view->channelNameUpdate(ch);
 	}
 
 void ChannelController::onFadeTimeChange(ChannelStrip& source,float time)

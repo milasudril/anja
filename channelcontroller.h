@@ -9,6 +9,7 @@ dependency[channelcontroller.o]
 
 class ChannelData;
 class Session;
+class SessionView;
 
 class ChannelController:public ChannelStrip::EventHandler
 	{
@@ -19,8 +20,12 @@ class ChannelController:public ChannelStrip::EventHandler
 		void onFadeTimeChange(ChannelStrip& source,float time);
 		void onGainChange(ChannelStrip& source,float value);
 
+		void sessionViewSet(SessionView* view)
+			{r_view=view;}
+
 	private:
 		Session* r_session;
+		SessionView* r_view;
 	};
 
 #endif

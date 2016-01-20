@@ -64,3 +64,9 @@ void WaveformDataUpdater::onOptionUnset(WaveformDataView& source,uint32_t option
 	waveform.flagUnset(option);
 	}
 
+void WaveformDataUpdater::onChannelChange(WaveformDataView& source,uint32_t channel)
+	{
+	auto& waveform=source.waveformDataGet().waveformGet();
+	waveform.channelSet(channel);
+	}
+

@@ -94,7 +94,7 @@ class Session
 		ChannelData* channelDataBegin()
 			{return m_channel_data.begin();}
 
-		unsigned int nChannelsGet()
+		unsigned int channelsCountGet()
 			{return m_channel_data.length();}
 
 		const ChannelData& channelDataGet(unsigned int index) const

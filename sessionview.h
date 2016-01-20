@@ -35,6 +35,8 @@ class SessionView:public Widget
 
 		void sessionSet(Session& session);
 
+		void channelNameUpdate(unsigned int id);
+
 		void keyboardViewUpdate();
 
 	private:

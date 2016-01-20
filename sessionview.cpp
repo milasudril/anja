@@ -50,7 +50,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_tabs->tabTitleSet(0,"Waveform data");
 
 	m_mixer=ChannelView::create(*m_tabs,channelstrip_handler
-		,session.channelDataBegin(),session.nChannelsGet());
+		,session.channelDataBegin(),session.channelsCountGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
 	sessionSet(session);
@@ -67,6 +67,8 @@ void SessionView::sessionSet(Session& session)
 	{
 	r_session=&session;
 	m_keyboard->keyboardLayoutSet(session.keyboardLayoutGet());
+	m_dataview->channelSelectorInit(session.channelDataBegin()
+		,session.channelsCountGet());
 	slotDisplay(session.slotActiveGet());
 	}
 
@@ -78,4 +80,9 @@ void SessionView::slotDisplay(uint8_t slot)
 void SessionView::keyboardViewUpdate()
 	{
 	m_keyboard->update();
+	}
+
+void SessionView::channelNameUpdate(unsigned int id)
+	{
+	m_dataview->channelNameUpdate(r_session->channelDataGet(id),id);
 	}

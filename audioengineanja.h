@@ -9,6 +9,7 @@ dependency[audioengineanja.o]
 #include "audioconnection.h"
 #include "ringbuffer.h"
 #include "framework/array_simple.h"
+#include "framework/array_fixed.h"
 #include "framework/randomgeneratorimpl.h"
 
 class Session;
@@ -61,7 +62,9 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		RandomGeneratorImpl<std::mt19937> m_randgen;
 		ArraySimple<PlaybackRange> m_source_buffers;
 		ArraySimple<uint8_t> r_source_buffers;
-		ArraySimple<float> m_voice_channels;
+		ArrayFixed<float,16> m_channels;
+		ArraySimple<float> m_buffer_temp;
+		ArraySimple<float> m_buffers_out;
 
 		void eventProcess(const Event& event,unsigned int time_offset);
 		void eventControlProcess(const Event& event);

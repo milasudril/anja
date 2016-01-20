@@ -188,6 +188,7 @@ class Waveform
 			{
 			m_gain=0.0f;
 			m_gain_random=0.0f;
+			m_channel=0;
 			m_flags=0.0f;
 			return *this;
 			}

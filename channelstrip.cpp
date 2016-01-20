@@ -56,7 +56,7 @@ double ChannelStrip::ValueInputHandler::valueMap(ValueInput& source,double x) co
 		case 0:
 			return 1e-3*exp2(12.0*x);
 		case 1:
-			return 120.0*(x - 1.0) + 6.0*x;
+			return 72.0*(x - 1.0) + 6.0*x;
 		}
 	return x;
 	}
@@ -68,7 +68,7 @@ double ChannelStrip::ValueInputHandler::valueMapInverse(ValueInput& source,doubl
 		case 0:
 			return log2(y*1e3)/12.0;
 		case 1:
-			return (y+120.0)/126;;
+			return (y+72.0)/78.0;
 		}
 	return y;
 	}

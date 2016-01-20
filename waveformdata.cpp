@@ -9,7 +9,9 @@ target[name[waveformdata.o] type[object]]
 #include "framework/pathutils.h"
 #include "framework/array_simple.h"
 #include "framework/floatconv.h"
+#include "framework/localeguard.h"
 
+#include <cstdlib>
 #include <cstring>
 
 WaveformData::WaveformData(const SessionFileRecord& record
@@ -44,6 +46,21 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	value=record.propertyGet("Options");
 	if(value!=nullptr)
 		{r_waveform->flagsSet(*value);}
+
+	value=record.propertyGet("Playback channel");
+	if(value!=nullptr)
+		{
+		long ch;
+			{
+			LocaleGuard locale("C");
+			ch=atol(value->begin());
+			}
+		if(ch<1 || ch>16)
+			{
+			throw "A sound effect must be mapped to a channel number between 1 to 16 inclusive";
+			}
+		r_waveform->channelSet(ch-1);
+		}
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
@@ -52,6 +69,7 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 
 void WaveformData::fileLoad(const char* filename)
 	{
+//	Do not try to load the file if it is the same file
 	if(strcmp(m_filename.begin(),filename)==0)
 		{return;}
 	if(r_waveform->flagsGet() & Waveform::LOCKED)
@@ -61,7 +79,6 @@ void WaveformData::fileLoad(const char* filename)
 			"slot.";
 		}
 	WavefileInfo info;
-	printf("%s\n",filename);
 	auto reader=WavefileReader::create(filename,info);
 	r_waveform->clear();
 	r_waveform->sampleRateSet(info.fs);

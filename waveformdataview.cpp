@@ -5,16 +5,13 @@ target[name[waveformdataview.o] type[object]]
 #include "waveformdataview.h"
 #include "waveformdata.h"
 #include "waveformrangeview.h"
+#include "channeldata.h"
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
 #include "framework/label.h"
 #include "framework/textbox.h"
 #include "framework/filenamepicker.h"
-#include "framework/slider.h"
-#include "framework/messagedisplay.h"
 #include "framework/window.h"
-#include "framework/colorpicker.h"
-#include "framework/optionbox.h"
 #include "framework/floatconv.h"
 
 #include <cstring>
@@ -72,7 +69,7 @@ const noexcept
 	switch(source.idGet())
 		{
 		case 0:
-			return 120.0*(x - 1.0) + 6.0*x;
+			return 72.0*(x - 1.0) + 6.0*x;
 		case 1:
 			return 6.0*x;
 		}
@@ -85,7 +82,7 @@ const noexcept
 	switch(source.idGet())
 		{
 		case 0:
-			return (y+120.0)/126;
+			return (y+72.0)/78;
 		case 1:
 			return y/6.0;
 		}
@@ -107,6 +104,11 @@ void WaveformDataView::EventHandlerInternal::onUnset(OptionBox& source
 	,unsigned int index)
 	{
 	r_view->doOptionUnset(index);
+	}
+
+void WaveformDataView::EventHandlerInternal::onOptionSelect(Listbox& source)
+	{
+	r_view->doChannelChange(source.optionSelectedGet());
 	}
 
 
@@ -179,6 +181,12 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 		m_box_details=BoxHorizontal::create(*m_box_main);
 			m_box_left=BoxVertical::create(*m_box_details);
 				m_color=InputEntry::create(*m_box_left,m_color_events,0,"Color:","...");
+				m_playback_channel_box=BoxHorizontal::create(*m_box_left);
+					m_playback_channel_label=Label::create(*m_playback_channel_box,"Playback channel:");
+					m_playback_channel_box->insertModeSet(BoxHorizontal::INSERTMODE_END
+						|BoxHorizontal::INSERTMODE_FILL
+						|BoxHorizontal::INSERTMODE_EXPAND);
+					m_playback_channel_input=Listbox::create(*m_playback_channel_box,m_handler,0);
 				m_playback_gain=Slider::create(*m_box_left,m_handler,0
 					,"Playback gain/dB:",1);
 				m_pbgain_randomize=Slider::create(*m_box_left,m_handler,1
@@ -199,6 +207,9 @@ WaveformDataView::~WaveformDataView()
 				m_options->destroy();
 				m_pbgain_randomize->destroy();
 				m_playback_gain->destroy();
+					m_playback_channel_input->destroy();
+					m_playback_channel_label->destroy();
+				m_playback_channel_box->destroy();
 				m_color->destroy();
 			m_box_left->destroy();
 		m_box_details->destroy();
@@ -237,6 +248,7 @@ void WaveformDataView::update()
 
 	m_playback_gain->valueSet(waveform.gainGet());
 	m_pbgain_randomize->valueSet(waveform.gainRandomGet());
+	m_playback_channel_input->optionSelect(waveform.channelGet());
 
 	auto N_options=m_options->nOptionsGet();
 	for(uint32_t k=0;k<N_options;++k)
@@ -244,6 +256,24 @@ void WaveformDataView::update()
 		m_options->stateSet(k,waveform.flagGet(k));
 		}
 	}
+
+void WaveformDataView::channelSelectorInit(const ChannelData* channels,unsigned int n_ch)
+	{
+	m_playback_channel_input->optionsClear();
+	while(n_ch!=0)
+		{
+		m_playback_channel_input->optionAppend(channels->labelGet().begin());
+		++channels;
+		--n_ch;
+		}
+	}
+
+void WaveformDataView::channelNameUpdate(const ChannelData& channel,unsigned int id)
+	{
+	m_playback_channel_input->optionReplace(id,channel.labelGet().begin());
+	}
+
+
 
 void WaveformDataView::doColorChange(const ColorRGBA& color_new)
 	{

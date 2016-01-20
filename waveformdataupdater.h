@@ -34,6 +34,8 @@ class WaveformDataUpdater:public WaveformDataView::EventHandler
 
 		void onOptionUnset(WaveformDataView& source,uint32_t option);
 
+		void onChannelChange(WaveformDataView& source,uint32_t channel);
+
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}
 

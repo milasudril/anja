@@ -15,6 +15,8 @@ Filename:    alien_scanner.wav
 
 Color:       1; 0,534 678; 0.75
 
+Playback channel: 1
+
 
 --------------------------------------Slot 2------------------------------------
 
@@ -30,6 +32,8 @@ Playback gain/dB: -6
 
 Playback gain random level/dB: 3
 
+Playback channel: 1
+
 
 --------------------------------------Slot 3------------------------------------
 
@@ -40,6 +44,8 @@ Filename:    pump_im.ogg
 Color:       1;0.25;0
 
 Options:     Loop
+
+Playback channel: 2
 
 
 --------------------------------------Slot 4------------------------------------
@@ -54,6 +60,8 @@ Options:     Sustain|Set gain on loop
 
 Playback gain random level/dB: 6
 
+Playback channel: 1
+
 
 --------------------------------------Slot 5------------------------------------
 
@@ -63,6 +71,8 @@ Filename:    sine48k.wav
 
 Color:       0.25;0;0.5
 
+Playback channel: 3
+
 
 --------------------------------------Slot 6------------------------------------
 
@@ -71,6 +81,8 @@ Description: [Sine 44] 440 Hz sine wave sampled at 44100 Hz
 Filename:    sine44k.wav
 
 Color:       1;1;0
+
+Playback channel: 3
 
 
 --------------------------------------Slot 7------------------------------------
@@ -86,7 +98,7 @@ Options:     Loop|Sustain
 
 ------------------------------------Channel 1-----------------------------------
 
-Label: Tech
+Label: Fx
 
 Gain/dB: 0
 

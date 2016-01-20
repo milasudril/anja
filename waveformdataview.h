@@ -14,14 +14,15 @@ dependency[waveformdataview.o]
 #include "framework/colorpicker.h"
 #include "framework/optionbox.h"
 #include "framework/slider.h"
+#include "framework/listbox.h"
 
 class GuiContainer;
 class BoxVertical;
 class BoxHorizontal;
 class Label;
-class Slider;
 class WaveformData;
 class Window;
+class ChannelData;
 
 class WaveformDataView:public Widget
 	{
@@ -45,6 +46,8 @@ class WaveformDataView:public Widget
 					,unsigned int option)=0;
 				virtual void onOptionUnset(WaveformDataView& source
 					,unsigned int option)=0;
+				virtual void onChannelChange(WaveformDataView& source
+					,unsigned int channel)=0;
 			};
 
 		void doSourceChange(const char* filename_new)
@@ -70,6 +73,9 @@ class WaveformDataView:public Widget
 		void doOptionUnset(unsigned int option)
 			{r_handler->onOptionUnset(*this,option);}
 
+		void doChannelChange(unsigned int channel)
+			{r_handler->onChannelChange(*this,channel);}
+
 
 
 		static WaveformDataView* create(GuiContainer& parent
@@ -80,6 +86,10 @@ class WaveformDataView:public Widget
 		const GuiHandle& handleNativeGet() const;
 
 		void waveformDataSet(WaveformData& wd);
+
+		void channelSelectorInit(const ChannelData* channels,unsigned int n_ch);
+
+		void channelNameUpdate(const ChannelData& channel,unsigned int id);
 
 		WaveformData& waveformDataGet()
 			{return *r_data;}
@@ -103,6 +113,7 @@ class WaveformDataView:public Widget
 			,public Textbox::EventHandler
 			,public OptionBox::EventHandler
 			,public ValueInput::EventHandler
+			,public Listbox::EventHandler
 			{
 			public:
 				EventHandlerInternal(WaveformDataView& view);
@@ -119,6 +130,8 @@ class WaveformDataView:public Widget
 				void textGet(ValueInput& source,double value,TextBuffer& buffer);
 				double valueMap(ValueInput& source,double x) const noexcept;
 				double valueMapInverse(ValueInput& source,double y) const noexcept;
+
+				void onOptionSelect(Listbox& source);
 
 			private:
 				WaveformDataView* r_view;
@@ -150,6 +163,9 @@ class WaveformDataView:public Widget
 			BoxHorizontal* m_box_details;
 				BoxVertical* m_box_left;
 					InputEntry* m_color;
+					BoxHorizontal* m_playback_channel_box;
+						Label* m_playback_channel_label;
+ 						Listbox* m_playback_channel_input;
 					Slider* m_playback_gain;
 					Slider* m_pbgain_randomize;
 					OptionBox* m_options;

@@ -18,8 +18,8 @@ int main()
 		Session session("testbank/testbank.txt");
 		WaveformRangeTrimmer trimmer;
 		KeyboardController keyboardevents(session);
-		ChannelController channelctrl(session);
 		WaveformDataUpdater waveform_updater;
+		ChannelController channelctrl(session);
 
 		auto event_loop=EventLoop::create(0);
 		auto mainwin=Window::create(*event_loop);
@@ -32,6 +32,7 @@ int main()
 			,waveform_updater,trimmer,channelctrl);
 		keyboardevents.sessionViewSet(view);
 		waveform_updater.sessionViewSet(view);
+		channelctrl.sessionViewSet(view);
 		}
 	catch(const char* msg)
 		{printf("Error: %s\n",msg);}

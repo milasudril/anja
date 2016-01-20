@@ -151,7 +151,7 @@ void Session::load(const char* filename)
 		if(strncmp(title_ptr,"Slot ",5)==0)
 			{
 			title_ptr+=5;
-			int slot_num;
+			long slot_num;
 				{
 				LocaleGuard locale("C");
 				slot_num=atol(title_ptr);
