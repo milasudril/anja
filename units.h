@@ -25,13 +25,12 @@ T dBToAmplitude(const T& x)
 	{return pow(T(10),x/T(20));}
 
 constexpr double framesToSeconds(uint64_t n_frames,double fs)
-	{
-	return n_frames/fs;
-	}
+	{return n_frames/fs;}
 
 constexpr uint64_t secondsToFrames(double seconds,double fs)
-	{
-	return uint64_t(seconds*fs+0.5);
-	}
+	{return uint64_t(seconds*fs+0.5);}
+
+inline double timeConstantToDecayFactor(double tau,double fs)
+	{return exp(-1.0/(fs*tau));}
 
 #endif

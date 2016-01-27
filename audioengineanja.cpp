@@ -7,6 +7,7 @@ target[name[audioengineanja.o] type[object]]
 #include "clock.h"
 #include "units.h"
 #include "playbackrange.h"
+#include "filterstep.h"
 #include "midiconstants/controlcodes.h"
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
@@ -16,6 +17,7 @@ target[name[audioengineanja.o] type[object]]
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	r_waveforms(&waveforms),m_event_queue(32),m_voice_current(0)
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
+	,m_fader_filter_factor(0)
 	,m_buffer_temp(1),m_buffers_out(16)
 	{
 	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
@@ -23,7 +25,7 @@ AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 		auto ptr_channel=m_channels.begin();
 		while(ptr_channel!=m_channels.end())
 			{
-			*ptr_channel=1.0f;
+			*ptr_channel={1.0,1.0,1.0,1.0};
 			++ptr_channel;
 			}
 		}
@@ -36,6 +38,7 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
 	source.audioPortOutputAdd("Audio out");
 	m_sample_rate=source.sampleRateGet();
+	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_now=0;
 	}
 
@@ -83,7 +86,7 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
 			auto value=event.status_word[3]==Event::VALUE_1_FLOAT?
 				event.value : float(event.status_word[2])/127.0f;
 			auto channel=event.status_word[0]&0xf;
-			m_channels[channel]=value;
+			m_channels[channel].gain_in_current=value;
 			}
 			break;
 		}
@@ -180,13 +183,13 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 				{
 				auto ptr_voice=m_buffer_temp.begin();
 				auto N=src_current->outputBufferGenerate(ptr_voice,n_frames_in);
-				auto channel=src_current->channelGet();
-				auto gain_channel=m_channels[channel];
-				auto ptr_buffer_out=m_buffers_out.begin()+n_frames_in*channel;
+				auto channel_index=src_current->channelGet();
+				auto ptr_buffer_out=m_buffers_out.begin()+n_frames_in*channel_index;
 				auto ptr_buffer_in=ptr_voice;
 				while(N!=0)
 					{
-					*ptr_buffer_out+=gain_channel * (*ptr_buffer_in);
+				//	TODO: We can vectorize here
+					*ptr_buffer_out+=*ptr_buffer_in;
 					--N;
 					++ptr_buffer_in;
 					++ptr_buffer_out;
@@ -207,17 +210,24 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		memset(buffer_out,0,n_frames_in*sizeof(float));
 		auto N_ch=m_channels.length();
 		auto ptr_in=m_buffers_out.begin();
+		auto channel=m_channels.begin();
+		auto filterfactor=m_fader_filter_factor;
 		while(N_ch!=0)
 			{
 			auto ptr_out=buffer_out;
 			auto N=n_frames_in;
+			auto gain_in_current=channel->gain_in_current;
+			auto gain_in_old=channel->gain_in_old;
 			while(N!=0)
 				{
-				*ptr_out+=*ptr_in;
+				*ptr_out+= (*ptr_in) * gain_in_old;
 				++ptr_in;
 				++ptr_out;
 				--N;
+				gain_in_old=filterstep(gain_in_current,gain_in_old,filterfactor);
 				}
+			channel->gain_in_old=gain_in_old;
+			++channel;
 			--N_ch;
 			}
 		}

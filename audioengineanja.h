@@ -62,7 +62,18 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		RandomGeneratorImpl<std::mt19937> m_randgen;
 		ArraySimple<PlaybackRange> m_source_buffers;
 		ArraySimple<uint8_t> r_source_buffers;
-		ArrayFixed<float,16> m_channels;
+
+		double m_fader_filter_factor;
+		struct ChannelState
+			{
+			double gain_in_old; /**<Old  fader value*/
+			double gain_in_current; /**<Value set by channel fader*/
+
+			double gain_out; /**<Output gain after fade-in/out*/
+			double fade_factor; /**<Fade-in/out factor */
+			};
+		ArrayFixed<ChannelState,16> m_channels;
+
 		ArraySimple<float> m_buffer_temp;
 		ArraySimple<float> m_buffers_out;
 

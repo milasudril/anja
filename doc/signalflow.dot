@@ -1,0 +1,24 @@
+digraph "G"
+	{
+	rankdir="LR"
+	event_source[shape="box",label="Event\nsource"];
+	selector[shape="box",label="Generator\nselector"];
+	generator[shape="record",label="<fr>Waveform\ngenerators|<f0>0|<f1>...|<f2>31"];
+	ch_map[shape="circle",label="+"];
+	ch_gain[shape="box",label="Channel\ngain"];
+	mixer[shape="record",label="<header>Channel\nmixer|<data>Control|<wave>Waveform"];
+	jack_out[shape="box",label="Jack"];
+
+	event_source->selector[label="Slot\nnumber"];
+	selector->generator:f0[label="Slot\nnumber"];
+	selector->generator:f1[label="Slot\nnumber",style="dashed"];
+	selector->generator:f2[label="Slot\nnumber",style="dashed"];
+	generator:f0->ch_map[label="Waveform"];
+	generator:f1->ch_map[label="Waveform"];
+	generator:f2->ch_map[label="Waveform"];
+	generator:fr->selector[label="Ready"];
+
+	ch_gain->mixer:control;
+	ch_map->mixer:wave[label="16 channels"];
+	mixer->jack_out;
+	}
