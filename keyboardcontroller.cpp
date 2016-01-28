@@ -36,19 +36,37 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 			{
 			auto channel=(scancode>=59 && scancode<=68)?
 				(scancode - 59) : (scancode - 87 + 10);
-			if(m_keystates[108] && !m_keystates[103]) // Fade out
+			if(m_keystates[108] && !m_keystates[103] && !m_keystates[105]
+				&& !m_keystates[106]) // Fade out
 				{
 				engine.eventPost(
 					 MIDIConstants::StatusCodes::CONTROLLER|channel
 					,MIDIConstants::ControlCodes::SOUND_1
 					,r_session->channelGet(channel).fadeTimeGet());
 				}
-			if(m_keystates[103] && !m_keystates[108]) // Fade in
+			if(m_keystates[103] && !m_keystates[108]  && !m_keystates[105]
+				&& !m_keystates[106]) // Fade in
 				{
 				engine.eventPost(
 					 MIDIConstants::StatusCodes::CONTROLLER|channel
 					,MIDIConstants::ControlCodes::SOUND_2
 					,r_session->channelGet(channel).fadeTimeGet());
+				}
+			if(!m_keystates[108] && !m_keystates[103] && m_keystates[105]
+				&& !m_keystates[106]) // Mute
+				{
+				engine.eventPost(
+					 MIDIConstants::StatusCodes::CONTROLLER|channel
+					,MIDIConstants::ControlCodes::SOUND_1
+					,1e-2f);
+				}
+			if(!m_keystates[103] && !m_keystates[108]  && !m_keystates[105]
+				&& m_keystates[106]) // Unmute
+				{
+				engine.eventPost(
+					 MIDIConstants::StatusCodes::CONTROLLER|channel
+					,MIDIConstants::ControlCodes::SOUND_2
+					,1e-2f);
 				}
 			}
 		else

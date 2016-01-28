@@ -11,6 +11,7 @@ target[name[audioengineanja.o] type[object]]
 #include "midiconstants/controlcodes.h"
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
+#include "framework/minifloat.h"
 
 #include <cstring>
 
@@ -87,6 +88,24 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
 				event.value : float(event.status_word[2])/127.0f;
 			auto channel=event.status_word[0]&0xf;
 			m_channels[channel].gain_in_current=value;
+			}
+			break;
+
+		case MIDIConstants::ControlCodes::SOUND_1: //Fade out
+			{
+			auto value=event.status_word[3]==Event::VALUE_1_FLOAT?
+				event.value : 4.096*Minifloat::fromBits(event.status_word[2])/15.5;
+			auto channel=event.status_word[0]&0xf;
+			m_channels[channel].fade_factor=timeConstantToDecayFactor(value,m_sample_rate);
+			}
+			break;
+
+		case MIDIConstants::ControlCodes::SOUND_2: //Fade in
+			{
+			auto value=event.status_word[3]==Event::VALUE_1_FLOAT?
+				event.value :  4.096*Minifloat::fromBits(event.status_word[2])/15.5;
+			auto channel=event.status_word[0]&0xf;
+			m_channels[channel].fade_factor=timeConstantToDecayFactor(-value,m_sample_rate);
 			}
 			break;
 		}
@@ -171,7 +190,7 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		--n_frames;
 		}
 
-//	Render voices
+	//	Render voices
 		{
 		memset(m_buffers_out.begin(),0,m_buffers_out.length()*sizeof(float));
 		auto src_begin=m_source_buffers.begin();
@@ -212,23 +231,48 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		auto ptr_in=m_buffers_out.begin();
 		auto channel=m_channels.begin();
 		auto filterfactor=m_fader_filter_factor;
+
 		while(N_ch!=0)
 			{
+		//	TODO: This will only capture the most recent CHANNEL_VOLUME event
+		//	within the current frame. This will work well as long as the buffer is
+		//	small. A larger buffer would require work in the event loop above.
 			auto ptr_out=buffer_out;
 			auto N=n_frames_in;
 			auto gain_in_current=channel->gain_in_current;
 			auto gain_in_old=channel->gain_in_old;
+			auto gain_out=channel->gain_out;
+			auto fade_factor=channel->fade_factor;
 			while(N!=0)
 				{
-				*ptr_out+= (*ptr_in) * gain_in_old;
+				*ptr_out+= (*ptr_in) * gain_in_old * gain_out;
 				++ptr_in;
 				++ptr_out;
 				--N;
+				gain_out=std::max(1e-5,std::min(1.0,fade_factor*gain_out));
 				gain_in_old=filterstep(gain_in_current,gain_in_old,filterfactor);
 				}
+			channel->gain_out=gain_out;
 			channel->gain_in_old=gain_in_old;
 			++channel;
 			--N_ch;
+			}
+		}
+
+	//	Stop muted voices
+		{
+		auto src_begin=m_source_buffers.begin();
+		auto src_current=src_begin;
+		auto src_end=m_source_buffers.end();
+		while(src_current!=src_end)
+			{
+			if(src_current->valid())
+				{
+				auto ch=src_current->channelGet();
+				if(m_channels[ch].gain_out<1e-4)
+					{src_current->stop();}
+				}
+			++src_current;
 			}
 		}
 	m_now=now;
