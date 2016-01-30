@@ -16,7 +16,7 @@ target[name[audioengineanja.o] type[object]]
 #include <cstring>
 
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
-	r_waveforms(&waveforms),m_sample_rate(48000),m_event_queue(32)
+	r_waveforms(&waveforms),m_sample_rate(0),m_event_queue(32)
 	,m_voice_current(0)
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
 	,m_fader_filter_factor(0)
@@ -38,6 +38,7 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
 	{
+	m_sample_rate=0.0;
 	reset();
 	}
 
@@ -49,7 +50,6 @@ void AudioEngineAnja::reset()
 		{
 		m_event_queue.pop_front();
 		}
-
 
 	//	Reset channel states
 		{
@@ -84,26 +84,32 @@ void AudioEngineAnja::buffersAllocate(AudioConnection& source,unsigned int n_fra
 
 void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,uint8_t value_1) noexcept
 	{
-	QueueElement tmp;
-	tmp.event=
+	if(m_sample_rate > 0.0)
 		{
-		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
-		,{status,value_0,value_1,0}
-		,0.0f
-		};
-	m_event_queue.push_back(tmp.vector);
+		QueueElement tmp;
+		tmp.event=
+			{
+			secondsToFrames(clockGet(),m_sample_rate)-m_time_start
+			,{status,value_0,value_1,0}
+			,0.0f
+			};
+		m_event_queue.push_back(tmp.vector);
+		}
 	}
 
 void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) noexcept
 	{
-	QueueElement tmp;
-	tmp.event=
+	if(m_sample_rate > 0.0)
 		{
-		 secondsToFrames(clockGet(),m_sample_rate)-m_time_start
-		,{status,value_0,0,Event::VALUE_1_FLOAT}
-		,value_1
-		};
-	m_event_queue.push_back(tmp.vector);
+		QueueElement tmp;
+		tmp.event=
+			{
+			secondsToFrames(clockGet(),m_sample_rate)-m_time_start
+			,{status,value_0,0,Event::VALUE_1_FLOAT}
+			,value_1
+			};
+		m_event_queue.push_back(tmp.vector);
+		}
 	}
 
 void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)

@@ -27,9 +27,7 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 		m_keystates[scancode]=1;
 		auto slot=r_session->scancodeToSlot(scancode);
 		if(slot!=255) //A slot was activated
-			{
-			engine.eventPost(MIDIConstants::StatusCodes::NOTE_ON,slot,1.0f);
-			}
+			{engine.eventPost(MIDIConstants::StatusCodes::NOTE_ON,slot,1.0f);}
 		else
 		if( (scancode>=59 && scancode <=68) || (scancode>=87 && scancode<=88))
 		// function key (Channel fade in/out)

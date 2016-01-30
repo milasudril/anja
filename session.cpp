@@ -7,10 +7,15 @@ target[name[session.o] type[object]]
 #include "sessionfilewriter.h"
 #include "sessionfilerecordimpl.h"
 #include "audioconnection.h"
+#include "units.h"
 #include "framework/localeguard.h"
 #include "framework/pathutils.h"
+#include "midiconstants/statuscodes.h"
+#include "midiconstants/controlcodes.h"
 
 #include <cstring>
+
+#include <unistd.h>
 
 void Session::waveformsClear()
 	{
@@ -227,6 +232,25 @@ void Session::audioServerConnect()
 	{
 	audioServerDisconnect();
 	m_connection=AudioConnection::create(m_title.begin(),m_engine);
+
+//	FIXME Instead of relying on a delay, use a callback. This event must be
+//	issued from the process function to ensure that the audio thread has started
+//	ugh.
+	sleep(1);
+
+//	Post channel volume messages
+	auto channel=m_channels.begin();
+	auto channels_end=m_channels.end();
+	auto k=0;
+	while(channel!=channels_end)
+		{
+		auto value=channel->gainGet();
+		m_engine.eventPost(k|MIDIConstants::StatusCodes::CONTROLLER
+			,MIDIConstants::ControlCodes::CHANNEL_VOLUME
+			,dBToAmplitude(value));
+		++channel;
+		++k;
+		}
 	}
 
 void Session::audioServerDisconnect()
