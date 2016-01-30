@@ -31,3 +31,11 @@ void ChannelController::onGainChange(ChannelStrip& source,float value)
 		,MIDIConstants::ControlCodes::CHANNEL_VOLUME
 		,dBToAmplitude(value));
 	}
+
+void ChannelController::onColorChange(ChannelStrip& source,const ColorRGBA& color)
+	{
+	auto ch=source.idGet();
+	r_session->channelDataGet(ch).colorSet(color);
+	r_view->channelColorUpdate(ch);
+	r_view->keyboardViewUpdate();
+	}

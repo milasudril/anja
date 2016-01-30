@@ -6,6 +6,7 @@ target[name[waveformdata.o] type[object]]
 #include "sessionfilerecord.h"
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
+#include "colorstring.h"
 #include "framework/pathutils.h"
 #include "framework/array_simple.h"
 #include "framework/floatconv.h"
@@ -33,7 +34,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 
 	value=record.propertyGet("Color");
 	if(value!=nullptr)
-		{keyColorSet(value->begin());}
+		{keyColorSet(colorFromString(value->begin()));}
 
 	value=record.propertyGet("Playback gain/dB");
 	if(value!=nullptr)
@@ -158,44 +159,10 @@ void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
 	descriptionSet(description.begin());
 	}
 
-void WaveformData::keyColorSet(const char* colorstring)
-	{
-	ArrayDynamicShort<char> buffer;
-	float values[4]={0.0f,0.0f,0.0f,1.0f};
-	uint8_t count=0;
-	while(*colorstring!='\0' && count!=4)
-		{
-		switch(*colorstring)
-			{
-			case ';':
-				buffer.append('\0');
-				values[count]=convert(buffer.begin());
-				++count;
-				buffer.clear();
-				break;
-			default:
-				buffer.append(*colorstring);
-				break;
-			}
-		++colorstring;
-		}
-	if(count!=4)
-		{
-		buffer.append('\0');
-		values[count]=convert(buffer.begin());
-		}
-	keyColorSet({values[0],values[1],values[2],values[3]});
-	}
 
 void WaveformData::keyColorSet(const ColorRGBA& color)
 	{
 	if(r_key!=nullptr)
 		{r_key->colorBackgroundSet(color);}
 	m_color=color;
-	}
-
-void WaveformData::keyColorGet(ColorString& buffer)
-	{
-	sprintf(buffer.begin(),"%.7g; %.7g; %.7g; %.7g"
-		,m_color.red,m_color.green,m_color.blue,m_color.alpha);
 	}

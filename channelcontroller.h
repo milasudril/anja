@@ -19,6 +19,7 @@ class ChannelController:public ChannelStrip::EventHandler
 		void onLabelChange(ChannelStrip& source,const char* label);
 		void onFadeTimeChange(ChannelStrip& source,float time);
 		void onGainChange(ChannelStrip& source,float value);
+		void onColorChange(ChannelStrip& source,const ColorRGBA& color);
 
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}

@@ -46,8 +46,19 @@ class ChannelData
 		void keySet(KeyboardLayout::KeyDescriptor* key)
 			{r_key=key;}
 
+		const ColorRGBA& colorGet() const
+			{return m_color;}
+
+		void colorSet(const ColorRGBA& color)
+			{
+			m_color=color;
+			if(r_key!=nullptr)
+				{r_key->colorBackgroundSet(color);}
+			}
+
 	private:
 		ArrayDynamicShort<char> m_label;
+		ColorRGBA m_color;
 		Channel* r_channel;
 		KeyboardLayout::KeyDescriptor* r_key;
 	};

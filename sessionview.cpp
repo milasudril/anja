@@ -80,7 +80,7 @@ void SessionView::slotDisplay(uint8_t slot)
 	m_tabs->tabActiveSet(0);
 	}
 
-void SessionView::channelDisplay(uint8_t channel)
+void SessionView::channelDisplay(unsigned int channel)
 	{
 	m_tabs->tabActiveSet(1);
 	}
@@ -90,7 +90,12 @@ void SessionView::keyboardViewUpdate()
 	m_keyboard->update();
 	}
 
-void SessionView::channelNameUpdate(unsigned int id)
+void SessionView::channelNameUpdate(unsigned int channel)
 	{
-	m_dataview->channelNameUpdate(r_session->channelDataGet(id),id);
+	m_dataview->channelNameUpdate(r_session->channelDataGet(channel),channel);
+	}
+
+void SessionView::channelColorUpdate(unsigned int channel)
+	{
+	m_mixer->channelDataSet(r_session->channelDataGet(channel),channel);
 	}

@@ -46,3 +46,8 @@ ChannelView::~ChannelView()
 		}
 	m_box->slaveRelease();
 	}
+
+void ChannelView::channelDataSet(const ChannelData& data,unsigned int channel)
+	{
+	m_strips[channel]->channelDataSet(data);
+	}

@@ -9,11 +9,11 @@ dependency[waveformdata.o]
 #include "waveform.h"
 
 #include "framework/color.h"
-#include "framework/array_fixed.h"
 #include "framework/keyboardlayout.h"
 #include <string>
 
 class SessionFileRecord;
+class ColorString;
 
 class WaveformData
 	{
@@ -63,14 +63,7 @@ class WaveformData
 		const ColorRGBA& keyColorGet() const
 			{return m_color;}
 
-		typedef ArrayFixed<char,64> ColorString;
-		void keyColorGet(ColorString& buffer);
-
 		void keyColorSet(const ColorRGBA& color_new);
-
-		void keyColorSet(const char* colorstring);
-
-
 
 	private:
 		ArrayDynamicShort<char> m_filename;

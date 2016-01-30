@@ -10,7 +10,10 @@ target[name[channelstrip.o] type[object]]
 #include "framework/knob.h"
 #include "framework/slider.h"
 #include "framework/floatconv.h"
+#include "framework/window.h"
 #include <cmath>
+
+#include <cstring>
 
 ChannelStrip* ChannelStrip::create(GuiContainer& parent,EventHandler& handler
 	,unsigned int id)
@@ -25,13 +28,15 @@ const GuiHandle& ChannelStrip::handleNativeGet() const
 	{return m_box->handleNativeGet();}
 
 ChannelStrip::ChannelStrip(GuiContainer& parent,EventHandler& handler
-	,unsigned int id):r_handler(&handler),m_input_handler(*this),m_id(id)
+	,unsigned int id):
+	r_handler(&handler),m_input_handler(*this),m_id(id)
 	{
 	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
 
 	m_label=Textbox::create(*m_box,m_input_handler,0);
 	m_label->widthMinSet(5);
+	m_color=ColorView::create(*m_box,m_input_handler,0);
 	m_fadetime=Knob::create(*m_box,m_input_handler,0,"Fade\ntime/s");
 
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
@@ -48,6 +53,25 @@ ChannelStrip::~ChannelStrip()
 	m_label->destroy();
 	m_box->slaveRelease();
 	}
+
+
+
+ChannelStrip::ValueInputHandler::ValueInputHandler(ChannelStrip& strip):
+	r_strip(strip),m_colordlg(nullptr),m_color_presets(64)
+	{
+	memcpy(m_color_presets.begin(),COLORS
+		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
+	}
+
+ChannelStrip::ValueInputHandler::~ValueInputHandler()
+	{
+	if(m_colordlg!=nullptr)
+		{
+		m_picker->destroy();
+		m_colordlg->destroy();
+		}
+	}
+
 
 double ChannelStrip::ValueInputHandler::valueMap(ValueInput& source,double x) const noexcept
 	{
@@ -109,10 +133,30 @@ void ChannelStrip::ValueInputHandler::onLeave(Textbox& source)
 	r_strip.doLabelChange(source.textGet());
 	}
 
+void ChannelStrip::ValueInputHandler::onActionPerform(ColorView& source)
+	{
+	if(m_colordlg==nullptr)
+		{
+		m_colordlg=Window::create(source,reinterpret_cast<void**>(&m_colordlg));
+		m_colordlg->titleSet("Choose a color");
+		m_color=source.colorGet();
+		m_picker=ColorPicker::create(*m_colordlg
+			,m_color
+			,m_color_presets.begin(),m_color_presets.length(),*this);
+		}
+	}
+
+void ChannelStrip::ValueInputHandler::onConfirmed(ColorPicker::Tag tag)
+	{
+	r_strip.doColorChange(m_color);
+	}
+
+
 void ChannelStrip::channelDataSet(const ChannelData& data)
 	{
 	m_label->textSet(data.labelGet().begin());
 	const auto& channel=data.channelGet();
 	m_fadetime->valueSet(channel.fadeTimeGet());
 	m_level->valueSet(channel.gainGet());
+	m_color->colorSet(data.colorGet());
 	}

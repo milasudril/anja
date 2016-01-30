@@ -5,6 +5,7 @@ target[name[waveformdataupdater.o] type[object]]
 #include "waveformdataupdater.h"
 #include "waveformdata.h"
 #include "sessionview.h"
+#include "colorstring.h"
 
 void WaveformDataUpdater::onSourceChange(WaveformDataView& source
 	,const char* filename_new)
@@ -34,7 +35,7 @@ void WaveformDataUpdater::onColorChange(WaveformDataView& source
 	,const char* colorstr)
 	{
 	auto& wd=source.waveformDataGet();
-	wd.keyColorSet(colorstr);
+	wd.keyColorSet(colorFromString(colorstr));
 	r_view->keyboardViewUpdate();
 	}
 

@@ -21,7 +21,6 @@ target
 #include "knob.h"
 #include "guicontainer.h"
 #include "guihandle.h"
-#include "array_fixed.h"
 #include "exceptionswallow.h"
 #include "colorsystem.h"
 #include <gtk/gtk.h>

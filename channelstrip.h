@@ -9,11 +9,16 @@ dependency[channelstrip.o]
 #include "framework/widget.h"
 #include "framework/valueinput.h"
 #include "framework/textbox.h"
+#include "framework/colorview.h"
+#include "framework/colorpicker.h"
+#include "framework/color.h"
+#include "framework/array_simple.h"
 
 class ChannelData;
 class Knob;
 class Slider;
 class BoxVertical;
+class Window;
 
 class ChannelStrip:public Widget
 	{
@@ -24,6 +29,7 @@ class ChannelStrip:public Widget
 				virtual void onLabelChange(ChannelStrip& source,const char* label)=0;
 				virtual void onFadeTimeChange(ChannelStrip& source,float time)=0;
 				virtual void onGainChange(ChannelStrip& source,float value)=0;
+				virtual void onColorChange(ChannelStrip& sorce,const ColorRGBA& value)=0;
 			};
 
 		void doLabelChange(const char* label)
@@ -34,6 +40,9 @@ class ChannelStrip:public Widget
 
 		void doGainChange(float value)
 			{r_handler->onGainChange(*this,value);}
+
+		void doColorChange(const ColorRGBA& color)
+			{r_handler->onColorChange(*this,color);}
 
 		static ChannelStrip* create(GuiContainer& parent,EventHandler& handler
 			,unsigned int id);
@@ -56,12 +65,13 @@ class ChannelStrip:public Widget
 
 		friend class ValueInputHandler;
 
-		class ValueInputHandler:public ValueInput::EventHandler
-			,public Textbox::EventHandler
+		class ValueInputHandler:public Textbox::EventHandler
+			,public ColorView::EventHandler,public ValueInput::EventHandler
+			,public ColorPicker::EventHandler
 			{
 			public:
-				ValueInputHandler(ChannelStrip& strip):r_strip(strip)
-					{}
+				ValueInputHandler(ChannelStrip& strip);
+				~ValueInputHandler();
 
 				void textGet(ValueInput& source,double value,TextBuffer& buffer);
 				double valueGet(ValueInput& source,const char* text);
@@ -70,12 +80,21 @@ class ChannelStrip:public Widget
 
 				void onLeave(Textbox& source);
 
+				void onActionPerform(ColorView& source);
+
+				void onConfirmed(ColorPicker::Tag x);
+
 			private:
 				ChannelStrip& r_strip;
+				Window* m_colordlg;
+				ColorPicker* m_picker;
+				ColorRGBA m_color;
+				ArraySimple<ColorRGBA> m_color_presets;
 			} m_input_handler;
 
 		BoxVertical* m_box;
 			Textbox* m_label;
+			ColorView* m_color;
 			Knob* m_fadetime;
 			Slider* m_level;
 

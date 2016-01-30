@@ -35,7 +35,7 @@ class Session
 			,m_connection(nullptr),r_key_active(nullptr),m_slot_active(0)
 			{
 			load(filename);
-			audioServerConnect();
+		//	audioServerConnect();
 			}
 
 		~Session()

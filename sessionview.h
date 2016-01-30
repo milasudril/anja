@@ -33,11 +33,13 @@ class SessionView:public Widget
 
 		void slotDisplay(uint8_t slot);
 
-		void channelDisplay(uint8_t channel);
+		void channelDisplay(unsigned int channel);
 
 		void sessionSet(Session& session);
 
-		void channelNameUpdate(unsigned int id);
+		void channelNameUpdate(unsigned int channel);
+
+		void channelColorUpdate(unsigned int channel);
 
 		void keyboardViewUpdate();
 

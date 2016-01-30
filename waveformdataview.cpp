@@ -6,6 +6,7 @@ target[name[waveformdataview.o] type[object]]
 #include "waveformdata.h"
 #include "waveformrangeview.h"
 #include "channeldata.h"
+#include "colorstring.h"
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
 #include "framework/label.h"
@@ -242,9 +243,7 @@ void WaveformDataView::update()
 
 	m_source->textSet(r_data->filenameGet().begin());
 	m_description_textbox->textSet(r_data->descriptionGet().begin());
-	WaveformData::ColorString string;
-	r_data->keyColorGet(string);
-	m_color->textSet(string.begin());
+	m_color->textSet(ColorString(r_data->keyColorGet()).begin());
 
 	m_playback_gain->valueSet(waveform.gainGet());
 	m_pbgain_randomize->valueSet(waveform.gainRandomGet());
@@ -278,7 +277,5 @@ void WaveformDataView::channelNameUpdate(const ChannelData& channel,unsigned int
 void WaveformDataView::doColorChange(const ColorRGBA& color_new)
 	{
 	r_handler->onColorChange(*this,color_new);
-	WaveformData::ColorString string;
-	r_data->keyColorGet(string);
-	m_color->textSet(string.begin());
+	m_color->textSet(ColorString(r_data->keyColorGet()).begin());
 	}

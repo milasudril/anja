@@ -23,6 +23,8 @@ class ChannelView:public Widget
 
 		void destroy();
 
+		void channelDataSet(const ChannelData& data,unsigned int channel);
+
 		const GuiHandle& handleNativeGet() const;
 
 	private:
