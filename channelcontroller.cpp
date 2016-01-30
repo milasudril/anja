@@ -14,6 +14,7 @@ void ChannelController::onLabelChange(ChannelStrip& source,const char* label)
 	auto ch=source.idGet();
 	r_session->channelDataGet(ch).labelSet(label);
 	r_view->channelNameUpdate(ch);
+	r_view->keyboardViewUpdate();
 	}
 
 void ChannelController::onFadeTimeChange(ChannelStrip& source,float time)

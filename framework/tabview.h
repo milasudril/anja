@@ -20,6 +20,8 @@ class TabView:public GuiContainer
 		static TabView* create(GuiContainer& parent,EventHandler* event_handler);
 
 		virtual void tabTitleSet(unsigned int tab,const char* title)=0;
+
+		virtual void tabActiveSet(unsigned int tab)=0;
 	};
 
 #endif

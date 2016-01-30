@@ -243,10 +243,10 @@ void KeyboardLayout::KeyDescriptor::labelSet(const char* text)
 	*(label.end()-1)=0;
 	}
 
-uint8_t KeyboardLayout::scancodeFromCoordinates(float x,float y)
+uint8_t KeyboardLayout::scancodeTAFromCoordinates(float x,float y)
 	{
-	uint8_t row=uint8_t(y);
-	uint8_t col=uint8_t(x-0.4f*row+2);
+	auto row=uint8_t(y);
+	auto col=uint8_t(x-0.4f*row+2);
 	if(row>4 || col>s_ncols_keymap-1)
 		{return 0;}
 	return s_typing_area[col+row*s_ncols_keymap];
@@ -258,93 +258,168 @@ const uint8_t* KeyboardLayout::typingAreaScancodesBegin()
 const uint8_t* KeyboardLayout::typingAreaScancodesEnd()
 	{return s_typing_area+sizeof(s_typing_area);}
 
+
+
+constexpr ArrayFixed<KeyboardLayout::KeyDescriptor
+	,KeyboardLayout::FUNCTION_KEYS_COLS*KeyboardLayout::FUNCTION_KEYS_ROWS>
+	KeyboardLayout::s_function_keys_default=
+	{
+	 s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	};
+
+constexpr ArrayFixed<const char*
+	,KeyboardLayout::FUNCTION_KEYS_COLS*KeyboardLayout::FUNCTION_KEYS_ROWS>
+	KeyboardLayout::s_function_keys_labels
+	{
+	 "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"
+	};
+
+static constexpr uint8_t s_function_keys[]=
+	{
+	 59,60,61,62,63,64,65,66,67,68,87,88
+	};
+static constexpr uint8_t s_ncols_fkeys=12;
+
+uint8_t KeyboardLayout::scancodeFXFromCoordinates(float x,float y)
+	{
+	auto row=uint8_t(y);
+	auto col=uint8_t(x);
+
+	if(row > 0 || col > s_ncols_fkeys-1)
+		{return 0;}
+
+	return s_function_keys[col+row*s_ncols_fkeys];
+	}
+
+const uint8_t* KeyboardLayout::functionKeysScancodesBegin()
+	{return s_function_keys;}
+
+const uint8_t* KeyboardLayout::functionKeysScancodesEnd()
+	{return s_function_keys+sizeof(s_function_keys);}
+
+
+
 KeyboardLayout::KeyboardLayout()
 	{
-	memcpy(m_typing_area.begin(),s_typing_area_default.begin()
-		,m_typing_area.size());
-
-	auto ptr=m_typing_area.begin();
-	auto ptr_end=m_typing_area.end();
-	auto label=s_typing_area_labels_swe.begin();
-	while(ptr!=ptr_end)
+	//	Initialize typing area
 		{
-		ptr->labelSet(*label);
-		++label;
+		memcpy(m_typing_area.begin(),s_typing_area_default.begin()
+			,m_typing_area.size());
+
+		auto ptr=m_typing_area.begin();
+		auto ptr_end=m_typing_area.end();
+		auto label=s_typing_area_labels_swe.begin();
+		while(ptr!=ptr_end)
+			{
+			ptr->labelSet(*label);
+			++label;
+			++ptr;
+			}
+
+		ptr=m_typing_area.begin();
+		m_from_scancode[41]=ptr+0;
+		m_from_scancode[2]=ptr+1;
+		m_from_scancode[3]=ptr+2;
+		m_from_scancode[4]=ptr+3;
+		m_from_scancode[5]=ptr+4;
+		m_from_scancode[6]=ptr+5;
+		m_from_scancode[7]=ptr+6;
+		m_from_scancode[8]=ptr+7;
+		m_from_scancode[9]=ptr+8;
+		m_from_scancode[10]=ptr+9;
+		m_from_scancode[11]=ptr+10;
+		m_from_scancode[12]=ptr+11;
+		m_from_scancode[13]=ptr+12;
+		m_from_scancode[14]=ptr+13;
 		++ptr;
+
+		m_from_scancode[15]=ptr+14;
+		m_from_scancode[16]=ptr+15;
+		m_from_scancode[17]=ptr+16;
+		m_from_scancode[18]=ptr+17;
+		m_from_scancode[19]=ptr+18;
+		m_from_scancode[20]=ptr+19;
+		m_from_scancode[21]=ptr+20;
+		m_from_scancode[22]=ptr+21;
+		m_from_scancode[23]=ptr+22;
+		m_from_scancode[24]=ptr+23;
+		m_from_scancode[25]=ptr+24;
+		m_from_scancode[26]=ptr+25;
+		m_from_scancode[27]=ptr+26;
+		m_from_scancode[28]=ptr+27;
+		++ptr;
+
+		m_from_scancode[58]=ptr+28;
+		++ptr;
+		m_from_scancode[30]=ptr+29;
+		m_from_scancode[31]=ptr+30;
+		m_from_scancode[32]=ptr+31;
+		m_from_scancode[33]=ptr+32;
+		m_from_scancode[34]=ptr+33;
+		m_from_scancode[35]=ptr+34;
+		m_from_scancode[36]=ptr+35;
+		m_from_scancode[37]=ptr+36;
+		m_from_scancode[38]=ptr+37;
+		m_from_scancode[39]=ptr+38;
+		m_from_scancode[40]=ptr+39;
+		m_from_scancode[43]=ptr+40;
+		++ptr;
+
+		m_from_scancode[42]=ptr+41;
+		m_from_scancode[86]=ptr+42;
+		m_from_scancode[44]=ptr+43;
+		m_from_scancode[45]=ptr+44;
+		m_from_scancode[46]=ptr+45;
+		m_from_scancode[47]=ptr+46;
+		m_from_scancode[48]=ptr+47;
+		m_from_scancode[49]=ptr+48;
+		m_from_scancode[50]=ptr+49;
+		m_from_scancode[51]=ptr+50;
+		m_from_scancode[52]=ptr+51;
+		m_from_scancode[53]=ptr+52;
+		m_from_scancode[54]=ptr+53;
+		ptr+=2;
+
+		m_from_scancode[29]=ptr+54;
+		m_from_scancode[125]=ptr+55;
+		m_from_scancode[56]=ptr+56;
+		m_from_scancode[57]=ptr+57;
+		ptr+=7;
+		m_from_scancode[100]=ptr+58;
+		m_from_scancode[126]=ptr+59;
+		m_from_scancode[127]=ptr+60;
+		m_from_scancode[97]=ptr+61;
 		}
 
-	ptr=m_typing_area.begin();
-	m_from_scancode[41]=ptr+0;
-	m_from_scancode[2]=ptr+1;
-	m_from_scancode[3]=ptr+2;
-	m_from_scancode[4]=ptr+3;
-	m_from_scancode[5]=ptr+4;
-	m_from_scancode[6]=ptr+5;
-	m_from_scancode[7]=ptr+6;
-	m_from_scancode[8]=ptr+7;
-	m_from_scancode[9]=ptr+8;
-	m_from_scancode[10]=ptr+9;
-	m_from_scancode[11]=ptr+10;
-	m_from_scancode[12]=ptr+11;
-	m_from_scancode[13]=ptr+12;
-	m_from_scancode[14]=ptr+13;
-	++ptr;
+	// Initialize function keys
+		{
+		memcpy(m_function_keys.begin(),s_function_keys_default.begin()
+			,m_function_keys.size());
 
-	m_from_scancode[15]=ptr+14;
-	m_from_scancode[16]=ptr+15;
-	m_from_scancode[17]=ptr+16;
-	m_from_scancode[18]=ptr+17;
-	m_from_scancode[19]=ptr+18;
-	m_from_scancode[20]=ptr+19;
-	m_from_scancode[21]=ptr+20;
-	m_from_scancode[22]=ptr+21;
-	m_from_scancode[23]=ptr+22;
-	m_from_scancode[24]=ptr+23;
-	m_from_scancode[25]=ptr+24;
-	m_from_scancode[26]=ptr+25;
-	m_from_scancode[27]=ptr+26;
-	m_from_scancode[28]=ptr+27;
-	++ptr;
+		auto ptr=m_function_keys.begin();
+		auto ptr_end=m_function_keys.end();
+		auto label=s_function_keys_labels.begin();
+		while(ptr!=ptr_end)
+			{
+			ptr->labelSet(*label);
+			++label;
+			++ptr;
+			}
 
-	m_from_scancode[58]=ptr+28;
-	++ptr;
-	m_from_scancode[30]=ptr+29;
-	m_from_scancode[31]=ptr+30;
-	m_from_scancode[32]=ptr+31;
-	m_from_scancode[33]=ptr+32;
-	m_from_scancode[34]=ptr+33;
-	m_from_scancode[35]=ptr+34;
-	m_from_scancode[36]=ptr+35;
-	m_from_scancode[37]=ptr+36;
-	m_from_scancode[38]=ptr+37;
-	m_from_scancode[39]=ptr+38;
-	m_from_scancode[40]=ptr+39;
-	m_from_scancode[43]=ptr+40;
-	++ptr;
-
-	m_from_scancode[42]=ptr+41;
-	m_from_scancode[86]=ptr+42;
-	m_from_scancode[44]=ptr+43;
-	m_from_scancode[45]=ptr+44;
-	m_from_scancode[46]=ptr+45;
-	m_from_scancode[47]=ptr+46;
-	m_from_scancode[48]=ptr+47;
-	m_from_scancode[49]=ptr+48;
-	m_from_scancode[50]=ptr+49;
-	m_from_scancode[51]=ptr+50;
-	m_from_scancode[52]=ptr+51;
-	m_from_scancode[53]=ptr+52;
-	m_from_scancode[54]=ptr+53;
-	ptr+=2;
-
-	m_from_scancode[29]=ptr+54;
-	m_from_scancode[125]=ptr+55;
-	m_from_scancode[56]=ptr+56;
-	m_from_scancode[57]=ptr+57;
-	ptr+=7;
-	m_from_scancode[100]=ptr+58;
-	m_from_scancode[126]=ptr+59;
-	m_from_scancode[127]=ptr+60;
-	m_from_scancode[97]=ptr+61;
-
+		ptr=m_function_keys.begin();
+		m_from_scancode[59]=ptr;
+		m_from_scancode[60]=ptr + 1;
+		m_from_scancode[61]=ptr + 2;
+		m_from_scancode[62]=ptr + 3;
+		m_from_scancode[63]=ptr + 4;
+		m_from_scancode[64]=ptr + 5;
+		m_from_scancode[65]=ptr + 6;
+		m_from_scancode[66]=ptr + 7;
+		m_from_scancode[67]=ptr + 8;
+		m_from_scancode[68]=ptr + 9;
+		m_from_scancode[87]=ptr + 10;
+		m_from_scancode[88]=ptr + 11;
+		}
 	}

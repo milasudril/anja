@@ -42,7 +42,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
-		m_box->insertModeSet(BoxVertical::INSERTMODE_END
+	m_box->insertModeSet(BoxVertical::INSERTMODE_END
 		|BoxVertical::INSERTMODE_FILL);
 	m_tabs=TabView::create(*m_box);
 
@@ -58,7 +58,9 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 
 SessionView::~SessionView()
 	{
+	m_mixer->destroy();
 	m_dataview->destroy();
+	m_tabs->destroy();
 	m_keyboard->destroy();
 	m_box->slaveRelease();
 	}
@@ -75,6 +77,12 @@ void SessionView::sessionSet(Session& session)
 void SessionView::slotDisplay(uint8_t slot)
 	{
 	m_dataview->waveformDataSet(r_session->waveformDataGet(slot));
+	m_tabs->tabActiveSet(0);
+	}
+
+void SessionView::channelDisplay(uint8_t channel)
+	{
+	m_tabs->tabActiveSet(1);
 	}
 
 void SessionView::keyboardViewUpdate()

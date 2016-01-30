@@ -50,6 +50,12 @@ class TabViewGtk:public TabView
 			gtk_notebook_set_tab_label_text((GtkNotebook*)handle,widget,title);
 			}
 
+		void tabActiveSet(unsigned int tab)
+			{
+			GtkWidget* handle=m_box;
+			gtk_notebook_set_current_page((GtkNotebook*)handle,tab);
+			}
+
 	private:
 		GuiContainer& r_parent;
 		EventHandler* r_handler;

@@ -10,7 +10,7 @@ dependency[playbackrange.o]
 
 class RandomGenerator;
 
-class alignas(32) PlaybackRange
+class PlaybackRange
 	{
 	public:
 		PlaybackRange() noexcept;
@@ -30,7 +30,7 @@ class alignas(32) PlaybackRange
 			{return r_current==r_end;}
 
 		void stop() noexcept
-			{r_begin=r_end;}
+			{r_current=r_end;}
 
 		PlaybackRange& delayReset() noexcept
 			{
@@ -56,6 +56,9 @@ class alignas(32) PlaybackRange
 		uint32_t channelGet() const noexcept
 			{return r_waveform->channelGet();}
 
+		void fadeOut(double decay_factor) noexcept
+			{m_decay_factor=decay_factor;}
+
 
 	private:
 		RandomGenerator* r_rng;
@@ -66,6 +69,8 @@ class alignas(32) PlaybackRange
 		const float* r_end;
 		uint32_t m_flags;
 		float m_gain_random_inst;
+		double m_decay_factor;
+		double m_gain_out;
 	};
 
 #endif

@@ -7,17 +7,22 @@ target[name[channeldata.o] type[object]]
 #include "sessionfilerecord.h"
 #include "framework/floatconv.h"
 
-ChannelData::ChannelData():m_label(""),r_channel(nullptr)
+ChannelData::ChannelData():m_label(""),r_channel(nullptr),r_key(nullptr)
 	{}
 
-ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel):
-	m_label(""),r_channel(&channel)
+ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel
+	,KeyboardLayout::KeyDescriptor* key):
+	m_label(""),r_channel(&channel),r_key(key)
 	{
 	r_channel->valuesInit();
 
 	auto value=record.propertyGet("Label");
 	if(value!=nullptr)
-		{m_label=*value;}
+		{
+		m_label=*value;
+		if(r_key!=nullptr)
+			{r_key->labelSet(value->begin());}
+		}
 
 	value=record.propertyGet("Gain/dB");
 	if(value!=nullptr)

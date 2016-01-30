@@ -23,7 +23,8 @@ class Session
 		Session& operator=(const Session&)=delete;
 		Session(const Session&)=delete;
 
-		Session():m_engine(m_waveforms),m_connection(nullptr),m_slot_active(0)
+		Session():m_engine(m_waveforms),m_connection(nullptr)
+			,r_key_active(nullptr),m_slot_active(0)
 			{
 			waveformsClear();
 			channelsClear();
@@ -31,7 +32,7 @@ class Session
 			}
 
 		Session(const char* filename):m_engine(m_waveforms)
-			,m_connection(nullptr),m_slot_active(0)
+			,m_connection(nullptr),r_key_active(nullptr),m_slot_active(0)
 			{
 			load(filename);
 			audioServerConnect();
@@ -85,7 +86,8 @@ class Session
 		uint8_t slotActiveGet() const
 			{return m_slot_active;}
 
-		void slotActiveSet(uint8_t slot);
+		void slotActiveSet(uint8_t slot)
+			{m_slot_active=slot;}
 
 
 
@@ -109,6 +111,9 @@ class Session
 		Channel& channelGet(unsigned int index)
 			{return m_channels[index];}
 
+		uint8_t scancodeToChannel(uint8_t scancode) const
+			{return m_scancode_to_channel[scancode];}
+
 
 
 
@@ -131,22 +136,29 @@ class Session
 		AudioEngineAnja& audioEngineGet()
 			{return m_engine;}
 
+		void keyHighlight(uint8_t scancode);
+
 	private:
 		AudioEngineAnja m_engine;
 		AudioConnection* m_connection;
 
 		ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;
-		ArrayFixed<uint8_t,Wavetable::length()> m_midikey_to_slot;
-		ArrayFixed<uint8_t,Wavetable::length()> m_scancode_to_slot;
+		ArrayFixed<uint8_t,128> m_midikey_to_slot;
+		ArrayFixed<uint8_t,128> m_scancode_to_slot;
 		Wavetable m_waveforms;
 		ChannelMixer m_channels;
 		ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 		ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
 		KeyboardLayout m_keyboard;
 
+
+		ArrayFixed<uint8_t,ChannelMixer::length()> m_channel_to_scancode;
+		ArrayFixed<uint8_t,128> m_scancode_to_channel;
+
 		ArrayDynamicShort<char> m_filename;
 		ArrayDynamicShort<char> m_directory;
 		ArrayDynamicShort<char> m_title;
+		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;
 
 		static constexpr uint32_t ENGINE_ONLINE=1;

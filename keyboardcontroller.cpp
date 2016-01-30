@@ -32,7 +32,7 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 			}
 		else
 		if( (scancode>=59 && scancode <=68) || (scancode>=87 && scancode<=88))
-		// function key
+		// function key (Channel fade in/out)
 			{
 			auto channel=(scancode>=59 && scancode<=68)?
 				(scancode - 59) : (scancode - 87 + 10);
@@ -70,7 +70,11 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 				}
 			}
 		else
-			{printf("%u\n",scancode);}
+		if(scancode==1)
+		//	Escape
+			{
+			engine.eventPost(MIDIConstants::StatusCodes::RESET,0,uint8_t(0));
+			}
 		}
 	}
 
@@ -92,7 +96,17 @@ void KeyboardController::onMouseUp(KeyboardView& source,uint8_t scancode
 	if(slot!=255)
 		{
 		r_session->slotActiveSet(slot);
+		r_session->keyHighlight(scancode);
 		r_view->slotDisplay(slot);
 		source.update();
+		return;
+		}
+	slot=r_session->scancodeToChannel(scancode);
+	if(slot!=255)
+		{
+		r_view->channelDisplay(slot);
+		r_session->keyHighlight(scancode);
+		source.update();
+		return;
 		}
 	}

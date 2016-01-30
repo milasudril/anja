@@ -6,6 +6,7 @@ dependency[channeldata.o]
 #ifndef CHANNELDATA_H
 #define CHANNELDATA_H
 
+#include "framework/keyboardlayout.h"
 #include "framework/arraydynamicshort.h"
 
 class SessionFileRecord;
@@ -16,7 +17,8 @@ class ChannelData
 	{
 	public:
 		ChannelData();
-		ChannelData(const SessionFileRecord& record,Channel& channel);
+		ChannelData(const SessionFileRecord& record,Channel& channel
+			,KeyboardLayout::KeyDescriptor* key);
 
 		const ArrayDynamicShort<char>& labelGet() const
 			{return m_label;}
@@ -24,6 +26,8 @@ class ChannelData
 		ChannelData& labelSet(const char* label)
 			{
 			m_label=label;
+			if(r_key!=nullptr)
+				{r_key->labelSet(label);}
 			return *this;
 			}
 
@@ -39,9 +43,13 @@ class ChannelData
 		Channel& channelGet()
 			{return *r_channel;}
 
+		void keySet(KeyboardLayout::KeyDescriptor* key)
+			{r_key=key;}
+
 	private:
 		ArrayDynamicShort<char> m_label;
 		Channel* r_channel;
+		KeyboardLayout::KeyDescriptor* r_key;
 	};
 
 #endif

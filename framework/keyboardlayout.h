@@ -147,15 +147,31 @@ class KeyboardLayout
 		KeyDescriptor* keyFromScancode(uint8_t scancode)
 			{return m_from_scancode[scancode];}
 
-		static uint8_t scancodeFromCoordinates(float x,float y);
+		static uint8_t scancodeTAFromCoordinates(float x,float y);
 
 		static const uint8_t* typingAreaScancodesBegin();
 
 		static const uint8_t* typingAreaScancodesEnd();
 
+
+
+		const KeyDescriptor* functionKeysBegin() const
+			{return m_function_keys.begin();}
+
+		const KeyDescriptor* functionKeysEnd() const
+			{return m_function_keys.end();}
+
+		static uint8_t scancodeFXFromCoordinates(float x,float y);
+
+		static const uint8_t* functionKeysScancodesBegin();
+
+		static const uint8_t* functionKeysScancodesEnd();
+
 	private:
 		static constexpr uint8_t TYPING_AREA_COLS=15;
 		static constexpr uint8_t TYPING_AREA_ROWS=5;
+		static constexpr uint8_t FUNCTION_KEYS_COLS=12;
+		static constexpr uint8_t FUNCTION_KEYS_ROWS=1;
 
 		static const KeyDescriptor s_key_normal;
 		static const KeyDescriptor s_key_backspace;
@@ -171,11 +187,20 @@ class KeyboardLayout
 
 		static const ArrayFixed<KeyDescriptor,TYPING_AREA_COLS*TYPING_AREA_ROWS>
 			s_typing_area_default;
+
+		static const ArrayFixed<KeyDescriptor,FUNCTION_KEYS_COLS*FUNCTION_KEYS_ROWS>
+			s_function_keys_default;
+
 		static const ArrayFixed<const char*,TYPING_AREA_COLS*TYPING_AREA_ROWS>
 			s_typing_area_labels_swe;
 
+		static const ArrayFixed<const char*,FUNCTION_KEYS_COLS*FUNCTION_KEYS_ROWS>
+			s_function_keys_labels;
+
 		ArrayFixed<KeyDescriptor,TYPING_AREA_COLS*TYPING_AREA_ROWS>
 			m_typing_area;
+		ArrayFixed<KeyDescriptor,FUNCTION_KEYS_COLS*FUNCTION_KEYS_ROWS>
+			m_function_keys;
 
 		ArrayFixed<KeyDescriptor*,256> m_from_scancode;
 	};

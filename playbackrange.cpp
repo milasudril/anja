@@ -16,6 +16,8 @@ PlaybackRange::PlaybackRange() noexcept
 void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
 	,uint32_t start_delay) noexcept
 	{
+	m_decay_factor=1.0;
+	m_gain_out=1.0;
 	r_rng=&rng;
 	r_waveform=&waveform;
 
@@ -62,12 +64,14 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	auto gain_random=r_waveform->gainRandomGet();
 
 	auto gain=dBToAmplitude(gain_random_inst + gain_init);
-
+	auto decay_factor=m_decay_factor;
+	auto gain_out=m_gain_out;
 	auto dir=ptr_current<ptr_end?1:-1;
 	while(n_frames_out!=0 && ptr_current!=ptr_end)
 		{
-		*buffer_out=gain*(*ptr_current);
+		*buffer_out=gain_out*gain*(*ptr_current);
 		++buffer_out;
+		gain_out*=decay_factor;
 		--n_frames_out;
 		ptr_current+=dir;
 
@@ -79,7 +83,11 @@ unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 			gain_random_inst=(flags&Waveform::GAIN_ONLOOP_SET)?
 				r_rng->drawUniform(gain_random) : gain_random_inst;
 			}
+
+		if(gain_out<1e-4)
+			{stop();}
 		}
+	m_gain_out=gain_out;
 	r_current=ptr_current;
 	m_gain_random_inst=gain_random_inst;
 	delayReset();

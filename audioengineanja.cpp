@@ -19,7 +19,7 @@ AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	r_waveforms(&waveforms),m_event_queue(32),m_voice_current(0)
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
 	,m_fader_filter_factor(0)
-	,m_buffer_temp(1),m_buffers_out(16)
+	,m_buffer_temp(1),m_sample_rate(48000),m_buffers_out(16)
 	{
 	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
 		{
@@ -114,6 +114,19 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
 void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 	,unsigned int time_offset)
 	{
+	if(event.status_word[0]==MIDIConstants::StatusCodes::RESET)
+		{
+		auto buffer=m_source_buffers.begin();
+		auto buffers_end=m_source_buffers.end();
+		auto decay_factor=timeConstantToDecayFactor(1e-2,m_sample_rate);
+		while(buffer!=buffers_end)
+			{
+			buffer->fadeOut(decay_factor);
+			++buffer;
+			}
+		return;
+		}
+
 	switch(event.status_word[0]&0xf0)
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
@@ -142,7 +155,10 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
 				{playback_buffer.flagsUnset(Waveform::LOOP);}
 			else
-				{playback_buffer.stop();}
+				{
+			//	TODO: Implement stop as a delayed action
+				playback_buffer.stop();
+				}
 			}
 			break;
 
@@ -234,9 +250,9 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 
 		while(N_ch!=0)
 			{
-		//	TODO: This will only capture the most recent CHANNEL_VOLUME event
-		//	within the current frame. This will work well as long as the buffer is
-		//	small. A larger buffer would require work in the event loop above.
+		//	TODO: This will only capture the most recent channel event within
+		//	the current block. Also the event offset is not considered. It works
+		//	as long as the buffer is small, but fails for larger buffers.
 			auto ptr_out=buffer_out;
 			auto N=n_frames_in;
 			auto gain_in_current=channel->gain_in_current;

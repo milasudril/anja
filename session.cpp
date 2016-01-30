@@ -13,7 +13,7 @@ target[name[session.o] type[object]]
 
 void Session::waveformsClear()
 	{
-	//	Reset scancodes
+	//	Reset slot scancodes
 		{
 		memset(m_scancode_to_slot.begin(),-1,sizeof(m_scancode_to_slot));
 		memset(m_slot_to_scancode.begin(),0,sizeof(m_slot_to_scancode));
@@ -38,9 +38,9 @@ void Session::waveformsClear()
 	//	Reset MIDI keys
 		{
 		memset(m_midikey_to_slot.begin(),-1,sizeof(m_midikey_to_slot));
-		for(uint8_t k=36;k<128;++k)
+		for(uint8_t k=36;k < 128 + 36;++k)
 			{
-			m_midikey_to_slot[k]=k-36;
+			m_midikey_to_slot[k%128]=(k-36)%128;
 			}
 		}
 
@@ -81,7 +81,29 @@ void Session::waveformsClear()
 
 void Session::channelsClear()
 	{
-	//	Reset channelsClear
+	//	Reset channel scancodes
+		{
+		memset(m_channel_to_scancode.begin(),0,sizeof(m_channel_to_scancode));
+		memset(m_scancode_to_channel.begin(),-1,sizeof(m_scancode_to_channel));
+		auto ptr=m_keyboard.functionKeysScancodesBegin();
+		auto ptr_end=m_keyboard.functionKeysScancodesEnd();
+		uint8_t scancode_prev=0;
+		uint8_t k=0;
+		while(ptr!=ptr_end)
+			{
+			auto val=*ptr;
+			if(val!=scancode_prev && val!=0)
+				{
+				m_scancode_to_channel[val]=k;
+				m_channel_to_scancode[k]=val;
+				++k;
+				}
+			scancode_prev=val;
+			++ptr;
+			}
+		}
+
+	//	Reset channels
 		{
 		auto ptr=m_channels.begin();
 		auto ptr_end=m_channels.end();
@@ -102,6 +124,8 @@ void Session::channelsClear()
 			{
 			char buffer[16];
 			sprintf(buffer,"Ch %u",k+1);
+			auto scancode=m_channel_to_scancode[k];
+			ptr->keySet(scancode==0?nullptr:m_keyboard.keyFromScancode(scancode));
 			ptr->labelSet(buffer);
 			ptr->channelSet(*ptr_channel);
 			++ptr_channel;
@@ -158,7 +182,7 @@ void Session::load(const char* filename)
 				}
 			if(slot_num<1 || slot_num>128)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
-			slot_num-=1;
+			--slot_num;
 
 			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
 			if(key==nullptr)
@@ -178,20 +202,23 @@ void Session::load(const char* filename)
 			if(ch<1 || ch>16)
 				{throw "The channel number has to be between 1 and 16 inclusive";}
 			--ch;
-			m_channel_data[ch]={record,m_channels[ch]};
+			auto scancode=m_channel_to_scancode[ch];
+			auto key=scancode==0?nullptr:m_keyboard.keyFromScancode(scancode);
+
+			m_channel_data[ch]={record,m_channels[ch],key};
 			}
 		}
 	}
 
-void Session::slotActiveSet(uint8_t slot)
+void Session::keyHighlight(uint8_t scancode)
 	{
-	auto key_active=m_keyboard.keyFromScancode(m_slot_to_scancode[m_slot_active]);
-	key_active->colorBorderSet({0.5f,0.5f,0.5f,1.0f});
-	key_active=m_keyboard.keyFromScancode(m_slot_to_scancode[slot]);
+	auto key_active=m_keyboard.keyFromScancode(scancode);
 	if(key_active!=nullptr)
 		{
+		if(r_key_active!=nullptr)
+			{r_key_active->colorBorderSet({0.5f,0.5f,0.5f,1.0f});}
 		key_active->colorBorderSet(COLORS[ColorID::GREEN]);
-		m_slot_active=slot;
+		r_key_active=key_active;
 		}
 	}
 

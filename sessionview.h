@@ -33,6 +33,8 @@ class SessionView:public Widget
 
 		void slotDisplay(uint8_t slot);
 
+		void channelDisplay(uint8_t channel);
+
 		void sessionSet(Session& session);
 
 		void channelNameUpdate(unsigned int id);
