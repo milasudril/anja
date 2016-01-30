@@ -36,7 +36,7 @@ void SessionFileRecordImpl::propertyReplace(const ArrayDynamicShort<char>& name
 	m_props[name]=value;
 	}
 
-void SessionFileRecordImpl::propertiesEnum(PropertyEnumerator& enumerator) const
+void SessionFileRecordImpl::propertiesEnum(PropertyEnumerator&& enumerator) const
 	{
 	auto i=m_props.begin();
 	auto i_end=m_props.end();

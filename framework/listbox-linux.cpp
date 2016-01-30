@@ -65,7 +65,9 @@ class ListboxGtk:public Listbox
 		void optionsClear()
 			{
 			GtkWidget* widget=m_listbox;
+			g_signal_handlers_disconnect_by_func(widget, (void*)onOptionSelect, this);
 			gtk_combo_box_text_remove_all((GtkComboBoxText*)widget);
+			g_signal_connect(widget,"changed",G_CALLBACK(onOptionSelect),this);
 			}
 
 

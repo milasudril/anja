@@ -8,7 +8,7 @@ target[name[channelview.o] type[object]]
 #include "framework/boxhorizontal.h"
 
 ChannelView* ChannelView::create(GuiContainer& parent
-	,ChannelStrip::EventHandler& handler,ChannelData* channels
+	,ChannelStrip::EventHandler& handler,const ChannelData* channels
 	,unsigned int n_channels)
 	{return new ChannelView(parent,handler,channels,n_channels);}
 
@@ -21,7 +21,7 @@ const GuiHandle& ChannelView::handleNativeGet() const
 	{return m_box->handleNativeGet();}
 
 ChannelView::ChannelView(GuiContainer& parent
-	,ChannelStrip::EventHandler& handler,ChannelData* channels
+	,ChannelStrip::EventHandler& handler,const ChannelData* channels
 	,unsigned int n_channels):
 	m_strips(n_channels)
 	{
@@ -50,4 +50,12 @@ ChannelView::~ChannelView()
 void ChannelView::channelDataSet(const ChannelData& data,unsigned int channel)
 	{
 	m_strips[channel]->channelDataSet(data);
+	}
+
+void ChannelView::channelDataSet(const ChannelData* channels,unsigned int n_channels)
+	{
+	for(unsigned int k=0;k<n_channels;++k)
+		{
+		m_strips[k]->channelDataSet(channels[k]);
+		}
 	}

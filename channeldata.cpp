@@ -39,4 +39,18 @@ ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel
 		r_key->labelSet(m_label.begin());
 		r_key->colorBackgroundSet(m_color);
 		}
+//	TODO Store other data not interpreted by Anja
+	}
+
+void ChannelData::dataGet(SessionFileRecord& record) const
+	{
+	record.clear();
+	record.propertySet("Label",m_label);
+	char buffer[32];
+	sprintf(buffer,"%.7g",r_channel->gainGet());
+	record.propertySet("Gain/dB",buffer);
+	sprintf(buffer,"%.7g",r_channel->fadeTimeGet());
+	record.propertySet("Fade time/s",buffer);
+	record.propertySet("Color",ColorString(m_color).begin());
+//	TODO Save other data not interpreted by Anja
 	}

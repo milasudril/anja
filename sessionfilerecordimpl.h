@@ -39,7 +39,7 @@ class SessionFileRecordImpl:public SessionFileRecord
 		void propertyReplace(const ArrayDynamicShort<char>& name
 			,const ArrayDynamicShort<char>& value);
 
-		void propertiesEnum(PropertyEnumerator& enumerator) const;
+		void propertiesEnum(PropertyEnumerator&& enumerator) const;
 
 	private:
 		ArrayDynamicShort<char> m_title;

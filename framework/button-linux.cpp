@@ -38,6 +38,12 @@ class ButtonGtk:public Button
 		unsigned int idGet() const
 			{return m_id;}
 
+		void titleSet(const char* title)
+			{
+			GtkWidget* widget=m_button;
+			gtk_button_set_label((GtkButton*)widget,title);
+			}
+
 	private:
 		static void onClick(GtkWidget* widget,void* buttongtk);
 

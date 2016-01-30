@@ -18,9 +18,9 @@ target[name[waveformdata.o] type[object]]
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path
 	,Waveform& waveform
-	,KeyboardLayout::KeyDescriptor& key):m_filename(""),m_description("")
+	,KeyboardLayout::KeyDescriptor* key):m_filename(""),m_description("")
 	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
-	,r_key(&key),r_waveform(&waveform)
+	,r_key(key),r_waveform(&waveform)
 	{
 	r_waveform->valuesInit();
 
@@ -62,6 +62,45 @@ WaveformData::WaveformData(const SessionFileRecord& record
 			}
 		r_waveform->channelSet(ch-1);
 		}
+
+	value=record.propertyGet("Playback starting position/frames");
+	if(value!=nullptr)
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		r_waveform->offsetBeginSet(pos);
+		}
+
+	value=record.propertyGet("Playback end position/frames");
+	if(value!=nullptr)
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		r_waveform->offsetEndSet(pos);
+		}
+//	TODO Store other data not interpreted by Anja
+	}
+
+void WaveformData::dataGet(SessionFileRecord& record) const
+	{
+	record.clear();
+	record.propertySet("Filename",m_filename);
+	record.propertySet("Description",m_description);
+	record.propertySet("Color",ColorString(m_color).begin());
+	char buffer[32];
+	sprintf(buffer,"%u",r_waveform->channelGet() + 1);
+	record.propertySet("Playback channel",buffer);
+	sprintf(buffer,"%.7g",r_waveform->gainGet());
+	record.propertySet("Playback gain/dB",buffer);
+	sprintf(buffer,"%.7g",r_waveform->gainRandomGet());
+	record.propertySet("Playback gain random level/dB",buffer);
+	sprintf(buffer,"%u",r_waveform->offsetBeginGet());
+	record.propertySet("Playback starting position/frames",buffer);
+	sprintf(buffer,"%u",r_waveform->offsetEndGet());
+	record.propertySet("Playback end position/frames",buffer);
+
+//	TODO Format flag string
+//	TODO Save other data not interpreted by Anja
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
@@ -71,14 +110,27 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 void WaveformData::fileLoad(const char* filename)
 	{
 //	Do not try to load the file if it is the same file
-	if(strcmp(m_filename.begin(),filename)==0)
+	if(strcmp(m_filename.begin(),filename)==0 && *filename!='\0')
 		{return;}
+
 	if(r_waveform->flagsGet() & Waveform::LOCKED)
 		{
 		throw "The waveform loaded in current slot is currently in use. "
 			"Please wait for the waveform to be unlocked, or choose another "
 			"slot.";
 		}
+
+	if(*filename=='\0')
+		{
+		r_waveform->clear();
+		float vals[2]={1e-7f,1e-7f};
+		r_waveform->append(vals,2);
+		r_waveform->valuesInit();
+		r_waveform->sampleRateSet(1000.0);
+		m_filename=filename;
+		return;
+		}
+
 	WavefileInfo info;
 	auto reader=WavefileReader::create(filename,info);
 	r_waveform->clear();

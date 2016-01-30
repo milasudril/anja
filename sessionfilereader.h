@@ -20,7 +20,7 @@ class SessionFileReader
 			create(const char* filename)
 			{return {instanceCreate(filename),destroy};}
 
-		virtual bool recordNextGet(SessionFileRecord& slot)=0;
+		virtual bool recordNextGet(SessionFileRecord& record)=0;
 
 
 	protected:

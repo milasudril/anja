@@ -28,14 +28,12 @@ class Session
 			{
 			waveformsClear();
 			channelsClear();
-			audioServerConnect();
 			}
 
 		Session(const char* filename):m_engine(m_waveforms)
 			,m_connection(nullptr),r_key_active(nullptr),m_slot_active(0)
 			{
 			load(filename);
-		//	audioServerConnect();
 			}
 
 		~Session()
@@ -44,6 +42,10 @@ class Session
 			}
 
 		void load(const char* filename);
+
+		void save();
+
+		void save(const char* filename);
 
 		const ArrayDynamicShort<char>& filenameGet() const
 			{return m_filename;}
@@ -116,6 +118,10 @@ class Session
 
 
 
+		void clear();
+
+
+
 
 		WaveformData& waveformDataFromMIDI(uint8_t midikey)
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
@@ -132,9 +138,13 @@ class Session
 		AudioConnection* audioConnectionGet()
 			{return m_connection;}
 
-
 		AudioEngineAnja& audioEngineGet()
 			{return m_engine;}
+
+		bool connectedIs() const
+			{return m_connection!=nullptr;}
+
+
 
 		void keyHighlight(uint8_t scancode);
 

@@ -23,7 +23,7 @@ class WaveformData
 		WaveformData(const SessionFileRecord& record
 			,const ArrayDynamicShort<char>& load_path
 			,Waveform& storage
-			,KeyboardLayout::KeyDescriptor& key);
+			,KeyboardLayout::KeyDescriptor* key);
 
 		void waveformSet(Waveform& waveform_new)
 			{
@@ -64,6 +64,9 @@ class WaveformData
 			{return m_color;}
 
 		void keyColorSet(const ColorRGBA& color_new);
+
+
+		void dataGet(SessionFileRecord& record) const;
 
 	private:
 		ArrayDynamicShort<char> m_filename;

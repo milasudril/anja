@@ -190,6 +190,8 @@ class Waveform
 			m_gain_random=0.0f;
 			m_channel=0;
 			m_flags=0.0f;
+			m_offset_begin=0;
+			m_offset_end=m_data.length();
 			return *this;
 			}
 

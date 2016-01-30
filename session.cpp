@@ -4,6 +4,7 @@ target[name[session.o] type[object]]
 
 #include "session.h"
 #include "sessionfilereader.h"
+#include "sessionfilewriter.h"
 #include "sessionfilerecordimpl.h"
 #include "audioconnection.h"
 #include "framework/localeguard.h"
@@ -44,20 +45,6 @@ void Session::waveformsClear()
 			}
 		}
 
-	//	Reset waveforms
-		{
-		auto ptr=m_waveforms.begin();
-		auto ptr_end=m_waveforms.end();
-		while(ptr!=ptr_end)
-			{
-			ptr->clear();
-			ptr->valuesInit();
-			float vals[2]={1e-7f,1e-7f};
-			ptr->append(vals,2);
-			ptr->sampleRateSet(1000.0);
-			++ptr;
-			}
-		}
 
 	//	Reset waveform data
 		{
@@ -69,7 +56,11 @@ void Session::waveformsClear()
 		while(ptr!=ptr_end)
 			{
 			ptr->waveformSet(*ptr_waveform);
-			ptr->keySet(keyboard.keyFromScancode(m_slot_to_scancode[slot]));
+			auto scancode=m_slot_to_scancode[slot];
+			ptr->keySet(scancode==0?nullptr:keyboard.keyFromScancode(scancode));
+			ptr->fileLoad("");
+			ptr->descriptionSet("");
+			ptr->keyColorSet(COLORS[ColorID::BLACK]);
 			++slot;
 			++ptr;
 			++ptr_waveform;
@@ -128,11 +119,20 @@ void Session::channelsClear()
 			ptr->keySet(scancode==0?nullptr:m_keyboard.keyFromScancode(scancode));
 			ptr->labelSet(buffer);
 			ptr->channelSet(*ptr_channel);
+			ptr->colorSet(COLORS[ColorID::BLACK]);
 			++ptr_channel;
 			++k;
 			++ptr;
 			}
 		}
+	}
+
+void Session::clear()
+	{
+	waveformsClear();
+	channelsClear();
+	m_filename="";
+	m_title="New session";
 	}
 
 void Session::load(const char* filename)
@@ -163,6 +163,7 @@ void Session::load(const char* filename)
 				{throw "Invalid slot number";}
 			slotActiveSet(slot_num-1);
 			}
+	//	TODO Store other data not interpreted by Anja
 		}
 
 //	Read records
@@ -184,11 +185,11 @@ void Session::load(const char* filename)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
 			--slot_num;
 
-			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
-			if(key==nullptr)
-				{throw "Slot has no scancode";}
+			auto scancode=m_slot_to_scancode[slot_num];
+			auto key=(scancode==0)?
+				nullptr:m_keyboard.keyFromScancode(scancode);
 
-			m_waveform_data[slot_num]={record,m_directory,m_waveforms[slot_num],*key};
+			m_waveform_data[slot_num]={record,m_directory,m_waveforms[slot_num],key};
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -235,3 +236,56 @@ void Session::audioServerDisconnect()
 	m_connection=nullptr;
 	}
 
+void Session::save()
+	{
+//	TODO
+	}
+
+void Session::save(const char* filename)
+	{
+	char buffer[32];
+	auto writer=SessionFileWriter::create(filename);
+	SessionFileRecordImpl record_out;
+
+	record_out.sectionLevelSet(0);
+	record_out.sectionTitleSet(m_title);
+	sprintf(buffer,"%u",m_slot_active + 1);
+	record_out.propertySet("Active slot",buffer);
+//	TODO Save other data not interpreted by Anja
+	writer->recordWrite(record_out);
+	record_out.clear();
+
+	//	Loop through all waveform slots
+		{
+		auto waveform=m_waveform_data.begin();
+		auto waveforms_end=m_waveform_data.end();
+		auto k=0;
+		while(waveform!=waveforms_end)
+			{
+			record_out.sectionLevelSet(1);
+			sprintf(buffer,"Slot %u",k+1);
+			record_out.sectionTitleSet(buffer);
+			waveform->dataGet(record_out);
+			writer->recordWrite(record_out);
+			++waveform;
+			++k;
+			}
+		}
+
+	//	Loop through all channels
+		{
+		auto channel=m_channel_data.begin();
+		auto channels_end=m_channel_data.end();
+		auto k=0;
+		while(channel!=channels_end)
+			{
+			record_out.sectionLevelSet(1);
+			sprintf(buffer,"Channel %u",k+1);
+			record_out.sectionTitleSet(buffer);
+			channel->dataGet(record_out);
+			writer->recordWrite(record_out);
+			++k;
+			++channel;
+			}
+		}
+	}

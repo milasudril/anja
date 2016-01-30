@@ -28,6 +28,8 @@ class Button:public Widget
 
 		virtual unsigned int idGet() const=0;
 
+		virtual void titleSet(const char* title)=0;
+
 	private:
 		static EventHandler s_default_handler;
 	};

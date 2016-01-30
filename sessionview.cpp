@@ -9,6 +9,8 @@ target[name[sessionview.o] type[object]]
 #include "keyboardcontroller.h"
 #include "waveformdataupdater.h"
 #include "channelview.h"
+#include "sessioncontrol.h"
+
 #include "framework/boxvertical.h"
 #include "framework/keyboardview.h"
 #include "framework/tabview.h"
@@ -39,6 +41,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	{
 	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
+	m_control=SessionControl::create(*m_box,session,*this);
 	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
 	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
@@ -62,6 +65,7 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
+	m_control->destroy();
 	m_box->slaveRelease();
 	}
 
@@ -71,6 +75,9 @@ void SessionView::sessionSet(Session& session)
 	m_keyboard->keyboardLayoutSet(session.keyboardLayoutGet());
 	m_dataview->channelSelectorInit(session.channelDataBegin()
 		,session.channelsCountGet());
+
+	m_mixer->channelDataSet(session.channelDataBegin(),session.channelsCountGet());
+
 	slotDisplay(session.slotActiveGet());
 	}
 

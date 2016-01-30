@@ -56,6 +56,8 @@ class ChannelData
 				{r_key->colorBackgroundSet(color);}
 			}
 
+		void dataGet(SessionFileRecord& record) const;
+
 	private:
 		ArrayDynamicShort<char> m_label;
 		ColorRGBA m_color;

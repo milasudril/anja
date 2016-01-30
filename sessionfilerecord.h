@@ -38,7 +38,7 @@ class SessionFileRecord
 					,const ArrayDynamicShort<char>& value)=0;
 			};
 
-		virtual void propertiesEnum(PropertyEnumerator& enumerator) const=0;
+		virtual void propertiesEnum(PropertyEnumerator&& enumerator) const=0;
 
 		virtual ~SessionFileRecord()=default;
 	};

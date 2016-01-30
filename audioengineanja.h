@@ -79,6 +79,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		void eventProcess(const Event& event,unsigned int time_offset);
 		void eventControlProcess(const Event& event);
+		void reset();
 	};
 
 #endif

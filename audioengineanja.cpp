@@ -16,20 +16,13 @@ target[name[audioengineanja.o] type[object]]
 #include <cstring>
 
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
-	r_waveforms(&waveforms),m_event_queue(32),m_voice_current(0)
+	r_waveforms(&waveforms),m_sample_rate(48000),m_event_queue(32)
+	,m_voice_current(0)
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
 	,m_fader_filter_factor(0)
-	,m_buffer_temp(1),m_sample_rate(48000),m_buffers_out(16)
+	,m_buffer_temp(1),m_buffers_out(16)
 	{
-	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
-		{
-		auto ptr_channel=m_channels.begin();
-		while(ptr_channel!=m_channels.end())
-			{
-			*ptr_channel={1.0,1.0,1.0,1.0};
-			++ptr_channel;
-			}
-		}
+	reset();
 	}
 
 AudioEngineAnja::~AudioEngineAnja()
@@ -44,8 +37,43 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
-	{}
+	{
+	reset();
+	}
 
+void AudioEngineAnja::reset()
+	{
+	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
+	//	Drain event queue
+	while(!m_event_queue.empty())
+		{
+		m_event_queue.pop_front();
+		}
+
+
+	//	Reset channel states
+		{
+		auto ptr_channel=m_channels.begin();
+		auto ptr_channel_end=m_channels.end();
+		while(ptr_channel!=ptr_channel_end)
+			{
+			*ptr_channel={1.0,1.0,1.0,1.0};
+			++ptr_channel;
+			}
+		}
+
+	//	Reset playback states
+		{
+		auto ptr=m_source_buffers.begin();
+		auto ptr_end=m_source_buffers.end();
+		while(ptr!=ptr_end)
+			{
+			if(ptr->valid())
+				{ptr->release();}
+			++ptr;
+			}
+		}
+	}
 
 void AudioEngineAnja::buffersAllocate(AudioConnection& source,unsigned int n_frames)
 	{
