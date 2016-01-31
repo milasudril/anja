@@ -15,14 +15,17 @@ dependency[sessionview.o]
 class GuiContainer;
 class Session;
 class BoxVertical;
+class BoxHorizontal;
 class TabView;
 class ChannelView;
 class SessionControl;
+class TitleView;
 
 class SessionView:public Widget
 	{
 	public:
 		static SessionView* create(GuiContainer& parent,Session& session
+			,TitleView& title_view
 			,KeyboardView::EventHandler& keyboard_input
  			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
@@ -44,21 +47,27 @@ class SessionView:public Widget
 
 		void keyboardViewUpdate();
 
+		void fullscreenToggle();
+
 	private:
 		SessionView(GuiContainer& parent,Session& session
+			,TitleView& title_view
 			,KeyboardView::EventHandler& keyboard_input
 			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
 			,ChannelStrip::EventHandler& channelstri);
 		~SessionView();
-
+		TitleView& r_tw;
 		Session* r_session;
-		BoxVertical* m_box;
+		bool m_fullscreen_state;
+
+		BoxHorizontal* m_box;
 			SessionControl* m_control;
-			KeyboardView* m_keyboard;
-			TabView* m_tabs;
-				WaveformDataView* m_dataview;
-				ChannelView* m_mixer;
+			BoxVertical* m_box_right;
+				KeyboardView* m_keyboard;
+				TabView* m_tabs;
+					WaveformDataView* m_dataview;
+					ChannelView* m_mixer;
 	};
 
 #endif

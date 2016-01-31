@@ -46,6 +46,18 @@ class BoxHorizontalGtk:public BoxHorizontal
 		void slaveRelease()
 			{r_slave=nullptr;}
 
+		void fullscreenSet(bool state)
+			{
+			GtkWidget* window=gtk_widget_get_toplevel(m_box);
+			if(gtk_widget_is_toplevel(window))
+				{
+				if(state)
+					{gtk_window_fullscreen((GtkWindow*)window);}
+				else
+					{gtk_window_unfullscreen((GtkWindow*)window);}
+				}
+			}
+
 	private:
 		GuiContainer& r_parent;
 		EventHandler* r_handler;

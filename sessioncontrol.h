@@ -8,11 +8,12 @@ dependency[sessioncontrol.o]
 
 #include "framework/widget.h"
 #include "framework/button.h"
+#include "framework/textbox.h"
 
 class Session;
 class SessionView;
 class GuiContainer;
-class BoxHorizontal;
+class BoxVertical;
 
 class SessionControl:public Widget
 	{
@@ -22,27 +23,32 @@ class SessionControl:public Widget
 		void destroy();
 		const GuiHandle& handleNativeGet() const;
 
+		void doTitleChange(const char* title);
 		void doSessionNew();
 		void doSessionLoad();
 		void doSessionSave();
 		void doSessionSaveAs();
 		void doEngineConnect();
+		void doFullscreen();
 
 	private:
 		Session* r_session;
 		SessionView* r_view;
-		BoxHorizontal* m_box;
+		BoxVertical* m_box;
+		Textbox* m_session_title;
 		Button* m_session_new;
 		Button* m_session_load;
 		Button* m_session_save;
 		Button* m_session_saveas;
 		Button* m_engine_connect;
+		Button* m_fullscreen;
 
-		class ActionHandler:public Button::EventHandler
+		class ActionHandler:public Button::EventHandler,public Textbox::EventHandler
 			{
 			public:
 				ActionHandler(SessionControl& ctrl);
 				void onActionPerform(Button& source);
+				void onLeave(Textbox& source);
 
 			private:
 				SessionControl& r_ctrl;

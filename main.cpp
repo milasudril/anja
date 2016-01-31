@@ -24,11 +24,7 @@ int main()
 		auto event_loop=EventLoop::create(0);
 		auto mainwin=Window::create(*event_loop);
 
-		ArrayDynamicShort<char> title("Anja - ");
-		title.truncate().append(session.titleGet());
-		mainwin->titleSet( title.begin() );
-
-		auto view=SessionView::create(*mainwin,session,keyboardevents
+		auto view=SessionView::create(*mainwin,session,*mainwin,keyboardevents
 			,waveform_updater,trimmer,channelctrl);
 		keyboardevents.sessionViewSet(view);
 		waveform_updater.sessionViewSet(view);

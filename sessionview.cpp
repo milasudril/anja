@@ -12,17 +12,20 @@ target[name[sessionview.o] type[object]]
 #include "sessioncontrol.h"
 
 #include "framework/boxvertical.h"
+#include "framework/boxhorizontal.h"
 #include "framework/keyboardview.h"
 #include "framework/tabview.h"
+#include "framework/titleview.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
+	,TitleView& title_view
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
 	,ChannelStrip::EventHandler& channelstrip_handler)
 	{
-	return new SessionView(parent,session,keyboard_input,data_eventhandler
-		,rangeview_handler,channelstrip_handler);
+	return new SessionView(parent,session,title_view,keyboard_input
+		,data_eventhandler,rangeview_handler,channelstrip_handler);
 	}
 
 void SessionView::destroy()
@@ -34,20 +37,28 @@ const GuiHandle& SessionView::handleNativeGet() const
 	}
 
 SessionView::SessionView(GuiContainer& parent,Session& session
+	,TitleView& title_view
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
-	,ChannelStrip::EventHandler& channelstrip_handler)
+	,ChannelStrip::EventHandler& channelstrip_handler):r_tw(title_view)
+	,m_fullscreen_state(0)
 	{
-	m_box=BoxVertical::create(parent);
+	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
 	m_control=SessionControl::create(*m_box,session,*this);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+
+	m_box->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
+		|BoxHorizontal::INSERTMODE_FILL);
+
+	m_box_right=BoxVertical::create(*m_box);
+	m_box_right->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
-	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet(),keyboard_input);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_END
+	m_keyboard=KeyboardView::create(*m_box_right,session.keyboardLayoutGet()
+		,keyboard_input);
+	m_box_right->insertModeSet(BoxVertical::INSERTMODE_END
 		|BoxVertical::INSERTMODE_FILL);
-	m_tabs=TabView::create(*m_box);
+	m_tabs=TabView::create(*m_box_right);
 
 	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
 	m_tabs->tabTitleSet(0,"Waveform data");
@@ -65,6 +76,7 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
+	m_box_right->destroy();
 	m_control->destroy();
 	m_box->slaveRelease();
 	}
@@ -77,6 +89,10 @@ void SessionView::sessionSet(Session& session)
 		,session.channelsCountGet());
 
 	m_mixer->channelDataSet(session.channelDataBegin(),session.channelsCountGet());
+
+	ArrayDynamicShort<char> title("Anja - ");
+	title.truncate().append(session.titleGet());
+	r_tw.titleSet( title.begin() );
 
 	slotDisplay(session.slotActiveGet());
 	}
@@ -105,4 +121,10 @@ void SessionView::channelNameUpdate(unsigned int channel)
 void SessionView::channelColorUpdate(unsigned int channel)
 	{
 	m_mixer->channelDataSet(r_session->channelDataGet(channel),channel);
+	}
+
+void SessionView::fullscreenToggle()
+	{
+	m_fullscreen_state=!m_fullscreen_state;
+	m_box->fullscreenSet(m_fullscreen_state);
 	}

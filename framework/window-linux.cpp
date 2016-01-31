@@ -57,6 +57,15 @@ class WindowGtk:public Window
 		void commandNotify(unsigned int command_id)
 			{r_handler->onCommand(*this,command_id);}
 
+		void fullscreenSet(bool state)
+			{
+			GtkWidget* window=m_window;
+			if(state)
+				{gtk_window_fullscreen((GtkWindow*)window);}
+			else
+				{gtk_window_unfullscreen((GtkWindow*)window);}
+			}
+
 	private:
 		static gboolean onClose(GtkWidget* object,GdkEvent* event,void* windowgtk);
 

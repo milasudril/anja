@@ -75,7 +75,6 @@ bool SessionFileReaderStdio::recordNextGet(SessionFileRecord& record)
 
 	do
 		{
-		printf("[%s] (%u)\n",m_tok.buffer.begin(),m_tok.type);
 		switch(m_tok.type)
 			{
 			case TokenType::SECTION_TITLE_0:

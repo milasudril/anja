@@ -120,8 +120,6 @@ void WaveformData::fileLoad(const char* filename)
 			"slot.";
 		}
 
-	printf("Loading [%s]\n",filename);
-
 	if(*filename=='\0')
 		{
 		r_waveform->clear();
