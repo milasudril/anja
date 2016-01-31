@@ -150,7 +150,14 @@ void ScrollWindowGtk::componentRemove(Widget& component)
 	{
 	auto handle=r_widget->handleNativeGet();
 	GtkWidget* window=m_box;
-//	FIXME: Broken?
-//	gtk_container_remove(GTK_CONTAINER(window),handle);
+	auto parent=gtk_widget_get_parent(handle);
+	if(parent!=window)
+		{
+		gtk_container_remove(GTK_CONTAINER(parent),handle);
+		gtk_container_remove(GTK_CONTAINER(window),parent);
+		}
+	else
+		{gtk_container_remove(GTK_CONTAINER(window),handle);}
+
 	r_widget=nullptr;
 	}
