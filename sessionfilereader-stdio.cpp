@@ -116,7 +116,7 @@ bool SessionFileReaderStdio::tokenGet(Token& tok)
 		}
 
 	int ch_in;
-	int ch_trigg;
+	int ch_trigg=0;
 	auto state_current=m_state;
 	auto state_prev=State::INIT;
 	tok.type=TokenType::INVALID;

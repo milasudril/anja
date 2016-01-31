@@ -49,6 +49,9 @@ class SessionView:public Widget
 
 		void fullscreenToggle();
 
+		bool fullscreenIs() const
+			{return m_fullscreen_state;}
+
 	private:
 		SessionView(GuiContainer& parent,Session& session
 			,TitleView& title_view
@@ -61,13 +64,12 @@ class SessionView:public Widget
 		Session* r_session;
 		bool m_fullscreen_state;
 
-		BoxHorizontal* m_box;
+		BoxVertical* m_box;
 			SessionControl* m_control;
-			BoxVertical* m_box_right;
-				KeyboardView* m_keyboard;
-				TabView* m_tabs;
-					WaveformDataView* m_dataview;
-					ChannelView* m_mixer;
+			KeyboardView* m_keyboard;
+			TabView* m_tabs;
+				WaveformDataView* m_dataview;
+				ChannelView* m_mixer;
 	};
 
 #endif

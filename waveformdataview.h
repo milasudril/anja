@@ -23,6 +23,7 @@ class Label;
 class WaveformData;
 class Window;
 class ChannelData;
+class ScrollWindow;
 
 class WaveformDataView:public Widget
 	{
@@ -161,14 +162,15 @@ class WaveformDataView:public Widget
 				Label* m_description_label;
 				Textbox* m_description_textbox;
 			BoxHorizontal* m_box_details;
-				BoxVertical* m_box_left;
-					InputEntry* m_color;
-					BoxHorizontal* m_playback_channel_box;
-						Label* m_playback_channel_label;
- 						Listbox* m_playback_channel_input;
-					Slider* m_playback_gain;
-					Slider* m_pbgain_randomize;
-					OptionBox* m_options;
+				ScrollWindow* m_scroll_left;
+					BoxVertical* m_box_left;
+						InputEntry* m_color;
+						BoxHorizontal* m_playback_channel_box;
+							Label* m_playback_channel_label;
+							Listbox* m_playback_channel_input;
+						Slider* m_playback_gain;
+						Slider* m_pbgain_randomize;
+						OptionBox* m_options;
 
 				WaveformRangeView* m_trim_input;
 	};

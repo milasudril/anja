@@ -5,7 +5,7 @@ target[name[sessioncontrol.o] type[object]]
 #include "sessioncontrol.h"
 #include "session.h"
 #include "sessionview.h"
-#include "framework/boxvertical.h"
+#include "framework/boxhorizontal.h"
 #include "framework/filenamepicker.h"
 #include "framework/textbox.h"
 
@@ -61,7 +61,7 @@ SessionControl::SessionControl(GuiContainer& parent,Session& session
 	,SessionView& view):
 	r_session(&session),r_view(&view),m_handler(*this)
 	{
-	m_box=BoxVertical::create(parent);
+	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
 
 	m_session_title=Textbox::create(*m_box,m_handler,0);
@@ -172,6 +172,10 @@ void SessionControl::doEngineConnect()
 
 void SessionControl::doFullscreen()
 	{
+	if(r_view->fullscreenIs())
+		{m_fullscreen->titleSet("Fullscreen");}
+	else
+		{m_fullscreen->titleSet("Windowed");}
 	r_view->fullscreenToggle();
 	}
 

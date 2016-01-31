@@ -13,7 +13,7 @@ dependency[sessioncontrol.o]
 class Session;
 class SessionView;
 class GuiContainer;
-class BoxVertical;
+class BoxHorizontal;
 
 class SessionControl:public Widget
 	{
@@ -34,7 +34,7 @@ class SessionControl:public Widget
 	private:
 		Session* r_session;
 		SessionView* r_view;
-		BoxVertical* m_box;
+		BoxHorizontal* m_box;
 		Textbox* m_session_title;
 		Button* m_session_new;
 		Button* m_session_load;

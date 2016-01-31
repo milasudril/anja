@@ -54,9 +54,6 @@ class WindowGtk:public Window
 		const GuiHandle& handleNativeGet() const
 			{return m_window;}
 
-		void commandNotify(unsigned int command_id)
-			{r_handler->onCommand(*this,command_id);}
-
 		void fullscreenSet(bool state)
 			{
 			GtkWidget* window=m_window;

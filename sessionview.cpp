@@ -44,21 +44,18 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	,ChannelStrip::EventHandler& channelstrip_handler):r_tw(title_view)
 	,m_fullscreen_state(0)
 	{
-	m_box=BoxHorizontal::create(parent);
+	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
 	m_control=SessionControl::create(*m_box,session,*this);
 
-	m_box->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
+	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxHorizontal::INSERTMODE_FILL);
 
-	m_box_right=BoxVertical::create(*m_box);
-	m_box_right->insertModeSet(BoxVertical::INSERTMODE_EXPAND
-		|BoxVertical::INSERTMODE_FILL);
-	m_keyboard=KeyboardView::create(*m_box_right,session.keyboardLayoutGet()
+	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet()
 		,keyboard_input);
-	m_box_right->insertModeSet(BoxVertical::INSERTMODE_END
-		|BoxVertical::INSERTMODE_FILL);
-	m_tabs=TabView::create(*m_box_right);
+	m_box->insertModeSet(BoxVertical::INSERTMODE_END
+		|BoxVertical::INSERTMODE_FILL|BoxVertical::INSERTMODE_EXPAND);
+	m_tabs=TabView::create(*m_box);
 
 	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
 	m_tabs->tabTitleSet(0,"Waveform data");
@@ -76,7 +73,6 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
-	m_box_right->destroy();
 	m_control->destroy();
 	m_box->slaveRelease();
 	}

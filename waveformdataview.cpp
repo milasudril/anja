@@ -14,6 +14,7 @@ target[name[waveformdataview.o] type[object]]
 #include "framework/filenamepicker.h"
 #include "framework/window.h"
 #include "framework/floatconv.h"
+#include "framework/scrollwindow.h"
 
 #include <cstring>
 
@@ -180,39 +181,43 @@ WaveformDataView::WaveformDataView(GuiContainer& parent
 					|BoxVertical::INSERTMODE_FILL
 					|BoxVertical::INSERTMODE_END);
 		m_box_details=BoxHorizontal::create(*m_box_main);
-			m_box_left=BoxVertical::create(*m_box_details);
-				m_color=InputEntry::create(*m_box_left,m_color_events,0,"Color:","...");
-				m_playback_channel_box=BoxHorizontal::create(*m_box_left);
-					m_playback_channel_label=Label::create(*m_playback_channel_box,"Playback channel:");
-					m_playback_channel_box->insertModeSet(BoxHorizontal::INSERTMODE_END
-						|BoxHorizontal::INSERTMODE_FILL
-						|BoxHorizontal::INSERTMODE_EXPAND);
-					m_playback_channel_input=Listbox::create(*m_playback_channel_box,m_handler,0);
-				m_playback_gain=Slider::create(*m_box_left,m_handler,0
-					,"Playback gain/dB:",1);
-				m_pbgain_randomize=Slider::create(*m_box_left,m_handler,1
-					,"Playback gain random level/dB:",1);
-				m_options=OptionBox::create(*m_box_left,m_handler,0
-					,"Options:",Waveform::FLAG_NAMES);
+			m_scroll_left=ScrollWindow::create(*m_box_details,ScrollWindow::MODE_VERTICAL);
+				m_box_left=BoxVertical::create(*m_scroll_left);
+					m_color=InputEntry::create(*m_box_left,m_color_events,0,"Color:","...");
+					m_playback_channel_box=BoxHorizontal::create(*m_box_left);
+						m_playback_channel_label=Label::create(*m_playback_channel_box,"Playback channel:");
+						m_playback_channel_box->insertModeSet(BoxHorizontal::INSERTMODE_END
+							|BoxHorizontal::INSERTMODE_FILL
+							|BoxHorizontal::INSERTMODE_EXPAND);
+						m_playback_channel_input=Listbox::create(*m_playback_channel_box,m_handler,0);
+					m_playback_gain=Slider::create(*m_box_left,m_handler,0
+						,"Playback gain/dB:",1);
+					m_pbgain_randomize=Slider::create(*m_box_left,m_handler,1
+						,"Playback gain random level/dB:",1);
+					m_options=OptionBox::create(*m_box_left,m_handler,0
+						,"Options:",Waveform::FLAG_NAMES);
 
 			m_box_details->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
 					|BoxHorizontal::INSERTMODE_FILL
 					|BoxHorizontal::INSERTMODE_END);
 
 			m_trim_input=WaveformRangeView::create(*m_box_details,handler_range);
+
+			m_scroll_left->heightMinSet(768/2-5*24);
 	}
 
 WaveformDataView::~WaveformDataView()
 	{
-			m_trim_input->destroy();
-				m_options->destroy();
-				m_pbgain_randomize->destroy();
-				m_playback_gain->destroy();
-					m_playback_channel_input->destroy();
-					m_playback_channel_label->destroy();
-				m_playback_channel_box->destroy();
-				m_color->destroy();
-			m_box_left->destroy();
+				m_trim_input->destroy();
+					m_options->destroy();
+					m_pbgain_randomize->destroy();
+					m_playback_gain->destroy();
+						m_playback_channel_input->destroy();
+						m_playback_channel_label->destroy();
+					m_playback_channel_box->destroy();
+					m_color->destroy();
+				m_box_left->destroy();
+			m_scroll_left->destroy();
 		m_box_details->destroy();
 			m_description_textbox->destroy();
 			m_description_label->destroy();
