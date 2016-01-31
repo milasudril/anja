@@ -120,6 +120,8 @@ void WaveformData::fileLoad(const char* filename)
 			"slot.";
 		}
 
+	printf("Loading [%s]\n",filename);
+
 	if(*filename=='\0')
 		{
 		r_waveform->clear();
@@ -158,6 +160,7 @@ void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
 		fileLoad(filename.begin());
 		}
 	else
+	if(*(filename.begin())!='\0')
 		{
 		auto fullpath=load_path;
 		fullpath.truncate().append(filename).append('\0');

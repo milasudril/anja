@@ -22,9 +22,11 @@ class SessionFileReaderStdio:public SessionFileReader
 
 		enum class State:uint8_t
 			{
-			 NORMAL,DATA_BEFORE,DATA,DATA_AFTER,WHITESPACE
+			  INIT,SECTION_TITLE_BEFORE,SECTION_TITLE,SECTION_TITLE_AFTER
+			 ,KEY,VALUE,NEWLINE,WHITESPACE
 			};
-		enum class TokenType:uint8_t{TITLE,SECTION_TITLE,KEY,VALUE,INVALID};
+
+		enum class TokenType:uint8_t{SECTION_TITLE_0,SECTION_TITLE_1,KEY,VALUE,INVALID};
 
 		struct Token
 			{
@@ -51,7 +53,7 @@ void SessionFileReader::destroy(SessionFileReader* reader)
 
 SessionFileReaderStdio::SessionFileReaderStdio(const char* filename):
 	m_source{fopen(filename,"rb"),fclose},m_token_type{TokenType::INVALID}
-	,m_state{State::NORMAL},m_state_old{State::NORMAL}
+	,m_state{State::INIT},m_state_old{State::INIT}
 	{
 	if(m_source.get()==NULL)
 		{
@@ -73,14 +75,15 @@ bool SessionFileReaderStdio::recordNextGet(SessionFileRecord& record)
 
 	do
 		{
+		printf("[%s] (%u)\n",m_tok.buffer.begin(),m_tok.type);
 		switch(m_tok.type)
 			{
-			case TokenType::TITLE:
+			case TokenType::SECTION_TITLE_0:
 				record.sectionTitleSet(m_tok.buffer);
 				record.sectionLevelSet(0);
 				break;
 
-			case TokenType::SECTION_TITLE:
+			case TokenType::SECTION_TITLE_1:
 				record.sectionTitleSet(m_tok.buffer);
 				record.sectionLevelSet(1);
 				break;
@@ -99,7 +102,7 @@ bool SessionFileReaderStdio::recordNextGet(SessionFileRecord& record)
 		if(!tokenGet(m_tok))
 			{return 1;}
 		}
-	while(m_tok.type!=TokenType::SECTION_TITLE
+	while(m_tok.type!=TokenType::SECTION_TITLE_1
 			&& m_tok.type!=TokenType::INVALID);
 	return 1;
 	}
@@ -114,241 +117,164 @@ bool SessionFileReaderStdio::tokenGet(Token& tok)
 		}
 
 	int ch_in;
-	auto state=m_state;
-	auto state_old=m_state_old;
-	auto token_type=m_token_type;
+	int ch_trigg;
+	auto state_current=m_state;
+	auto state_prev=State::INIT;
+	tok.type=TokenType::INVALID;
 	tok.buffer.clear();
 	while( (ch_in=getc(fptr)) != EOF)
 		{
-		switch(state)
+		if(ch_in=='\r')
+			{continue;}
+
+		switch(state_current)
 			{
+			case State::INIT:
+				if(ch_in=='=' || ch_in=='-')
+					{
+					ch_trigg=ch_in;
+					state_current=State::SECTION_TITLE_BEFORE;
+					}
+				else
+				if(!(ch_in>='\0' && ch_in<=' '))
+					{
+					tok.buffer.append(ch_in);
+					state_current=State::KEY;
+					}
+				break;
+
 			case State::WHITESPACE:
-				if(ch_in=='\n' && tok.buffer.length()!=0)
+				if(ch_in=='\n')
 					{
-					switch(token_type)
-						{
-						case TokenType::VALUE:
-							tok.buffer.truncate();
-							tok.buffer.append('\0');
-							tok.type=token_type;
-							m_token_type=TokenType::INVALID;
-							m_state_old=State::NORMAL;
-							m_state=state;
-							return 1;
-
-						default:
-							break;
-						}
-					break;
+					state_current=State::NEWLINE;
 					}
 				else
-				if(!(ch_in>=0 && ch_in<=' '))
+				if(!(ch_in>='\0' && ch_in<=' '))
 					{
-					if(state_old!=State::NORMAL)
-						{tok.buffer.append(ch_in);}
-					state=state_old;
+					state_current=state_prev;
+					if(tok.buffer.length()>0)
+						{tok.buffer.append(' ');}
+					tok.buffer.append(ch_in);
+					}
+				break;
+
+			case State::SECTION_TITLE_BEFORE:
+				if(ch_in>='\0' && ch_in<=' ')
+					{throw "Whitespace not allowed before section title";}
+
+				if(ch_in!=ch_trigg)
+					{
+					tok.buffer.append(ch_in);
+					state_current=State::SECTION_TITLE;
+					}
+				break;
+
+			case State::SECTION_TITLE:
+				if(ch_in=='\n')
+					{
+					state_prev=state_current;
+					state_current=State::NEWLINE;
 					}
 				else
-					{break;}
-
-			case State::NORMAL:
-				if(token_type==TokenType::INVALID)
+				if(ch_in>='\0' && ch_in<=' ')
 					{
-					switch(ch_in)
+					state_prev=state_current;
+					state_current=State::WHITESPACE;
+					}
+				else
+				if(ch_in==ch_trigg)
+					{
+					state_current=State::SECTION_TITLE_AFTER;
+					}
+				else
+					{tok.buffer.append(ch_in);}
+				break;
+
+			case State::SECTION_TITLE_AFTER:
+				if(ch_in=='\n')
+					{
+					tok.buffer.append('\0');
+					m_state=State::INIT;
+					tok.type=(ch_trigg=='=')?
+						TokenType::SECTION_TITLE_0:TokenType::SECTION_TITLE_1;
+					return 1;
+					}
+
+				if(!(ch_in==ch_trigg || ch_in=='\n'))
+					{throw "Invalid character after section title";}
+				break;
+
+			case State::KEY:
+				if(ch_in==':')
+					{
+					tok.buffer.append('\0');
+					m_state=State::VALUE;
+					tok.type=TokenType::KEY;
+					return 1;
+					}
+
+				if(ch_in=='\n')
+					{
+					state_prev=state_current;
+					state_current=State::NEWLINE;
+					}
+				else
+				if(ch_in>='\0' && ch_in<=' ')
+					{
+					state_prev=state_current;
+					state_current=State::WHITESPACE;
+					}
+				else
+					{tok.buffer.append(ch_in);}
+				break;
+
+			case State::VALUE:
+				if(ch_in=='\n')
+					{
+					state_prev=state_current;
+					state_current=State::NEWLINE;
+					}
+				else
+				if(ch_in>='\0' && ch_in<=' ')
+					{
+					state_prev=state_current;
+					state_current=State::WHITESPACE;
+					}
+				else
+					{tok.buffer.append(ch_in);}
+				break;
+
+			case State::NEWLINE:
+				if(ch_in=='\n')
+					{
+					if(state_prev!=State::VALUE)
 						{
-						case '=':
-							state=State::DATA_BEFORE;
-							token_type=TokenType::TITLE;
-							break;
-
-						case '-':
-							state=State::DATA_BEFORE;
-							token_type=TokenType::SECTION_TITLE;
-							break;
-
-						default:
-							state=State::DATA;
-							token_type=TokenType::KEY;
-							tok.buffer.append(ch_in);
-							break;
+						throw "Section title or key cannot end with newline";
 						}
+
+					tok.buffer.append('\0');
+					tok.type=TokenType::VALUE;
+					m_state=State::INIT;
+					return 1;
 					}
-				break;
-
-			case State::DATA_BEFORE:
-				switch(token_type)
+				else
+				if(!(ch_in>='\0' && ch_in<=' '))
 					{
-					case TokenType::TITLE:
-						if(ch_in!='=')
-							{
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							else
-								{
-								state=State::DATA;
-								tok.buffer.append(ch_in);
-								}
-							}
-						break;
-
-					case TokenType::SECTION_TITLE:
-						if(ch_in!='-')
-							{
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							else
-								{
-								state=State::DATA;
-								tok.buffer.append(ch_in);
-								}
-							}
-						break;
-
-					default:
-						break;
-					}
-				break;
-
-			case State::DATA:
-				switch(token_type)
-					{
-					case TokenType::TITLE:
-						if(ch_in=='=')
-							{
-							tok.type=token_type;
-							tok.buffer.append('\0');
-							m_state=State::DATA_AFTER;
-							m_token_type=token_type;
-							return 1;
-							}
-						else
-							{
-							tok.buffer.append(ch_in);
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							}
-						break;
-
-					case TokenType::KEY:
-						if(ch_in==':')
-							{
-							tok.type=token_type;
-							tok.buffer.append('\0');
-							m_state=State::DATA_AFTER;
-							m_token_type=token_type;
-							return 1;
-							}
-						else
-							{
-							tok.buffer.append(ch_in);
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							}
-						break;
-
-					case TokenType::VALUE:
-						if(ch_in=='\n')
-							{
-							tok.buffer.append(' ');
-							state=State::WHITESPACE;
-							state_old=State::DATA;
-							}
-						else
-							{
-							tok.buffer.append(ch_in);
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							}
-
-						break;
-
-					case TokenType::SECTION_TITLE:
-						if(ch_in=='-')
-							{
-							tok.type=token_type;
-							tok.buffer.append('\0');
-							m_state=State::DATA_AFTER;
-							m_token_type=token_type;
-							return 1;
-							}
-						else
-							{
-							tok.buffer.append(ch_in);
-							if(ch_in>=0 && ch_in<=' ')
-								{
-								state=State::WHITESPACE;
-								state_old=State::DATA;
-								}
-							}
-						break;
-
-					default:
-						break;
-					}
-				break;
-
-			case State::DATA_AFTER:
-				switch(token_type)
-					{
-					case TokenType::TITLE:
-						if(ch_in!='=')
-							{
-							if(ch_in=='\n')
-								{
-								state=State::WHITESPACE;
-								state_old=State::NORMAL;
-								token_type=TokenType::INVALID;
-								}
-							else
-								{throw "Junk after title";}
-							}
-						break;
-
-					case TokenType::KEY:
-						if(ch_in>=0 && ch_in<=' ')
-							{
-							state=State::WHITESPACE;
-							state_old=State::DATA;
-							token_type=TokenType::VALUE;
-							}
-						break;
-
-					case TokenType::SECTION_TITLE:
-						if(ch_in!='-')
-							{
-							if(ch_in=='\n')
-								{
-								state=State::WHITESPACE;
-								state_old=State::NORMAL;
-								token_type=TokenType::INVALID;
-								}
-							else
-								{throw "Junk after section title";}
-							}
-						break;
-
-					default:
-						break;
+					tok.buffer.append(' ').append(ch_in);
+					state_current=state_prev;
 					}
 				break;
 			}
 		}
-	tok.type=token_type;
-	tok.buffer.append('\0');
-	return 1;
+
+	if(state_current==State::VALUE || state_prev==State::VALUE)
+		{
+		tok.buffer.append('\0');
+		tok.type=TokenType::VALUE;
+
+		return 1;
+		}
+	if(state_current!=State::INIT)
+		{throw "Incomplete record";}
+	return 0;
 	}

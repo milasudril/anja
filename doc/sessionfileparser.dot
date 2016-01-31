@@ -5,8 +5,8 @@ digraph "Parser"
 	section_title_before[label="Before\nsection title"];
 	section_title[label="Section\ntitle"];
 	section_title_after[label="After\nsection title"];
-	key_name[label="Key name"];
-	key_value[label="Key value"];
+	key[label="Key"];
+	value[label="Value"];
 	whitespace[label="Whitespace"];
 	newline[label="Newline"];
 	error[label="Error"];
@@ -14,7 +14,7 @@ digraph "Parser"
 
 	init->section_title_before[label="ch_in=='=' || ch_in=='-'"];
 	init->init[label="ch_in>='\\0' && ch_in<=' '"];
-	init->key_name[label="!(ch_in=='=' || ch_in=='-' \n || (ch_in>='\\0' && ch_in<=' '))"];
+	init->key[label="!(ch_in=='=' || ch_in=='-' \n || (ch_in>='\\0' && ch_in<=' '))"];
 
 	whitespace->whitespace[label="ch_in>='\\0' && ch_in<=' '"];
 	whitespace->state_prev[label="!(ch_in>='\\0' && ch_in<=' ')"];
@@ -32,18 +32,18 @@ digraph "Parser"
 	section_title_after->init[label="ch_in=='\\n'"];
 	section_title_after->error[label="!(ch_in==ch_trigg || ch_in=='\\n')"];
 
-	key_name->key_value[label="ch_in==':'"];
-	key_name->newline[label="ch_in=='\\n'"];
-	key_name->whitespace[label="ch_in>='\\0' && ch_in<=' '\n && ch_in!='\\n'"];
-	key_name->key_name[label="!(ch_in>='\0' && ch_in<=' '\n || ch_in==':')"];
+	key->value[label="ch_in==':'"];
+	key->newline[label="ch_in=='\\n'"];
+	key->whitespace[label="ch_in>='\\0' && ch_in<=' '\n && ch_in!='\\n'"];
+	key->key[label="!(ch_in>='\0' && ch_in<=' '\n || ch_in==':')"];
 
-	key_value->whitespace[label="ch_in>='\\0' && ch_in<=' '\n  && ch_in!='\\n'"];
-	key_value->newline[label="ch_in=='\\n'"];
-	key_value->key_value[label="!(ch_in>='\\0' && ch_in<=' ')"];
+	value->whitespace[label="ch_in>='\\0' && ch_in<=' '\n  && ch_in!='\\n'"];
+	value->newline[label="ch_in=='\\n'"];
+	value->value[label="!(ch_in>='\\0' && ch_in<=' ')"];
 
 
-	newline->error[label="ch_in=='\\n'\n && state_prev!=KEY_VALUE"];
-	newline->init[label="ch_in=='\\n'\n && state_prev==KEY_VALUE"];
+	newline->error[label="ch_in=='\\n'\n && state_prev!=VALUE"];
+	newline->init[label="ch_in=='\\n'\n && state_prev==VALUE"];
 	newline->newline[label="ch_in>='\\0' && ch_in<=' '\n && ch_in!='\\n'"];
 	newline->state_prev[label="!(ch_in>='\\0' && ch_in<=' ')"];
 	}
