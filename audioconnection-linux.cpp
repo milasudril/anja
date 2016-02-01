@@ -135,6 +135,43 @@ class AudioConnectionJack:public AudioConnection
 
 
 
+		AudioConnection& midiPortInputAdd(const char* name)
+			{
+			m_midi_in_ports.append(
+				{
+				 m_connection.get()
+				,name
+				,JACK_DEFAULT_MIDI_TYPE
+				,JackPortIsInput
+				});
+			return *this;
+			}
+
+		unsigned int midiPortsInputCount() const
+			{return m_midi_in_ports.length();}
+
+		AudioConnection& midiPortOutputAdd(const char* name)
+			{
+			m_midi_out_ports.append(
+				{
+				 m_connection.get()
+				,name
+				,JACK_DEFAULT_MIDI_TYPE
+				,JackPortIsOutput
+				});
+			return *this;
+			}
+
+		unsigned int midiPortsOutputCount() const
+			{return m_midi_out_ports.length();}
+
+		bool midiEventGet(unsigned int port,unsigned int index
+			,MIDIEvent& event);
+
+		void midiEventWrite(unsigned int port,const MIDIEvent& event);
+
+
+
 		void destroy()
 			{delete this;}
 
@@ -147,6 +184,10 @@ class AudioConnectionJack:public AudioConnection
 		Port m_output;
 		ArrayDynamicShort<Port> m_audio_in_ports;
 		ArrayDynamicShort<Port> m_audio_out_ports;
+
+		ArrayDynamicShort<Port> m_midi_in_ports;
+		ArrayDynamicShort<Port> m_midi_out_ports;
+
 		jack_nframes_t m_fs;
 		static int dataProcess(jack_nframes_t n_frames,void* audioconnectionjack);
 		static int bufferAllocate(jack_nframes_t nframes,void* audioconnectionjack);
@@ -186,3 +227,21 @@ int AudioConnectionJack::dataProcess(jack_nframes_t n_frames,void* audioconnecti
 	_this->r_engine->audioProcess(*_this,n_frames);
 	return 0;
 	}
+
+bool AudioConnectionJack::midiEventGet(unsigned int port,unsigned int index
+	,MIDIEvent& event)
+	{
+	return 0;
+/*	jack_port_get_buffer(jack_port_t *  	,
+		jack_nframes_t
+	)
+
+	jack_midi_event_t ret;
+	if(jack_midi_event_get(&ret,port_buffer,index)==ENODATA)
+		{return 0;}
+	*/
+	}
+
+void AudioConnectionJack::midiEventWrite(unsigned int port,const MIDIEvent& event)
+	{}
+

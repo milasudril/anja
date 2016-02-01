@@ -82,7 +82,12 @@ TabView* TabView::create(GuiContainer& parent,EventHandler* handler)
 	{return new TabViewGtk(parent,handler);}
 
 void TabViewGtk::destroy()
-	{delete this;}
+	{
+	if(r_slave==nullptr)
+		{delete this;}
+	else
+		{r_slave->destroy();}
+	}
 
 TabViewGtk::TabViewGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),r_slave(nullptr)

@@ -41,6 +41,21 @@ class AudioConnection
 		virtual AudioConnection& audioPortOutputAdd(const char* name)=0;
 		virtual unsigned int audioPortsOutputCount() const=0;
 
+		struct MIDIEvent
+			{
+			uint32_t time_offset;
+			uint8_t data[4];
+			};
+
+		virtual bool midiEventGet(unsigned int port,unsigned int index
+			,MIDIEvent& event)=0;
+		virtual AudioConnection& midiPortInputAdd(const char* name)=0;
+		virtual unsigned int midiPortsInputCount() const=0;
+
+		virtual void midiEventWrite(unsigned int port,const MIDIEvent& event)=0;
+		virtual AudioConnection& midiPortOutputAdd(const char* name)=0;
+		virtual unsigned int midiPortsOutputCount() const=0;
+
 		virtual void activate()=0;
 		virtual void deactivate()=0;
 

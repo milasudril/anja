@@ -103,7 +103,12 @@ Window* Window::create(Widget& owner,EventHandler& handler,void** lifetime_cooki
 	{return new WindowGtk(owner,handler,lifetime_cookie);}
 
 void WindowGtk::destroy()
-	{delete this;}
+	{
+	if(r_slave==nullptr)
+		{delete this;}
+	else
+		{r_slave->destroy();}
+	}
 
 gboolean WindowGtk::onClose(GtkWidget* widget,GdkEvent* event,void* windowgtk)
 	{

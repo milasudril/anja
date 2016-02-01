@@ -89,7 +89,12 @@ ScrollWindow* ScrollWindow::create(GuiContainer& parent,EventHandler& handler
 	{return new ScrollWindowGtk(parent,handler,mode);}
 
 void ScrollWindowGtk::destroy()
-	{delete this;}
+	{
+	if(r_slave==nullptr)
+		{delete this;}
+	else
+		{r_slave->destroy();}
+	}
 
 ScrollWindowGtk::ScrollWindowGtk(GuiContainer& parent,EventHandler& handler
 	,unsigned int mode):

@@ -73,7 +73,12 @@ BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
 	{return new BoxVerticalGtk(parent,handler);}
 
 void BoxVerticalGtk::destroy()
-	{delete this;}
+	{
+	if(r_slave==nullptr)
+		{delete this;}
+	else
+		{r_slave->destroy();}
+	}
 
 BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)

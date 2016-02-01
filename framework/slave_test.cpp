@@ -16,9 +16,7 @@ class Test:public Widget
 
 		void destroy()
 			{
-			auto box=m_box;
 			delete this;
-			box->destroy();
 			}
 
 		const GuiHandle& handleNativeGet() const
@@ -52,6 +50,7 @@ class Test:public Widget
 			{
 			m_killme->destroy();
 			m_box->slaveRelease();
+			m_box->destroy();
 			}
 	};
 

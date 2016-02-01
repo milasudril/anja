@@ -46,6 +46,7 @@ InputEntry::~InputEntry()
 	m_textbox->destroy();
 	m_label->destroy();
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 const GuiHandle& InputEntry::handleNativeGet() const

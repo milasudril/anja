@@ -7,6 +7,8 @@ target[name[widget.h] type[include]]
 
 class GuiHandle;
 
+#include <cstdio>
+
 class Widget
 	{
 	public:

@@ -49,6 +49,7 @@ OptionBox::~OptionBox()
 		}
 	m_label->destroy();
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 const GuiHandle& OptionBox::handleNativeGet() const

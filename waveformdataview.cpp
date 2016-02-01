@@ -224,6 +224,7 @@ WaveformDataView::~WaveformDataView()
 		m_description_box->destroy();
 		m_source->destroy();
 	m_box_main->slaveRelease();
+	m_box_main->destroy();
 	}
 
 void WaveformDataView::destroy()

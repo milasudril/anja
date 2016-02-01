@@ -44,7 +44,9 @@ class BoxHorizontalGtk:public BoxHorizontal
 			{r_slave=&widget;}
 
 		void slaveRelease()
-			{r_slave=nullptr;}
+			{
+			r_slave=nullptr;
+			}
 
 		void fullscreenSet(bool state)
 			{
@@ -73,7 +75,12 @@ BoxHorizontal* BoxHorizontal::create(GuiContainer& parent,EventHandler* handler)
 	{return new BoxHorizontalGtk(parent,handler);}
 
 void BoxHorizontalGtk::destroy()
-	{delete this;}
+	{
+	if(r_slave==nullptr)
+		{delete this;}
+	else
+		{r_slave->destroy();}
+	}
 
 BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler* handler):
 	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)

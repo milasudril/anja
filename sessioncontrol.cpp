@@ -84,6 +84,7 @@ SessionControl::~SessionControl()
 	m_session_new->destroy();
 	m_session_title->destroy();
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 void SessionControl::destroy()

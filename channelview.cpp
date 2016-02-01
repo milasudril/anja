@@ -40,11 +40,10 @@ ChannelView::ChannelView(GuiContainer& parent
 ChannelView::~ChannelView()
 	{
 	auto n_channels=m_strips.length();
-	for(unsigned int k=0;k<n_channels;++k)
-		{
-		m_strips[k]->destroy();
-		}
+	for(unsigned int k=n_channels;k>0;--k)
+		{m_strips[k-1]->destroy();}
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 void ChannelView::channelDataSet(const ChannelData& data,unsigned int channel)

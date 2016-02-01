@@ -52,6 +52,7 @@ ChannelStrip::~ChannelStrip()
 	m_fadetime->destroy();
 	m_label->destroy();
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 

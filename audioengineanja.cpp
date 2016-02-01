@@ -30,7 +30,9 @@ AudioEngineAnja::~AudioEngineAnja()
 
 void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
-	source.audioPortOutputAdd("Audio out");
+	source.audioPortOutputAdd("Audio out")
+		.midiPortInputAdd("MIDI in")
+		.midiPortOutputAdd("MIDI out");
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_now=0;

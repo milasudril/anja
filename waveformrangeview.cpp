@@ -197,6 +197,7 @@ WaveformRangeView::~WaveformRangeView()
 	m_plot->destroy();
 	m_label->destroy();
 	m_box_main->slaveRelease();
+	m_box_main->destroy();
 	}
 
 void WaveformRangeView::destroy()

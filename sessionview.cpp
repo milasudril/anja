@@ -75,6 +75,7 @@ SessionView::~SessionView()
 	m_keyboard->destroy();
 	m_control->destroy();
 	m_box->slaveRelease();
+	m_box->destroy();
 	}
 
 void SessionView::sessionSet(Session& session)
