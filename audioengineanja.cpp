@@ -178,21 +178,18 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 
 		case MIDIConstants::StatusCodes::NOTE_OFF:
 			{
-		//	The replace lock cannot be released here, due to the possible
+		//	NOTE: The replace lock cannot be released here, due to the possible
 		//	sustain flag. Instead, it has to be done in audioProcess, when
 		//	the rendering loop detects that the clip should not continue.
 			auto slot=event.status_word[1];
 			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
 
-		//	When note is stopped in sustain mode, ensure that the LOOP flag is
-		//	is disabled to prevent infinite sound
+		//	NOTE: When note is stopped in sustain mode, ensure that the LOOP
+		//	flag is is disabled to prevent infinite sound
 			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
 				{playback_buffer.flagsUnset(Waveform::LOOP);}
 			else
-				{
-			//	TODO: Implement stop as a delayed action
-				playback_buffer.stop();
-				}
+				{playback_buffer.stop(time_offset);}
 			}
 			break;
 

@@ -32,6 +32,8 @@ class PlaybackRange
 		void stop() noexcept
 			{r_current=r_end;}
 
+		void stop(unsigned int delay) noexcept;
+
 		PlaybackRange& delayReset() noexcept
 			{
 			m_delay=0;

@@ -43,6 +43,26 @@ void PlaybackRange::release()
 	r_waveform=nullptr;
 	}
 
+void PlaybackRange::stop(unsigned int delay) noexcept
+	{
+//	NOTE: If sample rate conversions are introduced, delay has to be converted
+//	to other time units, or the pointers refered to by this functions must be
+//	the output from the sample rate converter
+
+	auto ptr_current=r_current;
+	auto ptr_end=r_end;
+	auto dir=ptr_current<ptr_end?1:-1;
+	if(dir>0)
+		{
+		r_end=std::min(ptr_end,ptr_current+delay);
+		}
+	else
+		{
+		auto tmp=delay>uintptr_t(ptr_current)? ptr_end : ptr_current-delay;
+		r_end=std::max(ptr_end,tmp);
+		}
+	}
+
 
 unsigned int PlaybackRange::outputBufferGenerate(float* buffer_out
 	,unsigned int n_frames_out) noexcept
