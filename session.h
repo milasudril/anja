@@ -89,7 +89,10 @@ class Session
 			{return m_slot_active;}
 
 		void slotActiveSet(uint8_t slot)
-			{m_slot_active=slot;}
+			{
+			m_slot_active=slot;
+			keyHighlight(m_slot_to_scancode[slot]);
+			}
 
 
 

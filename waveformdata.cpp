@@ -7,6 +7,7 @@ target[name[waveformdata.o] type[object]]
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
 #include "colorstring.h"
+#include "optionstring.h"
 #include "framework/pathutils.h"
 #include "framework/array_simple.h"
 #include "framework/floatconv.h"
@@ -46,7 +47,9 @@ WaveformData::WaveformData(const SessionFileRecord& record
 
 	value=record.propertyGet("Options");
 	if(value!=nullptr)
-		{r_waveform->flagsSet(*value);}
+		{
+		r_waveform->flagsSet(optionsFromString(value->begin(),Waveform::FLAG_NAMES));
+		}
 
 	value=record.propertyGet("Playback channel");
 	if(value!=nullptr)
@@ -98,6 +101,8 @@ void WaveformData::dataGet(SessionFileRecord& record) const
 	record.propertySet("Playback starting position/frames",buffer);
 	sprintf(buffer,"%u",r_waveform->offsetEndGet());
 	record.propertySet("Playback end position/frames",buffer);
+	record.propertySet("Options",stringFromOptions(r_waveform->flagsGet()
+		,Waveform::FLAG_NAMES));
 
 //	TODO Format flag string
 //	TODO Save other data not interpreted by Anja

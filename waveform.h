@@ -142,10 +142,6 @@ class Waveform
 		Waveform& flagSet(uint32_t flag_index) noexcept
 			{return flagsSet(1<<flag_index);}
 
-		Waveform& flagSet(const ArrayDynamicShort<char>& flagname) noexcept;
-
-		Waveform& flagsSet(const ArrayDynamicShort<char>& flagstring);
-
 		Waveform& flagUnset(uint32_t flag_index) noexcept
 			{return flagsUnset(1<<flag_index);}
 

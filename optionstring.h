@@ -14,4 +14,6 @@ ArrayDynamicShort<char> stringFromOptions(unsigned int option_bits
 unsigned int optionsFromString(const char* string
 	,const char* const* option_names);
 
+unsigned int optionFromString(const char* string,const char* const* option_names);
+
 #endif
