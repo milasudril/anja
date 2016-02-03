@@ -16,8 +16,9 @@ digraph "Parser"
 	init->init[label="ch_in>='\\0' && ch_in<=' '"];
 	init->key[label="!(ch_in=='=' || ch_in=='-' \n || (ch_in>='\\0' && ch_in<=' '))"];
 
-	whitespace->whitespace[label="ch_in>='\\0' && ch_in<=' '"];
+	whitespace->whitespace[label="ch_in>='\\0' && ch_in<=' '\n && ch_in!='\n'"];
 	whitespace->state_prev[label="!(ch_in>='\\0' && ch_in<=' ')"];
+	whitespace->newline[label="ch_in=='\\n'"]
 
 	section_title_before->section_title[label="ch_in!=ch_trigg\n!(ch_in>='\\0' && ch_in<=' ')"];
 	section_title_before->section_title_before[label="ch_in==ch_trigg"];
