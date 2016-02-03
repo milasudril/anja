@@ -41,7 +41,7 @@
 
 <xsl:template match="section">
 <h3><xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-<xsl:number count="chapter" level="any"/>.<xsl:number /><span class="fill" /><xsl:copy-of select="node()"/>
+<xsl:number count="chapter" level="any"/>.<xsl:number level="any" from="chapter"/> <span class="fill" /><xsl:copy-of select="node()"/>
 </h3>
 </xsl:template>
 

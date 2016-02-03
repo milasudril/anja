@@ -23,9 +23,15 @@
 	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also a kill-all-softly feature.</p>
 
 
-	<chapter id="obtaining">Obtaining Anja</chapter>
+	<chapter id="obtaining">Installing Anja</chapter>
 
 	<chapter id="using">Using Anja</chapter>
+
+	<section id="addfx">Adding sound effects</section>
+	<p>To be written</p>
+
+	<ection id="play">Playing sound effects</section>
+	<p>To be written</p>
 
 	<bibliography>
 		<item id="jack">JACK Audio Connection Kit <url>http://jackaudio.org</url></item>
