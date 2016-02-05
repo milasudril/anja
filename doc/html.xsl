@@ -7,6 +7,14 @@
 <xsl:copy-of select="." />
 </xsl:template>
 
+<xsl:template match="libname">
+<code><xsl:copy-of select="node()" /></code>
+</xsl:template>
+
+<xsl:template match="quantity">
+<xsl:value-of select="." />&#160;<xsl:value-of select="./@unit" />
+</xsl:template>
+
 <xsl:template match="title"/>
 <xsl:template match="author"/>
 

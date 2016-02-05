@@ -168,6 +168,12 @@ void Session::load(const char* filename)
 				{throw "Invalid slot number";}
 			slotActiveSet(slot_num-1);
 			}
+
+		auto value=record.propertyGet("Description");
+		if(value!=nullptr)
+			{
+			descriptionSet(*value);
+			}
 	//	TODO Store other data not interpreted by Anja
 		}
 
@@ -275,6 +281,7 @@ void Session::save(const char* filename)
 	record_out.sectionTitleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);
 	record_out.propertySet("Active slot",buffer);
+	record_out.propertySet("Description",descriptionGet().begin());
 //	TODO Save other data not interpreted by Anja
 	writer->recordWrite(record_out);
 	record_out.clear();

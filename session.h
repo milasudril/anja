@@ -74,6 +74,12 @@ class Session
 		const ArrayDynamicShort<char>& titleGet() const
 			{return m_title;}
 
+		void descriptionSet(const ArrayDynamicShort<char>& description_new)
+			{m_description=description_new;}
+
+		const ArrayDynamicShort<char>& descriptionGet() const
+			{return m_description;}
+
 
 
 		KeyboardLayout& keyboardLayoutGet()
@@ -171,6 +177,9 @@ class Session
 		ArrayDynamicShort<char> m_filename;
 		ArrayDynamicShort<char> m_directory;
 		ArrayDynamicShort<char> m_title;
+		ArrayDynamicShort<char> m_description;
+		ArrayDynamicShort<ColorRGBA> m_color_presets;
+
 		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;
 

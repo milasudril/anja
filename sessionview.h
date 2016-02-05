@@ -20,6 +20,7 @@ class TabView;
 class ChannelView;
 class SessionControl;
 class TitleView;
+class SessionDataView;
 
 class SessionView:public Widget
 	{
@@ -70,6 +71,7 @@ class SessionView:public Widget
 			TabView* m_tabs;
 				WaveformDataView* m_dataview;
 				ChannelView* m_mixer;
+				SessionDataView* m_sessiondata;
 	};
 
 #endif

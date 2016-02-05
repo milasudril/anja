@@ -10,6 +10,7 @@ target[name[sessionview.o] type[object]]
 #include "waveformdataupdater.h"
 #include "channelview.h"
 #include "sessioncontrol.h"
+#include "sessiondataview.h"
 
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
@@ -64,11 +65,15 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 		,session.channelDataBegin(),session.channelsCountGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
+	m_sessiondata=SessionDataView::create(*m_tabs);
+	m_tabs->tabTitleSet(2,"Session data");
+
 	sessionSet(session);
 	}
 
 SessionView::~SessionView()
 	{
+	m_sessiondata->destroy();
 	m_mixer->destroy();
 	m_dataview->destroy();
 	m_tabs->destroy();
