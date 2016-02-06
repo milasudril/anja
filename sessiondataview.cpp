@@ -3,16 +3,17 @@ target[name[sessiondataview.o] type[object]]
 #endif
 
 #include "sessiondataview.h"
+#include "session.h"
 #include "framework/guicontainer.h"
 #include "framework/scrollwindow.h"
 #include "framework/textbox.h"
 #include "framework/label.h"
 #include "framework/boxhorizontal.h"
 #include "framework/boxvertical.h"
-#include "framework/slider.h"
+#include "framework/optionbox.h"
 
-SessionDataView* SessionDataView::create(GuiContainer& parent)
-	{return new SessionDataView(parent);}
+SessionDataView* SessionDataView::create(GuiContainer& parent,Session& session)
+	{return new SessionDataView(parent,session);}
 
 void SessionDataView::destroy()
 	{delete this;}
@@ -22,7 +23,7 @@ const GuiHandle& SessionDataView::handleNativeGet() const
 	return m_box->handleNativeGet();
 	}
 
-SessionDataView::SessionDataView(GuiContainer& parent)
+SessionDataView::SessionDataView(GuiContainer& parent,Session& session)
 	{
 	m_box=ScrollWindow::create(parent,ScrollWindow::MODE_VERTICAL);
 	m_box->slaveAssign(*this);
@@ -42,12 +43,14 @@ SessionDataView::SessionDataView(GuiContainer& parent)
 		|BoxHorizontal::INSERTMODE_FILL);
 	m_description_input=Textbox::create(*m_description);
 
-	m_gain_master=Slider::create(*m_vbox,"Master gain/dB",1);
+	m_options=OptionBox::create(*m_vbox,"Options:",Session::FLAG_NAMES);
+
+	sessionSet(session);
 	}
 
-SessionDataView::~SessionDataView()
+	SessionDataView::~SessionDataView()
 	{
-	m_gain_master->destroy();
+	m_options->destroy();
 	m_description_input->destroy();
 	m_description_label->destroy();
 	m_description->destroy();
@@ -57,4 +60,10 @@ SessionDataView::~SessionDataView()
 	m_vbox->destroy(),
 	m_box->slaveRelease();
 	m_box->destroy();
+	}
+
+void SessionDataView::update()
+	{
+	m_title_input->textSet(r_session->titleGet().begin());
+	m_description_input->textSet(r_session->descriptionGet().begin());
 	}

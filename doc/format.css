@@ -12,7 +12,9 @@ h5{font-size:11pt;margin-top:3.25ex;margin-bottom:1.5ex}
 
 h6{font-size:11pt;margin-top:0pt;margin-bottom:0pt; display:inline}
 
-p,li{font-size:11pt;margin-top:0pt;margin-bottom:0pt;text-indent:18pt}
+p{font-size:11pt;margin-top:0pt;margin-bottom:0pt;text-indent:18pt}
+
+p,li,code,td{font-size:11pt;margin-top:0pt;margin-bottom:0pt}
 
 h1+p,h2+p,h3+p,h4+p,h5+p,p:first-of-type,li{text-indent:0pt}
 
@@ -25,6 +27,7 @@ p.titlepage{font-size:14.4pt}
 span.fill{margin-right:18pt}
 
 h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","CMU Serif",Serif;}
+code{font-family:"Latin Modern Typewriter",Monospace}
 
 @media screen and (min-width: 700px)
 	{
@@ -35,3 +38,6 @@ h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","CMU Serif",Serif;}
 	nav > h2,nav > ol{position:static}
 	}
 
+@media print {
+    h2 {page-break-before: right;}
+}

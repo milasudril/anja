@@ -8,12 +8,12 @@ dependency[sessioncontrol.o]
 
 #include "framework/widget.h"
 #include "framework/button.h"
-#include "framework/textbox.h"
 
 class Session;
 class SessionView;
 class GuiContainer;
-class BoxHorizontal;
+class BoxVertical;
+class Delimiter;
 
 class SessionControl:public Widget
 	{
@@ -28,27 +28,29 @@ class SessionControl:public Widget
 		void doSessionLoad();
 		void doSessionSave();
 		void doSessionSaveAs();
-		void doEngineConnect();
+		void doEngineStart();
+		void doEngineStop();
 		void doFullscreen();
 
 	private:
 		Session* r_session;
 		SessionView* r_view;
-		BoxHorizontal* m_box;
-		Textbox* m_session_title;
+		BoxVertical* m_box;
 		Button* m_session_new;
 		Button* m_session_load;
 		Button* m_session_save;
 		Button* m_session_saveas;
-		Button* m_engine_connect;
+		Delimiter* m_delimiter_a;
+		Button* m_engine_start;
+		Button* m_engine_stop;
+		Delimiter* m_delimiter_b;
 		Button* m_fullscreen;
 
-		class ActionHandler:public Button::EventHandler,public Textbox::EventHandler
+		class ActionHandler:public Button::EventHandler
 			{
 			public:
 				ActionHandler(SessionControl& ctrl);
 				void onActionPerform(Button& source);
-				void onLeave(Textbox& source);
 
 			private:
 				SessionControl& r_ctrl;

@@ -14,19 +14,30 @@ class BoxVertical;
 class BoxHorizontal;
 class Label;
 class Textbox;
-class Slider;
+class OptionBox;
+class Session;
 
 class SessionDataView:public Widget
 	{
 	public:
-		static SessionDataView* create(GuiContainer& parent);
+		static SessionDataView* create(GuiContainer& parent,Session& session);
 		void destroy();
 
 		const GuiHandle& handleNativeGet() const;
 
+		void sessionSet(Session& session)
+			{
+			r_session=&session;
+			update();
+			}
+
+		void update();
+
 	private:
-		SessionDataView(GuiContainer& parent);
+		SessionDataView(GuiContainer& parent,Session& session);
 		~SessionDataView();
+
+		Session* r_session;
 
 		ScrollWindow* m_box;
 		BoxVertical* m_vbox;
@@ -39,7 +50,8 @@ class SessionDataView:public Widget
 			Label* m_description_label;
 			Textbox* m_description_input;
 
-		Slider* m_gain_master;
+		OptionBox* m_options;
+
 	};
 
 #endif

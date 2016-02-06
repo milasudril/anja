@@ -17,6 +17,7 @@ target[name[sessionview.o] type[object]]
 #include "framework/keyboardview.h"
 #include "framework/tabview.h"
 #include "framework/titleview.h"
+#include "framework/delimiter.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
 	,TitleView& title_view
@@ -45,18 +46,24 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	,ChannelStrip::EventHandler& channelstrip_handler):r_tw(title_view)
 	,m_fullscreen_state(0)
 	{
-	m_box=BoxVertical::create(parent);
+	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
 	m_control=SessionControl::create(*m_box,session,*this);
 
-	m_box->insertModeSet(BoxVertical::INSERTMODE_EXPAND
-		|BoxHorizontal::INSERTMODE_FILL);
+	m_delimiter=Delimiter::create(*m_box);
 
-	m_keyboard=KeyboardView::create(*m_box,session.keyboardLayoutGet()
+	m_box->insertModeSet(BoxHorizontal::INSERTMODE_EXPAND
+		|BoxVertical::INSERTMODE_FILL);
+
+	m_vbox=BoxVertical::create(*m_box);
+
+	m_vbox->insertModeSet(BoxVertical::INSERTMODE_EXPAND
+		|BoxVertical::INSERTMODE_FILL);
+
+	m_keyboard=KeyboardView::create(*m_vbox,session.keyboardLayoutGet()
 		,keyboard_input);
-	m_box->insertModeSet(BoxVertical::INSERTMODE_END
-		|BoxVertical::INSERTMODE_FILL|BoxVertical::INSERTMODE_EXPAND);
-	m_tabs=TabView::create(*m_box);
+	m_vbox->insertModeSet(BoxVertical::INSERTMODE_FILL|BoxVertical::INSERTMODE_EXPAND);
+	m_tabs=TabView::create(*m_vbox);
 
 	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
 	m_tabs->tabTitleSet(0,"Waveform data");
@@ -65,8 +72,8 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 		,session.channelDataBegin(),session.channelsCountGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
-	m_sessiondata=SessionDataView::create(*m_tabs);
-	m_tabs->tabTitleSet(2,"Session data");
+	m_sessiondata=SessionDataView::create(*m_tabs,session);
+	m_tabs->tabTitleSet(2,"Session properties");
 
 	sessionSet(session);
 	}
@@ -78,6 +85,8 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
+	m_vbox->destroy();
+	m_delimiter->destroy();
 	m_control->destroy();
 	m_box->slaveRelease();
 	m_box->destroy();
@@ -91,6 +100,7 @@ void SessionView::sessionSet(Session& session)
 		,session.channelsCountGet());
 
 	m_mixer->channelDataSet(session.channelDataBegin(),session.channelsCountGet());
+	m_sessiondata->sessionSet(session);
 
 	ArrayDynamicShort<char> title("Anja - ");
 	title.truncate().append(session.titleGet());

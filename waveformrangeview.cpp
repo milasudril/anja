@@ -152,6 +152,7 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 
 	m_entries[0]=InputEntry::create(*m_box_positions,m_entry_handler,0
 		,"Begin:","Auto");
+	m_entries[0]->textWidthSet(5);
 
 	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_FILL
 		|BoxHorizontal::INSERTMODE_EXPAND);
@@ -160,6 +161,7 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 	m_box_positions->insertModeSet(BoxHorizontal::INSERTMODE_END);
 	m_entries[1]=InputEntry::create(*m_box_positions,m_entry_handler,1
 		,"End:","Auto");
+	m_entries[1]->textWidthSet(7);
 
 
 	auto c_begin=m_plot->cursorXAdd({-0.5,1.0f/3});

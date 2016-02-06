@@ -25,10 +25,7 @@ class Session
 
 		Session():m_engine(m_waveforms),m_connection(nullptr)
 			,r_key_active(nullptr),m_slot_active(0)
-			{
-			waveformsClear();
-			channelsClear();
-			}
+			{clear();}
 
 		Session(const char* filename):m_engine(m_waveforms)
 			,m_connection(nullptr),r_key_active(nullptr),m_slot_active(0)
@@ -47,51 +44,51 @@ class Session
 
 		void save(const char* filename);
 
-		const ArrayDynamicShort<char>& filenameGet() const
+		const ArrayDynamicShort<char>& filenameGet() const noexcept
 			{return m_filename;}
 
-		const ArrayDynamicShort<char>& directoryGet() const
+		const ArrayDynamicShort<char>& directoryGet() const noexcept
 			{return m_directory;}
 
 
 
 		void waveformsClear();
 
-		const WaveformData& waveformDataGet(uint8_t slot) const
+		const WaveformData& waveformDataGet(uint8_t slot) const noexcept
 			{return m_waveform_data[slot];}
 
-		WaveformData& waveformDataGet(uint8_t slot)
+		WaveformData& waveformDataGet(uint8_t slot) noexcept
 			{return m_waveform_data[slot];}
 
-		const Waveform& waveformGet(uint8_t slot)
+		const Waveform& waveformGet(uint8_t slot) noexcept
 			{return m_waveforms[slot];}
 
 
 
-		void titleSet(const ArrayDynamicShort<char>& title_new)
+		void titleSet(const ArrayDynamicShort<char>& title_new) noexcept
 			{m_title=title_new;}
 
-		const ArrayDynamicShort<char>& titleGet() const
+		const ArrayDynamicShort<char>& titleGet() const noexcept
 			{return m_title;}
 
-		void descriptionSet(const ArrayDynamicShort<char>& description_new)
+		void descriptionSet(const ArrayDynamicShort<char>& description_new) noexcept
 			{m_description=description_new;}
 
-		const ArrayDynamicShort<char>& descriptionGet() const
+		const ArrayDynamicShort<char>& descriptionGet() const noexcept
 			{return m_description;}
 
 
 
-		KeyboardLayout& keyboardLayoutGet()
+		KeyboardLayout& keyboardLayoutGet() noexcept
 			{return m_keyboard;}
 
-		const KeyboardLayout& keyboardLayoutGet() const
+		const KeyboardLayout& keyboardLayoutGet() const noexcept
 			{return m_keyboard;}
 
-		uint8_t scancodeToSlot(uint8_t scancode) const
+		uint8_t scancodeToSlot(uint8_t scancode) const noexcept
 			{return m_scancode_to_slot[scancode];}
 
-		uint8_t slotActiveGet() const
+		uint8_t slotActiveGet() const noexcept
 			{return m_slot_active;}
 
 		void slotActiveSet(uint8_t slot)
@@ -104,25 +101,25 @@ class Session
 
 		void channelsClear();
 
-		ChannelData* channelDataBegin()
+		ChannelData* channelDataBegin() noexcept
 			{return m_channel_data.begin();}
 
-		unsigned int channelsCountGet()
+		unsigned int channelsCountGet() noexcept
 			{return m_channel_data.length();}
 
-		const ChannelData& channelDataGet(unsigned int index) const
+		const ChannelData& channelDataGet(unsigned int index) const noexcept
 			{return m_channel_data[index];}
 
 		ChannelData& channelDataGet(unsigned int index)
 			{return m_channel_data[index];}
 
-		const Channel& channelGet(unsigned int index) const
+		const Channel& channelGet(unsigned int index) const noexcept
 			{return m_channels[index];}
 
-		Channel& channelGet(unsigned int index)
+		Channel& channelGet(unsigned int index) noexcept
 			{return m_channels[index];}
 
-		uint8_t scancodeToChannel(uint8_t scancode) const
+		uint8_t scancodeToChannel(uint8_t scancode) const noexcept
 			{return m_scancode_to_channel[scancode];}
 
 
@@ -132,10 +129,10 @@ class Session
 
 
 
-		WaveformData& waveformDataFromMIDI(uint8_t midikey)
+		WaveformData& waveformDataFromMIDI(uint8_t midikey) noexcept
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
 
-		const WaveformData& waveformDataFromMIDI(uint8_t midikey) const
+		const WaveformData& waveformDataFromMIDI(uint8_t midikey) const noexcept
 			{return m_waveform_data[m_midikey_to_slot[midikey]];}
 
 
@@ -144,18 +141,44 @@ class Session
 
 		void audioServerDisconnect();
 
-		AudioConnection* audioConnectionGet()
+		AudioConnection* audioConnectionGet() noexcept
 			{return m_connection;}
 
-		AudioEngineAnja& audioEngineGet()
+		AudioEngineAnja& audioEngineGet() noexcept
 			{return m_engine;}
 
-		bool connectedIs() const
+		bool connectedIs() const noexcept
 			{return m_connection!=nullptr;}
 
 
 
 		void keyHighlight(uint8_t scancode);
+
+
+
+		static const char* FLAG_NAMES[];
+
+		unsigned int flagsGet() const noexcept
+			{return m_flags;}
+
+		Session& flagsSet(unsigned int flags) noexcept
+			{
+			m_flags|=flags;
+			return *this;
+			}
+
+		Session& flagsUnset(unsigned int flags) noexcept
+			{
+			m_flags&=~flags;
+			return *this;
+			}
+
+		Session& flagSet(unsigned int index) noexcept
+			{return flagsSet(1<<index);}
+
+		Session& flagUnset(unsigned int index) noexcept
+			{return flagsSet(1<<index);}
+
 
 	private:
 		AudioEngineAnja m_engine;
@@ -182,10 +205,8 @@ class Session
 
 		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;
-
-		static constexpr uint32_t ENGINE_ONLINE=1;
-		static constexpr uint32_t MODE_RECORD=2;
-		static constexpr uint32_t VIEW_LIGHT=4;
+		static constexpr unsigned int MULTIOUTPUT=1;
+		unsigned int m_flags;
 	};
 
 #endif

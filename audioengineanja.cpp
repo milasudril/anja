@@ -318,7 +318,8 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 			if(src_current->valid())
 				{
 				auto ch=src_current->channelGet();
-				if(m_channels[ch].gain_out<1e-4)
+				if(m_channels[ch].gain_out<1e-4
+					&& m_channels[ch].fade_factor<1.0)
 					{src_current->stop();}
 				}
 			++src_current;

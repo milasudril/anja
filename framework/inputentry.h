@@ -12,8 +12,6 @@ dependency[inputentry.o]
 #include "button.h"
 
 class Label;
-class Textbox;
-class Button;
 
 class InputEntry:public Widget
 	{
@@ -49,6 +47,9 @@ class InputEntry:public Widget
 
 		void doTextChanged()
 			{r_handler->onTextChanged(*this);}
+
+		void textWidthSet(unsigned int width)
+			{m_textbox->widthMinSet(width);}
 
 	private:
 		InputEntry(GuiContainer& parent,EventHandler& handler

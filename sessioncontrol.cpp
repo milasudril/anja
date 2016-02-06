@@ -5,16 +5,17 @@ target[name[sessioncontrol.o] type[object]]
 #include "sessioncontrol.h"
 #include "session.h"
 #include "sessionview.h"
-#include "framework/boxhorizontal.h"
+#include "framework/boxvertical.h"
 #include "framework/filenamepicker.h"
 #include "framework/textbox.h"
+#include "framework/delimiter.h"
 
 static constexpr unsigned int SESSION_NEW=0;
 static constexpr unsigned int SESSION_LOAD=1;
 static constexpr unsigned int SESSION_SAVE=2;
 static constexpr unsigned int SESSION_SAVEAS=3;
-static constexpr unsigned int ENGINE_CONNECT=4;
-static constexpr unsigned int ENGINE_DISCONNECT=5;
+static constexpr unsigned int ENGINE_START=4;
+static constexpr unsigned int ENGINE_STOP=5;
 static constexpr unsigned int FULLSCREEN=6;
 
 
@@ -37,20 +38,17 @@ void SessionControl::ActionHandler::onActionPerform(Button& source)
 		case SESSION_SAVEAS:
 			r_ctrl.doSessionSaveAs();
 			break;
-		case ENGINE_CONNECT:
-			r_ctrl.doEngineConnect();
+		case ENGINE_START:
+			r_ctrl.doEngineStart();
+			break;
+		case ENGINE_STOP:
+			r_ctrl.doEngineStop();
 			break;
 		case FULLSCREEN:
 			r_ctrl.doFullscreen();
 			break;
 		}
 	}
-
-void SessionControl::ActionHandler::onLeave(Textbox& source)
-	{
-	r_ctrl.doTitleChange(source.textGet());
-	}
-
 
 
 SessionControl* SessionControl::create(GuiContainer& parent,Session& session
@@ -61,28 +59,30 @@ SessionControl::SessionControl(GuiContainer& parent,Session& session
 	,SessionView& view):
 	r_session(&session),r_view(&view),m_handler(*this)
 	{
-	m_box=BoxHorizontal::create(parent);
+	m_box=BoxVertical::create(parent);
 	m_box->slaveAssign(*this);
-
-	m_session_title=Textbox::create(*m_box,m_handler,0);
 	m_session_new=Button::create(*m_box,m_handler,SESSION_NEW,"New session");
 	m_session_load=Button::create(*m_box,m_handler,SESSION_LOAD,"Load session");
 	m_session_save=Button::create(*m_box,m_handler,SESSION_SAVE,"Save session");
 	m_session_saveas=Button::create(*m_box,m_handler,SESSION_SAVEAS,"Save session as");
-	m_engine_connect=Button::create(*m_box,m_handler,ENGINE_CONNECT,"Connect engine");
+	m_delimiter_a=Delimiter::create(*m_box);
+	m_engine_start=Button::create(*m_box,m_handler,ENGINE_START,"Start engine");
+	m_engine_stop=Button::create(*m_box,m_handler,ENGINE_STOP,"Stop engine");
+	m_delimiter_b=Delimiter::create(*m_box);
 	m_fullscreen=Button::create(*m_box,m_handler,FULLSCREEN,"Fullscreen");
-	m_session_title->textSet(session.titleGet().begin());
 	}
 
 SessionControl::~SessionControl()
 	{
 	m_fullscreen->destroy();
-	m_engine_connect->destroy();
+	m_delimiter_b->destroy();
+	m_engine_stop->destroy();
+	m_engine_start->destroy();
+	m_delimiter_a->destroy();
 	m_session_saveas->destroy();
 	m_session_save->destroy();
 	m_session_load->destroy();
 	m_session_new->destroy();
-	m_session_title->destroy();
 	m_box->slaveRelease();
 	m_box->destroy();
 	}
@@ -105,7 +105,6 @@ void SessionControl::doSessionNew()
 	r_view->sessionSet(*r_session);
 	if(status)
 		{r_session->audioServerConnect();}
-	m_session_title->textSet(r_session->titleGet().begin());
 	}
 
 void SessionControl::doSessionLoad()
@@ -125,8 +124,6 @@ void SessionControl::doSessionLoad()
 
 	if(status)
 		{r_session->audioServerConnect();}
-
-	m_session_title->textSet(r_session->titleGet().begin());
 	}
 
 void SessionControl::doSessionSave()
@@ -157,18 +154,16 @@ void SessionControl::doSessionSaveAs()
 		}
 	}
 
-void SessionControl::doEngineConnect()
+void SessionControl::doEngineStart()
 	{
-	if(r_session->connectedIs())
-		{
-		r_session->audioServerDisconnect();
-		m_engine_connect->titleSet("Connect engine");
-		}
-	else
-		{
-		r_session->audioServerConnect();
-		m_engine_connect->titleSet("Disconnect engine");
-		}
+	r_session->audioServerConnect();
+	m_engine_start->titleSet("Restart engine");
+	}
+
+void SessionControl::doEngineStop()
+	{
+	r_session->audioServerDisconnect();
+	m_engine_start->titleSet("Start engine");
 	}
 
 void SessionControl::doFullscreen()
@@ -178,10 +173,4 @@ void SessionControl::doFullscreen()
 	else
 		{m_fullscreen->titleSet("Windowed");}
 	r_view->fullscreenToggle();
-	}
-
-void SessionControl::doTitleChange(const char* title)
-	{
-	r_session->titleSet(title);
-	r_view->sessionSet(*r_session);
 	}

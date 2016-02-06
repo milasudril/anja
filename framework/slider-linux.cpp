@@ -119,6 +119,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler
 	gtk_box_pack_end((GtkBox*)box,m_text,FALSE,FALSE,0);
 	gtk_widget_show(m_text);
 	gtk_entry_set_width_chars((GtkEntry*)m_text,5);
+	gtk_entry_set_max_width_chars((GtkEntry*)m_text,5);
 
 	g_signal_connect(m_slider,"value-changed",G_CALLBACK(sliderMoved),this);
 	g_signal_connect(m_text,"focus-out-event",G_CALLBACK(textChanged),this);

@@ -13,6 +13,8 @@ dependency[channelview.o]
 class GuiContainer;
 class BoxHorizontal;
 class ChannelData;
+class ScrollWindow;
+class Slider;
 
 class ChannelView:public Widget
 	{
@@ -34,7 +36,10 @@ class ChannelView:public Widget
 			,const ChannelData* channels,unsigned int n_channels);
 		~ChannelView();
 		BoxHorizontal* m_box;
+		ScrollWindow* m_scroll;
+		BoxHorizontal* m_box_channels;
 		ArraySimple<ChannelStrip*> m_strips;
+		Slider* m_master_gain;
 	};
 
 #endif

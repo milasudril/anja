@@ -17,6 +17,8 @@ target[name[session.o] type[object]]
 
 #include <unistd.h>
 
+const char* Session::FLAG_NAMES[]={"Use one port per channel",nullptr};
+
 void Session::waveformsClear()
 	{
 	//	Reset slot scancodes
@@ -136,8 +138,11 @@ void Session::clear()
 	{
 	waveformsClear();
 	channelsClear();
-	m_filename="";
+	m_filename.clear();
+	m_filename.append('\0');
 	m_title="New session";
+	m_description.clear();
+	m_description.append('\0');
 	}
 
 void Session::load(const char* filename)
@@ -151,8 +156,7 @@ void Session::load(const char* filename)
 	if(record.sectionLevelGet()!=0)
 		{throw "Invalid session file";}
 
-	waveformsClear();
-	channelsClear();
+	clear();
 
 //	Get data from file header
 		{

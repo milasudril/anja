@@ -21,6 +21,7 @@ class ChannelView;
 class SessionControl;
 class TitleView;
 class SessionDataView;
+class Delimiter;
 
 class SessionView:public Widget
 	{
@@ -65,13 +66,15 @@ class SessionView:public Widget
 		Session* r_session;
 		bool m_fullscreen_state;
 
-		BoxVertical* m_box;
+		BoxHorizontal* m_box;
 			SessionControl* m_control;
-			KeyboardView* m_keyboard;
-			TabView* m_tabs;
-				WaveformDataView* m_dataview;
-				ChannelView* m_mixer;
-				SessionDataView* m_sessiondata;
+			Delimiter* m_delimiter;
+			BoxVertical* m_vbox;
+				KeyboardView* m_keyboard;
+				TabView* m_tabs;
+					WaveformDataView* m_dataview;
+					ChannelView* m_mixer;
+					SessionDataView* m_sessiondata;
 	};
 
 #endif
