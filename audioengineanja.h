@@ -31,6 +31,12 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		void eventPost(uint8_t status,uint8_t value_0,uint8_t value_1) noexcept;
 		void eventPost(uint8_t status,uint8_t value_0,float value_1) noexcept;
 
+		void masterGainSet(float gain) noexcept
+			{m_master_gain_in=gain;}
+
+		float masterGainGet() const noexcept
+			{return m_master_gain_in;}
+
 	private:
 		struct alignas(16) Event
 			{
@@ -76,6 +82,8 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		ArraySimple<float> m_buffer_temp;
 		ArraySimple<float> m_buffers_out;
+		double m_master_gain_out;
+		double m_master_gain_in;
 
 		void eventProcess(const Event& event,unsigned int time_offset);
 		void eventControlProcess(const Event& event);

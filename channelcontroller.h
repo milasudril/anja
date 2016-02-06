@@ -20,6 +20,7 @@ class ChannelController:public ChannelStripHandler::EventHandler
 		void onFadeTimeChange(unsigned int channel,float time);
 		void onGainChange(unsigned int channel,float value);
 		void onColorChange(unsigned int channel,const ColorRGBA& color);
+		void onMasterGainChange(float value);
 
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}

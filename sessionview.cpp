@@ -102,6 +102,7 @@ void SessionView::sessionSet(Session& session)
 		,session.channelsCountGet());
 
 	m_mixer->channelDataSet(session.channelDataBegin(),session.channelsCountGet());
+	m_mixer->masterGainSet(session.masterGainGet());
 	m_sessiondata->sessionSet(session);
 
 	ArrayDynamicShort<char> title("Anja - ");

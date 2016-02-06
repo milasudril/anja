@@ -35,3 +35,8 @@ void ChannelController::onColorChange(unsigned int channel,const ColorRGBA& colo
 	r_view->channelColorUpdate(channel);
 	r_view->keyboardViewUpdate();
 	}
+
+void ChannelController::onMasterGainChange(float value)
+	{
+	r_session->audioEngineGet().masterGainSet(dBToAmplitude(value));
+	}

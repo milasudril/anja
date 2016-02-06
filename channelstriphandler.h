@@ -27,6 +27,8 @@ class ChannelStripHandler:public Textbox::EventHandler
 				virtual void onFadeTimeChange(unsigned int channel,float time)=0;
 				virtual void onGainChange(unsigned int channel,float value)=0;
 				virtual void onColorChange(unsigned int channel,const ColorRGBA& value)=0;
+
+				virtual void onMasterGainChange(float value)=0;
 			};
 
 		ChannelStripHandler(EventHandler& handler,ColorRGBA* color_presets

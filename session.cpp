@@ -10,6 +10,7 @@ target[name[session.o] type[object]]
 #include "units.h"
 #include "framework/localeguard.h"
 #include "framework/pathutils.h"
+#include "framework/floatconv.h"
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
 
@@ -143,7 +144,7 @@ void Session::clear()
 	m_title="New session";
 	m_description.clear();
 	m_description.append('\0');
-
+	masterGainSet(-6);
 	memcpy(m_color_presets.begin(),COLORS
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	}
@@ -178,9 +179,11 @@ void Session::load(const char* filename)
 
 		auto value=record.propertyGet("Description");
 		if(value!=nullptr)
-			{
-			descriptionSet(*value);
-			}
+			{descriptionSet(*value);}
+
+		value=record.propertyGet("Master gain/dB");
+		if(value!=nullptr)
+			{masterGainSet(convert(value->begin()));}
 	//	TODO Store other data not interpreted by Anja
 		}
 
@@ -289,6 +292,10 @@ void Session::save(const char* filename)
 	sprintf(buffer,"%u",m_slot_active + 1);
 	record_out.propertySet("Active slot",buffer);
 	record_out.propertySet("Description",descriptionGet().begin());
+
+	sprintf(buffer,"%.7g",masterGainGet());
+	record_out.propertySet("Master gain/dB",buffer);
+
 //	TODO Save other data not interpreted by Anja
 	writer->recordWrite(record_out);
 	record_out.clear();
@@ -326,4 +333,15 @@ void Session::save(const char* filename)
 			++channel;
 			}
 		}
+	}
+
+float Session::masterGainGet() const noexcept
+	{
+	return amplitudeToDb(m_engine.masterGainGet());
+	}
+
+Session& Session::masterGainSet(float value) noexcept
+	{
+	m_engine.masterGainSet(dBToAmplitude(value));
+	return *this;
 	}

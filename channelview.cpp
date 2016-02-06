@@ -8,6 +8,7 @@ target[name[channelview.o] type[object]]
 #include "framework/boxhorizontal.h"
 #include "framework/scrollwindow.h"
 #include "framework/slider.h"
+#include "framework/floatconv.h"
 
 ChannelView* ChannelView::create(GuiContainer& parent
 	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
@@ -30,7 +31,7 @@ ChannelView::ChannelView(GuiContainer& parent
 	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
 	,unsigned int n_channels
 	,ColorRGBA* color_presets,size_t n_presets):
-	m_strips(n_channels),m_handler(handler,color_presets,n_presets)
+	m_handler(handler,color_presets,n_presets),m_strips(n_channels)
 	{
 	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
@@ -50,7 +51,7 @@ ChannelView::ChannelView(GuiContainer& parent
 		}
 
 	m_box->insertModeSet(0);
-	m_master_gain=Slider::create(*m_box,"Master\ngain/dB",0);
+	m_master_gain=Slider::create(*m_box,m_handler,2<<4,"Master\ngain/dB",0);
 	}
 
 ChannelView::~ChannelView()
@@ -76,4 +77,9 @@ void ChannelView::channelDataSet(const ChannelData* channels,unsigned int n_chan
 		{
 		m_strips[k]->channelDataSet(channels[k]);
 		}
+	}
+
+void ChannelView::masterGainSet(double x)
+	{
+	m_master_gain->valueSet(x);
 	}

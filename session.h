@@ -188,6 +188,9 @@ class Session
 			{return m_color_presets.length();}
 
 
+		float masterGainGet() const noexcept;
+
+		Session& masterGainSet(float value) noexcept;
 
 	private:
 		AudioEngineAnja m_engine;
@@ -211,6 +214,7 @@ class Session
 		ArrayDynamicShort<char> m_title;
 		ArrayDynamicShort<char> m_description;
 		ArrayFixed<ColorRGBA,64> m_color_presets;
+
 
 		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;

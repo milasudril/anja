@@ -5,7 +5,7 @@ Description: This is a test file that demonstrates how Anja works. Pdsounds.org
 
 License:     CC0 1.0 Universal, or equivalent
 
-Master gain/dB: 0
+Master gain/dB: -7
 
 --------------------------------------Slot 1------------------------------------
 

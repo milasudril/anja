@@ -21,6 +21,7 @@ AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
 	,m_fader_filter_factor(0)
 	,m_buffer_temp(1),m_buffers_out(16)
+	,m_master_gain_out(1.0),m_master_gain_in(1.0)
 	{
 	reset();
 	}
@@ -36,6 +37,7 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_now=0;
+	m_master_gain_out=m_master_gain_in;
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
