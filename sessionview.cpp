@@ -20,14 +20,15 @@ target[name[sessionview.o] type[object]]
 #include "framework/delimiter.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
-	,TitleView& title_view
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
-	,ChannelStripHandler::EventHandler& channelstrip_handler)
+	,ChannelStripHandler::EventHandler& channelstrip_handler
+	,SessionDataView::EventHandler& sessiondata_handler)
 	{
-	return new SessionView(parent,session,title_view,keyboard_input
-		,data_eventhandler,rangeview_handler,channelstrip_handler);
+	return new SessionView(parent,session,keyboard_input
+		,data_eventhandler,rangeview_handler,channelstrip_handler
+		,sessiondata_handler);
 	}
 
 void SessionView::destroy()
@@ -39,11 +40,11 @@ const GuiHandle& SessionView::handleNativeGet() const
 	}
 
 SessionView::SessionView(GuiContainer& parent,Session& session
-	,TitleView& title_view
 	,KeyboardView::EventHandler& keyboard_input
-	,WaveformDataView::EventHandler& data_eventhandler
+	,WaveformDataView::EventHandler& waveformdata_handler
 	,WaveformRangeView::EventHandler& rangeview_handler
-	,ChannelStripHandler::EventHandler& channelstrip_handler):r_tw(title_view)
+	,ChannelStripHandler::EventHandler& channelstrip_handler
+	,SessionDataView::EventHandler& sessiondata_handler):r_parent(parent)
 	,m_fullscreen_state(0)
 	{
 	m_box=BoxHorizontal::create(parent);
@@ -65,7 +66,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_vbox->insertModeSet(BoxVertical::INSERTMODE_FILL|BoxVertical::INSERTMODE_EXPAND);
 	m_tabs=TabView::create(*m_vbox);
 
-	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler
+	m_dataview=WaveformDataView::create(*m_tabs,waveformdata_handler,rangeview_handler
 		,session.colorPresetsBegin(),session.colorPresetsCountGet());
 	m_tabs->tabTitleSet(0,"Waveform data");
 
@@ -74,7 +75,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 		,session.colorPresetsBegin(),session.colorPresetsCountGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
-	m_sessiondata=SessionDataView::create(*m_tabs,session);
+	m_sessiondata=SessionDataView::create(*m_tabs,session,sessiondata_handler);
 	m_tabs->tabTitleSet(2,"Session properties");
 
 	sessionSet(session);
@@ -107,7 +108,7 @@ void SessionView::sessionSet(Session& session)
 
 	ArrayDynamicShort<char> title("Anja - ");
 	title.truncate().append(session.titleGet());
-	r_tw.titleSet( title.begin() );
+	r_parent.titleSet( title.begin() );
 
 	slotDisplay(session.slotActiveGet());
 	}
@@ -142,4 +143,9 @@ void SessionView::fullscreenToggle()
 	{
 	m_fullscreen_state=!m_fullscreen_state;
 	m_box->fullscreenSet(m_fullscreen_state);
+	}
+
+void SessionView::sessionTitleUpdate()
+	{
+	r_parent.titleSet(r_session->titleGet().begin());
 	}

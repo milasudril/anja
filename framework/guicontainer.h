@@ -44,6 +44,8 @@ class GuiContainer:public Widget
 		virtual void slaveAssign(Widget& component)=0;
 		virtual void slaveRelease()=0;
 		virtual void fullscreenSet(bool state)=0;
+
+		virtual void titleSet(const char* title){}
 	};
 
 #endif

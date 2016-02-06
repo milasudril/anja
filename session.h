@@ -24,7 +24,7 @@ class Session
 		Session(const Session&)=delete;
 
 		Session():m_engine(m_waveforms),m_connection(nullptr)
-			,r_key_active(nullptr),m_slot_active(0)
+			,r_key_active(nullptr),m_slot_active(0),m_state_flags(0)
 			{clear();}
 
 		Session(const char* filename):m_engine(m_waveforms)
@@ -66,13 +66,19 @@ class Session
 
 
 		void titleSet(const ArrayDynamicShort<char>& title_new) noexcept
-			{m_title=title_new;}
+			{
+			m_title=title_new;
+			m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
+			}
 
 		const ArrayDynamicShort<char>& titleGet() const noexcept
 			{return m_title;}
 
 		void descriptionSet(const ArrayDynamicShort<char>& description_new) noexcept
-			{m_description=description_new;}
+			{
+			m_description=description_new;
+			m_state_flags|=SESSION_DIRTY;
+			}
 
 		const ArrayDynamicShort<char>& descriptionGet() const noexcept
 			{return m_description;}
@@ -161,9 +167,16 @@ class Session
 		unsigned int flagsGet() const noexcept
 			{return m_flags;}
 
+		unsigned int flagGet(unsigned int index) noexcept
+			{return m_flags&index;}
+
+
 		Session& flagsSet(unsigned int flags) noexcept
 			{
+			if( (m_flags&MULTIOUTPUT) != (flags&MULTIOUTPUT) )
+				{m_state_flags|=RESTART_NEEDED;}
 			m_flags|=flags;
+			m_state_flags|=SESSION_DIRTY;
 			return *this;
 			}
 
@@ -191,6 +204,16 @@ class Session
 		float masterGainGet() const noexcept;
 
 		Session& masterGainSet(float value) noexcept;
+
+		bool restartNeeded() const noexcept
+			{return m_state_flags&RESTART_NEEDED;}
+
+		bool dirtyIs() const noexcept
+			{return m_state_flags&SESSION_DIRTY;}
+
+		void dirtySet() noexcept
+			{m_state_flags|=SESSION_DIRTY;}
+
 
 	private:
 		AudioEngineAnja m_engine;
@@ -220,6 +243,12 @@ class Session
 		uint8_t m_slot_active;
 		static constexpr unsigned int MULTIOUTPUT=1;
 		unsigned int m_flags;
+
+
+		static constexpr unsigned int RESTART_NEEDED=1;
+		static constexpr unsigned int SESSION_DIRTY=2;
+
+		unsigned int m_state_flags;
 	};
 
 #endif

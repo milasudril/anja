@@ -8,6 +8,7 @@ target[name[session.o] type[object]]
 #include "sessionfilerecordimpl.h"
 #include "audioconnection.h"
 #include "units.h"
+#include "optionstring.h"
 #include "framework/localeguard.h"
 #include "framework/pathutils.h"
 #include "framework/floatconv.h"
@@ -147,6 +148,7 @@ void Session::clear()
 	masterGainSet(-6);
 	memcpy(m_color_presets.begin(),COLORS
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
+	m_state_flags=0;
 	}
 
 void Session::load(const char* filename)
@@ -184,6 +186,12 @@ void Session::load(const char* filename)
 		value=record.propertyGet("Master gain/dB");
 		if(value!=nullptr)
 			{masterGainSet(convert(value->begin()));}
+
+		value=record.propertyGet("Options");
+		if(value!=nullptr)
+			{
+			flagsSet(optionsFromString(value->begin(),FLAG_NAMES));
+			}
 	//	TODO Store other data not interpreted by Anja
 		}
 
@@ -230,6 +238,7 @@ void Session::load(const char* filename)
 			m_channel_data[ch]={record,m_channels[ch],key};
 			}
 		}
+	m_state_flags=0;
 	}
 
 void Session::keyHighlight(uint8_t scancode)
@@ -267,6 +276,8 @@ void Session::audioServerConnect()
 		++channel;
 		++k;
 		}
+
+	m_state_flags&=~RESTART_NEEDED;
 	}
 
 void Session::audioServerDisconnect()
@@ -274,6 +285,7 @@ void Session::audioServerDisconnect()
 	if(m_connection!=nullptr)
 		{m_connection->destroy();}
 	m_connection=nullptr;
+	m_state_flags&=~RESTART_NEEDED;
 	}
 
 void Session::save()
@@ -295,6 +307,7 @@ void Session::save(const char* filename)
 
 	sprintf(buffer,"%.7g",masterGainGet());
 	record_out.propertySet("Master gain/dB",buffer);
+	record_out.propertySet("Options",stringFromOptions(flagsGet(),FLAG_NAMES));
 
 //	TODO Save other data not interpreted by Anja
 	writer->recordWrite(record_out);
@@ -333,6 +346,7 @@ void Session::save(const char* filename)
 			++channel;
 			}
 		}
+	m_state_flags&=~SESSION_DIRTY;
 	}
 
 float Session::masterGainGet() const noexcept
@@ -343,5 +357,6 @@ float Session::masterGainGet() const noexcept
 Session& Session::masterGainSet(float value) noexcept
 	{
 	m_engine.masterGainSet(dBToAmplitude(value));
+	m_state_flags|=SESSION_DIRTY;
 	return *this;
 	}

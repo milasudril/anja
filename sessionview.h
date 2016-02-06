@@ -9,6 +9,7 @@ dependency[sessionview.o]
 #include "framework/widget.h"
 #include "waveformrangeview.h"
 #include "waveformdataview.h"
+#include "sessiondataview.h"
 #include "channelstriphandler.h"
 #include "framework/keyboardview.h"
 
@@ -19,19 +20,17 @@ class BoxHorizontal;
 class TabView;
 class ChannelView;
 class SessionControl;
-class TitleView;
-class SessionDataView;
 class Delimiter;
 
 class SessionView:public Widget
 	{
 	public:
 		static SessionView* create(GuiContainer& parent,Session& session
-			,TitleView& title_view
 			,KeyboardView::EventHandler& keyboard_input
  			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
-			,ChannelStripHandler::EventHandler& channelstrip);
+			,ChannelStripHandler::EventHandler& channelstrip
+			,SessionDataView::EventHandler& sessiondata_handler);
 
 		void destroy();
 
@@ -47,6 +46,8 @@ class SessionView:public Widget
 
 		void channelColorUpdate(unsigned int channel);
 
+		void sessionTitleUpdate();
+
 		void keyboardViewUpdate();
 
 		void fullscreenToggle();
@@ -56,13 +57,13 @@ class SessionView:public Widget
 
 	private:
 		SessionView(GuiContainer& parent,Session& session
-			,TitleView& title_view
 			,KeyboardView::EventHandler& keyboard_input
 			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
-			,ChannelStripHandler::EventHandler& channelstri);
+			,ChannelStripHandler::EventHandler& channelstrip
+			,SessionDataView::EventHandler& sessiondata_handler);
 		~SessionView();
-		TitleView& r_tw;
+		GuiContainer& r_parent;
 		Session* r_session;
 		bool m_fullscreen_state;
 
