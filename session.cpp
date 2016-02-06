@@ -19,7 +19,7 @@ target[name[session.o] type[object]]
 
 #include <unistd.h>
 
-const char* Session::FLAG_NAMES[]={"Use one port per channel",nullptr};
+const char* Session::FLAG_NAMES[]={"Use individual ports for each channel",nullptr};
 
 void Session::waveformsClear()
 	{
@@ -256,6 +256,7 @@ void Session::keyHighlight(uint8_t scancode)
 void Session::audioServerConnect()
 	{
 	audioServerDisconnect();
+	m_engine.multioutputSet(flagGet(MULTIOUTPUT));
 	m_connection=AudioConnection::create(m_title.begin(),m_engine);
 
 //	FIXME Instead of relying on a delay, use a callback. This event must be

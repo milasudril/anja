@@ -37,6 +37,9 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		float masterGainGet() const noexcept
 			{return m_master_gain_in;}
 
+		void multioutputSet(bool state) noexcept
+			{m_multioutput=state;}
+
 	private:
 		struct alignas(16) Event
 			{
@@ -84,6 +87,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		ArraySimple<float> m_buffers_out;
 		double m_master_gain_out;
 		double m_master_gain_in;
+		bool m_multioutput;
 
 		void eventProcess(const Event& event,unsigned int time_offset);
 		void eventControlProcess(const Event& event);

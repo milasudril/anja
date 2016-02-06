@@ -21,7 +21,7 @@ AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	,m_source_buffers(32),r_source_buffers(waveforms.length())
 	,m_fader_filter_factor(0)
 	,m_buffer_temp(1),m_buffers_out(16)
-	,m_master_gain_out(1.0),m_master_gain_in(1.0)
+	,m_master_gain_out(1.0),m_master_gain_in(1.0),m_multioutput(0)
 	{
 	reset();
 	}
@@ -31,9 +31,22 @@ AudioEngineAnja::~AudioEngineAnja()
 
 void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
-	source.audioPortOutputAdd("Audio out")
+	if(m_multioutput)
+		{
+		char port_name_buffer[8];
+		for(int k=0;k<16;++k)
+			{
+			sprintf(port_name_buffer,"Ch %u",k);
+			source.audioPortOutputAdd(port_name_buffer);
+			}
+		}
+
+	source.audioPortOutputAdd("Master out")
 		.midiPortInputAdd("MIDI in")
 		.midiPortOutputAdd("MIDI out");
+
+
+
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_now=0;

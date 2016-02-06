@@ -13,7 +13,7 @@ void SessionDataUpdater::onTitleChange(SessionDataView& source,const char* title
 
 	if(session.restartNeeded())
 		{
-	//	Notify user that engine needs to be restarted;
+	//	TODO: Notify user that engine needs to be restarted;
 		}
 
 	}
@@ -25,7 +25,7 @@ void SessionDataUpdater::onDescriptionChange(SessionDataView& source
 	session.descriptionSet(description);
 	if(session.restartNeeded())
 		{
-	//	Notify user that engine needs to be restarted;
+	//	TODO: Notify user that engine needs to be restarted;
 		}
 	}
 
@@ -33,10 +33,10 @@ void SessionDataUpdater::onDescriptionChange(SessionDataView& source
 void SessionDataUpdater::onOptionSet(SessionDataView& source,unsigned int options)
 	{
 	auto& session=source.sessionGet();
-	session.flagsSet(options);
+	session.flagSet(options);
 	if(session.restartNeeded())
 		{
-	//	Notify user that engine needs to be restarted;
+	//	TODO: Notify user that engine needs to be restarted;
 		}
 	}
 
@@ -44,9 +44,9 @@ void SessionDataUpdater::onOptionSet(SessionDataView& source,unsigned int option
 void SessionDataUpdater::onOptionUnset(SessionDataView& source,unsigned int options)
 	{
 	auto& session=source.sessionGet();
-	session.flagsUnset(options);
+	session.flagUnset(options);
 	if(session.restartNeeded())
 		{
-	//	Notify user that engine needs to be restarted;
+	//	TODO: Notify user that engine needs to be restarted;
 		}
 	}

@@ -190,7 +190,7 @@ class Session
 			{return flagsSet(1<<index);}
 
 		Session& flagUnset(unsigned int index) noexcept
-			{return flagsSet(1<<index);}
+			{return flagsUnset(1<<index);}
 
 
 
