@@ -310,6 +310,23 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 			}
 		}
 
+	//	Adjust master gain
+		{
+		auto filterfactor=m_fader_filter_factor;
+		auto buffer_out=source.audioBufferOutputGet(0,n_frames_in);
+		auto N=n_frames_in;
+		auto gain_in=m_master_gain_in;
+		auto gain_out=m_master_gain_out;
+		while(N!=0)
+			{
+			*buffer_out *= gain_out;
+			gain_out=filterstep(gain_in,gain_out,filterfactor);
+			++buffer_out;
+			--N;
+			}
+		m_master_gain_out=gain_out;
+		}
+
 	//	Stop muted voices
 		{
 		auto src_begin=m_source_buffers.begin();
