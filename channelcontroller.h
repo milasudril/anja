@@ -3,23 +3,23 @@ target[name[channelcontroller.h] type[include]]
 dependency[channelcontroller.o]
 #endif
 
-#include "channelstrip.h"
 #ifndef CHANNELCONTROLLER_H
 #define CHANNELCONTROLLER_H
 
-class ChannelData;
+#include "channelstriphandler.h"
+
 class Session;
 class SessionView;
 
-class ChannelController:public ChannelStrip::EventHandler
+class ChannelController:public ChannelStripHandler::EventHandler
 	{
 	public:
 		ChannelController(Session& session):r_session(&session){}
 
-		void onLabelChange(ChannelStrip& source,const char* label);
-		void onFadeTimeChange(ChannelStrip& source,float time);
-		void onGainChange(ChannelStrip& source,float value);
-		void onColorChange(ChannelStrip& source,const ColorRGBA& color);
+		void onLabelChange(unsigned int channel,const char* label);
+		void onFadeTimeChange(unsigned int channel,float time);
+		void onGainChange(unsigned int channel,float value);
+		void onColorChange(unsigned int channel,const ColorRGBA& color);
 
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}

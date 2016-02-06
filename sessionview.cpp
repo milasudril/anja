@@ -24,7 +24,7 @@ SessionView* SessionView::create(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
-	,ChannelStrip::EventHandler& channelstrip_handler)
+	,ChannelStripHandler::EventHandler& channelstrip_handler)
 	{
 	return new SessionView(parent,session,title_view,keyboard_input
 		,data_eventhandler,rangeview_handler,channelstrip_handler);
@@ -43,7 +43,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
-	,ChannelStrip::EventHandler& channelstrip_handler):r_tw(title_view)
+	,ChannelStripHandler::EventHandler& channelstrip_handler):r_tw(title_view)
 	,m_fullscreen_state(0)
 	{
 	m_box=BoxHorizontal::create(parent);

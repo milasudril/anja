@@ -10,7 +10,7 @@ target[name[channelview.o] type[object]]
 #include "framework/slider.h"
 
 ChannelView* ChannelView::create(GuiContainer& parent
-	,ChannelStrip::EventHandler& handler,const ChannelData* channels
+	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
 	,unsigned int n_channels)
 	{return new ChannelView(parent,handler,channels,n_channels);}
 
@@ -23,9 +23,9 @@ const GuiHandle& ChannelView::handleNativeGet() const
 	{return m_scroll->handleNativeGet();}
 
 ChannelView::ChannelView(GuiContainer& parent
-	,ChannelStrip::EventHandler& handler,const ChannelData* channels
+	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
 	,unsigned int n_channels):
-	m_strips(n_channels)
+	m_strips(n_channels),m_handler(handler)
 	{
 	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
@@ -40,7 +40,7 @@ ChannelView::ChannelView(GuiContainer& parent
 
 	for(unsigned int k=0;k<n_channels;++k)
 		{
-		m_strips[k]=ChannelStrip::create(*m_box_channels,handler,k);
+		m_strips[k]=ChannelStrip::create(*m_box_channels,m_handler,k);
 		m_strips[k]->channelDataSet(channels[k]);
 		}
 

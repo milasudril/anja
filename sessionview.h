@@ -9,7 +9,7 @@ dependency[sessionview.o]
 #include "framework/widget.h"
 #include "waveformrangeview.h"
 #include "waveformdataview.h"
-#include "channelstrip.h"
+#include "channelstriphandler.h"
 #include "framework/keyboardview.h"
 
 class GuiContainer;
@@ -31,7 +31,7 @@ class SessionView:public Widget
 			,KeyboardView::EventHandler& keyboard_input
  			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
-			,ChannelStrip::EventHandler& channelstrip);
+			,ChannelStripHandler::EventHandler& channelstrip);
 
 		void destroy();
 
@@ -60,7 +60,7 @@ class SessionView:public Widget
 			,KeyboardView::EventHandler& keyboard_input
 			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
-			,ChannelStrip::EventHandler& channelstri);
+			,ChannelStripHandler::EventHandler& channelstri);
 		~SessionView();
 		TitleView& r_tw;
 		Session* r_session;

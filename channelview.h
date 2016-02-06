@@ -8,6 +8,7 @@ dependency[channelview.o]
 
 #include "framework/widget.h"
 #include "channelstrip.h"
+#include "channelstriphandler.h"
 #include "framework/array_simple.h"
 
 class GuiContainer;
@@ -20,7 +21,7 @@ class ChannelView:public Widget
 	{
 	public:
 		static ChannelView* create(GuiContainer& parent
-			,ChannelStrip::EventHandler& handler,const ChannelData* channels
+			,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
 			,unsigned int n_channels);
 
 		void destroy();
@@ -32,7 +33,7 @@ class ChannelView:public Widget
 		const GuiHandle& handleNativeGet() const;
 
 	private:
-		ChannelView(GuiContainer& parent,ChannelStrip::EventHandler& handler
+		ChannelView(GuiContainer& parent,ChannelStripHandler::EventHandler& handler
 			,const ChannelData* channels,unsigned int n_channels);
 		~ChannelView();
 		BoxHorizontal* m_box;
@@ -40,6 +41,7 @@ class ChannelView:public Widget
 		BoxHorizontal* m_box_channels;
 		ArraySimple<ChannelStrip*> m_strips;
 		Slider* m_master_gain;
+		ChannelStripHandler m_handler;
 	};
 
 #endif

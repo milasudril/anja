@@ -9,33 +9,29 @@ target[name[channelcontroller.o] type[object]]
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
 
-void ChannelController::onLabelChange(ChannelStrip& source,const char* label)
+void ChannelController::onLabelChange(unsigned int channel,const char* label)
 	{
-	auto ch=source.idGet();
-	r_session->channelDataGet(ch).labelSet(label);
-	r_view->channelNameUpdate(ch);
+	r_session->channelDataGet(channel).labelSet(label);
+	r_view->channelNameUpdate(channel);
 	r_view->keyboardViewUpdate();
 	}
 
-void ChannelController::onFadeTimeChange(ChannelStrip& source,float time)
+void ChannelController::onFadeTimeChange(unsigned int channel,float time)
 	{
-	auto ch=source.idGet();
-	r_session->channelGet(ch).fadeTimeSet(time);
+	r_session->channelGet(channel).fadeTimeSet(time);
 	}
 
-void ChannelController::onGainChange(ChannelStrip& source,float value)
+void ChannelController::onGainChange(unsigned int channel,float value)
 	{
-	auto ch=source.idGet();
-	r_session->channelGet(ch).gainSet(value);
-	r_session->audioEngineGet().eventPost(ch|MIDIConstants::StatusCodes::CONTROLLER
+	r_session->channelGet(channel).gainSet(value);
+	r_session->audioEngineGet().eventPost(channel|MIDIConstants::StatusCodes::CONTROLLER
 		,MIDIConstants::ControlCodes::CHANNEL_VOLUME
 		,dBToAmplitude(value));
 	}
 
-void ChannelController::onColorChange(ChannelStrip& source,const ColorRGBA& color)
+void ChannelController::onColorChange(unsigned int channel,const ColorRGBA& color)
 	{
-	auto ch=source.idGet();
-	r_session->channelDataGet(ch).colorSet(color);
-	r_view->channelColorUpdate(ch);
+	r_session->channelDataGet(channel).colorSet(color);
+	r_view->channelColorUpdate(channel);
 	r_view->keyboardViewUpdate();
 	}
