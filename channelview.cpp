@@ -11,8 +11,12 @@ target[name[channelview.o] type[object]]
 
 ChannelView* ChannelView::create(GuiContainer& parent
 	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
-	,unsigned int n_channels)
-	{return new ChannelView(parent,handler,channels,n_channels);}
+	,unsigned int n_channels
+	,ColorRGBA* color_presets,size_t n_presets)
+	{
+	return new ChannelView(parent,handler,channels,n_channels
+		,color_presets,n_presets);
+	}
 
 void ChannelView::destroy()
 	{
@@ -24,8 +28,9 @@ const GuiHandle& ChannelView::handleNativeGet() const
 
 ChannelView::ChannelView(GuiContainer& parent
 	,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
-	,unsigned int n_channels):
-	m_strips(n_channels),m_handler(handler)
+	,unsigned int n_channels
+	,ColorRGBA* color_presets,size_t n_presets):
+	m_strips(n_channels),m_handler(handler,color_presets,n_presets)
 	{
 	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);

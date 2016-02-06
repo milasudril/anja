@@ -65,11 +65,13 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_vbox->insertModeSet(BoxVertical::INSERTMODE_FILL|BoxVertical::INSERTMODE_EXPAND);
 	m_tabs=TabView::create(*m_vbox);
 
-	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler);
+	m_dataview=WaveformDataView::create(*m_tabs,data_eventhandler,rangeview_handler
+		,session.colorPresetsBegin(),session.colorPresetsCountGet());
 	m_tabs->tabTitleSet(0,"Waveform data");
 
 	m_mixer=ChannelView::create(*m_tabs,channelstrip_handler
-		,session.channelDataBegin(),session.channelsCountGet());
+		,session.channelDataBegin(),session.channelsCountGet()
+		,session.colorPresetsBegin(),session.colorPresetsCountGet());
 	m_tabs->tabTitleSet(1,"Channel mixer");
 
 	m_sessiondata=SessionDataView::create(*m_tabs,session);

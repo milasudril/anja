@@ -8,11 +8,11 @@ target[name[channelstriphandler.o] type[object]]
 
 #include <cstring>
 
-ChannelStripHandler::ChannelStripHandler(EventHandler& handler):
-	r_handler(&handler),m_colordlg(nullptr),m_color_presets(64)
+ChannelStripHandler::ChannelStripHandler(EventHandler& handler
+	,ColorRGBA* color_presets,size_t n_colors):
+	r_handler(&handler),m_colordlg(nullptr),r_color_presets(color_presets)
+	,m_n_colors(n_colors)
 	{
-	memcpy(m_color_presets.begin(),COLORS
-		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	}
 
 ChannelStripHandler::~ChannelStripHandler()
@@ -94,7 +94,7 @@ void ChannelStripHandler::onActionPerform(ColorView& source)
 		m_color=source.colorGet();
 		m_picker=ColorPicker::create(*m_colordlg
 			,m_color
-			,m_color_presets.begin(),m_color_presets.length(),*this);
+			,r_color_presets,m_n_colors,*this);
 		m_id_active=source.idGet()&0xf;
 		}
 	}
@@ -103,5 +103,6 @@ void ChannelStripHandler::onConfirmed(ColorPicker::Tag tag)
 	{
 	r_handler->onColorChange(m_id_active,m_color);
 	}
+
 
 

@@ -29,7 +29,8 @@ class ChannelStripHandler:public Textbox::EventHandler
 				virtual void onColorChange(unsigned int channel,const ColorRGBA& value)=0;
 			};
 
-		ChannelStripHandler(EventHandler& handler);
+		ChannelStripHandler(EventHandler& handler,ColorRGBA* color_presets
+			,size_t n_colors);
 		~ChannelStripHandler();
 
 		void textGet(ValueInput& source,double value,TextBuffer& buffer);
@@ -49,7 +50,8 @@ class ChannelStripHandler:public Textbox::EventHandler
 		Window* m_colordlg;
 		ColorPicker* m_picker;
 		ColorRGBA m_color;
-		ArraySimple<ColorRGBA> m_color_presets;
+		ColorRGBA* r_color_presets;
+		size_t m_n_colors;
 		unsigned int m_id_active;
 	};
 

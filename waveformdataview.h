@@ -81,7 +81,8 @@ class WaveformDataView:public Widget
 
 		static WaveformDataView* create(GuiContainer& parent
 			,EventHandler& handler
-			,WaveformRangeView::EventHandler& handler_range);
+			,WaveformRangeView::EventHandler& handler_range
+			,ColorRGBA* color_presets,size_t n_colors);
 
 		void destroy();
 		const GuiHandle& handleNativeGet() const;
@@ -103,7 +104,8 @@ class WaveformDataView:public Widget
 	private:
 		WaveformDataView(GuiContainer& parent
 			,EventHandler& handler
-			,WaveformRangeView::EventHandler& handler_range);
+			,WaveformRangeView::EventHandler& handler_range
+			,ColorRGBA* color_presets,size_t n_colors);
 		~WaveformDataView();
 
 		GuiContainer& r_parent;
@@ -142,8 +144,10 @@ class WaveformDataView:public Widget
 			,public ColorPicker::EventHandler
 			{
 			public:
-				ColorEventHandler(WaveformDataView& view);
+				ColorEventHandler(WaveformDataView& view
+					,ColorRGBA* color_presets,size_t n_colors);
 				~ColorEventHandler();
+				
 				void onButtonClick(InputEntry& source);
 				void onTextChanged(InputEntry& source);
 				void onConfirmed(ColorPicker::Tag x);
@@ -153,7 +157,8 @@ class WaveformDataView:public Widget
 				Window* m_colordlg;
 				ColorPicker* m_picker;
 				ColorRGBA m_color;
-				ArraySimple<ColorRGBA> m_color_presets;
+				ColorRGBA* r_color_presets;
+				size_t m_n_colors;
 			} m_color_events;
 
 		BoxVertical* m_box_main;

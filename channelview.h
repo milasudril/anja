@@ -22,7 +22,8 @@ class ChannelView:public Widget
 	public:
 		static ChannelView* create(GuiContainer& parent
 			,ChannelStripHandler::EventHandler& handler,const ChannelData* channels
-			,unsigned int n_channels);
+			,unsigned int n_channels
+			,ColorRGBA* color_presets,size_t n_presets);
 
 		void destroy();
 
@@ -34,7 +35,8 @@ class ChannelView:public Widget
 
 	private:
 		ChannelView(GuiContainer& parent,ChannelStripHandler::EventHandler& handler
-			,const ChannelData* channels,unsigned int n_channels);
+			,const ChannelData* channels,unsigned int n_channels
+			,ColorRGBA* color_presets,size_t n_presets);
 		~ChannelView();
 		BoxHorizontal* m_box;
 		ScrollWindow* m_scroll;

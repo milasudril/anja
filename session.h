@@ -180,6 +180,15 @@ class Session
 			{return flagsSet(1<<index);}
 
 
+
+		ColorRGBA* colorPresetsBegin() noexcept
+			{return m_color_presets.begin();}
+
+		size_t colorPresetsCountGet() const noexcept
+			{return m_color_presets.length();}
+
+
+
 	private:
 		AudioEngineAnja m_engine;
 		AudioConnection* m_connection;
@@ -201,7 +210,7 @@ class Session
 		ArrayDynamicShort<char> m_directory;
 		ArrayDynamicShort<char> m_title;
 		ArrayDynamicShort<char> m_description;
-		ArrayDynamicShort<ColorRGBA> m_color_presets;
+		ArrayFixed<ColorRGBA,64> m_color_presets;
 
 		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;

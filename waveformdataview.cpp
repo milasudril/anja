@@ -115,11 +115,10 @@ void WaveformDataView::EventHandlerInternal::onOptionSelect(Listbox& source)
 
 
 
-WaveformDataView::ColorEventHandler::ColorEventHandler(WaveformDataView& view):
-	r_view(&view),m_colordlg(nullptr),m_color_presets(64)
+WaveformDataView::ColorEventHandler::ColorEventHandler(WaveformDataView& view
+	,ColorRGBA* color_presets,size_t n_colors):
+	r_view(&view),m_colordlg(nullptr),r_color_presets(color_presets),m_n_colors(n_colors)
 	{
-	memcpy(m_color_presets.begin(),COLORS
-		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	}
 
 WaveformDataView::ColorEventHandler::~ColorEventHandler()
@@ -140,7 +139,7 @@ void WaveformDataView::ColorEventHandler::onButtonClick(InputEntry& source)
 		m_color=r_view->waveformDataGet().keyColorGet();
 		m_picker=ColorPicker::create(*m_colordlg
 			,m_color
-			,m_color_presets.begin(),m_color_presets.length(),*this);
+			,r_color_presets,m_n_colors,*this);
 		}
 	}
 
@@ -158,13 +157,15 @@ void WaveformDataView::ColorEventHandler::onConfirmed(ColorPicker::Tag x)
 
 WaveformDataView* WaveformDataView::create(GuiContainer& parent
 	,EventHandler& handler
-	,WaveformRangeView::EventHandler& handler_range)
-	{return new WaveformDataView(parent,handler,handler_range);}
+	,WaveformRangeView::EventHandler& handler_range
+	,ColorRGBA* color_presets,size_t n_colors)
+	{return new WaveformDataView(parent,handler,handler_range,color_presets,n_colors);}
 
 WaveformDataView::WaveformDataView(GuiContainer& parent
 	,EventHandler& handler
-	,WaveformRangeView::EventHandler& handler_range):r_parent(parent)
-	,r_handler(&handler),m_handler(*this),m_color_events(*this)
+	,WaveformRangeView::EventHandler& handler_range
+	,ColorRGBA* color_presets,size_t n_colors):r_parent(parent)
+	,r_handler(&handler),m_handler(*this),m_color_events(*this,color_presets,n_colors)
 	{
 	m_box_main=BoxVertical::create(parent);
 	m_box_main->slaveAssign(*this);

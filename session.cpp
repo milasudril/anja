@@ -143,6 +143,9 @@ void Session::clear()
 	m_title="New session";
 	m_description.clear();
 	m_description.append('\0');
+
+	memcpy(m_color_presets.begin(),COLORS
+		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	}
 
 void Session::load(const char* filename)
