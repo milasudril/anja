@@ -18,6 +18,7 @@ target[name[sessionview.o] type[object]]
 #include "framework/tabview.h"
 #include "framework/titleview.h"
 #include "framework/delimiter.h"
+#include "framework/label.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
 	,KeyboardView::EventHandler& keyboard_input
@@ -58,6 +59,9 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 
 	m_vbox=BoxVertical::create(*m_box);
 
+	m_vbox->insertModeSet(BoxVertical::INSERTMODE_LEFT);
+	m_status=Label::create(*m_vbox,"Anja is offline. Click \"Start engine\" to activate audio output.");
+
 	m_vbox->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
 
@@ -78,6 +82,8 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_sessiondata=SessionDataView::create(*m_tabs,session,sessiondata_handler);
 	m_tabs->tabTitleSet(2,"Session properties");
 
+
+
 	sessionSet(session);
 	}
 
@@ -88,6 +94,7 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
+	m_status->destroy();
 	m_vbox->destroy();
 	m_delimiter->destroy();
 	m_control->destroy();
@@ -111,6 +118,7 @@ void SessionView::sessionSet(Session& session)
 	r_parent.titleSet( title.begin() );
 
 	slotDisplay(session.slotActiveGet());
+	statusUpdate();
 	}
 
 void SessionView::slotDisplay(uint8_t slot)
@@ -149,3 +157,19 @@ void SessionView::sessionTitleUpdate()
 	{
 	r_parent.titleSet(r_session->titleGet().begin());
 	}
+
+void SessionView::statusUpdate()
+	{
+	if(r_session->connectedIs())
+		{
+		if(r_session->restartNeeded())
+			{m_status->titleSet("Changes requires the engine to be restarted.");}
+		else
+			{m_status->titleSet("Anja is online.");}
+		}
+	else
+		{
+		m_status->titleSet("Anja is offline. Click \"Start engine\" to activate audio output.");
+		}
+	}
+

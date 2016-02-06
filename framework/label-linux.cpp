@@ -31,6 +31,12 @@ class LabelGtk:public Label
 		const GuiHandle& handleNativeGet() const
 			{return m_label;}
 
+		void titleSet(const char* title)
+			{
+			GtkWidget* w=m_label;
+			gtk_label_set_text((GtkLabel*)w,title);
+			}
+
 	private:
 		GuiContainer& r_parent;
 		GuiHandle m_label;

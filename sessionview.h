@@ -21,6 +21,7 @@ class TabView;
 class ChannelView;
 class SessionControl;
 class Delimiter;
+class Label;
 
 class SessionView:public Widget
 	{
@@ -55,6 +56,8 @@ class SessionView:public Widget
 		bool fullscreenIs() const
 			{return m_fullscreen_state;}
 
+		void statusUpdate();
+
 	private:
 		SessionView(GuiContainer& parent,Session& session
 			,KeyboardView::EventHandler& keyboard_input
@@ -76,6 +79,7 @@ class SessionView:public Widget
 					WaveformDataView* m_dataview;
 					ChannelView* m_mixer;
 					SessionDataView* m_sessiondata;
+				Label* m_status;
 	};
 
 #endif
