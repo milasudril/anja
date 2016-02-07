@@ -10,6 +10,7 @@ target[name[anja] type[application]]
 #include "waveformrangetrimmer.h"
 #include "waveformdataupdater.h"
 #include "sessiondataupdater.h"
+#include "sessioncontrol.h"
 #include "framework/window.h"
 
 int main()
@@ -22,16 +23,19 @@ int main()
 		WaveformDataUpdater waveform_updater;
 		ChannelController channelctrl(session);
 		SessionDataUpdater session_updater;
+		SessionControl session_control;
 
 		auto event_loop=EventLoop::create(0);
 		auto mainwin=Window::create(*event_loop);
 
-		auto view=SessionView::create(*mainwin,session,keyboardevents
-			,waveform_updater,trimmer,channelctrl,session_updater);
+		auto view=SessionView::create(*mainwin,session,session_control
+			,keyboardevents,waveform_updater,trimmer,channelctrl
+			,session_updater);
 		keyboardevents.sessionViewSet(view);
 		waveform_updater.sessionViewSet(view);
 		channelctrl.sessionViewSet(view);
 		session_updater.sessionViewSet(view);
+		session_control.sessionViewSet(view);
 		}
 	catch(const char* msg)
 		{printf("Error: %s\n",msg);}

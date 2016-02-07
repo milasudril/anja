@@ -4,13 +4,8 @@ target[name[sessionview.o] type[object]]
 
 #include "sessionview.h"
 #include "session.h"
-#include "waveformdataview.h"
 #include "audioconnection.h"
-#include "keyboardcontroller.h"
-#include "waveformdataupdater.h"
 #include "channelview.h"
-#include "sessioncontrol.h"
-#include "sessiondataview.h"
 
 #include "framework/boxvertical.h"
 #include "framework/boxhorizontal.h"
@@ -21,13 +16,14 @@ target[name[sessionview.o] type[object]]
 #include "framework/label.h"
 
 SessionView* SessionView::create(GuiContainer& parent,Session& session
+	,SessionActions::EventHandler& session_actions
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& data_eventhandler
 	,WaveformRangeView::EventHandler& rangeview_handler
 	,ChannelStripHandler::EventHandler& channelstrip_handler
 	,SessionDataView::EventHandler& sessiondata_handler)
 	{
-	return new SessionView(parent,session,keyboard_input
+	return new SessionView(parent,session,session_actions,keyboard_input
 		,data_eventhandler,rangeview_handler,channelstrip_handler
 		,sessiondata_handler);
 	}
@@ -41,6 +37,7 @@ const GuiHandle& SessionView::handleNativeGet() const
 	}
 
 SessionView::SessionView(GuiContainer& parent,Session& session
+	,SessionActions::EventHandler& session_actions
 	,KeyboardView::EventHandler& keyboard_input
 	,WaveformDataView::EventHandler& waveformdata_handler
 	,WaveformRangeView::EventHandler& rangeview_handler
@@ -50,7 +47,7 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	{
 	m_box=BoxHorizontal::create(parent);
 	m_box->slaveAssign(*this);
-	m_control=SessionControl::create(*m_box,session,*this);
+	m_actions=SessionActions::create(*m_box,session_actions,session);
 
 	m_delimiter=Delimiter::create(*m_box);
 
@@ -97,7 +94,7 @@ SessionView::~SessionView()
 	m_status->destroy();
 	m_vbox->destroy();
 	m_delimiter->destroy();
-	m_control->destroy();
+	m_actions->destroy();
 	m_box->slaveRelease();
 	m_box->destroy();
 	}

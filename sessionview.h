@@ -11,6 +11,7 @@ dependency[sessionview.o]
 #include "waveformdataview.h"
 #include "sessiondataview.h"
 #include "channelstriphandler.h"
+#include "sessionactions.h"
 #include "framework/keyboardview.h"
 
 class GuiContainer;
@@ -19,7 +20,6 @@ class BoxVertical;
 class BoxHorizontal;
 class TabView;
 class ChannelView;
-class SessionControl;
 class Delimiter;
 class Label;
 
@@ -27,6 +27,7 @@ class SessionView:public Widget
 	{
 	public:
 		static SessionView* create(GuiContainer& parent,Session& session
+			,SessionActions::EventHandler& session_actions
 			,KeyboardView::EventHandler& keyboard_input
  			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
@@ -60,6 +61,7 @@ class SessionView:public Widget
 
 	private:
 		SessionView(GuiContainer& parent,Session& session
+			,SessionActions::EventHandler& session_actions
 			,KeyboardView::EventHandler& keyboard_input
 			,WaveformDataView::EventHandler& data_eventhandler
 			,WaveformRangeView::EventHandler& rangeview_handler
@@ -71,7 +73,7 @@ class SessionView:public Widget
 		bool m_fullscreen_state;
 
 		BoxHorizontal* m_box;
-			SessionControl* m_control;
+			SessionActions* m_actions;
 			Delimiter* m_delimiter;
 			BoxVertical* m_vbox;
 				KeyboardView* m_keyboard;
