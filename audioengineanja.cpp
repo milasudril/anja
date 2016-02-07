@@ -45,8 +45,6 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 		.midiPortInputAdd("MIDI in")
 		.midiPortOutputAdd("MIDI out");
 
-
-
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_now=0;
@@ -289,31 +287,45 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 
 	//	Mix channels
 		{
-		auto buffer_out=source.audioBufferOutputGet(0,n_frames_in);
-		memset(buffer_out,0,n_frames_in*sizeof(float));
 		auto N_ch=m_channels.length();
+		auto multioutput=m_multioutput;
+		auto buffer_out=source.audioBufferOutputGet(N_ch*multioutput
+			,n_frames_in);
+		memset(buffer_out,0,n_frames_in*sizeof(float));
+		auto N_ch_in=N_ch;
 		auto ptr_in=m_buffers_out.begin();
 		auto channel=m_channels.begin();
 		auto filterfactor=m_fader_filter_factor;
-
+		float dummy;
 		while(N_ch!=0)
 			{
 		//	TODO: This will only capture the most recent channel event within
 		//	the current block. Also the event offset is not considered. It works
 		//	as long as the buffer is small, but fails for larger buffers.
-			auto ptr_out=buffer_out;
+
 			auto N=n_frames_in;
+
+			auto ptr_out=buffer_out;
+		//	HACK Use the address of a dummy variable so we can write to
+		//	*ptr_out_raw in any case
+			float* ptr_out_raw=&dummy;
+			if(multioutput)
+				{ptr_out_raw=source.audioBufferOutputGet(N_ch_in-N_ch,N);}
+
 			auto gain_in_current=channel->gain_in_current;
 			auto gain_in_old=channel->gain_in_old;
 			auto gain_out=channel->gain_out;
 			auto fade_factor=channel->fade_factor;
 			while(N!=0)
 				{
-				*ptr_out+= (*ptr_in) * gain_in_old * gain_out;
+				auto x=(*ptr_in) * gain_in_old * gain_out;
+				*ptr_out_raw=x;
+				*ptr_out+=x;
 				++ptr_in;
 				++ptr_out;
+				ptr_out_raw=(ptr_out_raw==&dummy)?ptr_out_raw:ptr_out_raw + 1;
 				--N;
-				gain_out=std::max(1e-5,std::min(1.0,fade_factor*gain_out));
+				gain_out=std::max(1e-4,std::min(1.0,fade_factor*gain_out));
 				gain_in_old=filterstep(gain_in_current,gain_in_old,filterfactor);
 				}
 			channel->gain_out=gain_out;
@@ -326,7 +338,8 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 	//	Adjust master gain
 		{
 		auto filterfactor=m_fader_filter_factor;
-		auto buffer_out=source.audioBufferOutputGet(0,n_frames_in);
+		auto buffer_out=source.audioBufferOutputGet(m_channels.length()*m_multioutput
+			,n_frames_in);
 		auto N=n_frames_in;
 		auto gain_in=m_master_gain_in;
 		auto gain_out=m_master_gain_out;
@@ -350,7 +363,7 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 			if(src_current->valid())
 				{
 				auto ch=src_current->channelGet();
-				if(m_channels[ch].gain_out<1e-4
+				if(m_channels[ch].gain_out<1e-3
 					&& m_channels[ch].fade_factor<1.0)
 					{src_current->stop();}
 				}
