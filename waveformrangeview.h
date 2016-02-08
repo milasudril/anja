@@ -10,7 +10,7 @@ dependency[waveformrangeview.o]
 #include "framework/xyplot.h"
 #include "framework/inputentry.h"
 #include "framework/array_simple.h"
-#include <valarray>
+#include "framework/arraydynamicshort.h"
 
 class BoxVertical;
 class BoxHorizontal;
@@ -75,6 +75,8 @@ class WaveformRangeView:public Widget
 				void cursorsRefSet(const XYPlot::Cursor& begin);
 				void cursorsRefSet(XYPlot::Cursor&&)=delete;
 
+				void onKeyDown(XYPlot& source,uint8_t scancode);
+
 			private:
 				WaveformRangeView& r_view;
 				XYPlot::Cursor* r_cursor_x;
@@ -100,6 +102,9 @@ class WaveformRangeView:public Widget
 		void autotrim(unsigned int index);
 		void rangeUpdate(unsigned int index, double position);
 		void reverse();
+		void waveformRender(double x_min,double x_max);
+		void zoom();
+		void unzoom();
 
 		Waveform* r_range;
 		EventHandler* r_handler;
@@ -114,7 +119,8 @@ class WaveformRangeView:public Widget
 		Button* m_swap;
 
 		ArraySimple<Curve::Point> m_waveform_curve;
-		double m_fs;
+		std::pair<double,double> m_range_current;
+		ArrayDynamicShort< std::pair<double,double> > m_range_history;
 	};
 
 #endif

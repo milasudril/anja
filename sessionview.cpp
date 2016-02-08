@@ -59,6 +59,9 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_vbox->insertModeSet(BoxVertical::INSERTMODE_LEFT);
 	m_status=Label::create(*m_vbox,"Anja is offline. Click \"Start engine\" to activate audio output.");
 
+	m_vbox->insertModeSet(0);
+	m_delimiter_h=Delimiter::create(*m_vbox);
+
 	m_vbox->insertModeSet(BoxVertical::INSERTMODE_EXPAND
 		|BoxVertical::INSERTMODE_FILL);
 
@@ -79,8 +82,6 @@ SessionView::SessionView(GuiContainer& parent,Session& session
 	m_sessiondata=SessionDataView::create(*m_tabs,session,sessiondata_handler);
 	m_tabs->tabTitleSet(2,"Session properties");
 
-
-
 	sessionSet(session);
 	}
 
@@ -91,6 +92,7 @@ SessionView::~SessionView()
 	m_dataview->destroy();
 	m_tabs->destroy();
 	m_keyboard->destroy();
+	m_delimiter_h->destroy();
 	m_status->destroy();
 	m_vbox->destroy();
 	m_delimiter->destroy();
@@ -162,11 +164,14 @@ void SessionView::statusUpdate()
 		if(r_session->restartNeeded())
 			{m_status->titleSet("Changes requires the engine to be restarted.");}
 		else
-			{m_status->titleSet("Anja is online.");}
+			{
+			m_status->titleSet("Anja is now online. Use a JACK patchbay tool "
+				"such as Catia or Carla to connect Anja to other parts of the system.");
+			}
 		}
 	else
 		{
-		m_status->titleSet("Anja is offline. Click \"Start engine\" to activate audio output.");
+		m_status->titleSet("Anja is currently offline. Click \"Start engine\" to activate audio output.");
 		}
 	}
 

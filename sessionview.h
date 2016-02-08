@@ -76,12 +76,13 @@ class SessionView:public Widget
 			SessionActions* m_actions;
 			Delimiter* m_delimiter;
 			BoxVertical* m_vbox;
+				Label* m_status;
+				Delimiter* m_delimiter_h;
 				KeyboardView* m_keyboard;
 				TabView* m_tabs;
 					WaveformDataView* m_dataview;
 					ChannelView* m_mixer;
 					SessionDataView* m_sessiondata;
-				Label* m_status;
 	};
 
 #endif

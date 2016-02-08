@@ -73,6 +73,20 @@ void WaveformRangeView::EventHandlerPlot::onMouseUp(XYPlot& source
 	r_cursor_y=nullptr;
 	}
 
+void WaveformRangeView::EventHandlerPlot::onKeyDown(XYPlot& source,uint8_t scancode)
+	{
+	switch(scancode)
+		{
+		case 44: //z
+			r_view.zoom();
+			break;
+
+		case 45: //x
+			r_view.unzoom();
+			break;
+		}
+	}
+
 
 
 WaveformRangeView::EventHandlerEntry::EventHandlerEntry(WaveformRangeView& view):
@@ -136,7 +150,7 @@ WaveformRangeView* WaveformRangeView::create(GuiContainer& parent
 
 WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler):
 	r_range(nullptr),r_handler(&handler)
-	,m_plot_handler(*this),m_entry_handler(*this),m_waveform_curve(1024),m_fs(48000)
+	,m_plot_handler(*this),m_entry_handler(*this),m_waveform_curve(1024)
 	{
 	m_box_main=BoxVertical::create(parent);
 	m_box_main->slaveAssign(*this);
@@ -230,53 +244,63 @@ void WaveformRangeView::reverse()
 	r_handler->reverse(*this);
 	}
 
-void WaveformRangeView::waveformSet(Waveform& range)
+void WaveformRangeView::waveformRender(double x_min,double x_max)
 	{
-	r_range=&range;
-	double fs=r_range->sampleRateGet();
 	auto length_in=r_range->lengthFull();
 	ArraySimple<float> meansquare_full(length_in);
 	r_handler->waveformRenderPrepare(*this,meansquare_full.begin(),length_in);
 
+	auto ptr_dest_begin=m_waveform_curve.begin();
+	auto length_out=m_waveform_curve.length();
+	uint32_t i=0;
+	auto value=std::max(-145.0f,powerToDb(meansquare_full[0]));
+	auto y_min=value;
+	auto y_max=value;
+	auto fs=r_range->sampleRateGet();
+	auto i_min=secondsToFrames(x_min,fs);
+	auto i_max=secondsToFrames(x_max,fs);
+
+	while(i!=length_out)
 		{
-	//	Collect values to plot
-		auto ptr_dest_begin=m_waveform_curve.begin();
-		auto length_out=m_waveform_curve.length();
-		uint32_t i=0;
-		auto ratio=double(length_in)/length_out;
-		auto value=std::max(-145.0f,powerToDb(meansquare_full[0]));
-		auto y_min=value;
-		auto y_max=value;
+	//	index_mapped(0)=i_min
+	//	index_mapped(length_out))=i_max
+		auto x=i/double(length_out);
+		auto index_mapped=uint32_t( i_min*(1 - x) + i_max*x);
 
-		while(i!=length_out)
+		value=std::max(-145.0f,powerToDb(meansquare_full[index_mapped]));
+
+	//	Compute min and max
+		y_max=std::max(y_max,value);
+		y_min=std::min(y_min,value);
+		Curve::Point p
 			{
-			auto index_mapped=uint32_t(i*ratio);
-
-			value=std::max(-145.0f,powerToDb(meansquare_full[index_mapped]));
-			y_max=std::max(y_max,value);
-			y_min=std::min(y_min,value);
-
-			Curve::Point p
-				{
-				framesToSeconds(index_mapped,fs)
-				,value
-				};
-
-			*ptr_dest_begin=p;
-			++i;
-			++ptr_dest_begin;
-			}
-
-		if(std::abs(y_max-y_min)<1e-7)
-			{
-			y_min=-145;
-			y_max=0;
-			}
-
-		m_plot->cursorYGet(0).position=0.25*y_max+0.75*y_min;
-		m_plot->domainSet({{0,y_min},{framesToSeconds(length_in,fs),y_max}});
+			 framesToSeconds(index_mapped,fs)
+			,value
+			};
+		*ptr_dest_begin=p;
+		++ptr_dest_begin;
+		++i;
 		}
 
+	if(std::abs(y_max-y_min)<1e-7)
+		{
+		y_min=-145;
+		y_max=0;
+		}
+
+	m_plot->domainSet({{x_min,y_min},{x_max,y_max}});
+	}
+
+void WaveformRangeView::waveformSet(Waveform& range)
+	{
+	r_range=&range;
+
+	double fs=r_range->sampleRateGet();
+	auto length_in=r_range->lengthFull();
+	auto x_max=framesToSeconds(length_in,fs);
+	m_range_current={0,x_max};
+	m_range_history.clear();
+	waveformRender(0,x_max);
 	cursorsUpdate();
 	}
 
@@ -287,4 +311,25 @@ void WaveformRangeView::cursorsUpdate()
 	cursorSet(0,framesToSeconds(r_range->offsetBeginGet(),fs));
 	inputSet(1,framesToSeconds(r_range->offsetEndGet(),fs));
 	cursorSet(1,framesToSeconds(r_range->offsetEndGet(),fs));
+	}
+
+void WaveformRangeView::zoom()
+	{
+	const auto& x_a=m_plot->cursorXGet(0).position;
+	const auto& x_b=m_plot->cursorXGet(1).position;
+	m_range_history.append(m_range_current);
+	m_range_current={std::min(x_a,x_b), std::max(x_a,x_b)};
+	waveformRender(m_range_current.first,m_range_current.second);
+	m_plot->update();
+	}
+
+void WaveformRangeView::unzoom()
+	{
+	if(m_range_history.length()!=0)
+		{
+		m_range_current=*(m_range_history.end()-1);
+		waveformRender(m_range_current.first,m_range_current.second);
+		m_plot->update();
+		m_range_history.truncate();
+		}
 	}
