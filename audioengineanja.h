@@ -79,10 +79,6 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 			double gain_out; /**<Output gain after fade-in/out*/
 			double fade_factor; /**<Fade-in/out factor */
-
-			static constexpr unsigned int SUSTAIN=1;
-
-			unsigned int flags;
 			};
 		ArrayFixed<ChannelState,16> m_channels;
 

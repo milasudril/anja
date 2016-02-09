@@ -61,6 +61,7 @@ void PlaybackRange::stop(unsigned int delay) noexcept
 		auto tmp=delay>uintptr_t(ptr_current)? ptr_end : ptr_current-delay;
 		r_end=std::max(ptr_end,tmp);
 		}
+	m_flags&=~Waveform::LOOP;
 	}
 
 
