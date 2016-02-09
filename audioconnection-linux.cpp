@@ -10,6 +10,7 @@ target[name[audioconnection.o] type[object] platform[;GNU/Linux] dependency[jack
 #include "framework/arraydynamicshort.h"
 
 #include <jack/jack.h>
+#include <jack/midiport.h>
 
 #include <memory>
 #include <cassert>
@@ -54,7 +55,7 @@ class Port
 		Port(Port&& port):r_client(port.r_client),m_port(port.m_port)
 			{port.m_port=nullptr;}
 
-		Port& operator=(Port&& port)
+		Port& operator=(Port&& port) noexcept
 			{
 			std::swap(port.m_port,m_port);
 			std::swap(port.r_client,r_client);
@@ -75,7 +76,7 @@ class Port
 				{jack_port_unregister(r_client,m_port);}
 			}
 
-		void* bufferGet(jack_nframes_t n_frames) const
+		void* bufferGet(jack_nframes_t n_frames) const noexcept
 			{return jack_port_get_buffer(m_port,n_frames);}
 
 	private:
@@ -97,7 +98,7 @@ class AudioConnectionJack:public AudioConnection
 		void deactivate()
 			{jack_deactivate(m_connection.get());}
 
-		const float* audioBufferInputGet(unsigned int index,unsigned int n_frames) const
+		const float* audioBufferInputGet(unsigned int index,unsigned int n_frames) const noexcept
 			{return static_cast<const float*>(m_audio_in_ports[index].bufferGet(n_frames));}
 
 		AudioConnection& audioPortInputAdd(const char* name)
@@ -112,10 +113,10 @@ class AudioConnectionJack:public AudioConnection
 			return *this;
 			}
 
-		unsigned int audioPortsInputCount() const
+		unsigned int audioPortsInputCount() const noexcept
 			{return m_audio_in_ports.length();}
 
-		float* audioBufferOutputGet(unsigned int index,unsigned int n_frames) const
+		float* audioBufferOutputGet(unsigned int index,unsigned int n_frames) const noexcept
 			{return static_cast<float*>(m_audio_out_ports[index].bufferGet(n_frames));}
 
 		AudioConnection& audioPortOutputAdd(const char* name)
@@ -130,7 +131,7 @@ class AudioConnectionJack:public AudioConnection
 			return *this;
 			}
 
-		unsigned int audioPortsOutputCount() const
+		unsigned int audioPortsOutputCount() const noexcept
 			{return m_audio_out_ports.length();}
 
 
@@ -147,7 +148,7 @@ class AudioConnectionJack:public AudioConnection
 			return *this;
 			}
 
-		unsigned int midiPortsInputCount() const
+		unsigned int midiPortsInputCount() const noexcept
 			{return m_midi_in_ports.length();}
 
 		AudioConnection& midiPortOutputAdd(const char* name)
@@ -162,20 +163,28 @@ class AudioConnectionJack:public AudioConnection
 			return *this;
 			}
 
-		unsigned int midiPortsOutputCount() const
+		unsigned int midiPortsOutputCount() const noexcept
 			{return m_midi_out_ports.length();}
 
 		bool midiEventGet(unsigned int port,unsigned int index
-			,MIDIEvent& event);
+			,MIDIEvent& event) noexcept;
 
-		void midiEventWrite(unsigned int port,const MIDIEvent& event);
 
+
+		void midiEventWrite(MIDIBufferOutputHandle handle,const MIDIEvent& event) noexcept;
+
+		MIDIBufferOutputHandle midiBufferOutputGet(unsigned int port,unsigned int n_frames) noexcept
+			{
+			auto buffer=m_midi_out_ports[port].bufferGet(n_frames);
+			jack_midi_clear_buffer(buffer);
+			return {buffer};
+			}
 
 
 		void destroy()
 			{delete this;}
 
-		double sampleRateGet() const
+		double sampleRateGet() const noexcept
 			{return m_fs;}
 
 	private:
@@ -229,7 +238,7 @@ int AudioConnectionJack::dataProcess(jack_nframes_t n_frames,void* audioconnecti
 	}
 
 bool AudioConnectionJack::midiEventGet(unsigned int port,unsigned int index
-	,MIDIEvent& event)
+	,MIDIEvent& event) noexcept
 	{
 	return 0;
 /*	jack_port_get_buffer(jack_port_t *  	,
@@ -242,6 +251,34 @@ bool AudioConnectionJack::midiEventGet(unsigned int port,unsigned int index
 	*/
 	}
 
-void AudioConnectionJack::midiEventWrite(unsigned int port,const MIDIEvent& event)
-	{}
+void AudioConnectionJack::midiEventWrite(AudioConnection::MIDIBufferOutputHandle handle,const MIDIEvent& event) noexcept
+	{
+	int length;
+	if(event.data[0] < 0xF0)
+		{length = (event.data[0] >= 0xC0 &&  event.data[0] <= 0xDF) ? 2 : 3;}
+	else
+	if(event.data[0] >= 0xF8)
+		{length = 1;}
+	else
+		{
+		switch (event.data[0])
+			{
+			case 0xF1:
+			case 0xF3:
+				length = 2;
+				break;
+			case 0xF2:
+				length = 3;
+				break;
+			case 0xF6:
+				length = 1;
+				break;
+			default:
+				return;
+			}
+		}
+	jack_midi_data_t* outbuff = jack_midi_event_reserve(handle.buffer,event.time_offset,length);
+	while(length--)
+		{outbuff[length]=event.data[length];}
+	}
 

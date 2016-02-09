@@ -31,6 +31,8 @@ AudioEngineAnja::~AudioEngineAnja()
 
 void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
+	reset();
+
 	if(m_multioutput)
 		{
 		char port_name_buffer[8];
@@ -48,17 +50,21 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_master_gain_out=m_master_gain_in;
+
+	m_time_start=secondsToFrames(clockGet(),m_sample_rate);
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
 	{
 	m_sample_rate=0.0;
-	reset();
 	}
 
 void AudioEngineAnja::reset()
 	{
 	m_event_next={0,{MIDIConstants::StatusCodes::INVALID,0,0,0},0.0f};
+	QueueElement e;
+	e.event=m_event_next;
+
 	//	Drain event queue
 	while(!m_event_queue.empty())
 		{
@@ -159,6 +165,65 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) n
 		}
 	}
 
+
+void AudioEngineAnja::eventWrite(AudioConnection& output_connection
+	,AudioConnection::MIDIBufferOutputHandle midi_out
+	,const AudioEngineAnja::Event& event
+	,unsigned int time_offset) noexcept
+	{
+	if(event.status_word[0]!=MIDIConstants::StatusCodes::INVALID)
+		{
+		uint8_t value_0=event.status_word[0];
+		uint8_t value_1=event.status_word[1];
+		uint8_t value_2=event.status_word[2];
+
+	//	Convert values suitable for MIDI
+		switch(value_0&0xf0)
+			{
+			case MIDIConstants::StatusCodes::NOTE_OFF:
+			case MIDIConstants::StatusCodes::NOTE_ON: // Rotate keys to get a more suitable octave
+				value_1=(int(event.status_word[1]) + 36)%128;
+				value_2=uint8_t(event.status_word[3]==Event::VALUE_1_FLOAT?
+						event.value*127 : event.status_word[2]);
+				break;
+
+			case MIDIConstants::StatusCodes::CONTROLLER:
+				value_1=event.status_word[1];
+				switch(value_1)
+					{
+					case MIDIConstants::ControlCodes::CHANNEL_VOLUME:
+						value_2=uint8_t(event.status_word[3]==Event::VALUE_1_FLOAT?
+							(0.5f*event.value)*127 : event.status_word[2]);
+						break;
+				//	Filter out SOUND_1 and SOUND_2 controller code
+					case MIDIConstants::ControlCodes::SOUND_1:
+					case MIDIConstants::ControlCodes::SOUND_2:
+						value_0=0;
+						break;
+
+					default:
+						value_2=uint8_t(event.status_word[3]==Event::VALUE_1_FLOAT?
+							event.value*127 : event.status_word[2]);
+						break;
+					}
+				break;
+			default:
+				value_2=uint8_t(event.status_word[3]==Event::VALUE_1_FLOAT?
+					event.value*127 : event.status_word[2]);
+				break;
+			}
+
+		if(value_0!=0)
+			{
+			output_connection.midiEventWrite(midi_out,
+				{
+				 time_offset
+				,value_0,value_1,value_2
+				});
+			}
+		}
+	}
+
 void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 	,unsigned int time_offset) noexcept
 	{
@@ -213,16 +278,18 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		}
 	}
 
-void AudioEngineAnja::eventsUIFetch(unsigned int n_frames) noexcept
+void AudioEngineAnja::eventsUIFetch(AudioConnection& source,unsigned int n_frames) noexcept
 	{
+	auto output_buffer=source.midiBufferOutputGet(0,n_frames);
 	Event event_next=m_event_next;
 	auto& queue=m_event_queue;
-	const auto now_in=secondsToFrames(clockGet(),m_sample_rate);
+	const auto now_in=secondsToFrames(clockGet(),m_sample_rate) - m_time_start;
 	auto now=now_in;
 	while(n_frames!=0)
 		{
 		if(now>=event_next.delay) // If next event has passed
 			{
+			eventWrite(source,output_buffer,event_next,now-now_in);
 			eventProcess(event_next,now-now_in);
 		//	Set the status code to invalid so it does not do anything more
 			event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
@@ -235,6 +302,7 @@ void AudioEngineAnja::eventsUIFetch(unsigned int n_frames) noexcept
 				event_next=tmp.event;
 				if(now>=event_next.delay) //Process next event now
 					{
+					eventWrite(source,output_buffer,event_next,now-now_in);
 					eventProcess(event_next,now-now_in);
 					event_next.status_word[0]=MIDIConstants::StatusCodes::INVALID;
 					}
@@ -369,7 +437,7 @@ void AudioEngineAnja::voicesStop() noexcept
 
 void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
 	{
-	eventsUIFetch(n_frames);
+	eventsUIFetch(source,n_frames);
 	voicesRender(n_frames);
 	channelsMix(source,n_frames);
 	masterGainAdjust(source,n_frames);

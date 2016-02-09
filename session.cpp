@@ -149,6 +149,7 @@ void Session::clear()
 	memcpy(m_color_presets.begin(),COLORS
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	m_state_flags=0;
+	m_flags=0;
 	}
 
 void Session::load(const char* filename)
