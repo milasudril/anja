@@ -79,6 +79,10 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 			double gain_out; /**<Output gain after fade-in/out*/
 			double fade_factor; /**<Fade-in/out factor */
+
+			static constexpr unsigned int SUSTAIN=1;
+
+			unsigned int flags;
 			};
 		ArrayFixed<ChannelState,16> m_channels;
 
@@ -88,9 +92,11 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		double m_master_gain_in;
 		bool m_multioutput;
 
+		static AudioEngineAnja::Event eventConvert(const AudioConnection::MIDIEvent& e) noexcept;
 		void eventWrite( AudioConnection& output_connection
 			,AudioConnection::MIDIBufferOutputHandle midi_out
 			,const Event& event,unsigned int time_offset) noexcept;
+		void eventsRead(AudioConnection& source,unsigned int n_frames) noexcept;
 
 		void eventProcess(const Event& event,unsigned int time_offset) noexcept;
 

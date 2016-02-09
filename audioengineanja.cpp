@@ -162,6 +162,20 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) n
 			m_channels[channel].fade_factor=timeConstantToDecayFactor(-value,m_sample_rate);
 			}
 			break;
+
+		case MIDIConstants::ControlCodes::SUSTAIN:
+			{
+			auto channel=event.status_word[0]&0xf;
+			if(event.status_word[2] < 64)
+				{
+			//	TODO Disable sustain flag for all voices on this channel
+				}
+			else
+				{
+			//	TODO Enable sustain flag for all voices on this channel
+				}
+			}
+			break;
 		}
 	}
 
@@ -244,6 +258,7 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
 			{
+		//	TODO: Use the velocity field
 			auto voice=m_voice_current;
 			auto slot=event.status_word[1];
 
@@ -314,6 +329,35 @@ void AudioEngineAnja::eventsUIFetch(AudioConnection& source,unsigned int n_frame
 		--n_frames;
 		}
 	m_event_next=event_next;
+	}
+
+
+AudioEngineAnja::Event AudioEngineAnja::eventConvert(const AudioConnection::MIDIEvent& e) noexcept
+	{
+	switch(e.data[0]&0xf0)
+		{
+		case MIDIConstants::StatusCodes::NOTE_OFF:
+		case MIDIConstants::StatusCodes::NOTE_ON:
+			{
+			auto key_in=int(e.data[1]);
+			auto key=key_in<36? (key_in-36)+128: key_in-36;
+			return {0,{e.data[0],uint8_t(key),e.data[2],0}};
+			}
+
+		default:
+			return {0,{e.data[0],e.data[1],e.data[2],0}};
+		}
+	}
+
+void AudioEngineAnja::eventsRead(AudioConnection& source,unsigned int n_frames) noexcept
+	{
+ 	auto events_in=source.midiBufferInputGet(0,n_frames);
+	AudioConnection::MIDIEvent event_in;
+	while(source.midiEventGet(events_in,event_in))
+		{
+		eventProcess( eventConvert(event_in), event_in.time_offset );
+		event_in.data[0]=MIDIConstants::StatusCodes::INVALID;
+		}
 	}
 
 void AudioEngineAnja::voicesRender(unsigned int n_frames) noexcept
@@ -437,6 +481,7 @@ void AudioEngineAnja::voicesStop() noexcept
 
 void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
 	{
+	eventsRead(source,n_frames);
 	eventsUIFetch(source,n_frames);
 	voicesRender(n_frames);
 	channelsMix(source,n_frames);

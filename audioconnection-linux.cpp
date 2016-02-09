@@ -151,6 +151,17 @@ class AudioConnectionJack:public AudioConnection
 		unsigned int midiPortsInputCount() const noexcept
 			{return m_midi_in_ports.length();}
 
+		MIDIBufferInputHandle midiBufferInputGet(unsigned int port,unsigned int n_frames) noexcept
+			{
+			auto buffer=m_midi_in_ports[port].bufferGet(n_frames);
+			return {buffer,0,jack_midi_get_event_count(buffer)};
+			}
+
+		bool midiEventGet(MIDIBufferInputHandle& buffer,MIDIEvent& event) noexcept;
+
+
+
+
 		AudioConnection& midiPortOutputAdd(const char* name)
 			{
 			m_midi_out_ports.append(
@@ -165,11 +176,6 @@ class AudioConnectionJack:public AudioConnection
 
 		unsigned int midiPortsOutputCount() const noexcept
 			{return m_midi_out_ports.length();}
-
-		bool midiEventGet(unsigned int port,unsigned int index
-			,MIDIEvent& event) noexcept;
-
-
 
 		void midiEventWrite(MIDIBufferOutputHandle handle,const MIDIEvent& event) noexcept;
 
@@ -201,6 +207,23 @@ class AudioConnectionJack:public AudioConnection
 		static int dataProcess(jack_nframes_t n_frames,void* audioconnectionjack);
 		static int bufferAllocate(jack_nframes_t nframes,void* audioconnectionjack);
 	};
+
+bool AudioConnectionJack::midiEventGet(MIDIBufferInputHandle& buffer,MIDIEvent& event) noexcept
+	{
+	if(buffer.event_index != buffer.event_count)
+		{
+		jack_midi_event_t e;
+		jack_midi_event_get(&e,buffer.buffer,buffer.event_index);
+		event.data[0]=e.buffer[0];
+		event.data[1]=e.buffer[1];
+		event.data[2]=e.buffer[2];
+		event.data[3]=0;
+		event.time_offset=e.time;
+		++buffer.event_index;
+		return 1;
+		}
+	return 0;
+	}
 
 AudioConnection* AudioConnection::create(const char* name,AudioEngine& engine)
 	{
@@ -235,20 +258,6 @@ int AudioConnectionJack::dataProcess(jack_nframes_t n_frames,void* audioconnecti
 	auto _this=reinterpret_cast<AudioConnectionJack*>(audioconnectionjack);
 	_this->r_engine->audioProcess(*_this,n_frames);
 	return 0;
-	}
-
-bool AudioConnectionJack::midiEventGet(unsigned int port,unsigned int index
-	,MIDIEvent& event) noexcept
-	{
-	return 0;
-/*	jack_port_get_buffer(jack_port_t *  	,
-		jack_nframes_t
-	)
-
-	jack_midi_event_t ret;
-	if(jack_midi_event_get(&ret,port_buffer,index)==ENODATA)
-		{return 0;}
-	*/
 	}
 
 void AudioConnectionJack::midiEventWrite(AudioConnection::MIDIBufferOutputHandle handle,const MIDIEvent& event) noexcept

@@ -8,6 +8,7 @@ dependency[audioconnection.o]
 
 #include <cstdint>
 #include <utility>
+#include <cstddef>
 
 class Session;
 
@@ -47,8 +48,14 @@ class AudioConnection
 			uint8_t data[4];
 			};
 
-		virtual bool midiEventGet(unsigned int port,unsigned int index
-			,MIDIEvent& event) noexcept=0;
+		struct MIDIBufferInputHandle
+			{
+			void* buffer;
+			uint32_t event_index;
+			uint32_t event_count;
+			};
+		virtual bool midiEventGet(MIDIBufferInputHandle& buffer,MIDIEvent& event) noexcept=0;
+		virtual MIDIBufferInputHandle midiBufferInputGet(unsigned int port,unsigned int n_frames) noexcept=0;
 		virtual AudioConnection& midiPortInputAdd(const char* name)=0;
 		virtual unsigned int midiPortsInputCount() const noexcept=0;
 
@@ -56,7 +63,6 @@ class AudioConnection
 			{
 			void* buffer;
 			};
-
 		virtual void midiEventWrite(MIDIBufferOutputHandle handle,const MIDIEvent& event) noexcept=0;
 		virtual MIDIBufferOutputHandle midiBufferOutputGet(unsigned int port,unsigned int n_frames) noexcept=0;
 		virtual AudioConnection& midiPortOutputAdd(const char* name)=0;
