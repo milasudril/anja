@@ -54,7 +54,6 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		double m_sample_rate;
 		uint64_t m_time_start;
-		uint64_t m_now;
 
 	//	Force vectorized instructions to pop elements form the event queue
 		typedef float QueueVector __attribute__((vector_size(16)));
@@ -89,8 +88,15 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		double m_master_gain_in;
 		bool m_multioutput;
 
-		void eventProcess(const Event& event,unsigned int time_offset);
-		void eventControlProcess(const Event& event);
+		void eventProcess(const Event& event,unsigned int time_offset) noexcept;
+		void eventControlProcess(const Event& event) noexcept;
+
+		void eventsUIFetch(unsigned int n_frames) noexcept;
+		void voicesRender(unsigned int n_frames) noexcept;
+		void channelsMix(AudioConnection& source,unsigned int n_frames) noexcept;
+		void masterGainAdjust(AudioConnection& source,unsigned int n_frames) noexcept;
+		void voicesStop() noexcept;
+
 		void reset();
 	};
 

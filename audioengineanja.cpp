@@ -47,7 +47,6 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 
 	m_sample_rate=source.sampleRateGet();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
-	m_now=0;
 	m_master_gain_out=m_master_gain_in;
 	}
 
@@ -127,7 +126,7 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) no
 		}
 	}
 
-void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
+void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) noexcept
 	{
 	switch(event.status_word[1])
 		{
@@ -161,7 +160,7 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event)
 	}
 
 void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
-	,unsigned int time_offset)
+	,unsigned int time_offset) noexcept
 	{
 	if(event.status_word[0]==MIDIConstants::StatusCodes::RESET)
 		{
@@ -214,17 +213,12 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		}
 	}
 
-void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
+void AudioEngineAnja::eventsUIFetch(unsigned int n_frames) noexcept
 	{
-	auto& queue=m_event_queue;
 	Event event_next=m_event_next;
-	auto now=m_now;
-	if(now==0)
-		{m_time_start=secondsToFrames(clockGet(),m_sample_rate);}
-	const auto now_in=now;
-	const auto n_frames_in=n_frames;
-
-//	Fetch events
+	auto& queue=m_event_queue;
+	const auto now_in=secondsToFrames(clockGet(),m_sample_rate);
+	auto now=now_in;
 	while(n_frames!=0)
 		{
 		if(now>=event_next.delay) // If next event has passed
@@ -251,125 +245,133 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 		++now;
 		--n_frames;
 		}
+	m_event_next=event_next;
+	}
 
-	//	Render voices
+void AudioEngineAnja::voicesRender(unsigned int n_frames) noexcept
+	{
+	memset(m_buffers_out.begin(),0,m_buffers_out.length()*sizeof(float));
+	auto src_begin=m_source_buffers.begin();
+	auto src_current=src_begin;
+	auto src_end=m_source_buffers.end();
+	while(src_current!=src_end)
 		{
-		memset(m_buffers_out.begin(),0,m_buffers_out.length()*sizeof(float));
-		auto src_begin=m_source_buffers.begin();
-		auto src_current=src_begin;
-		auto src_end=m_source_buffers.end();
-		while(src_current!=src_end)
+		if(src_current->valid())
 			{
-			if(src_current->valid())
-				{
-				auto ptr_voice=m_buffer_temp.begin();
-				auto N=src_current->outputBufferGenerate(ptr_voice,n_frames_in);
-				auto channel_index=src_current->channelGet();
-				auto ptr_buffer_out=m_buffers_out.begin()+n_frames_in*channel_index;
-				auto ptr_buffer_in=ptr_voice;
-				while(N!=0)
-					{
-				//	TODO: We can vectorize here
-					*ptr_buffer_out+=*ptr_buffer_in;
-					--N;
-					++ptr_buffer_in;
-					++ptr_buffer_out;
-					}
-				if(src_current->done())
-					{
-					src_current->release();
-					m_voice_current=src_current-src_begin;
-					}
-				}
-			++src_current;
-			}
-		}
-
-	//	Mix channels
-		{
-		auto N_ch=m_channels.length();
-		auto multioutput=m_multioutput;
-		auto buffer_out=source.audioBufferOutputGet(N_ch*multioutput
-			,n_frames_in);
-		memset(buffer_out,0,n_frames_in*sizeof(float));
-		auto N_ch_in=N_ch;
-		auto ptr_in=m_buffers_out.begin();
-		auto channel=m_channels.begin();
-		auto filterfactor=m_fader_filter_factor;
-		float dummy;
-		while(N_ch!=0)
-			{
-		//	TODO: This will only capture the most recent channel event within
-		//	the current block. Also the event offset is not considered. It works
-		//	as long as the buffer is small, but fails for larger buffers.
-
-			auto N=n_frames_in;
-
-			auto ptr_out=buffer_out;
-		//	HACK Use the address of a dummy variable so we can write to
-		//	*ptr_out_raw in any case
-			float* ptr_out_raw=&dummy;
-			if(multioutput)
-				{ptr_out_raw=source.audioBufferOutputGet(N_ch_in-N_ch,N);}
-
-			auto gain_in_current=channel->gain_in_current;
-			auto gain_in_old=channel->gain_in_old;
-			auto gain_out=channel->gain_out;
-			auto fade_factor=channel->fade_factor;
+			auto ptr_voice=m_buffer_temp.begin();
+			auto N=src_current->outputBufferGenerate(ptr_voice,n_frames);
+			auto channel_index=src_current->channelGet();
+			auto ptr_buffer_out=m_buffers_out.begin()+n_frames*channel_index;
+			auto ptr_buffer_in=ptr_voice;
 			while(N!=0)
 				{
-				auto x=(*ptr_in) * gain_in_old * gain_out;
-				*ptr_out_raw=x;
-				*ptr_out+=x;
-				++ptr_in;
-				++ptr_out;
-				ptr_out_raw=(ptr_out_raw==&dummy)?ptr_out_raw:ptr_out_raw + 1;
+			//	TODO: We can vectorize here
+				*ptr_buffer_out+=*ptr_buffer_in;
 				--N;
-				gain_out=std::max(1e-4,std::min(1.0,fade_factor*gain_out));
-				gain_in_old=filterstep(gain_in_current,gain_in_old,filterfactor);
+				++ptr_buffer_in;
+				++ptr_buffer_out;
 				}
-			channel->gain_out=gain_out;
-			channel->gain_in_old=gain_in_old;
-			++channel;
-			--N_ch;
+			if(src_current->done())
+				{
+				src_current->release();
+				m_voice_current=src_current-src_begin;
+				}
 			}
+		++src_current;
 		}
+	}
 
-	//	Adjust master gain
+void AudioEngineAnja::channelsMix(AudioConnection& source,unsigned int n_frames) noexcept
+	{
+	auto N_ch=m_channels.length();
+	auto multioutput=m_multioutput;
+	auto buffer_out=source.audioBufferOutputGet(N_ch*multioutput,n_frames);
+	memset(buffer_out,0,n_frames*sizeof(float));
+	auto N_ch_in=N_ch;
+	auto ptr_in=m_buffers_out.begin();
+	auto channel=m_channels.begin();
+	auto filterfactor=m_fader_filter_factor;
+	float dummy;
+	while(N_ch!=0)
 		{
-		auto filterfactor=m_fader_filter_factor;
-		auto buffer_out=source.audioBufferOutputGet(m_channels.length()*m_multioutput
-			,n_frames_in);
-		auto N=n_frames_in;
-		auto gain_in=m_master_gain_in;
-		auto gain_out=m_master_gain_out;
+	//	TODO: This will only capture the most recent channel event within
+	//	the current block. Also the event offset is not considered. It works
+	//	as long as the buffer is small, but fails for larger buffers.
+
+		auto N=n_frames;
+
+		auto ptr_out=buffer_out;
+	//	HACK Use the address of a dummy variable so we can write to
+	//	*ptr_out_raw in any case
+		float* ptr_out_raw=&dummy;
+		if(multioutput)
+			{ptr_out_raw=source.audioBufferOutputGet(N_ch_in-N_ch,N);}
+
+		auto gain_in_current=channel->gain_in_current;
+		auto gain_in_old=channel->gain_in_old;
+		auto gain_out=channel->gain_out;
+		auto fade_factor=channel->fade_factor;
 		while(N!=0)
 			{
-			*buffer_out *= gain_out;
-			gain_out=filterstep(gain_in,gain_out,filterfactor);
-			++buffer_out;
+			auto x=(*ptr_in) * gain_in_old * gain_out;
+			*ptr_out_raw=x;
+			*ptr_out+=x;
+			++ptr_in;
+			++ptr_out;
+			ptr_out_raw=(ptr_out_raw==&dummy)?ptr_out_raw:ptr_out_raw + 1;
 			--N;
+			gain_out=std::max(1e-4,std::min(1.0,fade_factor*gain_out));
+			gain_in_old=filterstep(gain_in_current,gain_in_old,filterfactor);
 			}
-		m_master_gain_out=gain_out;
+		channel->gain_out=gain_out;
+		channel->gain_in_old=gain_in_old;
+		++channel;
+		--N_ch;
 		}
+	}
 
-	//	Stop muted voices
+
+void AudioEngineAnja::masterGainAdjust(AudioConnection& source
+	,unsigned int n_frames) noexcept
+	{
+	auto filterfactor=m_fader_filter_factor;
+	auto buffer_out=source.audioBufferOutputGet(m_channels.length()*m_multioutput
+		,n_frames);
+	auto gain_in=m_master_gain_in;
+	auto gain_out=m_master_gain_out;
+	while(n_frames!=0)
 		{
-		auto src_begin=m_source_buffers.begin();
-		auto src_current=src_begin;
-		auto src_end=m_source_buffers.end();
-		while(src_current!=src_end)
-			{
-			if(src_current->valid())
-				{
-				auto ch=src_current->channelGet();
-				if(m_channels[ch].gain_out<1e-3
-					&& m_channels[ch].fade_factor<1.0)
-					{src_current->stop();}
-				}
-			++src_current;
-			}
+		*buffer_out *= gain_out;
+		gain_out=filterstep(gain_in,gain_out,filterfactor);
+		++buffer_out;
+		--n_frames;
 		}
-	m_now=now;
-	m_event_next=event_next;
+	m_master_gain_out=gain_out;
+	}
+
+void AudioEngineAnja::voicesStop() noexcept
+	{
+	auto src_begin=m_source_buffers.begin();
+	auto src_current=src_begin;
+	auto src_end=m_source_buffers.end();
+	while(src_current!=src_end)
+		{
+		if(src_current->valid())
+			{
+			auto ch=src_current->channelGet();
+			if(m_channels[ch].gain_out<1e-3
+				&& m_channels[ch].fade_factor<1.0)
+				{src_current->stop();}
+			}
+		++src_current;
+		}
+	}
+
+void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
+	{
+	eventsUIFetch(n_frames);
+	voicesRender(n_frames);
+	channelsMix(source,n_frames);
+	masterGainAdjust(source,n_frames);
+	voicesStop();
 	}
