@@ -254,8 +254,6 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		return;
 		}
 
-	printf("Time offset: %u\n",time_offset);
-
 	switch(event.status_word[0]&0xf0)
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
