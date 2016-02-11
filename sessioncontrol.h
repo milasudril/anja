@@ -9,10 +9,13 @@ dependency[sessioncontrol.o]
 #include "sessionactions.h"
 
 class SessionView;
+class Window;
 
 class SessionControl:public SessionActions::EventHandler
 	{
 	public:
+		SessionControl(Window& window);
+
 		void onSessionNew(SessionActions& source);
 		void onSessionLoad(SessionActions& source,const char* filename);
 		void onSessionSave(SessionActions& source);
@@ -20,12 +23,14 @@ class SessionControl:public SessionActions::EventHandler
 		void onEngineStart(SessionActions& source);
 		void onEngineStop(SessionActions& source);
 		void onFullscreen(SessionActions& source);
+		void onExit(SessionActions& source);
 
 		void sessionViewSet(SessionView* view)
 			{r_view=view;}
 
 	private:
 		SessionView* r_view;
+		Window* r_window;
 	};
 
 #endif

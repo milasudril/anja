@@ -26,6 +26,7 @@ class SessionActions:public Widget
 				virtual void onEngineStart(SessionActions& source)=0;
 				virtual void onEngineStop(SessionActions& source)=0;
 				virtual void onFullscreen(SessionActions& source)=0;
+				virtual void onExit(SessionActions& source)=0;
 			};
 
 		static SessionActions* create(GuiContainer& parent
@@ -36,11 +37,11 @@ class SessionActions:public Widget
 		void doSessionNew()
 			{r_handler->onSessionNew(*this);}
 
-		void doSessionLoad(const char* filename)
-			{r_handler->onSessionLoad(*this,filename);}
+		void doSessionLoad();
 
-		void doSessionSaveAs(const char* filename)
-			{r_handler->onSessionSaveAs(*this,filename);}
+		void doSessionSave();
+
+		void doSessionSaveAs();
 
 		void doEngineStart()
 			{r_handler->onEngineStart(*this);}
@@ -50,6 +51,9 @@ class SessionActions:public Widget
 
 		void doFullscreen()
 			{r_handler->onFullscreen(*this);}
+
+		void doExit()
+			{r_handler->onExit(*this);}
 
 		Session& sessionGet()
 			{return *r_session;}
@@ -71,6 +75,7 @@ class SessionActions:public Widget
 		Button* m_engine_stop;
 		Delimiter* m_delimiter_b;
 		Button* m_fullscreen;
+		Button* m_exit;
 
 		class ActionHandler:public Button::EventHandler
 			{

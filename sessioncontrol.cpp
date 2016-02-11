@@ -5,6 +5,10 @@ target[name[sessioncontrol.o] type[object]]
 #include "sessioncontrol.h"
 #include "sessionview.h"
 #include "session.h"
+#include "framework/window.h"
+
+SessionControl::SessionControl(Window& window):r_window(&window)
+	{}
 
 void SessionControl::onSessionNew(SessionActions& source)
 	{
@@ -66,4 +70,20 @@ void SessionControl::onFullscreen(SessionActions& source)
 		{source.fullscreenSet();}
 	else
 		{source.fullscreenUnset();}
+	}
+
+void SessionControl::onExit(SessionActions& source)
+	{
+	auto& session=source.sessionGet();
+	if(session.dirtyIs())
+		{
+		auto answer=source.notifyUser("Do you want to save changes to this session?"
+			,"Exit Anja",MESSAGE_TYPE_WARNING|MESSAGE_ANSWERS_YESNO);
+		if(answer==MESSAGE_ANSWER_YES)
+			{
+			source.doSessionSave();
+			}
+		}
+	r_view->destroy();
+	r_window->destroy();
 	}

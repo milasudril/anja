@@ -2,7 +2,6 @@
 target[name[anja] type[application]]
 #endif
 
-
 #include "session.h"
 #include "sessionview.h"
 #include "keyboardcontroller.h"
@@ -13,31 +12,20 @@ target[name[anja] type[application]]
 #include "sessioncontrol.h"
 #include "framework/window.h"
 
-class MainwinHandler:public Window::EventHandler
-	{
-	public:
-		void onClose(Window& source)
-			{
-			printf("Do you really want to exit\n");
-			source.destroy();
-			}
-	};
-
 int main()
 	{
 	try
 		{
-		MainwinHandler box_handler;
 		Session session("testbank/testbank.txt");
 		WaveformRangeTrimmer trimmer;
 		KeyboardController keyboardevents(session);
 		WaveformDataUpdater waveform_updater;
 		ChannelController channelctrl(session);
 		SessionDataUpdater session_updater;
-		SessionControl session_control;
 
 		auto event_loop=EventLoop::create(0);
-		auto mainwin=Window::create(*event_loop,box_handler);
+		auto mainwin=Window::create(*event_loop);
+		SessionControl session_control(*mainwin);
 
 		auto view=SessionView::create(*mainwin,session,session_control
 			,keyboardevents,waveform_updater,trimmer,channelctrl

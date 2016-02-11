@@ -16,6 +16,7 @@ static constexpr unsigned int SESSION_SAVEAS=3;
 static constexpr unsigned int ENGINE_START=4;
 static constexpr unsigned int ENGINE_STOP=5;
 static constexpr unsigned int FULLSCREEN=6;
+static constexpr unsigned int EXIT=7;
 
 
 SessionActions::ActionHandler::ActionHandler(SessionActions& ctrl):r_ctrl(ctrl)
@@ -29,63 +30,14 @@ void SessionActions::ActionHandler::onActionPerform(Button& source)
 			r_ctrl.doSessionNew();
 			break;
 		case SESSION_LOAD:
-			{
-			auto& session=r_ctrl.sessionGet();
-			auto picker=FilenamePicker::create(r_ctrl,session.filenameGet().begin()
-				,FilenamePicker::MODE_OPEN);
-
-			auto filename=picker->filenameGet();
-
-			if(filename!=nullptr)
-				{
-				r_ctrl.doSessionLoad(filename);
-				}
-			}
+			r_ctrl.doSessionLoad();
 			break;
-
 		case SESSION_SAVE:
-			{
-			auto& session=r_ctrl.sessionGet();
-
-			const char* filename=session.filenameGet().begin();
-
-			if(*filename=='\0')
-				{
-				auto filename_suggested=session.titleGet();
-				filename_suggested.append(".txt").append('\0');
-				auto picker=FilenamePicker::create(r_ctrl
-					,filename_suggested.begin()
-					,FilenamePicker::MODE_SAVE);
-
-				filename=picker->filenameGet();
-
-				if(filename!=nullptr)
-					{r_ctrl.doSessionSaveAs(filename);}
-				}
-			else
-				{r_ctrl.doSessionSaveAs(filename);}
-			}
+			r_ctrl.doSessionSave();
 			break;
-
 		case SESSION_SAVEAS:
-			{
-			auto& session=r_ctrl.sessionGet();
-
-			auto filename_suggested=session.titleGet();
-			filename_suggested.append(".txt").append('\0');
-			auto picker=FilenamePicker::create(r_ctrl
-				,filename_suggested.begin()
-				,FilenamePicker::MODE_SAVE);
-
-			auto filename=picker->filenameGet();
-
-			if(filename!=nullptr)
-				{
-				r_ctrl.doSessionSaveAs(filename);
-				}
-			}
+			r_ctrl.doSessionSaveAs();
 			break;
-
 		case ENGINE_START:
 			r_ctrl.doEngineStart();
 			break;
@@ -94,6 +46,9 @@ void SessionActions::ActionHandler::onActionPerform(Button& source)
 			break;
 		case FULLSCREEN:
 			r_ctrl.doFullscreen();
+			break;
+		case EXIT:
+			r_ctrl.doExit();
 			break;
 		}
 	}
@@ -117,10 +72,12 @@ SessionActions::SessionActions(GuiContainer& parent,EventHandler& handler
 	m_engine_stop=Button::create(*m_box,m_handler,ENGINE_STOP,"Stop engine");
 	m_delimiter_b=Delimiter::create(*m_box);
 	m_fullscreen=Button::create(*m_box,m_handler,FULLSCREEN,"Fullscreen");
+	m_exit=Button::create(*m_box,m_handler,EXIT,"Exit");
 	}
 
 SessionActions::~SessionActions()
 	{
+	m_exit->destroy();
 	m_fullscreen->destroy();
 	m_delimiter_b->destroy();
 	m_engine_stop->destroy();
@@ -160,4 +117,42 @@ void SessionActions::fullscreenSet()
 void SessionActions::fullscreenUnset()
 	{
 	m_fullscreen->titleSet("Fullscreen");
+	}
+
+void SessionActions::doSessionSaveAs()
+	{
+	auto filename_suggested=r_session->titleGet();
+	filename_suggested.append(".txt").append('\0');
+	auto picker=FilenamePicker::create(*this
+		,filename_suggested.begin()
+		,FilenamePicker::MODE_SAVE);
+
+	auto filename=picker->filenameGet();
+
+	if(filename!=nullptr)
+		{
+		r_handler->onSessionSaveAs(*this,filename);
+		}
+	}
+
+void SessionActions::doSessionSave()
+	{
+	auto filename=r_session->filenameGet().begin();
+	if(*filename=='\0')
+		{
+		doSessionSaveAs();
+		}
+	else
+		{r_handler->onSessionSaveAs(*this,filename);}
+	}
+
+void SessionActions::doSessionLoad()
+	{
+	auto picker=FilenamePicker::create(*this,r_session->filenameGet().begin()
+		,FilenamePicker::MODE_OPEN);
+
+	auto filename=picker->filenameGet();
+
+	if(filename!=nullptr)
+		{r_handler->onSessionLoad(*this,filename);}
 	}
