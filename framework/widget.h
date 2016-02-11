@@ -1,5 +1,6 @@
 #ifdef __WAND__
 target[name[widget.h] type[include]]
+dependency[widget.o]
 #endif
 
 #ifndef WIDGET_H
@@ -7,7 +8,7 @@ target[name[widget.h] type[include]]
 
 class GuiHandle;
 
-#include <cstdio>
+#include "messageconstants.h"
 
 class Widget
 	{
@@ -18,6 +19,9 @@ class Widget
 			{widget->destroy();}
 
 		virtual const GuiHandle& handleNativeGet() const=0;
+
+		virtual uint32_t notifyUser(const char* message,const char* title
+			,uint32_t message_type);
 
 	protected:
 		virtual ~Widget()=default;

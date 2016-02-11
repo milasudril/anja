@@ -11,7 +11,15 @@ void WaveformDataUpdater::onSourceChange(WaveformDataView& source
 	,const char* filename_new)
 	{
 	auto& wd=source.waveformDataGet();
-	wd.fileLoad(filename_new);
+	try
+		{
+		wd.fileLoad(filename_new);
+		}
+	catch(const char* message)
+		{
+	//	messageDisplay(*_context,message,"Anja",MESSAGE_TYPE_ERROR);
+		source.notifyUser(message,"Anja wave file loader",MESSAGE_TYPE_ERROR);
+		}
 	source.update();
 	}
 
