@@ -8,11 +8,10 @@ dependency[window.o]
 
 #include "eventloop.h"
 #include "guicontainer.h"
-#include "titleview.h"
 
 class GuiHandle;
 
-class Window:public GuiContainer,public TitleView
+class Window:public GuiContainer
 	{
 	public:
 		class EventHandler:public GuiContainer::EventHandler<Window>

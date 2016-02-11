@@ -151,18 +151,18 @@ gboolean WindowGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 		,_this);
-	return FALSE;
+	return TRUE;
 	}
 
 gboolean WindowGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
 	,void* windowgtk)
 	{
 	WindowGtk* _this=(WindowGtk*)windowgtk;
-	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
+	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 		,_this);
-	return FALSE;
+	return TRUE;
 	}
 
 WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler):
@@ -172,11 +172,11 @@ WindowGtk::WindowGtk(EventLoop& event_loop,EventHandler& handler):
 	GtkWidget* window_this=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_object_ref_sink(G_OBJECT(window_this));
 	gtk_widget_show(window_this);
-	g_signal_connect(window_this,"button-release-event",G_CALLBACK(onMouseUp),this);
-	g_signal_connect(window_this,"button-press-event",G_CALLBACK(onMouseDown),this);
-	g_signal_connect(window_this,"motion-notify-event",G_CALLBACK(onMouseMove),this);
-	g_signal_connect(window_this,"key_press_event",G_CALLBACK(onKeyDown),this);
-	g_signal_connect(window_this,"key_release_event",G_CALLBACK(onKeyUp),this);
+	g_signal_connect_after(window_this,"button-release-event",G_CALLBACK(onMouseUp),this);
+	g_signal_connect_after(window_this,"button-press-event",G_CALLBACK(onMouseDown),this);
+	g_signal_connect_after(window_this,"motion-notify-event",G_CALLBACK(onMouseMove),this);
+	g_signal_connect_after(window_this,"key-press-event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect_after(window_this,"key-release-event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(window_this,"delete-event",G_CALLBACK(onClose),this);
 	g_object_set_data(G_OBJECT(window_this),"anja_window",this);
 	event_loop.windowRegister();

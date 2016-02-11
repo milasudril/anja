@@ -286,7 +286,7 @@ gboolean XYPlotGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,event->hardware_keycode-8);
 		,_this);
-	return FALSE;
+	return TRUE;
 	}
 
 gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
@@ -295,7 +295,7 @@ gboolean XYPlotGtk::onKeyUp(GtkWidget *widget, GdkEventKey *event
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
 	EXCEPTION_SWALLOW(_this->r_handler->onKeyUp(*_this,event->hardware_keycode-8);
 		,_this);
-	return FALSE;
+	return TRUE;
 	}
 
 XYPlot::Cursor* XYPlotGtk::cursorXAtPoint(const Curve::Point& p,double tol)
@@ -342,8 +342,8 @@ XYPlotGtk::XYPlotGtk(GuiContainer& parent,EventHandler& handler):
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(onMouseMove),this);
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(onMouseDown),this);
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(onMouseUp),this);
-	g_signal_connect(m_canvas,"key_press_event",G_CALLBACK(onKeyDown),this);
-	g_signal_connect(m_canvas,"key_release_event",G_CALLBACK(onKeyUp),this);
+	g_signal_connect(m_canvas,"key-press-event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(onSizeChange),this);
 
 	g_object_ref_sink(m_canvas);

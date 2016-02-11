@@ -265,6 +265,17 @@ gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 	auto n_cols=_this->r_keyboard->typingAreaCols();
 	auto key_width=double(width)/(n_cols);
 
+	int dark_is;
+	g_object_get(gtk_settings_get_default()
+		,"gtk-application-prefer-dark-theme",&dark_is,NULL);
+
+	//	Draw background
+		{
+		ColorSystem color_gtk{dark_is?COLORS[ColorID::GRAY_DARK]:COLORS[ColorID::GRAY]};
+		gdk_cairo_set_source_rgba(cr,color_gtk);
+		cairo_paint(cr);
+		}
+
 	cairo_set_font_size(cr,std::min(key_width/4,12.0));
 
 	//	Draw function keys
@@ -300,6 +311,17 @@ gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 				}
 			}
 		}
+
+	//	Draw border
+	ColorSystem color_border{dark_is?
+			COLORS[ColorID::GRAY]:COLORS[ColorID::GRAY_DARK]};
+	if(gtk_widget_has_focus(object))
+		{color_border=ColorRGBA{ColorHSLA::fromHueAndLuma(0.33f,dark_is?0.7f:0.4f)};}
+
+	gdk_cairo_set_source_rgba(cr,color_border);
+	auto height=gtk_widget_get_allocated_height(object);
+	cairo_rectangle(cr,0.5,0.5,width-1,height-1);
+	cairo_stroke(cr);
 
 	return FALSE;
 	}

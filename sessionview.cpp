@@ -11,7 +11,6 @@ target[name[sessionview.o] type[object]]
 #include "framework/boxhorizontal.h"
 #include "framework/keyboardview.h"
 #include "framework/tabview.h"
-#include "framework/titleview.h"
 #include "framework/delimiter.h"
 #include "framework/label.h"
 

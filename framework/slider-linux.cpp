@@ -45,6 +45,9 @@ class SliderGtk:public Slider
 	private:
 		static void sliderMoved(GtkRange* range,void* slidergtk);
 		static gint textChanged(GtkWidget* entry,GdkEvent* event,void* slidergtk);
+		static gboolean onKeyUp(GtkWidget *widget, GdkEventKey *event
+			,void* knobgtk)
+			{return TRUE;}
 
 		GuiContainer& r_parent;
 		EventHandler& r_handler;
@@ -123,6 +126,7 @@ SliderGtk::SliderGtk(GuiContainer& parent,EventHandler& handler
 
 	g_signal_connect(m_slider,"value-changed",G_CALLBACK(sliderMoved),this);
 	g_signal_connect(m_text,"focus-out-event",G_CALLBACK(textChanged),this);
+	g_signal_connect(m_slider,"key-release-event",G_CALLBACK(onKeyUp),this);
 	parent.componentAdd(*this);
 	}
 

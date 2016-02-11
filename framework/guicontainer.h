@@ -33,9 +33,6 @@ class GuiContainer:public Widget
 
 				virtual void onKeyUp(ContainerType& source,uint8_t scancode)
 					{}
-
-				virtual void onCommand(ContainerType& source,unsigned int command_id)
-					{}
 			};
 
 		virtual void componentAdd(Widget& component)=0;

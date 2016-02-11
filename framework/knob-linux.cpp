@@ -65,7 +65,8 @@ class KnobGtk:public Knob
 			,void* knobgtk);
 
 		static gboolean onKeyUp(GtkWidget *widget, GdkEventKey *event
-			,void* knobgtk);
+			,void* knobgtk)
+			{return TRUE;}
 
 		GuiContainer& r_parent;
 		EventHandler& r_handler;
@@ -260,7 +261,7 @@ gboolean KnobGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event,void* knobgtk)
 			return TRUE;
 		}
 
-	return FALSE;
+	return TRUE;
 	}
 
 KnobGtk::KnobGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
@@ -290,7 +291,8 @@ KnobGtk::KnobGtk(GuiContainer& parent,EventHandler& handler,unsigned int id
 	g_signal_connect(m_knob,"motion-notify-event",G_CALLBACK(onMouseMove),this);
 	g_signal_connect(m_knob,"button-press-event",G_CALLBACK(onMouseDown),this);
 	g_signal_connect(m_knob,"button-release-event",G_CALLBACK(onMouseUp),this);
-	g_signal_connect(m_knob,"key_press_event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect(m_knob,"key-press-event",G_CALLBACK(onKeyDown),this);
+	g_signal_connect(m_knob,"key-release-event",G_CALLBACK(onKeyUp),this);
 	g_signal_connect(m_knob, "size-allocate", G_CALLBACK(onSizeChange),this);
 	g_object_ref_sink(m_knob);
 	gtk_box_pack_start((GtkBox*)box,m_knob,TRUE,TRUE,0);

@@ -13,11 +13,11 @@ dependency[sessionview.o]
 #include "channelstriphandler.h"
 #include "sessionactions.h"
 #include "framework/keyboardview.h"
+#include "framework/boxhorizontal.h"
 
 class GuiContainer;
 class Session;
 class BoxVertical;
-class BoxHorizontal;
 class TabView;
 class ChannelView;
 class Delimiter;
