@@ -473,7 +473,11 @@ void AudioEngineAnja::voicesStop() noexcept
 			auto ch=src_current->channelGet();
 			if(m_channels[ch].gain_out<1e-3
 				&& m_channels[ch].fade_factor<1.0)
-				{src_current->stop();}
+				{
+				src_current->stop();
+			//Reset fade factor so fade in will work after fade out
+				m_channels[ch].fade_factor=1.0;
+				}
 			}
 		++src_current;
 		}
