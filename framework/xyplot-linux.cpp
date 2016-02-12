@@ -600,6 +600,11 @@ void XYPlotGtk::curveDraw(cairo_t* cr,const Curve& curve) const
 gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 	{
 	XYPlotGtk* _this=(XYPlotGtk*)xyplotgtk;
+	int dark_is;
+	g_object_get(gtk_settings_get_default()
+		,"gtk-application-prefer-dark-theme",&dark_is,NULL);
+
+	_this->backgroundSet(!dark_is);
 
 	auto width = gtk_widget_get_allocated_width (object);
 	auto height = gtk_widget_get_allocated_height (object);

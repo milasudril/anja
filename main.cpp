@@ -13,11 +13,18 @@ target[name[anja] type[application]]
 #include "mainwinhandler.h"
 #include "framework/window.h"
 
-int main()
+int main(int argc,char* argv[])
 	{
 	try
 		{
-		Session session("testbank/testbank.txt");
+		Session session;
+		if(argc>1)
+			{
+			try
+				{session.load(argv[1]);}
+			catch(...)
+				{}
+			}
 		WaveformRangeTrimmer trimmer;
 		KeyboardController keyboardevents(session);
 		WaveformDataUpdater waveform_updater;

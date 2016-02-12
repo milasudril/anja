@@ -258,7 +258,6 @@ float KeyboardViewGtk::keyDraw(cairo_t* cr
 gboolean KeyboardViewGtk::onPaint(GtkWidget* object,cairo_t* cr
 	,void* keyboardviewgtk)
 	{
-//	This function needs some clean-up
 	KeyboardViewGtk* _this=reinterpret_cast<KeyboardViewGtk*>(keyboardviewgtk);
 
 	auto width = gtk_widget_get_allocated_width (object);
