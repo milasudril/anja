@@ -4,12 +4,9 @@ target[name[waveformdata.o] type[object]]
 
 #include "waveformdata.h"
 #include "sessionfilerecord.h"
-#include "wavefilereader.h"
-#include "wavefileinfo.h"
 #include "colorstring.h"
 #include "optionstring.h"
 #include "framework/pathutils.h"
-#include "framework/array_simple.h"
 #include "framework/floatconv.h"
 #include "framework/localeguard.h"
 
@@ -21,7 +18,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	,Waveform& waveform
 	,KeyboardLayout::KeyDescriptor* key):m_filename(""),m_description("")
 	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
-	,r_key(key),r_waveform(&waveform)
+	,r_key(key),r_waveform(&waveform),m_stateflags(0)
 	{
 	r_waveform->valuesInit();
 
@@ -82,6 +79,8 @@ WaveformData::WaveformData(const SessionFileRecord& record
 		r_waveform->offsetEndSet(pos);
 		}
 //	TODO Store other data not interpreted by Anja
+
+	dirtyClear();
 	}
 
 void WaveformData::dataGet(SessionFileRecord& record) const
@@ -103,13 +102,11 @@ void WaveformData::dataGet(SessionFileRecord& record) const
 	record.propertySet("Playback end position/frames",buffer);
 	record.propertySet("Options",stringFromOptions(r_waveform->flagsGet()
 		,Waveform::FLAG_NAMES));
-
-//	TODO Format flag string
 //	TODO Save other data not interpreted by Anja
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
-	,m_color{0.0f,0.0f,0.0f,1},r_key(nullptr),r_waveform(nullptr)
+	,m_color{0.0f,0.0f,0.0f,1},r_key(nullptr),r_waveform(nullptr),m_stateflags(0)
 	{}
 
 void WaveformData::fileLoad(const char* filename)
@@ -118,41 +115,10 @@ void WaveformData::fileLoad(const char* filename)
 	if(strcmp(m_filename.begin(),filename)==0 && *filename!='\0')
 		{return;}
 
-	if(r_waveform->flagsGet() & Waveform::LOCKED)
-		{
-		throw "The waveform loaded in current slot is currently in use. "
-			"Please wait for the waveform to be unlocked, or choose another "
-			"slot.";
-		}
+	r_waveform->fileLoad(filename);
 
-	if(*filename=='\0')
-		{
-		r_waveform->clear();
-		float vals[2]={1e-7f,1e-7f};
-		r_waveform->append(vals,2);
-		r_waveform->valuesInit();
-		r_waveform->sampleRateSet(1000.0);
-		m_filename=filename;
-		return;
-		}
-
-	WavefileInfo info;
-	auto reader=WavefileReader::create(filename,info);
-	r_waveform->clear();
-	r_waveform->sampleRateSet(info.fs);
-	r_waveform->capacitySet(info.n_frames);
-	const uint32_t buffer_size=1024;
-	ArraySimple<float> buffer_tmp(buffer_size);
-	uint32_t n_read=0;
-	do
-		{
-		n_read=reader->dataRead(buffer_tmp.begin(),buffer_size);
-		r_waveform->append(buffer_tmp.begin(),n_read);
-		}
-	while(n_read==buffer_size);
-	r_waveform->offsetsReset();
-	r_waveform->flagsSet(Waveform::READONLY);
 	m_filename=filename;
+	m_stateflags|=DIRTY;
 	}
 
 void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
@@ -173,6 +139,8 @@ void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
 
 void WaveformData::descriptionSet(const char* description)
 	{
+	if(strcmp(m_description.begin(),description)==0)
+		{return;}
 	m_description=description;
 	m_key_label.clear();
 	auto state=0;
@@ -210,6 +178,8 @@ void WaveformData::descriptionSet(const char* description)
 
 	if(r_key!=nullptr)
 		{r_key->labelSet(m_key_label.begin());}
+
+	m_stateflags|=DIRTY;
 	}
 
 void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
@@ -223,4 +193,15 @@ void WaveformData::keyColorSet(const ColorRGBA& color)
 	if(r_key!=nullptr)
 		{r_key->colorBackgroundSet(color);}
 	m_color=color;
+	m_stateflags|=DIRTY;
+	}
+
+void WaveformData::init(Waveform& storage,KeyboardLayout::KeyDescriptor* key)
+	{
+	r_waveform=&storage;
+	r_key=key;
+	keyColorSet(COLORS[ColorID::BLACK]);
+	descriptionSet("");
+	fileLoad("");
+	dirtyClear();
 	}

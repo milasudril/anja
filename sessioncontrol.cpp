@@ -32,11 +32,6 @@ void SessionControl::onSessionLoad(SessionActions& source,const char* filename)
 		{session.audioServerConnect();}
 	}
 
-void SessionControl::onSessionSave(SessionActions& source)
-	{
-	source.sessionGet().save();
-	}
-
 void SessionControl::onSessionSaveAs(SessionActions& source,const char* filename)
 	{
 	auto& session=source.sessionGet();

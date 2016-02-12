@@ -25,12 +25,9 @@ class WaveformData
 			,Waveform& storage
 			,KeyboardLayout::KeyDescriptor* key);
 
-		void waveformSet(Waveform& waveform_new)
-			{
-			r_waveform=&waveform_new;
-			}
+		void init(Waveform& storage,KeyboardLayout::KeyDescriptor* key);
 
-		Waveform& waveformGet()
+		Waveform& waveformGet() noexcept
 			{
 			return *r_waveform;
 			}
@@ -43,30 +40,37 @@ class WaveformData
 
 		void fileLoad(const char* filename);
 
-		void keySet(KeyboardLayout::KeyDescriptor* key)
-			{r_key=key;}
 
 
-
-		const ArrayDynamicShort<char>& descriptionGet() const
+		const ArrayDynamicShort<char>& descriptionGet() const noexcept
 			{return m_description;}
 
 		void descriptionSet(const ArrayDynamicShort<char>& description);
 
 		void descriptionSet(const char* description);
 
-		const ArrayDynamicShort<char>& keyLabelGet() const
+		const ArrayDynamicShort<char>& keyLabelGet() const noexcept
 			{return m_key_label;}
 
 
 
-		const ColorRGBA& keyColorGet() const
+		const ColorRGBA& keyColorGet() const noexcept
 			{return m_color;}
 
 		void keyColorSet(const ColorRGBA& color_new);
 
-
 		void dataGet(SessionFileRecord& record) const;
+
+		bool dirtyIs() const noexcept
+			{
+			return m_stateflags&DIRTY || r_waveform->dirtyIs();
+			}
+
+		void dirtyClear()
+			{
+			m_stateflags&=~DIRTY;
+			r_waveform->dirtyClear();
+			}
 
 	private:
 		ArrayDynamicShort<char> m_filename;
@@ -75,6 +79,10 @@ class WaveformData
 		ColorRGBA m_color;
 		KeyboardLayout::KeyDescriptor* r_key;
 		Waveform* r_waveform;
+
+		static constexpr unsigned int DIRTY=0x1;
+
+		unsigned int m_stateflags;
 	};
 
 #endif

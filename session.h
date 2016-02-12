@@ -40,8 +40,6 @@ class Session
 
 		void load(const char* filename);
 
-		void save();
-
 		void save(const char* filename);
 
 		const ArrayDynamicShort<char>& filenameGet() const noexcept
@@ -128,20 +126,7 @@ class Session
 		uint8_t scancodeToChannel(uint8_t scancode) const noexcept
 			{return m_scancode_to_channel[scancode];}
 
-
-
 		void clear();
-
-
-
-
-		WaveformData& waveformDataFromMIDI(uint8_t midikey) noexcept
-			{return m_waveform_data[m_midikey_to_slot[midikey]];}
-
-		const WaveformData& waveformDataFromMIDI(uint8_t midikey) const noexcept
-			{return m_waveform_data[m_midikey_to_slot[midikey]];}
-
-
 
 		void audioServerConnect();
 
@@ -208,19 +193,16 @@ class Session
 		bool restartNeeded() const noexcept
 			{return m_state_flags&RESTART_NEEDED;}
 
-		bool dirtyIs() const noexcept
-			{return m_state_flags&SESSION_DIRTY;}
+		bool dirtyIs() const noexcept;
 
-		void dirtySet() noexcept
-			{m_state_flags|=SESSION_DIRTY;}
-
+		void dirtyClear() noexcept
+			{m_state_flags&=~SESSION_DIRTY;}
 
 	private:
 		AudioEngineAnja m_engine;
 		AudioConnection* m_connection;
 
-		ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;
-		ArrayFixed<uint8_t,128> m_midikey_to_slot;
+		ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;;
 		ArrayFixed<uint8_t,128> m_scancode_to_slot;
 		Wavetable m_waveforms;
 		ChannelMixer m_channels;
@@ -241,12 +223,12 @@ class Session
 
 		KeyboardLayout::KeyDescriptor* r_key_active;
 		uint8_t m_slot_active;
-		static constexpr unsigned int MULTIOUTPUT=1;
+		static constexpr unsigned int MULTIOUTPUT=0x1;
 		unsigned int m_flags;
 
 
-		static constexpr unsigned int RESTART_NEEDED=1;
-		static constexpr unsigned int SESSION_DIRTY=2;
+		static constexpr unsigned int RESTART_NEEDED=0x1;
+		static constexpr unsigned int SESSION_DIRTY=0x2;
 
 		unsigned int m_state_flags;
 	};

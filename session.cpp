@@ -45,16 +45,6 @@ void Session::waveformsClear()
 			}
 		}
 
-	//	Reset MIDI keys
-		{
-		memset(m_midikey_to_slot.begin(),-1,sizeof(m_midikey_to_slot));
-		for(uint8_t k=36;k < 128 + 36;++k)
-			{
-			m_midikey_to_slot[k%128]=(k-36)%128;
-			}
-		}
-
-
 	//	Reset waveform data
 		{
 		auto ptr=m_waveform_data.begin();
@@ -64,12 +54,9 @@ void Session::waveformsClear()
 		auto& keyboard=m_keyboard;
 		while(ptr!=ptr_end)
 			{
-			ptr->waveformSet(*ptr_waveform);
 			auto scancode=m_slot_to_scancode[slot];
-			ptr->keySet(scancode==0?nullptr:keyboard.keyFromScancode(scancode));
-			ptr->fileLoad("");
-			ptr->descriptionSet("");
-			ptr->keyColorSet(COLORS[ColorID::BLACK]);
+			ptr->init(*ptr_waveform
+				,scancode==0?nullptr:keyboard.keyFromScancode(scancode));
 			++slot;
 			++ptr;
 			++ptr_waveform;
@@ -103,17 +90,6 @@ void Session::channelsClear()
 			}
 		}
 
-	//	Reset channels
-		{
-		auto ptr=m_channels.begin();
-		auto ptr_end=m_channels.end();
-		while(ptr!=ptr_end)
-			{
-			ptr->valuesInit();
-			++ptr;
-			}
-		}
-
 	//	Reset channel data
 		{
 		auto ptr=m_channel_data.begin();
@@ -122,13 +98,11 @@ void Session::channelsClear()
 		auto k=0;
 		while(ptr!=ptr_end)
 			{
-			char buffer[16];
-			sprintf(buffer,"Ch %u",k+1);
 			auto scancode=m_channel_to_scancode[k];
-			ptr->keySet(scancode==0?nullptr:m_keyboard.keyFromScancode(scancode));
-			ptr->labelSet(buffer);
-			ptr->channelSet(*ptr_channel);
-			ptr->colorSet(COLORS[ColorID::BLACK]);
+			ptr->init(*ptr_channel
+				,scancode==0?nullptr:m_keyboard.keyFromScancode(scancode)
+				,k);
+
 			++ptr_channel;
 			++k;
 			++ptr;
@@ -164,6 +138,8 @@ void Session::load(const char* filename)
 		{throw "Invalid session file";}
 
 	clear();
+
+	dirtyClear();
 
 //	Get data from file header
 		{
@@ -239,7 +215,7 @@ void Session::load(const char* filename)
 			m_channel_data[ch]={record,m_channels[ch],key};
 			}
 		}
-	m_state_flags=0;
+	dirtyClear();
 	}
 
 void Session::keyHighlight(uint8_t scancode)
@@ -290,11 +266,6 @@ void Session::audioServerDisconnect()
 	m_state_flags&=~RESTART_NEEDED;
 	}
 
-void Session::save()
-	{
-//	TODO
-	}
-
 void Session::save(const char* filename)
 	{
 	char buffer[32];
@@ -326,7 +297,8 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(buffer);
 			waveform->dataGet(record_out);
-			writer->recordWrite(record_out);
+			writer->recordWrite(record_out);m_state_flags=0;
+			waveform->dirtyClear();
 			++waveform;
 			++k;
 			}
@@ -348,7 +320,8 @@ void Session::save(const char* filename)
 			++channel;
 			}
 		}
-	m_state_flags&=~SESSION_DIRTY;
+
+	dirtyClear();
 	}
 
 float Session::masterGainGet() const noexcept
@@ -361,4 +334,36 @@ Session& Session::masterGainSet(float value) noexcept
 	m_engine.masterGainSet(dBToAmplitude(value));
 	m_state_flags|=SESSION_DIRTY;
 	return *this;
+	}
+
+bool Session::dirtyIs() const noexcept
+	{
+	if(m_state_flags&SESSION_DIRTY)
+		{return 1;}
+
+	//	Check if waveform data is dirty
+		{
+		auto ptr_wfd=m_waveform_data.begin();
+		auto ptr_end=m_waveform_data.end();
+		while(ptr_wfd!=ptr_end)
+			{
+			if(ptr_wfd->dirtyIs())
+				{return 1;}
+			++ptr_wfd;
+			}
+		}
+
+	//	Check if channel data is dirty
+		{
+		auto ptr_channel=m_channel_data.begin();
+		auto ptr_end=m_channel_data.end();
+		while(ptr_channel!=ptr_end)
+			{
+			if(ptr_channel->dirtyIs())
+				{return 1;}
+			++ptr_channel;
+			}
+		}
+
+	return 0;
 	}

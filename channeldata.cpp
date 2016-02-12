@@ -8,13 +8,16 @@ target[name[channeldata.o] type[object]]
 #include "colorstring.h"
 #include "framework/floatconv.h"
 
+#include <cstring>
+
 ChannelData::ChannelData():m_label(""),m_color(COLORS[ColorID::BLACK])
-	,r_channel(nullptr),r_key(nullptr)
+	,r_channel(nullptr),r_key(nullptr),m_state_flags(0)
 	{}
 
 ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel
 	,KeyboardLayout::KeyDescriptor* key):
 	m_label(""),m_color{0.25f,0.0f,0.5f,1.0f},r_channel(&channel),r_key(key)
+	,m_state_flags(0)
 	{
 	r_channel->valuesInit();
 
@@ -39,6 +42,8 @@ ChannelData::ChannelData(const SessionFileRecord& record,Channel& channel
 		r_key->labelSet(m_label.begin());
 		r_key->colorBackgroundSet(m_color);
 		}
+
+	dirtyClear();
 //	TODO Store other data not interpreted by Anja
 	}
 
@@ -53,4 +58,30 @@ void ChannelData::dataGet(SessionFileRecord& record) const
 	record.propertySet("Fade time/s",buffer);
 	record.propertySet("Color",ColorString(m_color).begin());
 //	TODO Save other data not interpreted by Anja
+	}
+
+void ChannelData::init(Channel& ch,KeyboardLayout::KeyDescriptor* key
+	,unsigned int k)
+	{
+	ch.valuesInit();
+	channelSet(ch);
+	char buffer[16];
+	sprintf(buffer,"Ch %u",k+1);
+
+	keySet(key);
+	labelSet(buffer);
+	colorSet(COLORS[ColorID::BLACK]);
+
+	dirtyClear();
+	}
+
+ChannelData& ChannelData::labelSet(const char* label) noexcept
+	{
+	if(strcmp(m_label.begin(),label)==0)
+		{return *this;}
+	m_label=label;
+	if(r_key!=nullptr)
+		{r_key->labelSet(label);}
+	m_state_flags|=DIRTY;
+	return *this;
 	}

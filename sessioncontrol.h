@@ -18,7 +18,6 @@ class SessionControl:public SessionActions::EventHandler
 
 		void onSessionNew(SessionActions& source);
 		void onSessionLoad(SessionActions& source,const char* filename);
-		void onSessionSave(SessionActions& source);
 		void onSessionSaveAs(SessionActions& source,const char* filename);
 		void onEngineStart(SessionActions& source);
 		void onEngineStop(SessionActions& source);
