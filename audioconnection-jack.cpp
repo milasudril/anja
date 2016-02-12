@@ -1,5 +1,5 @@
 #ifdef __WAND__
-target[name[audioconnection.o] type[object] platform[;GNU/Linux] dependency[jack;external]]
+target[name[audioconnection.o] type[object] dependency[jack;external]]
 #endif
 
 #include "audioconnection.h"
