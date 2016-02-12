@@ -61,6 +61,7 @@ class SessionActions:public Widget
 		void statusUpdate();
 		void fullscreenSet();
 		void fullscreenUnset();
+		void askSave();
 
 	private:
 		Session* r_session;

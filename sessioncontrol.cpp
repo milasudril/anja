@@ -12,6 +12,7 @@ SessionControl::SessionControl(Window& window):r_window(&window)
 
 void SessionControl::onSessionNew(SessionActions& source)
 	{
+	source.askSave();
 	auto& session=source.sessionGet();
 
 	bool status=session.connectedIs();
@@ -24,6 +25,7 @@ void SessionControl::onSessionNew(SessionActions& source)
 
 void SessionControl::onSessionLoad(SessionActions& source,const char* filename)
 	{
+	source.askSave();
 	auto& session=source.sessionGet();
 	bool status=session.connectedIs();
 	session.load(filename);
@@ -69,16 +71,7 @@ void SessionControl::onFullscreen(SessionActions& source)
 
 void SessionControl::onExit(SessionActions& source)
 	{
-	auto& session=source.sessionGet();
-	if(session.dirtyIs())
-		{
-		auto answer=source.notifyUser("Do you want to save changes to this session?"
-			,"Exit Anja",MESSAGE_TYPE_WARNING|MESSAGE_ANSWERS_YESNO);
-		if(answer==MESSAGE_ANSWER_YES)
-			{
-			source.doSessionSave();
-			}
-		}
+	source.askSave();
 	r_view->destroy();
 	r_window->destroy();
 	}

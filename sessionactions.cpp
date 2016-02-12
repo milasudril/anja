@@ -156,3 +156,14 @@ void SessionActions::doSessionLoad()
 	if(filename!=nullptr)
 		{r_handler->onSessionLoad(*this,filename);}
 	}
+
+void SessionActions::askSave()
+	{
+	if(r_session->dirtyIs())
+		{
+		auto answer=notifyUser("Do you want to save changes to this session?"
+			,"Close Anja session",MESSAGE_TYPE_WARNING|MESSAGE_ANSWERS_YESNO);
+		if(answer==MESSAGE_ANSWER_YES)
+			{doSessionSave();}
+		}
+	}

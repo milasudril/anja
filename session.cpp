@@ -215,7 +215,7 @@ void Session::load(const char* filename)
 			m_channel_data[ch]={record,m_channels[ch],key};
 			}
 		}
-	dirtyClear();
+	m_state_flags=0;
 	}
 
 void Session::keyHighlight(uint8_t scancode)
@@ -297,7 +297,7 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(buffer);
 			waveform->dataGet(record_out);
-			writer->recordWrite(record_out);m_state_flags=0;
+			writer->recordWrite(record_out);
 			waveform->dirtyClear();
 			++waveform;
 			++k;

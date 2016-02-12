@@ -59,6 +59,9 @@ class SessionView:public Widget
 
 		void statusUpdate();
 
+		SessionActions* actionsGet()
+			{return m_actions;}
+
 	private:
 		SessionView(GuiContainer& parent,Session& session
 			,SessionActions::EventHandler& session_actions
