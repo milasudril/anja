@@ -30,7 +30,7 @@ class GuiHandleCommon
 class GuiHandle:public GuiHandleCommon<HWND>
 	{
 	public:
-		constexpr GuiHandle()=default;
+		GuiHandle()=default;
 
 		constexpr GuiHandle(HWND handle):GuiHandleCommon(handle)
 			{}
