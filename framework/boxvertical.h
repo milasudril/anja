@@ -12,12 +12,7 @@ dependency[boxvertical.o]
 class BoxVertical:public GuiContainer
 	{
 	public:
-		typedef GuiContainer::EventHandler<BoxVertical> EventHandler;
-
-		static BoxVertical* create(GuiContainer& parent)
-			{return create(parent,nullptr);}
-
-		static BoxVertical* create(GuiContainer& parent,EventHandler* event_handler);
+		static BoxVertical* create(GuiContainer& parent);
 
 		static constexpr uint32_t INSERTMODE_END=1;
 		static constexpr uint32_t INSERTMODE_EXPAND=2;

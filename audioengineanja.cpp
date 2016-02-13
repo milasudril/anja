@@ -165,14 +165,14 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) n
 
 		case MIDIConstants::ControlCodes::SUSTAIN:
 			{
-			auto channel=event.status_word[0]&0xf;
-			if(event.status_word[2] < 64)
+			uint32_t channel=event.status_word[0]&0xf;
+			auto ptr_voice=m_source_buffers.begin();
+			auto voice_end=m_source_buffers.end();
+			while(ptr_voice!=voice_end)
 				{
-			//	TODO Disable sustain flag for all voices on this channel
-				}
-			else
-				{
-			//	TODO Enable sustain flag for all voices on this channel
+				if(ptr_voice->valid() && ptr_voice->channelGet()==channel)
+					{ptr_voice->sustainToggle();}
+				++ptr_voice;
 				}
 			}
 			break;
@@ -258,13 +258,14 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 		{
 		case MIDIConstants::StatusCodes::NOTE_ON:
 			{
-		//	TODO: Use the velocity field
 			auto voice=m_voice_current;
 			auto slot=event.status_word[1];
-
 			auto& waveform=(*r_waveforms)[slot];
+			auto velocity=event.status_word[3]==Event::VALUE_1_FLOAT?
+				event.value : float(event.status_word[2])/127;
 
-			m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset);
+			m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset
+				,velocity);
 			r_source_buffers[slot]=voice;
 			m_voice_current=(voice+1)%m_source_buffers.length();
 			}

@@ -26,7 +26,7 @@ target
 class TabViewGtk:public TabView
 	{
 	public:
-		TabViewGtk(GuiContainer& parent,EventHandler* event_handler);
+		TabViewGtk(GuiContainer& parent);
 		~TabViewGtk();
 
 		void destroy();
@@ -70,7 +70,6 @@ class TabViewGtk:public TabView
 
 	private:
 		GuiContainer& r_parent;
-		EventHandler* r_handler;
 		GuiHandle m_box;
 		Widget* r_slave;
 
@@ -78,8 +77,8 @@ class TabViewGtk:public TabView
 		void componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i);
 	};
 
-TabView* TabView::create(GuiContainer& parent,EventHandler* handler)
-	{return new TabViewGtk(parent,handler);}
+TabView* TabView::create(GuiContainer& parent)
+	{return new TabViewGtk(parent);}
 
 void TabViewGtk::destroy()
 	{
@@ -89,8 +88,8 @@ void TabViewGtk::destroy()
 		{r_slave->destroy();}
 	}
 
-TabViewGtk::TabViewGtk(GuiContainer& parent,EventHandler* handler):
-	r_parent(parent),r_handler(handler),r_slave(nullptr)
+TabViewGtk::TabViewGtk(GuiContainer& parent):
+	r_parent(parent),r_slave(nullptr)
 	{
 	GtkWidget* box=gtk_notebook_new();
 	m_box=box;

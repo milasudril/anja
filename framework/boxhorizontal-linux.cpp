@@ -27,7 +27,7 @@ target
 class BoxHorizontalGtk:public BoxHorizontal
 	{
 	public:
-		BoxHorizontalGtk(GuiContainer& parent,EventHandler& event_handler);
+		BoxHorizontalGtk(GuiContainer& parent);
 		~BoxHorizontalGtk();
 
 		void destroy();
@@ -63,83 +63,16 @@ class BoxHorizontalGtk:public BoxHorizontal
 
 	private:
 		GuiContainer& r_parent;
-		EventHandler* r_handler;
 		GuiHandle m_box;
 		Widget* r_slave;
 		uint32_t m_insert_mode;
-
-		static gboolean onMouseMove(GtkWidget* object,GdkEventMotion* event
-			,void* boxhorizontalgtk);
-
-		static gboolean onMouseDown(GtkWidget* object,GdkEventButton* event
-			,void* boxhorizontalgtk);
-
-		static gboolean onMouseUp(GtkWidget* object,GdkEventButton* event
-			,void* boxhorizontalgtk);
-
-		static gboolean onKeyDown(GtkWidget* widget,GdkEventKey* event
-			,void* boxhorizontalgtk);
-
-		static gboolean onKeyUp(GtkWidget* widget,GdkEventKey* event
-			,void* boxhorizontalgtk);
 
 		ArrayDynamicShort<Widget*> m_widgets;
 		void componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i);
 	};
 
-
-gboolean BoxHorizontalGtk::onMouseMove(GtkWidget* object,GdkEventMotion* event
-	,void* windowgtk)
-	{
-	BoxHorizontalGtk* _this=(BoxHorizontalGtk*)windowgtk;
-	EXCEPTION_SWALLOW(
-		_this->r_handler->onMouseMove(*_this,event->x,event->y,keymaskFromSystem(event->state));
-		,_this);
-	return TRUE;
-	}
-
-gboolean BoxHorizontalGtk::onMouseDown(GtkWidget* widget,GdkEventButton* event
-	,void* windowgtk)
-	{
-	BoxHorizontalGtk* _this=(BoxHorizontalGtk*)windowgtk;
-	EXCEPTION_SWALLOW(
-		_this->r_handler->onMouseDown(*_this,event->x,event->y,keymaskFromSystem(event->state));
-		,_this);
-	return TRUE;
-	}
-
-gboolean BoxHorizontalGtk::onMouseUp(GtkWidget* widget,GdkEventButton* event
-	,void* windowgtk)
-	{
-	BoxHorizontalGtk* _this=(BoxHorizontalGtk*)windowgtk;
-	EXCEPTION_SWALLOW(
-		_this->r_handler->onMouseUp(*_this,event->x,event->y,keymaskFromSystem(event->state));
-		,_this);
-	return TRUE;
-	}
-
-gboolean BoxHorizontalGtk::onKeyDown(GtkWidget* widget,GdkEventKey* event
-	,void* windowgtk)
-	{
-	BoxHorizontalGtk* _this=(BoxHorizontalGtk*)windowgtk;
-	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
-		,_this);
-	return FALSE;
-	}
-
-gboolean BoxHorizontalGtk::onKeyUp(GtkWidget* widget,GdkEventKey* event
-	,void* windowgtk)
-	{
-	BoxHorizontalGtk* _this=(BoxHorizontalGtk*)windowgtk;
-	EXCEPTION_SWALLOW(_this->r_handler->onKeyDown(*_this,keymaskFromSystem(event->state));
-		,_this);
-	return FALSE;
-	}
-
-BoxHorizontal::EventHandler BoxHorizontal::s_default_handler;
-
-BoxHorizontal* BoxHorizontal::create(GuiContainer& parent,EventHandler& handler)
-	{return new BoxHorizontalGtk(parent,handler);}
+BoxHorizontal* BoxHorizontal::create(GuiContainer& parent)
+	{return new BoxHorizontalGtk(parent);}
 
 void BoxHorizontalGtk::destroy()
 	{
@@ -149,19 +82,12 @@ void BoxHorizontalGtk::destroy()
 		{r_slave->destroy();}
 	}
 
-BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent,EventHandler& handler):
-	r_parent(parent),r_handler(&handler),r_slave(nullptr),m_insert_mode(0)
+BoxHorizontalGtk::BoxHorizontalGtk(GuiContainer& parent):
+	r_parent(parent),r_slave(nullptr),m_insert_mode(0)
 	{
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_HORIZONTAL,4);
 	m_box=box;
 	g_object_ref_sink(box);
-	gtk_widget_set_can_focus(m_box,TRUE);
-	g_signal_connect(box,"button-release-event",G_CALLBACK(onMouseUp),this);
-	g_signal_connect(box,"button-press-event",G_CALLBACK(onMouseDown),this);
-	g_signal_connect(box,"motion-notify-event",G_CALLBACK(onMouseMove),this);
-	g_signal_connect(box,"key_press_event",G_CALLBACK(onKeyDown),this);
-	g_signal_connect(box,"key_release_event",G_CALLBACK(onKeyUp),this);
-
 	r_parent.componentAdd(*this);
 	gtk_widget_show(box);
 	}

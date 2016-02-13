@@ -12,12 +12,7 @@ dependency[tabview.o]
 class TabView:public GuiContainer
 	{
 	public:
-		typedef GuiContainer::EventHandler<TabView> EventHandler;
-
-		static TabView* create(GuiContainer& parent)
-			{return create(parent,nullptr);}
-
-		static TabView* create(GuiContainer& parent,EventHandler* event_handler);
+		static TabView* create(GuiContainer& parent);
 
 		virtual void tabTitleSet(unsigned int tab,const char* title)=0;
 

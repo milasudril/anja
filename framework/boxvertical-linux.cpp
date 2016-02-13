@@ -26,7 +26,7 @@ target
 class BoxVerticalGtk:public BoxVertical
 	{
 	public:
-		BoxVerticalGtk(GuiContainer& parent,EventHandler* event_handler);
+		BoxVerticalGtk(GuiContainer& parent);
 		~BoxVerticalGtk();
 
 		void destroy();
@@ -60,7 +60,6 @@ class BoxVerticalGtk:public BoxVertical
 
 	private:
 		GuiContainer& r_parent;
-		EventHandler* r_handler;
 		GuiHandle m_box;
 		Widget* r_slave;
 		uint32_t m_insert_mode;
@@ -69,8 +68,8 @@ class BoxVerticalGtk:public BoxVertical
 		void componentRemoveAt(const ArrayDynamicShort<Widget*>::iterator& i);
 	};
 
-BoxVertical* BoxVertical::create(GuiContainer& parent,EventHandler* handler)
-	{return new BoxVerticalGtk(parent,handler);}
+BoxVertical* BoxVertical::create(GuiContainer& parent)
+	{return new BoxVerticalGtk(parent);}
 
 void BoxVerticalGtk::destroy()
 	{
@@ -80,8 +79,8 @@ void BoxVerticalGtk::destroy()
 		{r_slave->destroy();}
 	}
 
-BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent,EventHandler* handler):
-	r_parent(parent),r_handler(handler),r_slave(nullptr),m_insert_mode(0)
+BoxVerticalGtk::BoxVerticalGtk(GuiContainer& parent):
+	r_parent(parent),r_slave(nullptr),m_insert_mode(0)
 	{
 	GtkWidget* box=gtk_box_new(GTK_ORIENTATION_VERTICAL,4);
 	m_box=box;

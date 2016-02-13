@@ -16,7 +16,7 @@ class PlaybackRange
 		PlaybackRange() noexcept;
 
 		void waveformSet(RandomGenerator& rng,Waveform& waveform
-			,uint32_t start_delay) noexcept;
+			,uint32_t start_delay,float velocity) noexcept;
 
 		bool valid() const noexcept
 			{return r_waveform!=nullptr;}
@@ -61,6 +61,11 @@ class PlaybackRange
 		void fadeOut(double decay_factor) noexcept
 			{m_decay_factor=decay_factor;}
 
+		PlaybackRange& sustainToggle() noexcept
+			{
+			m_flags^=Waveform::SUSTAIN;
+			return *this;
+			}
 
 	private:
 		RandomGenerator* r_rng;
@@ -71,6 +76,7 @@ class PlaybackRange
 		const float* r_end;
 		uint32_t m_flags;
 		float m_gain_random_inst;
+		float m_velocity;
 		double m_decay_factor;
 		double m_gain_out;
 	};
