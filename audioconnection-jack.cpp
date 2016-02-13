@@ -242,8 +242,8 @@ AudioConnectionJack::AudioConnectionJack(const char* name,AudioEngine& engine):
 
 AudioConnectionJack::~AudioConnectionJack()
 	{
-	r_engine->onDeactivate(*this);
 	jack_deactivate(m_connection.get());
+	r_engine->onDeactivate(*this);
 	}
 
 int AudioConnectionJack::bufferAllocate(jack_nframes_t n_frames,void* audioconnectionjack)

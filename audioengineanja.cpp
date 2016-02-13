@@ -7,6 +7,7 @@ target[name[audioengineanja.o] type[object]]
 #include "clock.h"
 #include "units.h"
 #include "playbackrange.h"
+#include "recordbuffers.h"
 #include "filterstep.h"
 #include "midiconstants/controlcodes.h"
 #include "midiconstants/statuscodes.h"
@@ -14,6 +15,16 @@ target[name[audioengineanja.o] type[object]]
 #include "framework/minifloat.h"
 
 #include <cstring>
+
+unsigned int AudioEngineAnja::RecordTask::run()
+	{
+	while(!m_stopped)
+		{
+		auto& buffer=r_rec_buffers->bufferGet();
+		}
+	return 0;
+	}
+
 
 AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	r_waveforms(&waveforms),m_sample_rate(0),m_event_queue(32)
@@ -44,18 +55,27 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 		}
 
 	source.audioPortOutputAdd("Master out")
+		.audioPortInputAdd("Audio capture")
 		.midiPortInputAdd("MIDI in")
 		.midiPortOutputAdd("MIDI out");
 
 	m_sample_rate=source.sampleRateGet();
+	m_rec_buffers=new RecordBuffers(m_sample_rate); //Use 1 s for record buffers;
+	m_record_task.recordBuffersSet(m_rec_buffers);
+	m_record_task.stopReset();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_master_gain_out=m_master_gain_in;
 
 	m_time_start=secondsToFrames(clockGet(),m_sample_rate);
+	m_rec_thread=Thread::create(m_record_task);
 	}
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
 	{
+	m_rec_buffers->readySet();
+	m_record_task.stop();
+	m_rec_thread->destroy();
+	delete m_rec_buffers;
 	m_sample_rate=0.0;
 	}
 
@@ -484,6 +504,12 @@ void AudioEngineAnja::voicesStop() noexcept
 		}
 	}
 
+void AudioEngineAnja::capture(AudioConnection& source,unsigned int n_frames) noexcept
+	{
+	auto buffer_in=source.audioBufferInputGet(0,n_frames);
+	m_rec_buffers->write(buffer_in,n_frames);
+	}
+
 void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
 	{
 	eventsRead(source,n_frames);
@@ -492,4 +518,5 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 	channelsMix(source,n_frames);
 	masterGainAdjust(source,n_frames);
 	voicesStop();
+	capture(source,n_frames);
 	}

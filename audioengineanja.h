@@ -11,9 +11,11 @@ dependency[audioengineanja.o]
 #include "framework/array_simple.h"
 #include "framework/array_fixed.h"
 #include "framework/randomgeneratorimpl.h"
+#include "framework/thread.h"
 
 class Session;
 class PlaybackRange;
+class RecordBuffers;
 class Wavetable;
 
 class AudioEngineAnja:public AudioConnection::AudioEngine
@@ -84,6 +86,26 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		ArraySimple<float> m_buffer_temp;
 		ArraySimple<float> m_buffers_out;
+		RecordBuffers* m_rec_buffers;
+		Thread* m_rec_thread;
+		class RecordTask:public Thread::Task
+			{
+			public:
+				unsigned int run();
+
+				void recordBuffersSet(RecordBuffers* rec_buffers)
+					{r_rec_buffers=rec_buffers;}
+
+				void stop()
+					{m_stopped=1;}
+
+				void stopReset()
+					{m_stopped=0;}
+			private:
+				RecordBuffers* r_rec_buffers;
+				volatile bool m_stopped;
+			} m_record_task;
+
 		double m_master_gain_out;
 		double m_master_gain_in;
 		bool m_multioutput;
@@ -103,6 +125,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		void channelsMix(AudioConnection& source,unsigned int n_frames) noexcept;
 		void masterGainAdjust(AudioConnection& source,unsigned int n_frames) noexcept;
 		void voicesStop() noexcept;
+		void capture(AudioConnection& source,unsigned int n_frames) noexcept;
 
 		void reset();
 	};

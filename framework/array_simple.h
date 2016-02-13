@@ -29,7 +29,7 @@ class alignas(2*sizeof(T*)) ArraySimple
 			return *this;
 			}
 
-		explicit ArraySimple(size_t N):m_data(new T[N]),m_N(N)
+		ArraySimple(size_t N):m_data(new T[N]),m_N(N)
 			{}
 
 		const T* begin() const
