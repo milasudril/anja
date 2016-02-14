@@ -21,6 +21,7 @@ void SessionControl::onSessionNew(SessionActions& source)
 	r_view->sessionSet(session);
 	if(status)
 		{session.audioServerConnect();}
+	r_view->statusUpdate();
 	}
 
 void SessionControl::onSessionLoad(SessionActions& source,const char* filename)
@@ -32,6 +33,7 @@ void SessionControl::onSessionLoad(SessionActions& source,const char* filename)
 	r_view->sessionSet(session);
 	if(status)
 		{session.audioServerConnect();}
+	r_view->statusUpdate();
 	}
 
 void SessionControl::onSessionSaveAs(SessionActions& source,const char* filename)
