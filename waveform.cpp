@@ -15,7 +15,7 @@ void Waveform::fileLoad(const char* filename)
 	{
 //	Stop loading new data into this slot if it is already in use by an audio
 //	thread.
-	if(flagsGet() & Waveform::LOCKED)
+	if(flagsGet() & (PLAYBACK_RUNNING|RECORD_RUNNING) )
 		{
 		throw "The waveform loaded in the current slot is currently in use. "
 			"Please wait for the waveform to be unlocked, or choose another "
@@ -30,7 +30,7 @@ void Waveform::fileLoad(const char* filename)
 		append(vals,2);
 		valuesInit();
 		sampleRateSet(1000.0);
-		m_state_flags&=~DIRTY;
+		dirtyClear();
 		return;
 		}
 

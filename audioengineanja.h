@@ -17,6 +17,8 @@ class Session;
 class PlaybackRange;
 class RecordBuffers;
 class Wavetable;
+class Waveform;
+class Event;
 
 class AudioEngineAnja:public AudioConnection::AudioEngine
 	{
@@ -41,6 +43,10 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 
 		void multioutputSet(bool state) noexcept
 			{m_multioutput=state;}
+
+		void waitForFrame() noexcept;
+
+		void waitForRecordComplete() noexcept;
 
 	private:
 		struct alignas(16) Event
@@ -91,24 +97,58 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		class RecordTask:public Thread::Task
 			{
 			public:
+				RecordTask();
+
+				~RecordTask();
+
 				unsigned int run();
 
-				void recordBuffersSet(RecordBuffers* rec_buffers)
-					{r_rec_buffers=rec_buffers;}
+				RecordTask& recordBuffersSet(RecordBuffers* rec_buffers) noexcept
+					{
+					r_rec_buffers=rec_buffers;
+					return *this;
+					}
 
-				void stop()
-					{m_stopped=1;}
+				RecordTask& stop() noexcept
+					{
+					m_flags|=STOPPED;
+					return *this;
+					}
 
-				void stopReset()
-					{m_stopped=0;}
+				RecordTask& stopReset() noexcept
+					{
+					m_flags&=~STOPPED;
+					return *this;
+					}
+
+				bool stopped() noexcept
+					{return m_flags&STOPPED;}
+
+				void enable() noexcept
+					{m_flags|=ENABLED;}
+
+				bool enabled() const noexcept
+					{return m_flags&ENABLED;}
+
+				RecordTask& disable() noexcept;
+
+				RecordTask& waveformSet(Waveform& waveform) noexcept;
+
 			private:
+				static constexpr unsigned int ENABLED=0x1;
+				static constexpr unsigned int STOPPED=0x2;
+
 				RecordBuffers* r_rec_buffers;
-				volatile bool m_stopped;
+				Waveform* volatile r_waveform;
+				volatile unsigned int m_flags;
+				::Event* m_ready;
 			} m_record_task;
 
 		double m_master_gain_out;
 		double m_master_gain_in;
 		bool m_multioutput;
+		::Event* m_ready;
+		::Event* m_record_complete;
 
 		static AudioEngineAnja::Event eventConvert(const AudioConnection::MIDIEvent& e) noexcept;
 		void eventWrite( AudioConnection& output_connection
@@ -117,8 +157,7 @@ class AudioEngineAnja:public AudioConnection::AudioEngine
 		void eventsRead(AudioConnection& source,unsigned int n_frames) noexcept;
 
 		void eventProcess(const Event& event,unsigned int time_offset) noexcept;
-
-		void eventControlProcess(const Event& event) noexcept;
+		void eventControlProcess(const Event& event,unsigned int time_offset) noexcept;
 
 		void eventsUIFetch(AudioConnection& source,unsigned int n_frames) noexcept;
 		void voicesRender(unsigned int n_frames) noexcept;

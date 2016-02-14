@@ -12,17 +12,65 @@ target[name[audioengineanja.o] type[object]]
 #include "midiconstants/controlcodes.h"
 #include "midiconstants/statuscodes.h"
 #include "midiconstants/controlcodes.h"
+#include "framework/event.h"
 #include "framework/minifloat.h"
 
 #include <cstring>
 
+AudioEngineAnja::RecordTask::RecordTask()
+	{
+	m_ready=::Event::create();
+	m_flags=0;
+	}
+
+AudioEngineAnja::RecordTask::~RecordTask()
+	{
+	m_ready->destroy();
+	}
+
+AudioEngineAnja::RecordTask& AudioEngineAnja::RecordTask::disable() noexcept
+	{
+	if(enabled())
+		{
+		m_flags&=~ENABLED;
+	//	NOTE: Synchronization is needed here. Otherwise, the record thread may
+	//	not keep up when updating playback offsets.
+		printf("I am here: %s %u\n",__FILE__,__LINE__);
+		m_ready->wait();
+		}
+	return *this;
+	}
+
 unsigned int AudioEngineAnja::RecordTask::run()
 	{
-	while(!m_stopped)
+	while(!stopped())
 		{
 		auto& buffer=r_rec_buffers->bufferGet();
+		auto n_written=buffer.m_n_written;
+
+	//	NOTE: Capture the pointer here so we get a local copy of it. The other
+	//	thread may set r_waveform to 0 before we get to the append statement.
+		auto waveform=r_waveform;
+		if(waveform!=nullptr)
+			{
+			waveform->append(buffer.m_data.begin(),n_written);
+		//	NOTE: We should write remaining data to waveform. When done
+		//	clear record flag and reset playback offsets.
+			if(!enabled())
+				{
+				waveform->flagsUnset(Waveform::RECORD_RUNNING).offsetsReset();
+				r_waveform=nullptr;
+				m_ready->set();
+				}
+			}
 		}
 	return 0;
+	}
+
+AudioEngineAnja::RecordTask& AudioEngineAnja::RecordTask::waveformSet(Waveform& waveform) noexcept
+	{
+	r_waveform=&waveform;
+	return *this;
 	}
 
 
@@ -34,11 +82,23 @@ AudioEngineAnja::AudioEngineAnja(Wavetable& waveforms):
 	,m_buffer_temp(1),m_buffers_out(16)
 	,m_master_gain_out(1.0),m_master_gain_in(1.0),m_multioutput(0)
 	{
+	m_ready=::Event::create();
+	m_record_complete=::Event::create();
 	reset();
 	}
 
 AudioEngineAnja::~AudioEngineAnja()
-	{}
+	{
+	m_ready->destroy();
+	m_record_complete->destroy();
+	}
+
+void AudioEngineAnja::waitForFrame() noexcept
+	{m_ready->wait();}
+
+void AudioEngineAnja::waitForRecordComplete() noexcept
+	{m_record_complete->wait();}
+
 
 void AudioEngineAnja::onActivate(AudioConnection& source)
 	{
@@ -60,11 +120,11 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 		.midiPortOutputAdd("MIDI out");
 
 	m_sample_rate=source.sampleRateGet();
-	m_rec_buffers=new RecordBuffers(m_sample_rate); //Use 1 s for record buffers;
-	m_record_task.recordBuffersSet(m_rec_buffers);
-	m_record_task.stopReset();
 	m_fader_filter_factor=timeConstantToDecayFactor(1e-3,m_sample_rate);
 	m_master_gain_out=m_master_gain_in;
+
+	m_rec_buffers=new RecordBuffers(m_sample_rate); //Use 1 s for record buffers;
+	m_record_task.recordBuffersSet(m_rec_buffers).disable().stopReset();
 
 	m_time_start=secondsToFrames(clockGet(),m_sample_rate);
 	m_rec_thread=Thread::create(m_record_task);
@@ -72,8 +132,10 @@ void AudioEngineAnja::onActivate(AudioConnection& source)
 
 void AudioEngineAnja::onDeactivate(AudioConnection& source)
 	{
-	m_rec_buffers->readySet();
+	m_record_task.disable();
+	m_record_complete->set();
 	m_record_task.stop();
+	m_rec_buffers->readySet();
 	m_rec_thread->destroy();
 	delete m_rec_buffers;
 	m_sample_rate=0.0;
@@ -113,6 +175,12 @@ void AudioEngineAnja::reset()
 			++ptr;
 			}
 		}
+
+	//	Reset events
+		{
+		m_ready->reset();
+		m_record_complete->reset();
+		}
 	}
 
 void AudioEngineAnja::buffersAllocate(AudioConnection& source,unsigned int n_frames)
@@ -135,6 +203,8 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,uint8_t value_1) 
 			};
 		m_event_queue.push_back(tmp.vector);
 		}
+	else
+		{m_record_complete->set();}
 	}
 
 void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) noexcept
@@ -150,9 +220,12 @@ void AudioEngineAnja::eventPost(uint8_t status,uint8_t value_0,float value_1) no
 			};
 		m_event_queue.push_back(tmp.vector);
 		}
+	else
+		{m_record_complete->set();}
 	}
 
-void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) noexcept
+void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event
+	,unsigned int time_offset) noexcept
 	{
 	switch(event.status_word[1])
 		{
@@ -196,9 +269,137 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event) n
 				}
 			}
 			break;
+
+		case MIDIConstants::ControlCodes::GENERAL_PURPOSE_1: //Record start
+			{
+			auto slot=event.status_word[2];
+			auto& waveform=(*r_waveforms)[slot];
+		//	NOTE: Do not record to a slot that is in use, or has been
+		//	marked as readonly.
+			if(! ( waveform.flagsGet()
+				&(Waveform::READONLY
+				 |Waveform::PLAYBACK_RUNNING
+				 |Waveform::RECORD_RUNNING) ) )
+				{
+				waveform.sampleRateSet(m_sample_rate)
+					.flagsSet(Waveform::RECORD_RUNNING)
+					.clear();
+				m_rec_buffers->readySet();
+				m_record_task.disable().waveformSet(waveform);
+				m_rec_buffers->reset();
+				m_record_task.enable();
+				}
+			}
+			break;
+
+		case MIDIConstants::ControlCodes::GENERAL_PURPOSE_2: //Record stop
+			{
+			auto slot=event.status_word[2];
+			auto& waveform=(*r_waveforms)[slot];
+		//	NOTE: Only try to stop the recording if the waveform is used
+			if(waveform.flagsGet() & Waveform::RECORD_RUNNING)
+				{
+				m_rec_buffers->readySet();
+				m_record_task.disable();
+				}
+			m_record_complete->set();
+			}
+			break;
+
+		case MIDIConstants::ControlCodes::GENERAL_PURPOSE_3: //Record stop
+			{
+			m_rec_buffers->readySet();
+			for(uint8_t k=0;k<128;++k)
+				{
+				auto& waveform=(*r_waveforms)[k];
+			//	NOTE: Only stop the recording if the waveform is used
+				if(waveform.flagsGet() & Waveform::RECORD_RUNNING)
+					{
+					m_record_task.disable();
+					waveform.flagsUnset(Waveform::RECORD_RUNNING);
+					auto ch=waveform.channelGet();
+
+				//	Send a NOTE_ON event right now
+					Event e
+						{
+						event.delay
+							,{
+							  uint8_t(MIDIConstants::StatusCodes::NOTE_ON|ch)
+							 ,k
+							 ,127
+							 ,Event::VALUE_1_FLOAT
+							}
+						,1.0f
+						};
+					eventProcess(e,time_offset);
+					}
+				}
+			}
+			m_record_complete->set();
+			break;
 		}
 	}
 
+void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
+	,unsigned int time_offset) noexcept
+	{
+	if(event.status_word[0]==MIDIConstants::StatusCodes::RESET)
+		{
+		auto buffer=m_source_buffers.begin();
+		auto buffers_end=m_source_buffers.end();
+		auto decay_factor=timeConstantToDecayFactor(1e-2,m_sample_rate);
+		while(buffer!=buffers_end)
+			{
+			buffer->fadeOut(decay_factor);
+			++buffer;
+			}
+		return;
+		}
+
+	switch(event.status_word[0]&0xf0)
+		{
+		case MIDIConstants::StatusCodes::NOTE_ON:
+			{
+			auto slot=event.status_word[1];
+			auto& waveform=(*r_waveforms)[slot];
+		//	NOTE: Do not try to play from a slot that is currently used for
+		//	recording.
+			if(! (waveform.flagsGet() & Waveform::RECORD_RUNNING ) )
+				{
+				auto voice=m_voice_current;
+				auto velocity=event.status_word[3]==Event::VALUE_1_FLOAT?
+					event.value : float(event.status_word[2])/127;
+
+				m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset
+					,velocity);
+				r_source_buffers[slot]=voice;
+				m_voice_current=(voice+1)%m_source_buffers.length();
+				}
+			}
+			break;
+
+		case MIDIConstants::StatusCodes::NOTE_OFF:
+			{
+		//	NOTE: The replace lock cannot be released here, due to the possible
+		//	sustain flag. Instead, it has to be done in audioProcess, when
+		//	the rendering loop detects that the clip should not continue.
+			auto slot=event.status_word[1];
+			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
+
+		//	NOTE: When note is stopped in sustain mode, ensure that the LOOP
+		//	flag is is disabled to prevent infinite sound
+			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
+				{playback_buffer.flagsUnset(Waveform::LOOP);}
+			else
+				{playback_buffer.stop(time_offset);}
+			}
+			break;
+
+		case MIDIConstants::StatusCodes::CONTROLLER:
+			eventControlProcess(event,time_offset);
+			break;
+		}
+	}
 
 void AudioEngineAnja::eventWrite(AudioConnection& output_connection
 	,AudioConnection::MIDIBufferOutputHandle midi_out
@@ -255,62 +456,6 @@ void AudioEngineAnja::eventWrite(AudioConnection& output_connection
 				,value_0,value_1,value_2
 				});
 			}
-		}
-	}
-
-void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
-	,unsigned int time_offset) noexcept
-	{
-	if(event.status_word[0]==MIDIConstants::StatusCodes::RESET)
-		{
-		auto buffer=m_source_buffers.begin();
-		auto buffers_end=m_source_buffers.end();
-		auto decay_factor=timeConstantToDecayFactor(1e-2,m_sample_rate);
-		while(buffer!=buffers_end)
-			{
-			buffer->fadeOut(decay_factor);
-			++buffer;
-			}
-		return;
-		}
-
-	switch(event.status_word[0]&0xf0)
-		{
-		case MIDIConstants::StatusCodes::NOTE_ON:
-			{
-			auto voice=m_voice_current;
-			auto slot=event.status_word[1];
-			auto& waveform=(*r_waveforms)[slot];
-			auto velocity=event.status_word[3]==Event::VALUE_1_FLOAT?
-				event.value : float(event.status_word[2])/127;
-
-			m_source_buffers[voice].waveformSet(m_randgen,waveform,time_offset
-				,velocity);
-			r_source_buffers[slot]=voice;
-			m_voice_current=(voice+1)%m_source_buffers.length();
-			}
-			break;
-
-		case MIDIConstants::StatusCodes::NOTE_OFF:
-			{
-		//	NOTE: The replace lock cannot be released here, due to the possible
-		//	sustain flag. Instead, it has to be done in audioProcess, when
-		//	the rendering loop detects that the clip should not continue.
-			auto slot=event.status_word[1];
-			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
-
-		//	NOTE: When note is stopped in sustain mode, ensure that the LOOP
-		//	flag is is disabled to prevent infinite sound
-			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
-				{playback_buffer.flagsUnset(Waveform::LOOP);}
-			else
-				{playback_buffer.stop(time_offset);}
-			}
-			break;
-
-		case MIDIConstants::StatusCodes::CONTROLLER:
-			eventControlProcess(event);
-			break;
 		}
 	}
 
@@ -506,8 +651,11 @@ void AudioEngineAnja::voicesStop() noexcept
 
 void AudioEngineAnja::capture(AudioConnection& source,unsigned int n_frames) noexcept
 	{
-	auto buffer_in=source.audioBufferInputGet(0,n_frames);
-	m_rec_buffers->write(buffer_in,n_frames);
+	if(m_record_task.enabled())
+		{
+		auto buffer_in=source.audioBufferInputGet(0,n_frames);
+		m_rec_buffers->write(buffer_in,n_frames);
+		}
 	}
 
 void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames) noexcept
@@ -519,4 +667,5 @@ void AudioEngineAnja::audioProcess(AudioConnection& source,unsigned int n_frames
 	masterGainAdjust(source,n_frames);
 	voicesStop();
 	capture(source,n_frames);
+	m_ready->set();
 	}

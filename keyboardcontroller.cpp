@@ -29,7 +29,14 @@ void KeyboardController::onKeyDown(KeyboardView& source,uint8_t scancode)
 		if(slot!=255) //A slot was activated
 			{
 			auto channel=r_session->waveformGet(slot).channelGet();
-			engine.eventPost(MIDIConstants::StatusCodes::NOTE_ON|channel,slot,1.0f);
+			if(m_keystates[110]) //Record mode
+				{
+			//	Post a record start event
+				engine.eventPost(MIDIConstants::StatusCodes::CONTROLLER|channel
+					,MIDIConstants::ControlCodes::GENERAL_PURPOSE_1,slot);
+				}
+			else
+				{engine.eventPost(MIDIConstants::StatusCodes::NOTE_ON|channel,slot,1.0f);}
 			}
 		else
 		if( (scancode>=59 && scancode <=68) || (scancode>=87 && scancode<=88))
@@ -87,7 +94,28 @@ void KeyboardController::onKeyUp(KeyboardView& source,uint8_t scancode)
 	if(slot!=255)
 		{
 		auto channel=r_session->waveformGet(slot).channelGet();
-		engine.eventPost(MIDIConstants::StatusCodes::NOTE_OFF|channel,slot,1.0f);
+		if(m_keystates[110]) //We were recording
+			{
+			engine.eventPost(MIDIConstants::StatusCodes::CONTROLLER|channel
+				,MIDIConstants::ControlCodes::GENERAL_PURPOSE_2
+				,slot);
+			engine.waitForRecordComplete();
+			r_session->slotActiveSet(slot);
+			r_session->keyHighlight(scancode);
+			source.update();
+			r_view->slotDisplay(slot);
+			}
+		else
+			{engine.eventPost(MIDIConstants::StatusCodes::NOTE_OFF|channel,slot,1.0f);}
+		}
+	else
+	if(scancode==110) //Stop any ongoing recording
+		{
+		engine.eventPost(MIDIConstants::StatusCodes::CONTROLLER
+			,MIDIConstants::ControlCodes::GENERAL_PURPOSE_3
+			,uint8_t(0));
+		engine.waitForRecordComplete();
+		r_view->sessionSet(*r_session);
 		}
 	}
 

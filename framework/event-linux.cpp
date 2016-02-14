@@ -11,24 +11,13 @@ class EventLinux:public Event
 		EventLinux();
 		~EventLinux();
 
-		void set()
-			{
-			pthread_mutex_lock(&m_mutex);
-			m_signaled=1;
-			pthread_cond_signal(&m_cond);
-			pthread_mutex_unlock(&m_mutex);
-			}
+		void set();
 
-		void wait()
-			{
-			pthread_mutex_lock(&m_mutex);
-			while(!m_signaled)
-				{pthread_cond_wait(&m_cond,&m_mutex);}
-			m_signaled=0;
-			pthread_mutex_unlock(&m_mutex);
-			}
+		void wait();
 
 		void destroy();
+
+		void reset();
 
 	private:
 		pthread_cond_t m_cond;
@@ -53,4 +42,26 @@ EventLinux::~EventLinux()
 	{
 	pthread_mutex_destroy(&m_mutex);
 	pthread_cond_destroy(&m_cond);
+	}
+
+void EventLinux::set()
+	{
+	pthread_mutex_lock(&m_mutex);
+	pthread_cond_signal(&m_cond);
+	m_signaled=1;
+	pthread_mutex_unlock(&m_mutex);
+	}
+
+void EventLinux::reset()
+	{
+	m_signaled=0;
+	}
+
+void EventLinux::wait()
+	{
+	pthread_mutex_lock(&m_mutex);
+	while(!m_signaled)
+		{pthread_cond_wait(&m_cond,&m_mutex);}
+	m_signaled=0;
+	pthread_mutex_unlock(&m_mutex);
 	}

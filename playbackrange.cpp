@@ -25,7 +25,7 @@ void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
 //	If user tries to load a new waveform in slot while it is playing
 //	a SIGSEGV will occur. Therefore, the waveform object needs to be
 //	marked as locked before we continue.
-	waveform.flagsSet(Waveform::LOCKED);
+	waveform.flagsSet(Waveform::PLAYBACK_RUNNING);
 
 	r_begin=waveform.begin();
 	r_current=waveform.begin();
@@ -40,7 +40,7 @@ void PlaybackRange::waveformSet(RandomGenerator& rng,Waveform& waveform
 void PlaybackRange::release()
 	{
 //	Clear lock flag
-	r_waveform->flagsUnset(Waveform::LOCKED);
+	r_waveform->flagsUnset(Waveform::PLAYBACK_RUNNING);
 	r_waveform=nullptr;
 	}
 

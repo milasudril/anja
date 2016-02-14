@@ -17,8 +17,6 @@ target[name[session.o] type[object]]
 
 #include <cstring>
 
-#include <unistd.h>
-
 const char* Session::FLAG_NAMES[]={"Use individual ports for each channel",nullptr};
 
 void Session::waveformsClear()
@@ -236,10 +234,7 @@ void Session::audioServerConnect()
 	m_engine.multioutputSet(flagGet(MULTIOUTPUT));
 	m_connection=AudioConnection::create(m_title.begin(),m_engine);
 
-//	FIXME Instead of relying on a delay, use a callback. This event must be
-//	issued from the process function to ensure that the audio thread has started
-//	ugh.
-	sleep(1);
+	m_engine.waitForFrame();
 
 //	Post channel volume messages
 	auto channel=m_channels.begin();

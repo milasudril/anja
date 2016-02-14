@@ -15,12 +15,12 @@ class Waveform
 	{
 	public:
 		Waveform() noexcept:m_offset_begin(0),m_offset_end(0),m_channel(0)
-			,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0),m_state_flags(0)
+			,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
 			{}
 
 		Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
 			m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
-			,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY),m_state_flags(0)
+			,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 			{}
 
 		void fileLoad(const char* filename);
@@ -43,16 +43,17 @@ class Waveform
 		float sampleRateGet() const noexcept
 			{return m_fs;}
 
-		void sampleRateSet(float fs) noexcept
+		Waveform& sampleRateSet(float fs) noexcept
 			{
-			m_state_flags|=(std::abs(fs-m_fs)>1e-2? DIRTY : 0);
+			m_flags|=(std::abs(fs-m_fs)>1e-2? DIRTY : 0);
 			m_fs=fs;
+			return *this;
 			}
 
 		Waveform& offsetBeginSet(uint32_t value_new) noexcept
 			{
 			auto temp=std::min(value_new,m_data.length());
-			m_state_flags|=(temp!=m_offset_begin? DIRTY : 0);
+			m_flags|=(temp!=m_offset_begin? DIRTY : 0);
 			m_offset_begin=temp;
 			return *this;
 			}
@@ -63,7 +64,7 @@ class Waveform
 		Waveform& offsetEndSet(uint32_t value_new) noexcept
 			{
 			auto temp=std::min(value_new,m_data.length());
-			m_state_flags|=(temp!=m_offset_end? DIRTY : 0);
+			m_flags|=(temp!=m_offset_end? DIRTY : 0);
 			m_offset_end=temp;
 			return *this;
 			}
@@ -72,14 +73,14 @@ class Waveform
 			{
 			m_offset_end=m_data.length();
 			m_offset_begin=0;
-			m_state_flags|=DIRTY;
+			m_flags|=DIRTY;
 			return *this;
 			}
 
 		Waveform& reverse() noexcept
 			{
 			std::swap(m_offset_end,m_offset_begin);
-			m_state_flags|=DIRTY;
+			m_flags|=DIRTY;
 			return *this;
 			}
 
@@ -104,7 +105,7 @@ class Waveform
 
 		Waveform& channelSet(uint32_t x) noexcept
 			{
-			m_state_flags|=(x!=m_channel? DIRTY : 0);
+			m_flags|=(x!=m_channel? DIRTY : 0);
 			m_channel=x;
 			return *this;
 			}
@@ -116,7 +117,7 @@ class Waveform
 
 		Waveform& gainSet(float gain) noexcept
 			{
-			m_state_flags|=(std::abs(gain - m_gain)>1e-4? DIRTY : 0);
+			m_flags|=(std::abs(gain - m_gain)>1e-4? DIRTY : 0);
 			m_gain=gain;
 			return *this;
 			}
@@ -126,7 +127,7 @@ class Waveform
 
 		Waveform& gainRandomSet(float value) noexcept
 			{
-			m_state_flags|=(std::abs(value - m_gain_random)>1e-4? DIRTY : 0);;
+			m_flags|=(std::abs(value - m_gain_random)>1e-4? DIRTY : 0);;
 			m_gain_random=value;
 			return *this;
 			}
@@ -137,7 +138,8 @@ class Waveform
 		static constexpr uint32_t SUSTAIN=0x2;
 		static constexpr uint32_t READONLY=0x4;
 		static constexpr uint32_t GAIN_ONLOOP_SET=0x8;
-		static constexpr uint32_t LOCKED=0x80000000;
+		static constexpr uint32_t PLAYBACK_RUNNING=0x20000000;
+		static constexpr uint32_t RECORD_RUNNING=0x40000000;
 
 		static const char* FLAG_NAMES[];
 
@@ -149,8 +151,11 @@ class Waveform
 
 		Waveform& flagsSet(uint32_t flags) noexcept
 			{
-			m_state_flags|=( !(flags&m_flags) ? DIRTY : 0);
-			m_flags|=flags;
+			auto flags_new=m_flags|flags;
+			auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
+
+			m_flags=flags_new;
+			m_flags|=( (flags_old== (flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
 			return *this;
 			}
 
@@ -162,8 +167,11 @@ class Waveform
 
 		Waveform& flagsUnset(uint32_t flags) noexcept
 			{
-			m_state_flags|=( (flags&m_flags)? DIRTY : 0);
-			m_flags&=~flags;
+			auto flags_new=m_flags&~flags;
+			auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
+
+			m_flags=flags_new;
+			m_flags|=( (flags_old==(flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
 			return *this;
 			}
 
@@ -172,14 +180,14 @@ class Waveform
  		Waveform& append(float x)
 			{
 			m_data.append(x);
-			m_state_flags|=DIRTY;
+			m_flags|=DIRTY;
 			return *this;
 			}
 
 		Waveform& append(const float* x,uint32_t n)
 			{
 			m_data.append(x,n);
-			m_state_flags|=DIRTY;
+			m_flags|=DIRTY;
 			return *this;
 			}
 
@@ -192,7 +200,8 @@ class Waveform
 		void clear()
 			{
 			m_data.clear();
-			m_state_flags|=DIRTY;
+			offsetsReset();
+			m_flags|=DIRTY;
 			}
 
 		static Waveform nullGet()
@@ -209,20 +218,25 @@ class Waveform
 			m_flags=0.0f;
 			m_offset_begin=0;
 			m_offset_end=m_data.length();
-			m_state_flags|=DIRTY;
+			m_flags|=DIRTY;
 			return *this;
 			}
 
 		bool dirtyIs() const noexcept
 			{
-			return m_state_flags&DIRTY;
+			return m_flags&DIRTY;
 			}
 
 		void dirtyClear()
- 			{m_state_flags&=~DIRTY;}
+ 			{
+			m_flags&=~DIRTY;
+			}
 
 
 	private:
+		static constexpr uint32_t DIRTY=0x80000000;
+		static constexpr uint32_t MASK_CHANGE_IGNORE=DIRTY|RECORD_RUNNING|PLAYBACK_RUNNING;
+
 		ArrayDynamicShort<float> m_data;
 		uint32_t m_offset_begin;
 		uint32_t m_offset_end;
@@ -231,10 +245,6 @@ class Waveform
 		float m_gain_random;
 		float m_fs;
 		uint32_t m_flags;
-
-		static constexpr uint32_t DIRTY=0x1;
-
-		uint32_t m_state_flags;
 	};
 
 #endif

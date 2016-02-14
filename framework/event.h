@@ -16,6 +16,7 @@ class Event
 
 		virtual void set()=0;
 		virtual void wait()=0;
+		virtual void reset()=0;
 
 	protected:
 		virtual ~Event()=default;

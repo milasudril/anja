@@ -7,8 +7,9 @@ target[name[recordbuffers.o] type[object]]
 
 #include <cstring>
 
-RecordBuffers::RecordBuffers(unsigned int n_frames):m_data({n_frames,n_frames})
-	,m_buffer_current(0),m_n_written(0)
+RecordBuffers::RecordBuffers(unsigned int n_frames):
+	m_data({{n_frames,0},{n_frames,0}})
+	,m_buffer_current(0),m_buffer_current_out(0)
 	{
 	m_ready=Event::create();
 	}
@@ -18,33 +19,41 @@ RecordBuffers::~RecordBuffers()
 	m_ready->destroy();
 	}
 
-const ArraySimple<float>& RecordBuffers::bufferGet() const
+const RecordBuffers::WaveformBuffer& RecordBuffers::bufferGet() const
 	{
 	m_ready->wait();
-	return m_data[(m_buffer_current + 1)%2];
+	return m_data[m_buffer_current_out];
 	}
 
 void RecordBuffers::readySet() noexcept
 	{
-	m_buffer_current=(m_buffer_current + 1)%2;
+	m_buffer_current_out=m_buffer_current;
 	m_ready->set();
 	}
 
 void RecordBuffers::write(const float* buffer,unsigned int N) noexcept
 	{
-	auto ptr_out=m_data[m_buffer_current].begin();
-	auto length=m_data[m_buffer_current].length();
-	auto n_written=m_n_written;
+	auto buffer_current=m_buffer_current;
+	auto ptr_out=m_data[buffer_current].m_data.begin();
+	auto length=m_data[buffer_current].m_data.length();
+	auto n_written=m_data[buffer_current].m_n_written;
+	ptr_out+=n_written;
 	while(N!=0)
 		{
 		if(n_written==length)
 			{
-			n_written=0;
-			m_buffer_current=(m_buffer_current + 1)%2;
+		//	We have filled the buffer. Commit results and release the lock.
+			m_data[buffer_current].m_n_written=n_written;
+			m_buffer_current_out=buffer_current;
 			m_ready->set();
-			ptr_out=m_data[m_buffer_current].begin();
-			length=m_data[m_buffer_current].length();
-		//	FIXME: Return the correct length from buffer get;
+
+		//	Swap buffers and start again
+			buffer_current=(buffer_current + 1)%2;
+			n_written=0;
+			ptr_out=m_data[buffer_current].m_data.begin();
+			length=m_data[buffer_current].m_data.length();
+
+		//	Clear current buffer
 			memset(ptr_out,length,sizeof(float));
 			}
 		auto n=std::min(size_t(N),length-n_written);
@@ -53,5 +62,6 @@ void RecordBuffers::write(const float* buffer,unsigned int N) noexcept
 		ptr_out+=n;
 		n_written+=n;
 		}
-	m_n_written=n_written;
+	m_data[buffer_current].m_n_written=n_written;
+	m_buffer_current=buffer_current;
 	}

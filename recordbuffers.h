@@ -13,20 +13,32 @@ class Event;
 class RecordBuffers
 	{
 	public:
+
 		RecordBuffers(unsigned int n_frames);
 		~RecordBuffers();
 
 		void write(const float* value,unsigned int n)noexcept;
 
-		const ArraySimple<float>& bufferGet() const;
+		struct WaveformBuffer
+			{
+			ArraySimple<float> m_data;
+			unsigned int m_n_written;
+			};
+		const WaveformBuffer& bufferGet() const;
 
 		void readySet() noexcept;
 
+		void reset() noexcept
+			{
+			m_data[0].m_n_written=0;
+			m_data[1].m_n_written=0;
+			}
+
 	private:
 		Event* m_ready;
-		ArraySimple<float> m_data[2];
+		WaveformBuffer m_data[2];
 		unsigned int m_buffer_current;
-		unsigned int m_n_written;
+		unsigned int m_buffer_current_out;
 	};
 
 #endif
