@@ -27,6 +27,5 @@ int main(int argc,char** argv)
 	auto plotwindow=XYPlot::create(*mainwin);
 	plotwindow->curveAdd({data_0,N+1,COLORS[ColorID::YELLOW]});
 	plotwindow->curveAdd({data_1,N+1,COLORS[ColorID::BLUE]});
-	plotwindow->backgroundSet(1);
 	return 0;
 	}

@@ -11,5 +11,6 @@ dependency[pathutils.o]
 ArrayDynamicShort<char> realpath(const ArrayDynamicShort<char>& path);
 ArrayDynamicShort<char> parentDirectory(const ArrayDynamicShort<char>& path);
 bool absoluteIs(const ArrayDynamicShort<char>& path);
+ArrayDynamicShort<char> makeRelativeTo(const char* path, const char* reference);
 
 #endif

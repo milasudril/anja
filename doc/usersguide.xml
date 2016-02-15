@@ -26,8 +26,10 @@
 	<section id="comparison">Anja compared to other software</section>
 	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also a kill-all-softly feature.</p>
 
-
 	<chapter id="obtaining">Installing Anja</chapter>
+	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package <cite>anjasrc</cite>, and compile it. Assuming all dependencies are met, the following procedure should work.</p>
+	<program-source language="bash">
+	</program-source>
 
 	<chapter id="using">Using Anja</chapter>
 
@@ -42,5 +44,6 @@
 		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
 		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
+		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
 	</bibliography>
 </document>

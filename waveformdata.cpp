@@ -83,10 +83,16 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	dirtyClear();
 	}
 
-void WaveformData::dataGet(SessionFileRecord& record) const
+void WaveformData::dataGet(SessionFileRecord& record
+	,const ArrayDynamicShort<char>& load_path) const
 	{
 	record.clear();
-	record.propertySet("Filename",m_filename);
+
+	auto filename_out=m_filename;
+	if(*filename_out.begin()!='\0')
+		{filename_out=makeRelativeTo(filename_out.begin(),load_path.begin());}
+
+	record.propertySet("Filename",filename_out);
 	record.propertySet("Description",m_description);
 	record.propertySet("Color",ColorString(m_color).begin());
 	char buffer[32];

@@ -59,7 +59,8 @@ class WaveformData
 
 		void keyColorSet(const ColorRGBA& color_new);
 
-		void dataGet(SessionFileRecord& record) const;
+		void dataGet(SessionFileRecord& record
+			,const ArrayDynamicShort<char>& load_path) const;
 
 		bool dirtyIs() const noexcept
 			{

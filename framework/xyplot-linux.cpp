@@ -38,7 +38,9 @@ class XYPlotGtk:public XYPlot
 		~XYPlotGtk();
 
 		void update()
-			{gtk_widget_queue_draw(m_canvas);}
+			{
+			gtk_widget_queue_draw(m_canvas);
+			}
 
 		void curveAdd(const Curve& curve);
 
@@ -50,8 +52,6 @@ class XYPlotGtk:public XYPlot
 
 		const Curve::Domain& domainGet() const
 			{return m_domain_current_active;}
-
-		void backgroundSet(bool light);
 
 		void destroy();
 
@@ -115,6 +115,8 @@ class XYPlotGtk:public XYPlot
 			}
 
 	private:
+		void backgroundSet(bool light);
+
 		static void onSizeChange(GtkWidget* widget,GtkAllocation* allocation
 			,void* xyplotgtk);
 
@@ -395,7 +397,6 @@ void XYPlotGtk::backgroundSet(bool light)
 		m_curve_luma=0.7f;
 		m_canvas_color=COLORS[ColorID::GRAY_DARK];
 		}
-	update();
 	}
 
 void XYPlotGtk::axisXExtents(cairo_t* cr,double x_0,size_t N,double delta_x)
@@ -700,5 +701,5 @@ gboolean XYPlotGtk::onPaint(GtkWidget* object,cairo_t* cr,void* xyplotgtk)
 		_this->axisXDraw(cr);
 		}
 
-	return FALSE;
+	return TRUE;
 	}

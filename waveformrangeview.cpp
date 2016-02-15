@@ -201,7 +201,6 @@ WaveformRangeView::WaveformRangeView(GuiContainer& parent,EventHandler& handler)
 				,0
 			 }
 		});
-	m_plot->backgroundSet(0);
 	}
 
 WaveformRangeView::~WaveformRangeView()

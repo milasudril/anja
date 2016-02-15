@@ -59,7 +59,6 @@ class XYPlot:public Widget
 
 		static XYPlot* create(GuiContainer& parent,EventHandler& handler);
 
-		virtual void backgroundSet(bool light)=0;
 		virtual void update()=0;
 		virtual void eventHandlerSet(EventHandler& handler)=0;
 		virtual void curveAdd(const Curve& curve)=0;
