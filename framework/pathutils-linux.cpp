@@ -82,23 +82,39 @@ ArrayDynamicShort<char> makeRelativeTo(const char* path, const char* reference)
 		else
 			{break;}
 		}
-// Subtract leading identical token from  target
-	--gen_count_target;
 
 	auto ref_val_last=*reference;
 	auto path_val_last=*path;
 
+//	We have read through reference. This means that all but possibly the last
+//	components of referenec are equalto the corresponding part in path.
+	if(ref_val_last=='\0')
+		{
+	//	If we have reached end of path
+		if(path_val_last=='\0')
+			{
+		//	Since we have processed both paths, the only difference must be in the
+		//	last component. Just go up and down
+			ret.append("../").truncate().append(path_tok.begin());
+			return ret;
+			}
+		else
+	//	Ohterwise, check if the two last tokens are equal. If so, just append
+	//	the remaining part of path
+		if(strcmp(path_tok.begin(),ref_tok.begin())==0)
+			{
+			ret.append(path);
+			return ret;
+			}
+		}
+
 	auto gen_count_tot=gen_count_target;
 
 //	Add the last part to gen_count_tot, but only if there are remaining
-//	components of path. Also some empirical rules apply...
-	if((path_val_last!='\0'
-		||  (ref_val_last=='\0' && path_val_last=='\0'))
-		&& !(ref_val_last=='\0' && path_val_last!='\0') )
+//	components of path. This is because when there are no parts left in path,
+//	the parts that differs remains in reference
+	if(path_val_last!='\0')
 		{++gen_count_tot;}
-
-	if(gen_count_tot==gen_count_target && path_val_last!='\0')
-		{return path;}
 
 //	Count the number of remaining parts
 	while(*reference!='\0')

@@ -7,28 +7,20 @@ target[name[pathutils-test] type[application]]
 
 int main()
 	{
-	auto path=makeRelativeTo("/foo/other/path","/foo/bar/some/path/");
-	printf("1A %s\n\n",path.begin());
-
-	path=makeRelativeTo("/foo/other/path","/foo/bar/some/path");
-	printf("1B %s\n\n",path.begin());
-
-	path=makeRelativeTo("/foo/bar/one/foo","/foo/bar/one/foo/onemore/");
-	printf("2A %s\n\n",path.begin());
+	auto path=makeRelativeTo("/foo/other/path","/foo/bar/some/path");
+	printf("1 %s\n\n",path.begin());
 
 	path=makeRelativeTo("/foo/bar/one/foo","/foo/bar/one/foo/onemore");
-	printf("2B %s\n\n",path.begin());
-
-	path=makeRelativeTo("/foo/bar/one","/foo/bar/two/");
-	printf("3A %s\n\n",path.begin());
+	printf("2 %s\n\n",path.begin());
 
 	path=makeRelativeTo("/foo/bar/one","/foo/bar/two");
-	printf("3B %s\n\n",path.begin());
+	printf("3 %s\n\n",path.begin());
 
-	path=makeRelativeTo("/foo/bar/one.txt","/foo/bar/");
-	printf("4A %s\n\n",path.begin());
+	path=makeRelativeTo("/foo/bar/one/more/directory","/foo/bar");
+	printf("4 %s\n\n",path.begin());
 
-	path=makeRelativeTo("/foo/bar/one.txt","/foo/bar");
-	printf("4B %s\n\n",path.begin());
+	path=makeRelativeTo("/home/torbjorr/laptop_r4/Dokument/anja/testbank/alien.wav"
+		,"/home/torbjorr/Skrivbord");
+	printf("5 %s\n\n",path.begin());
 	return 0;
 	}

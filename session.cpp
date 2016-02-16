@@ -266,7 +266,8 @@ void Session::save(const char* filename)
 	char buffer[32];
 	auto writer=SessionFileWriter::create(filename);
 	SessionFileRecordImpl record_out;
-
+	auto dir=parentDirectory(realpath(filename));
+	printf("%s\n",dir.begin());
 	record_out.sectionLevelSet(0);
 	record_out.sectionTitleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);
@@ -291,7 +292,7 @@ void Session::save(const char* filename)
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(buffer);
-			waveform->dataGet(record_out,m_directory);
+			waveform->dataGet(record_out,dir);
 			writer->recordWrite(record_out);
 			waveform->dirtyClear();
 			++waveform;
