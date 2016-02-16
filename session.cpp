@@ -267,7 +267,6 @@ void Session::save(const char* filename)
 	auto writer=SessionFileWriter::create(filename);
 	SessionFileRecordImpl record_out;
 	auto dir=parentDirectory(realpath(filename));
-	printf("%s\n",dir.begin());
 	record_out.sectionLevelSet(0);
 	record_out.sectionTitleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);
