@@ -3,8 +3,44 @@
 
 <xsl:key name="cite_id" match="/document/bibliography/item" use="@id" />
 
+<xsl:key name="Listing" match="/document/listing" use="@id" />
+
 <xsl:template match="*">
 <xsl:copy-of select="." />
+</xsl:template>
+
+<xsl:template match="ref">
+<a>
+<xsl:attribute name="href">#<xsl:value-of select="."/></xsl:attribute><xsl:value-of select="@what"/> <xsl:text> </xsl:text>
+<xsl:value-of select="count(key(@what,.)/preceding-sibling::chapter)"/>.<xsl:value-of select="count(key(@what,.)/preceding-sibling::listing)+1"/>
+</a>
+</xsl:template>
+
+<xsl:template match="env">
+<code class="env"><xsl:copy-of select="node()" /></code>
+</xsl:template>
+
+<xsl:template match="prgname">
+<code class="prgname"><xsl:copy-of select="node()" /></code>
+</xsl:template>
+
+<xsl:template match="dirname">
+<code class="dirname"><xsl:copy-of select="node()" /></code>
+</xsl:template>
+
+<xsl:template match="caption">
+<xsl:apply-templates />
+</xsl:template>
+
+<xsl:template match="code">
+<pre><code><xsl:attribute name="class"><xsl:value-of select="@language" /></xsl:attribute><xsl:copy-of select="node()" /></code></pre>
+</xsl:template>
+
+<xsl:template match="listing">
+<div class="listing"><xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+<p><strong>Listing <xsl:number count="chapter" level="any"/>.<xsl:number from="chapter" level="any"/></strong>: <xsl:apply-templates select="caption" /></p>
+<xsl:apply-templates select="code" />
+</div>
 </xsl:template>
 
 <xsl:template match="libname">
@@ -53,6 +89,17 @@
 </h3>
 </xsl:template>
 
+<xsl:template match="subsection" mode="toc">
+<li><a><xsl:attribute name="href">#<xsl:value-of select="@id" />
+</xsl:attribute><xsl:copy-of select="node()"/></a></li>
+</xsl:template>
+
+<xsl:template match="subsection">
+<h4><xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+<xsl:number count="chapter" level="any"/>.<xsl:number level="any" from="chapter"/>.<xsl:number level="any" from="chapter"/> <span class="fill" /><xsl:copy-of select="node()"/>
+</h4>
+</xsl:template>
+
 
 
 <xsl:template match="tableofcontents">
@@ -86,7 +133,10 @@
 <html>
 <head>
 <title><xsl:value-of select="title" /></title>
+<link rel="stylesheet" href="highlight/styles/default.css" type="text/css" />
 <link rel="stylesheet" href="format.css" type="text/css" />
+<script src="highlight/highlight.pack.js" type="text/javascript"></script>
+<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 </head>
 
 <body>

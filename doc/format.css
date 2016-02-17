@@ -27,7 +27,10 @@ p.titlepage{font-size:14.4pt}
 span.fill{margin-right:18pt}
 
 h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","CMU Serif",Serif;}
-code{font-family:"Latin Modern Typewriter",Monospace}
+code,pre{font-family:"Latin Modern Mono",Monospace}
+pre > code{font-size:10pt}
+
+div.listing{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
 
 @media screen and (min-width: 700px)
 	{
@@ -36,8 +39,12 @@ code{font-family:"Latin Modern Typewriter",Monospace}
 		nav{top:0;position:fixed;width:200px;left:0pt;padding-left:8px;height: 100%;background-color:#d0d0d0}
 
 	nav > h2,nav > ol{position:static}
+		
+	div.listing{position:relative;width:calc(100% - 200px - 140pt);left:200px;margin-left:70pt;}
 	}
+
 
 @media print {
     h2 {page-break-before: right;}
+	pre,code{overflow-x: visible;overflow-y:visible}
 }
