@@ -90,7 +90,10 @@ void WaveformData::dataGet(SessionFileRecord& record
 
 	auto filename_out=m_filename;
 	if(*filename_out.begin()!='\0')
-		{filename_out=makeRelativeTo(filename_out.begin(),load_path.begin());}
+		{
+		filename_out=makeRelativeTo(filename_out.begin(),load_path.begin());
+		}
+
 
 	record.propertySet("Filename",filename_out);
 	record.propertySet("Description",m_description);
@@ -141,6 +144,22 @@ void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
 		fullpath.truncate().append(filename).append('\0');
 		fileLoad(fullpath.begin());
 		}
+	}
+
+void WaveformData::fileSave(unsigned int k,const ArrayDynamicShort<char>& path)
+	{
+	auto filename=m_filename;
+	if(*(filename.begin())=='\0')
+		{
+		char buffer[32];
+		unsigned long long int x=time(NULL);
+		sprintf(buffer,"%llx-%x.wav",x,k);
+		filename=path;
+		filename.truncate().append(buffer);
+		}
+	r_waveform->fileSave(filename.begin());
+	m_filename=filename;
+	m_stateflags|=DIRTY;
 	}
 
 void WaveformData::descriptionSet(const char* description)

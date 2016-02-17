@@ -40,6 +40,8 @@ class WaveformData
 
 		void fileLoad(const char* filename);
 
+		void fileSave(unsigned int k,const ArrayDynamicShort<char>& path);
+
 
 
 		const ArrayDynamicShort<char>& descriptionGet() const noexcept

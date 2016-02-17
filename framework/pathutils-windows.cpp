@@ -1,9 +1,11 @@
 #ifdef __WAND__
-target[name[pathutils.o] type[object] platform[;Windows]]
+target[name[pathutils.o] type[object] platform[;Windows] dependency[shlwapi;external]]
 #endif
 
 #include "pathutils.h"
 #include <windows.h>
+
+#include <shlwapi.h> //	Needed for PathRelativePathTo wtf
 
 ArrayDynamicShort<char> realpath(const ArrayDynamicShort<char>& path)
 	{
@@ -31,4 +33,12 @@ ArrayDynamicShort<char> parentDirectory(const ArrayDynamicShort<char>& path)
 bool absoluteIs(const ArrayDynamicShort<char>& path)
 	{
 	return !PathIsRelativeA(path.begin());
+	}
+
+ArrayDynamicShort<char> makeRelativeTo(const char* path, const char* reference)
+	{
+	char buffer[4*MAX_PATH];
+	if(PathRelativePathToA(buffer,reference,FILE_ATTRIBUTE_DIRECTORY,path,0))
+		{return buffer;}
+	return path;
 	}

@@ -291,6 +291,11 @@ void Session::save(const char* filename)
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(buffer);
+			auto& w=waveform->waveformGet();
+			if(w.flagsGet()&Waveform::RECORDED)
+				{
+				waveform->fileSave(k,dir);
+				}
 			waveform->dataGet(record_out,dir);
 			writer->recordWrite(record_out);
 			waveform->dirtyClear();

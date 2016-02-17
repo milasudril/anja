@@ -25,6 +25,8 @@ class Waveform
 
 		void fileLoad(const char* filename);
 
+		void fileSave(const char* filename);
+
 		const float* begin() const noexcept
 			{return m_data.begin() + m_offset_begin;}
 
@@ -138,6 +140,7 @@ class Waveform
 		static constexpr uint32_t SUSTAIN=0x2;
 		static constexpr uint32_t READONLY=0x4;
 		static constexpr uint32_t GAIN_ONLOOP_SET=0x8;
+		static constexpr uint32_t RECORDED=0x10000000;
 		static constexpr uint32_t PLAYBACK_RUNNING=0x20000000;
 		static constexpr uint32_t RECORD_RUNNING=0x40000000;
 

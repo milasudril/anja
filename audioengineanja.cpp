@@ -35,7 +35,6 @@ AudioEngineAnja::RecordTask& AudioEngineAnja::RecordTask::disable() noexcept
 		m_flags&=~ENABLED;
 	//	NOTE: Synchronization is needed here. Otherwise, the record thread may
 	//	not keep up when updating playback offsets.
-		printf("I am here: %s %u\n",__FILE__,__LINE__);
 		m_ready->wait();
 		}
 	return *this;
@@ -58,7 +57,8 @@ unsigned int AudioEngineAnja::RecordTask::run()
 		//	clear record flag and reset playback offsets.
 			if(!enabled())
 				{
-				waveform->flagsUnset(Waveform::RECORD_RUNNING).offsetsReset();
+				waveform->flagsUnset(Waveform::RECORD_RUNNING)
+					.flagsSet(Waveform::RECORDED).offsetsReset();
 				r_waveform=nullptr;
 				m_ready->set();
 				}

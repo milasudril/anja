@@ -3,8 +3,8 @@ target[name[wavefilereader.h] type[include]]
 dependency[wavefilereader.o]
 #endif
 
-#ifndef WAVEFILELOADER_H
-#define WAVEFILELOADER_H
+#ifndef WAVEFILEREADER_H
+#define WAVEFILEREADER_H
 
 #include <memory>
 

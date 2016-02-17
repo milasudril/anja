@@ -6,7 +6,10 @@ target[name[waveform.o] type[object]]
 #include "optionstring.h"
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
+#include "wavefilewriter.h"
 #include "framework/array_simple.h"
+
+static constexpr unsigned int BUFFER_SIZE=1024;
 
 const char* Waveform::FLAG_NAMES[]=
 	{"Loop","Sustain","Readonly","Set gain on loop",nullptr};
@@ -40,19 +43,42 @@ void Waveform::fileLoad(const char* filename)
 	clear();
 	sampleRateSet(info.fs);
 	capacitySet(info.n_frames);
-	const uint32_t buffer_size=1024;
-	ArraySimple<float> buffer_tmp(buffer_size);
+	ArraySimple<float> buffer_tmp(BUFFER_SIZE);
 	uint32_t n_read=0;
 	do
 		{
-		n_read=reader->dataRead(buffer_tmp.begin(),buffer_size);
+		n_read=reader->dataRead(buffer_tmp.begin(),BUFFER_SIZE);
 		append(buffer_tmp.begin(),n_read);
 		}
-	while(n_read==buffer_size);
+	while(n_read==BUFFER_SIZE);
 	offsetsReset();
 
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
 	flagsSet(Waveform::READONLY);
 
 	dirtyClear();
+	}
+
+
+
+void Waveform::fileSave(const char* filename)
+	{
+	if(flagsGet() & (PLAYBACK_RUNNING|RECORD_RUNNING))
+		{
+		throw "The waveform loaded in the current slot is currently in use. "
+			"Please wait for the waveform to be unlocked.";
+		}
+
+	WavefileInfo info{lengthFull(),sampleRateGet(),1};
+
+	auto writer=WavefileWriter::create(filename,info);
+	auto ptr=beginFull();
+	auto n=lengthFull();
+	while(n!=0)
+		{
+		auto n_written=writer->dataWrite(ptr,std::min(BUFFER_SIZE,n));
+		n-=n_written;
+		ptr+=n_written;
+		}
+	m_flags&=~RECORDED;
 	}
