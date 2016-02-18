@@ -62,8 +62,7 @@ make</code>
 
 	<subsection id="deps">Obtaining all dependencies</subsection>
 	<p>The procedure listed in <ref what="Listing">installscript</ref> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by the following commands:</p>
-	<listing language="bash"><caption>Commands used to install all dependencies before compiling Anja on a Debian based system</caption><code>
-#!/bin/bash
+	<listing language="bash"><caption>Commands used to install all dependencies before compiling Anja on a Debian based system</caption><code>#!/bin/bash
 #Install dependencies. These commands needs to be run before compiling Anja
 
 sudo apt-get install libgtk-3-dev

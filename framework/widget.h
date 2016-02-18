@@ -23,6 +23,18 @@ class Widget
 		virtual uint32_t notifyUser(const char* message,const char* title
 			,uint32_t message_type);
 
+		virtual unsigned int heightMinGet()
+			{return 24;}
+
+		virtual unsigned int widthMinGet()
+			{return 96;}
+
+		virtual unsigned int widthForHeightGet(unsigned int height)
+			{return 96;}
+
+		virtual unsigned int heightForWidthGet(unsigned int width)
+			{return 24;}
+
 	protected:
 		virtual ~Widget()=default;
 	};

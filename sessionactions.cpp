@@ -8,6 +8,9 @@ target[name[sessionactions.o] type[object]]
 #include "framework/filenamepicker.h"
 #include "framework/textbox.h"
 #include "framework/delimiter.h"
+#include "framework/aboutbox.h"
+
+#include <cstring>
 
 static constexpr unsigned int SESSION_NEW=0;
 static constexpr unsigned int SESSION_LOAD=1;
@@ -17,6 +20,7 @@ static constexpr unsigned int ENGINE_START=4;
 static constexpr unsigned int ENGINE_STOP=5;
 static constexpr unsigned int FULLSCREEN=6;
 static constexpr unsigned int EXIT=7;
+static constexpr unsigned int ABOUT=8;
 
 
 SessionActions::ActionHandler::ActionHandler(SessionActions& ctrl):r_ctrl(ctrl)
@@ -50,6 +54,9 @@ void SessionActions::ActionHandler::onActionPerform(Button& source)
 		case EXIT:
 			r_ctrl.doExit();
 			break;
+		case ABOUT:
+			r_ctrl.doAbout();
+			break;
 		}
 	}
 
@@ -73,6 +80,8 @@ SessionActions::SessionActions(GuiContainer& parent,EventHandler& handler
 	m_delimiter_b=Delimiter::create(*m_box);
 	m_fullscreen=Button::create(*m_box,m_handler,FULLSCREEN,"Fullscreen");
 	m_exit=Button::create(*m_box,m_handler,EXIT,"Exit");
+	m_delimiter_c=Delimiter::create(*m_box);
+	m_about=Button::create(*m_box,m_handler,ABOUT,"About Anja");
 	}
 
 SessionActions::~SessionActions()
@@ -166,4 +175,31 @@ void SessionActions::askSave()
 		if(answer==MESSAGE_ANSWER_YES)
 			{doSessionSave();}
 		}
+	}
+
+static const char* const AUTHORS[]={"Torbjörn Rathsman",nullptr};
+static const char* const ACKNOWLEDGEMENT[]=
+	{
+	 "Mega-Nerd - for libsndfile"
+	,"Paul Davis et.al. - for JACK"
+	,"Stefan Buller - for valuable feedback on the user interface"
+	,nullptr
+	};
+
+void SessionActions::doAbout()
+	{
+	AboutBox::ProgramInfo info;
+	memset(&info,0,sizeof(info));
+	info.name="Anja";
+	info.description="A sample recorder and player for use with JACK";
+	info.authors=AUTHORS;
+	info.year=2016;
+	info.acknowledgement=ACKNOWLEDGEMENT;
+	info.disclaimer=
+		"This program comes with ABSOLUTELY NO WARRANTY. This is free software,\n"
+		"and you are welcome to redistribute it under certain conditions. For details,\n"
+		"see the file GPL.md, which should have been distributed together with the\n"
+		"software.";
+	info.build_date=__DATE__ " " __TIME__;
+	auto box=AboutBox::create(*this,info);
 	}

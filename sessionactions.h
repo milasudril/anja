@@ -55,6 +55,8 @@ class SessionActions:public Widget
 		void doExit()
 			{r_handler->onExit(*this);}
 
+		void doAbout();
+
 		Session& sessionGet()
 			{return *r_session;}
 
@@ -77,6 +79,8 @@ class SessionActions:public Widget
 		Delimiter* m_delimiter_b;
 		Button* m_fullscreen;
 		Button* m_exit;
+		Delimiter* m_delimiter_c;
+		Button* m_about;
 
 		class ActionHandler:public Button::EventHandler
 			{
