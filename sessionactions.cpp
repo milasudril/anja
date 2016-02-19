@@ -4,6 +4,7 @@ target[name[sessionactions.o] type[object]]
 
 #include "sessionactions.h"
 #include "session.h"
+#include "anjainfo.h"
 #include "framework/boxvertical.h"
 #include "framework/filenamepicker.h"
 #include "framework/textbox.h"
@@ -177,29 +178,9 @@ void SessionActions::askSave()
 		}
 	}
 
-static const char* const AUTHORS[]={"Torbjörn Rathsman",nullptr};
-static const char* const ACKNOWLEDGEMENT[]=
-	{
-	 "Mega-Nerd - for libsndfile"
-	,"Paul Davis et.al. - for JACK"
-	,"Stefan Buller - for valuable feedback on the user interface"
-	,nullptr
-	};
+
 
 void SessionActions::doAbout()
 	{
-	AboutBox::ProgramInfo info;
-	memset(&info,0,sizeof(info));
-	info.name="Anja";
-	info.description="A sample recorder and player for use with JACK";
-	info.authors=AUTHORS;
-	info.year=2016;
-	info.acknowledgement=ACKNOWLEDGEMENT;
-	info.disclaimer=
-		"This program comes with ABSOLUTELY NO WARRANTY. This is free software,\n"
-		"and you are welcome to redistribute it under certain conditions. For details,\n"
-		"see the file GPL.md, which should have been distributed together with the\n"
-		"software.";
-	info.build_date=__DATE__ " " __TIME__;
-	auto box=AboutBox::create(*this,info);
+	auto box=AboutBox::create(*this,ANJAINFO);
 	}

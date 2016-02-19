@@ -20,7 +20,11 @@ target[
 #include "widget.h"
 #include "guihandle.h"
 #include "arraydynamicshort.h"
+#include "programinfo.h"
+#include "rgbablock.h"
+#include "array_simple.h"
 #include <gtk/gtk.h>
+#include <cstring>
 
 
 class AboutBoxGtk:public AboutBox
@@ -40,21 +44,124 @@ class AboutBoxGtk:public AboutBox
 		GtkWidget* m_acknowledgement_title;
 		GtkWidget* m_acknowledgement_content;
 		GtkWidget* m_disclaimer;
+		GtkWidget* m_logo;
 		GtkWidget* m_build_date;
+		const RGBABlock* r_logo;
+		static gboolean logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk);
+
 	};
+
+struct alignas(4) Pixel
+	{
+	uint8_t v0;
+	uint8_t v1;
+	uint8_t v2;
+	uint8_t v3;
+	};
+
+gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk)
+	{
+	AboutBoxGtk* _this=reinterpret_cast<AboutBoxGtk*>(aboutboxgtk);
+	if(_this->r_logo!=nullptr)
+		{
+
+		auto width=gtk_widget_get_allocated_width(widget);
+		auto height=gtk_widget_get_allocated_height(widget);
+		auto width_in=_this->r_logo->width;
+
+		auto ratio_in=double(width_in)/double(_this->r_logo->height);
+		auto ratio_out=double(width)/double(height);
+
+		auto height_out=size_t(ratio_out > ratio_in? height : width/ratio_in);
+		auto width_out=size_t(ratio_out > ratio_in? height*ratio_in : width);
+
+
+		auto factor=double(width_in)/width_out;
+
+	//	printf("Hello %.15g  %.15g\n",factor,double(_this->r_logo->height)/height_out);
+
+		ArraySimple<Pixel> pixels(width_out*height_out);
+		auto ptr=pixels.begin();
+		auto ptr_end=pixels.end();
+		auto ptr_src=reinterpret_cast<const Pixel*>( _this->r_logo->pixelsGet() );
+		unsigned int row=0;
+		unsigned int col=0;
+		GdkColor color = gtk_widget_get_style(widget)->bg[GTK_STATE_NORMAL];
+		Pixel color_blend
+			{
+			 uint8_t(255*color.red/65535.0f)
+			,uint8_t(255*color.green/65535.0f)
+			,uint8_t(255*color.blue/65535.0f)
+			,255
+			};
+		while(ptr!=ptr_end)
+			{
+		//	TODO: Interpolate
+			auto row_src=size_t(row*factor);
+			auto col_src=size_t(col*factor);
+
+			auto alpha=ptr_src[row_src*width_in + col_src].v3/255.0f;
+			*ptr=
+				{
+				 uint8_t(alpha*ptr_src[row_src*width_in + col_src].v2 + (1-alpha)*color_blend.v2)
+				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v1 + (1-alpha)*color_blend.v1)
+				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v0 + (1-alpha)*color_blend.v0)
+				,255
+			/*	 ptr_src[row_src*width_in + col_src].v2
+				,ptr_src[row_src*width_in + col_src].v1
+				,ptr_src[row_src*width_in + col_src].v0
+				,ptr_src[row_src*width_in + col_src].v3*/
+				};
+
+			++col;
+			if(col==width_out)
+				{
+				col=0;
+				++row;
+				}
+			++ptr;
+			}
+
+		auto surface=cairo_image_surface_create_for_data(
+			(uint8_t*)pixels.begin()
+			,CAIRO_FORMAT_ARGB32
+			,width_out,height_out
+			,width_out*sizeof(Pixel));
+
+		cairo_set_source_surface(cr, surface, 0.5*(width-width_out), 0.0);
+		cairo_paint(cr);
+
+		cairo_surface_destroy(surface);
+		}
+	return FALSE;
+	}
 
 AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 	 m_description(nullptr),m_authors(nullptr),m_acknowledgement_title(nullptr)
-	,m_acknowledgement_content(nullptr),m_disclaimer(nullptr),m_build_date(nullptr)
+	,m_acknowledgement_content(nullptr),m_disclaimer(nullptr)
+	,m_logo(nullptr)
+	,m_build_date(nullptr)
+	,r_logo(info.logo)
 	{
 	auto parent=gtk_widget_get_toplevel(owner.handleNativeGet());
 	ArrayDynamicShort<char> buffer="About ";
 	buffer.truncate().append(info.name);
 	m_dialog=gtk_dialog_new_with_buttons(buffer.begin(),(GtkWindow*)parent
-		,GTK_DIALOG_MODAL,"OK",NULL);
+		,GTK_DIALOG_MODAL,"OK",0,NULL);
 
 	auto box=gtk_dialog_get_content_area( (GtkDialog*)m_dialog);
 	gtk_box_set_homogeneous((GtkBox*)box,FALSE);
+
+	if(info.logo!=nullptr)
+		{
+		m_logo=gtk_drawing_area_new();
+		g_object_ref_sink(m_logo);
+		gtk_box_pack_start((GtkBox*)box,m_logo,1,1,0);
+		g_signal_connect (G_OBJECT (m_logo), "draw",
+			G_CALLBACK(logo_draw),this);
+		gtk_widget_set_size_request(m_logo, 0, 160);
+		gtk_widget_show(m_logo);
+		}
 
 
 	m_title=gtk_label_new(info.name);
@@ -87,7 +194,7 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 		buffer.truncate().append(year);
 		m_authors=gtk_label_new(buffer.begin());
 		g_object_ref_sink(m_authors);
-		gtk_box_pack_start((GtkBox*)box,m_authors,0,0,16);
+		gtk_box_pack_start((GtkBox*)box,m_authors,0,0,8);
 		gtk_widget_show(m_authors);
 		}
 
@@ -114,26 +221,27 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 		{
 		m_disclaimer=gtk_label_new(info.disclaimer);
 		g_object_ref_sink(m_disclaimer);
-		gtk_box_pack_start((GtkBox*)box,m_disclaimer,1,1,8);
+		gtk_box_pack_start((GtkBox*)box,m_disclaimer,0,0,8);
 		gtk_widget_show(m_disclaimer);
 		}
 
-	if(info.build_date!=nullptr)
+	if(info.compileinfo!=nullptr)
 		{
 		buffer="This Anja was compiled ";
-		buffer.truncate().append(info.build_date);
+		buffer.truncate().append(info.compileinfo);
 		m_build_date=gtk_label_new(buffer.begin());
 		g_object_ref_sink(m_build_date);
-		gtk_box_pack_start((GtkBox*)box,m_build_date,1,1,8);
+		gtk_box_pack_start((GtkBox*)box,m_build_date,0,0,8);
 		gtk_widget_show(m_build_date);
 		}
-
 
 	gtk_dialog_run(GTK_DIALOG(m_dialog));
 	}
 
 AboutBoxGtk::~AboutBoxGtk()
 	{
+	if(m_logo!=nullptr)
+		{gtk_widget_destroy(m_logo);}
 	if(m_build_date!=nullptr)
 		{gtk_widget_destroy(m_build_date);}
 	if(m_disclaimer!=nullptr)

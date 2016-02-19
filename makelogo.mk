@@ -1,9 +1,12 @@
-anja-3-0001.dat: anja-3-0001.png
-	framework/rgba-create.sh anja-3-0001.png
+all: anjalogo.dat anjalogo.png anjalogo-hires.png
 
-anja-3-0001.png: anja.blend
-	blender -b anja.blend -o //anja-3- -F PNG -S S3 -f 1 > /dev/null
+anjalogo.dat: anjalogo.png framework/rgbadump.sh
+	framework/rgbadump.sh anjalogo.png
 
-anja-0-0001.png: anja.blend
-	blender -b anja.blend -o //anja-0- -F PNG -S S0 -f 1 > /dev/null
+anjalogo.png: anja.blend
+	blender -b anja.blend -S S2 -o //anjalogo -F PNG -s 1 -e 1 -a > /dev/null
+	mv anjalogo0001.png anjalogo.png
 
+anjalogo-hires.png: anja.blend
+	blender -b anja.blend -S S0 -o //anjalogo-hires -F PNG -s 1 -e 1 -a > /dev/null
+	mv anjalogo-hires0001.png anjalogo-hires.png
