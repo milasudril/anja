@@ -25,7 +25,7 @@
 <xsl:apply-templates />
 <img>
 <xsl:attribute name="src">
-<xsl:value-of select="includegraphics[1]/@src" />
+<xsl:value-of select="includegraphics[last()]/@src" />
 </xsl:attribute>
 </img>
 </picture>
