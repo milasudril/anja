@@ -9,6 +9,28 @@
 <xsl:copy-of select="." />
 </xsl:template>
 
+<xsl:template match="includegraphics">
+<source>
+<xsl:attribute name="media">
+<xsl:value-of select="@media" />
+</xsl:attribute>
+<xsl:attribute name="srcset">
+<xsl:value-of select="@src" />
+</xsl:attribute>
+</source>
+</xsl:template>
+
+<xsl:template match="titlepic">
+<picture>
+<xsl:apply-templates />
+<img>
+<xsl:attribute name="src">
+<xsl:value-of select="includegraphics[1]/@src" />
+</xsl:attribute>
+</img>
+</picture>
+</xsl:template>
+
 <xsl:template match="ref">
 <a>
 <xsl:attribute name="href">#<xsl:value-of select="."/></xsl:attribute><xsl:value-of select="@what"/> <xsl:text> </xsl:text>

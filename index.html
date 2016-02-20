@@ -12,6 +12,10 @@
 <p class="titlepage">Torbjörn Rathsman</p>
 	
 	
+	<picture>
+		<source media="screen" srcset="anjalogo.png"></source>
+		<source media="print" srcset="anjalogo-hires.png"></source>
+	<img src="anjalogo.png"></picture>
 
 	<div class="abstract">
 		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
@@ -45,7 +49,7 @@
 
 	<h3 id="installlinux">2.1<span class="fill"></span>Installing on a GNU/Linux system</h3>
 
-	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package <cite><a href="#anjasrc">[5]</a></cite>, and compile it. Assuming all dependencies are met, the following procedure should work.</p>
+	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package <cite><a href="#anjasrc">[5]</a></cite>, and compile it. Assuming all dependencies are met, the following procedure in <a href="#installscript">Listing 2.1</a> should work.</p>
 	<div class="listing" id="installscript">
 <p><strong>Listing 2.1</strong>: Installation script that can be used on a GNU/Linux system</p>
 <pre><code class="">#!/bin/bash
@@ -67,20 +71,20 @@ cd "$SRC_DIR"
 #Complie
 make</code></pre>
 </div>
-	<p>When running <code class="prgname">make</code>, files are written to <code class="dirname">__wand_targets_rel</code>. After the compilation has completed, Anja can be launched directly by typing</p>
-	<div class="listing" id="">
+<p>When running <code class="prgname">make</code>, files are written to <code class="dirname">__wand_targets_rel</code>. After the compilation has completed, Anja can be launched directly as in <a href="#launch">Listing 2.2</a>.</p>
+	<div class="listing" id="launch">
 <p><strong>Listing 2.2</strong>: Command to launch Anja</p>
 <pre><code class="">__wand_targets_rel/anja</code></pre>
 </div>
-	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <code class="env">PATH</code> variable. For example, if you have <code class="prgname">sudo</code> permissions, you can do the following</p>
-	<div class="listing" id="">
+	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <code class="env">PATH</code> variable. For example, if you have <code class="prgname">sudo</code> permissions, you can do as in <a href="#linuxinstall">Listing 2.3</a></p>
+	<div class="listing" id="linuxinstall">
 <p><strong>Listing 2.3</strong>: Command to "install" Anja</p>
 <pre><code class="">sudo mv __wand_targets_rel/anja /usr/local/bin</code></pre>
 </div>
 
 	<h4 id="deps">2.1.1<span class="fill"></span>Obtaining all dependencies</h4>
-	<p>The procedure listed in <a href="#installscript">Listing 2.1</a> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by the following commands:</p>
-	<div class="listing" id="">
+	<p>The procedure listed in <a href="#installscript">Listing 2.1</a> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by invoking the commands listed in <a href="#debs">Listing 2.4</a>.</p>
+	<div class="listing" id="debs">
 <p><strong>Listing 2.4</strong>: Commands used to install all dependencies before compiling Anja on a Debian based system</p>
 <pre><code class="">#!/bin/bash
 #Install dependencies. These commands needs to be run before compiling Anja

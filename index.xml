@@ -3,6 +3,10 @@
 <document>
 	<title>Anja user's guide</title>
 	<author>Torbjörn Rathsman</author>
+	<titlepic>
+		<includegraphics src="anjalogo.png" media="screen" />
+		<includegraphics src="anjalogo-hires.png" media="print" />
+	</titlepic>
 
 	<abstract>
 		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
@@ -31,7 +35,7 @@
 
 	<section id="installlinux">Installing on a GNU/Linux system</section>
 
-	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package<cite>anjasrc</cite>, and compile it. Assuming all dependencies are met, the following procedure should work.</p>
+	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package<cite>anjasrc</cite>, and compile it. Assuming all dependencies are met, the following procedure in <ref what="Listing">installscript</ref> should work.</p>
 	<listing language="bash" id="installscript">
 		<caption>Installation script that can be used on a GNU/Linux system</caption>
 		<code>#!/bin/bash
@@ -53,16 +57,16 @@ cd "$SRC_DIR"
 #Complie
 make</code>
 </listing>
-	<p>When running <prgname>make</prgname>, files are written to <dirname>__wand_targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by typing</p>
-	<listing language="bash"><caption>Command to launch Anja</caption><code>__wand_targets_rel/anja</code>
+<p>When running <prgname>make</prgname>, files are written to <dirname>__wand_targets_rel</dirname>. After the compilation has completed, Anja can be launched directly as in <ref what="Listing">launch</ref>.</p>
+	<listing language="bash" id="launch"><caption>Command to launch Anja</caption><code>__wand_targets_rel/anja</code>
 	</listing>
-	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do the following</p>
-	<listing language="bash"><caption>Command to "install" Anja</caption><code>sudo mv __wand_targets_rel/anja /usr/local/bin</code>
+	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do as in <ref what="Listing">linuxinstall</ref></p>
+	<listing language="bash" id="linuxinstall"><caption>Command to "install" Anja</caption><code>sudo mv __wand_targets_rel/anja /usr/local/bin</code>
 	</listing>
 
 	<subsection id="deps">Obtaining all dependencies</subsection>
-	<p>The procedure listed in <ref what="Listing">installscript</ref> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by the following commands:</p>
-	<listing language="bash"><caption>Commands used to install all dependencies before compiling Anja on a Debian based system</caption><code>#!/bin/bash
+	<p>The procedure listed in <ref what="Listing">installscript</ref> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by invoking the commands listed in <ref what="Listing">debs</ref>.</p>
+	<listing language="bash" id="debs"><caption>Commands used to install all dependencies before compiling Anja on a Debian based system</caption><code>#!/bin/bash
 #Install dependencies. These commands needs to be run before compiling Anja
 
 sudo apt-get install libgtk-3-dev
