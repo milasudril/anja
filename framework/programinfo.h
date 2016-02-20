@@ -11,13 +11,14 @@ class RGBABlock;
 struct ProgramInfo
 	{
 	const char* name;
+	const char* version;
 	const char* description;
 	const char* const* authors;
 	unsigned int year;
 	const char* const* acknowledgement;
 	const char* disclaimer;
 	const RGBABlock* logo;
-	const char* compileinfo;
+	const char* const* compileinfo;
 	};
 
 #endif

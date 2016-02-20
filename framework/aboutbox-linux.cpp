@@ -45,7 +45,7 @@ class AboutBoxGtk:public AboutBox
 		GtkWidget* m_acknowledgement_content;
 		GtkWidget* m_disclaimer;
 		GtkWidget* m_logo;
-		GtkWidget* m_build_date;
+		GtkWidget* m_compileinfo;
 		const RGBABlock* r_logo;
 		static gboolean logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk);
 
@@ -107,7 +107,8 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v1 + (1-alpha)*color_blend.v1)
 				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v0 + (1-alpha)*color_blend.v0)
 				,255
-			/*	 ptr_src[row_src*width_in + col_src].v2
+			/*	Broken in Cairo?
+				 ptr_src[row_src*width_in + col_src].v2
 				,ptr_src[row_src*width_in + col_src].v1
 				,ptr_src[row_src*width_in + col_src].v0
 				,ptr_src[row_src*width_in + col_src].v3*/
@@ -127,7 +128,7 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 			,CAIRO_FORMAT_ARGB32
 			,width_out,height_out
 			,width_out*sizeof(Pixel));
-
+		cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
 		cairo_set_source_surface(cr, surface, 0.5*(width-width_out), 0.0);
 		cairo_paint(cr);
 
@@ -140,7 +141,7 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 	 m_description(nullptr),m_authors(nullptr),m_acknowledgement_title(nullptr)
 	,m_acknowledgement_content(nullptr),m_disclaimer(nullptr)
 	,m_logo(nullptr)
-	,m_build_date(nullptr)
+	,m_compileinfo(nullptr)
 	,r_logo(info.logo)
 	{
 	auto parent=gtk_widget_get_toplevel(owner.handleNativeGet());
@@ -163,8 +164,12 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 		gtk_widget_show(m_logo);
 		}
 
-
-	m_title=gtk_label_new(info.name);
+	buffer=info.name;
+	if(info.version!=nullptr)
+		{
+		buffer.truncate().append(info.version);
+		}
+	m_title=gtk_label_new(buffer.begin());
 	g_object_ref_sink(m_title);
 	gtk_box_pack_start((GtkBox*)box,m_title,0,0,0);
 	gtk_widget_show(m_title);
@@ -228,11 +233,16 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 	if(info.compileinfo!=nullptr)
 		{
 		buffer="This Anja was compiled ";
-		buffer.truncate().append(info.compileinfo);
-		m_build_date=gtk_label_new(buffer.begin());
-		g_object_ref_sink(m_build_date);
-		gtk_box_pack_start((GtkBox*)box,m_build_date,0,0,8);
-		gtk_widget_show(m_build_date);
+		auto ptr=info.compileinfo;
+		while(*ptr!=nullptr)
+			{
+			buffer.truncate().append(*ptr);
+			++ptr;
+			}
+		m_compileinfo=gtk_label_new(buffer.begin());
+		g_object_ref_sink(m_compileinfo);
+		gtk_box_pack_start((GtkBox*)box,m_compileinfo,0,0,8);
+		gtk_widget_show(m_compileinfo);
 		}
 
 	gtk_dialog_run(GTK_DIALOG(m_dialog));
@@ -242,8 +252,8 @@ AboutBoxGtk::~AboutBoxGtk()
 	{
 	if(m_logo!=nullptr)
 		{gtk_widget_destroy(m_logo);}
-	if(m_build_date!=nullptr)
-		{gtk_widget_destroy(m_build_date);}
+	if(m_compileinfo!=nullptr)
+		{gtk_widget_destroy(m_compileinfo);}
 	if(m_disclaimer!=nullptr)
 		{gtk_widget_destroy(m_disclaimer);}
 	gtk_widget_destroy(m_acknowledgement_content);
