@@ -26,6 +26,9 @@ div.abstract{margin-top:2ex; font-style:italic}
 p.titlepage{font-size:14.4pt}
 span.fill{margin-right:18pt}
 
+ol,ul{padding-left:14pt;}
+nav{padding-right:0.05em;}
+
 h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","CMU Serif",Serif;}
 code,pre{font-family:"Latin Modern Mono",Monospace}
 pre > code{font-size:10pt}
@@ -33,6 +36,7 @@ pre > code{font-size:10pt}
 div.listing{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
 
 img{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
+
 
 @media screen and (min-width: 700px)
 	{
@@ -42,7 +46,7 @@ img{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-t
 
 	nav > h2,nav > ol{position:static}
 
-	div.listing{position:relative;width:calc(100% - 200px - 140pt);left:200px;margin-left:70pt;}
+	div.listing{position:relative;width:calc(100% - 200px - 80pt);left:200px;margin-left:40pt;}
 	img{position:relative;width:calc(100% - 200px - 140pt);margin-left:70pt;}
 	}
 

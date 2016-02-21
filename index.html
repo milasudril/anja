@@ -1,58 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
 <title>Anja user's guide</title>
-<link rel="stylesheet" href="highlight/styles/default.css" type="text/css">
-<link rel="stylesheet" href="format.css" type="text/css">
-<script src="highlight/highlight.pack.js" type="text/javascript"></script><script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+<link rel="stylesheet" href="highlight/styles/default.css" type="text/css" />
+<link rel="stylesheet" href="format.css" type="text/css" />
+<script src="highlight/highlight.pack.js" type="text/javascript"></script>
+<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
-<h1>Anja user's guide</h1>
-<p class="titlepage">Torbjörn Rathsman</p>
-	
-	
-	<picture>
-		<source media="(min-width:1024px)" srcset="anjalogo-hires.png"></source>
-		<source media="(max-width:1024px)" srcset="anjalogo.png"></source>
-	<img src="anjalogo.png"></picture>
-
-	<div class="abstract">
-		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
-	</div>
-
-	<nav id="toc"><h2>Table of contents</h2>
-<ol>
-<li><a href="#intro">Introduction</a></li>
-<li><a href="#install">Installing Anja</a></li>
-<li><a href="#using">Using Anja</a></li>
-</ol></nav>
-
-	<h2 id="intro">1<span class="fill"></span>Introduction</h2>
-	<p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
+<h1>Anja user's guide</h1><p class="titlepage">Torbjörn Rathsman</p><picture><source src="anjalogo-hires.png" media="(min-width:1024px)"><source src="anjalogo.png" media="(max-width:1024px)"><img src="anjalogo.png"></picture><div class="abstract"><p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
+	</div><nav id="toc">
+<h2>Table of contents</h2>
+<ol><li><a href="#intro">Introduction</a></li><ol><li><a href="#requirements">System requirements</a></li><li><a href="#comparison">Anja compared to other software</a></li></ol><li><a href="#install">Installing Anja</a></li><ol><li><a href="#installlinux">Installing on a GNU/Linux system</a></li><ol><li><a href="#deps">Obtaining all dependencies</a></li></ol></ol><li><a href="#using">Using Anja</a></li><ol><li><a href="#addfx">Adding sound effects</a></li><li><a href="#play">Playing sound effects</a></li></ol></ol>
+</nav><h2 id="intro">1<span class="fill"></span>Introduction</h2><p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
 
 	<p>Anja also featues a channel mixer with 16 channels. All sound effects are routed through one of these channels. The channel mixer makes it possible to fade a group of sound effects together. As with sound effects, each channel has a color and a description. In addition to color, description and channel gain, each channel also has an adjustable fade time, that is used to automatically fade the channel.</p>
 
-	<p>The backend of Anja is JACK, the low-latency audio server <cite><a href="#jack">[1]</a></cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
+	<p>The backend of Anja is JACK, the low-latency audio server&#160;<cite><a href="#jack">[1]</a></cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
 
-	<p>The session file format of Anja is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown <cite><a href="#markdown">[2]</a></cite> and is very similar to the syntax used in the "Doom template file" <cite><a href="#doomwiki">[3]</a></cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
+	<p>The session file format of Anja is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown&#160;<cite><a href="#markdown">[2]</a></cite> and is very similar to the syntax used in the "Doom template file"&#160;<cite><a href="#doomwiki">[3]</a></cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
 
-	<h3 id="requirements">1.1<span class="fill"></span>System requirements</h3>
-	<p>To run Anja, a working installation of JACK <cite><a href="#jack">[1]</a></cite> is required. Moreover, Anja requires <code>libsndfile</code> and <code>GTK+</code> version 3. Anja runs smoothly on an Intel® Pentium® M, and thus, it is only moderately CPU demanding. However, since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At 48 kHz, the RAM usage is 11 MiB/min of sound. The minimum screen resolution for running Anja in fullscreen mode is 923 px × 599 px. In windowed mode, the required screen resolution depends on the windowing system, but it is approximately 930 px × 630 px.</p>
+	<h3 id="requirements">1.1<span class="fill"></span>System requirements</h3><p>To run Anja, a working installation of JACK&#160;<cite><a href="#jack">[1]</a></cite> is required. Moreover, Anja requires <code>libsndfile</code> and <code>GTK+</code> version 3. Anja runs smoothly on an Intel® Pentium® M, and thus, it is only moderately CPU demanding. However, since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At 48&#160;kHz , the RAM usage is 11&#160;MiB/min  of sound. The minimum screen resolution for running Anja in fullscreen mode is 923&#160;px  × 599&#160;px . In windowed mode, the required screen resolution depends on the windowing system, but it is approximately 930&#160;px  × 630&#160;px .</p>
 
 
-	<h3 id="comparison">1.2<span class="fill"></span>Anja compared to other software</h3>
-	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen <cite><a href="#hydrogen">[4]</a></cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also a kill-all-softly feature.</p>
+	<h3 id="comparison">1.2<span class="fill"></span>Anja compared to other software</h3><p>There are other sample players that also may be used with JACK. One such program is Hydrogen&#160;<cite><a href="#hydrogen">[4]</a></cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also a kill-all-softly feature.</p>
 
-	<h2 id="install">2<span class="fill"></span>Installing Anja</h2>
-	<p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure</p>
+	<h2 id="install">2<span class="fill"></span>Installing Anja</h2><p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure</p>
 
-	<h3 id="installlinux">2.1<span class="fill"></span>Installing on a GNU/Linux system</h3>
-
-	<p>On GNU/Linux, the recommended way of installing Anja is to download the source package <cite><a href="#anjasrc">[5]</a></cite>, and compile it. Assuming all dependencies are met, the following procedure in <a href="#installscript">Listing 2.1</a> should work.</p>
-	<div class="listing" id="installscript">
-<p><strong>Listing 2.1</strong>: Installation script that can be used on a GNU/Linux system</p>
-<pre><code class="">#!/bin/bash
+	<h3 id="installlinux">2.1<span class="fill"></span>Installing on a GNU/Linux system</h3><p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package&#160;<cite><a href="#anjasrc">[5]</a></cite>, and compile it. Assuming all dependencies are met, following the procedure in <a href="#installscript">Listing 2.1</a> should work.</p>
+	<div class="listing" id="installscript"><p><strong>Listing 2.1</strong>: Installation script that can be used on a GNU/Linux system</p><pre><code class="bash">#!/bin/bash
 #This script downloads and compiles the latest Anja release
 
 #Get the download URL
@@ -64,56 +41,30 @@ wget -O anja.tar.gz "$ANJA_SRC"
 
 #Extract the contents
 SRC_DIR=`tar -xvf anja.tar.gz | head -n 1`
+tar -xf anja.tar.gz
 
 #Change directory
 cd "$SRC_DIR"
 
 #Complie
-make</code></pre>
-</div>
-<p>When running <code class="prgname">make</code>, files are written to <code class="dirname">__wand_targets_rel</code>. After the compilation has completed, Anja can be launched directly as in <a href="#launch">Listing 2.2</a>.</p>
-	<div class="listing" id="launch">
-<p><strong>Listing 2.2</strong>: Command to launch Anja</p>
-<pre><code class="">__wand_targets_rel/anja</code></pre>
-</div>
-	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <code class="env">PATH</code> variable. For example, if you have <code class="prgname">sudo</code> permissions, you can do as in <a href="#linuxinstall">Listing 2.3</a></p>
-	<div class="listing" id="linuxinstall">
-<p><strong>Listing 2.3</strong>: Command to "install" Anja</p>
-<pre><code class="">sudo mv __wand_targets_rel/anja /usr/local/bin</code></pre>
-</div>
-
-	<h4 id="deps">2.1.1<span class="fill"></span>Obtaining all dependencies</h4>
-	<p>The procedure listed in <a href="#installscript">Listing 2.1</a> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by invoking the commands listed in <a href="#debs">Listing 2.4</a>.</p>
-	<div class="listing" id="debs">
-<p><strong>Listing 2.4</strong>: Commands used to install all dependencies before compiling Anja on a Debian based system</p>
-<pre><code class="">#!/bin/bash
+make</code></pre></div><p>When running <code>make</code>, files are written to <code>__wand_targets_rel</code>. After the compilation has completed, Anja can be launched directly by running the command</p>
+<pre><code class="bash">__wand_targets_rel/anja</code></pre><p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <code>sudo</code> permissions, you can do</p>
+<pre><code class="bash">sudo mv __wand_targets_rel/anja /usr/local/bin</code></pre><p>If you do not have <code>sudo</code> permissions, you can move it to <code>~/bin</code> instead:</p>
+<pre><code class="bash">mv __wand_targets_rel/anja ~/bin</code></pre><h4 id="deps">2.1.1<span class="fill"></span>Obtaining all dependencies</h4><p>The procedure listed in <a href="#installscript">Listing 2.1</a> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by invoking the commands listed in <a href="#debs">Listing 2.2</a>.</p>
+	<div class="listing" id="debs"><p><strong>Listing 2.2</strong>: Commands used to install all dependencies before compiling Anja on a Debian based system</p><pre><code class="bash">#!/bin/bash
 #Install dependencies. These commands needs to be run before compiling Anja
 
 sudo apt-get install libgtk-3-dev
 sudo apt-get install libsndfile1-dev
 sudo apt-get install jackd
-sudo apt-get install libjack-jackd2-dev</code></pre>
-</div>
+sudo apt-get install libjack-jackd2-dev</code></pre></div><h2 id="using">3<span class="fill"></span>Using Anja</h2><h3 id="addfx">3.1<span class="fill"></span>Adding sound effects</h3><p>To be written</p>
 
-	<h2 id="using">3<span class="fill"></span>Using Anja</h2>
+	<h3 id="play">3.2<span class="fill"></span>Playing sound effects</h3><p>To be written</p>
 
-	<h3 id="addfx">3.1<span class="fill"></span>Adding sound effects</h3>
-	<p>To be written</p>
-
-	<h3 id="play">3.2<span class="fill"></span>Playing sound effects</h3>
-	<p>To be written</p>
-
-	<h2>References</h2>
-		<p class="bibitem" id="jack">
-[1]<span class="fill"></span>JACK Audio Connection Kit <a href="http://jackaudio.org">http://jackaudio.org</a></p>
-		<p class="bibitem" id="markdown">
-[2]<span class="fill"></span>Daring Firball: Markdown <a href="https://daringfireball.net/projects/markdown">https://daringfireball.net/projects/markdown</a></p>
-		<p class="bibitem" id="doomwiki">
-[3]<span class="fill"></span>Doom file template <a href="http://doom.wikia.com/wiki/Doom_file_template">http://doom.wikia.com/wiki/Doom_file_template</a></p>
-		<p class="bibitem" id="hydrogen">
-[4]<span class="fill"></span>Hydrogen <a href="http://www.hydrogen-music.org/hcms">http://www.hydrogen-music.org/hcms</a></p>
-		<p class="bibitem" id="anjasrc">
-[5]<span class="fill"></span>Anja source archive <a href="https://github.com/milasudril/anja/releases/latest">https://github.com/milasudril/anja/releases/latest</a></p>
-	
-</body>
+	<h2>References</h2><p class="bibitem" id="jack"> [1] 
+		<a href="http://jackaudio.org" target="blank">http://jackaudio.org</a></p><p class="bibitem" id="markdown"> [2] 
+		<a href="https://daringfireball.net/projects/markdown" target="blank">https://daringfireball.net/projects/markdown</a></p><p class="bibitem" id="doomwiki"> [3] 
+		<a href="http://doom.wikia.com/wiki/Doom_file_template" target="blank">http://doom.wikia.com/wiki/Doom_file_template</a></p><p class="bibitem" id="hydrogen"> [4] 
+		<a href="http://www.hydrogen-music.org/hcms" target="blank">http://www.hydrogen-music.org/hcms</a></p><p class="bibitem" id="anjasrc"> [5] 
+		<a href="https://github.com/milasudril/anja/releases/latest" target="blank">https://github.com/milasudril/anja/releases/latest</a></p></body>
 </html>
