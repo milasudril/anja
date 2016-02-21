@@ -30,7 +30,7 @@ def author(node):
 	printWrapper('''<p class="titlepage">''' +node.text + '''</p>''')
 
 def includegraphics(node):
-	printWrapper('''<source src="''' + node.attrib["src"] + '''" media="''' + node.attrib["media"] +'''">''')
+	printWrapper('''<source srcset="''' + node.attrib["src"] + '''" media="''' + node.attrib["media"] +'''">''')
 
 def titlepic(node):
 	printWrapper('''<picture>''')
