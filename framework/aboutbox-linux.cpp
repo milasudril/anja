@@ -67,6 +67,8 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 
 		auto width=gtk_widget_get_allocated_width(widget);
 		auto height=gtk_widget_get_allocated_height(widget);
+	//	gtk_render_background(gtk_widget_get_style_context(widget),cr,0,0,width,height);
+
 		auto width_in=_this->r_logo->width;
 
 		auto ratio_in=double(width_in)/double(_this->r_logo->height);
