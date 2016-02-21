@@ -17,10 +17,10 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>Anja user's guide</h1>
 <p class="titlepage">Torbjörn Rathsman</p>
-<picture><source srcset="anjalogo-hires.png" media=
-"(min-width:1024px)"><source srcset="anjalogo.png" media=
+<div class="titlepic"><picture><source srcset="anjalogo-hires.png"
+media="(min-width:1024px)"><source srcset="anjalogo.png" media=
 "(max-width:1024px)"><img src="anjalogo.png" alt=
-"Title picture"></picture>
+"Title picture"></picture></div>
 <div class="abstract">
 <p>Anja is a sample player designed for live sound effect playback.
 Anja makes it possible to assign sound effects to the keys of the
@@ -166,6 +166,31 @@ sudo apt-get install libsndfile1-dev
 sudo apt-get install jackd
 sudo apt-get install libjack-jackd2-dev</code></pre></div>
 <h2 id="using"><span class="fill">3</span>Using Anja</h2>
+<p>Starting Anja without any command line arguments brings up a
+window that looks like the one presented in <a href=
+"#anjastart">Figure 3.1</a>. The workspace consits of three main
+parts annotated in <a href="#anjaworkspace">Figure 3.2</a>. To the
+left, there the <dfn>Action panel</dfn> a panel with different
+buttons that affect Anja's current state. To the right of that, the
+<dfn>Keyboard view</dfn> is located, and below that, there is a
+<dfn>Settings panel</dfn>, controling which waveforms are loaded as
+well as the playback of loaded waveforms.</p>
+<figure id="anjastart"><picture><source srcset=
+"mainwindow-start.png"><img src="mainwindow-start.png" alt=
+"The Anja window, as shown after launching Anja without any command line arguments"></picture>
+<p><strong>Figure 3.1</strong>: The Anja window, as shown after
+launching Anja without any command line arguments</p>
+</figure>
+<figure id="anjaworkspace"><picture><source srcset=
+"anjaworkspace.png"><img src="anjaworkspace.png" alt=
+"The different parts of the Anja workspace. (1) is the "></picture>
+<p><strong>Figure 3.2</strong>: The different parts of the Anja
+workspace. (1) is the <dfn>Action panel</dfn>, used to control
+Anja's state, (2) is the <dfn>Keyboard View</dfn>, which selects
+waveform slots and channels, and (3) is the <dfn>Settings
+panel</dfn>, which controls which loads waveforms and controls the
+playback of loaded waveforms.</p>
+</figure>
 <h3 id="addfx"><span class="fill">3.1</span>Adding sound
 effects</h3>
 <p>To be written</p>

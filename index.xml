@@ -78,6 +78,17 @@ sudo apt-get install libjack-jackd2-dev</code>
 	</listing>
 
 	<chapter id="using">Using Anja</chapter>
+	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
+
+	<figure id="anjastart">
+		<includegraphics src="mainwindow-start.png" />
+		<caption>The Anja window, as shown after launching Anja without any command line arguments</caption>
+	</figure>
+
+	<figure id="anjaworkspace">
+		<includegraphics src="anjaworkspace.png" />
+		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard View</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>
+	</figure>
 
 	<section id="addfx">Adding sound effects</section>
 	<p>To be written</p>

@@ -8,6 +8,7 @@ sections=0
 subsection=0
 subsubsections=0
 listings=0
+figures=0
 
 labels={}
 float_name=''
@@ -24,22 +25,27 @@ def printWrapper(string):
 		print(string,end='')
 
 def title(node):
-	printWrapper('''<h1>''' + node.text + '''</h1>''')
+	printWrapper('<h1>' + node.text + '</h1>')
 
 def author(node):
-	printWrapper('''<p class="titlepage">''' +node.text + '''</p>''')
+	printWrapper('<p class="titlepage">' +node.text + '</p>')
 
 def includegraphics(node):
-	printWrapper('''<source srcset="''' + node.attrib["src"] + '''" media="''' + node.attrib["media"] +'''">''')
+	printWrapper('<source srcset="' + node.attrib["src"]+'"')
+	if "media" in node.attrib:
+		printWrapper(' media="' + node.attrib["media"]+'"')
+	printWrapper('>')
 
 def titlepic(node):
-	printWrapper('''<picture>''')
+	printWrapper('''<div class="titlepic">
+<picture>''')
 	for altgraphics in node.findall('includegraphics'):
 		includegraphics(altgraphics)
 
 	last=node.findall('includegraphics[last()]')[0]
-	printWrapper('''<img src="''' + last.attrib["src"] + '" alt="Title picture">')
-	printWrapper('''</picture>''')
+	printWrapper('<img src="' + last.attrib["src"] + '" alt="Title picture">')
+	printWrapper('''</picture>
+</div>''')
 
 def abstract(node):
 	printWrapper('<div class="abstract">')
@@ -87,6 +93,7 @@ def chapter(node):
 	global subsections
 	global subsubsections
 	global listings
+	global figures
 	chapters=chapters+1
 	printWrapper('<h2 id="' + node.attrib["id"] + '"><span class="fill">' \
 		+ str(chapters) + '</span>')
@@ -99,6 +106,7 @@ def chapter(node):
 	subsections=0
 	subsubsections=0
 	listings=0
+	figures=0
 
 def section(node):
 	global sections
@@ -211,6 +219,28 @@ def bibliography(node):
 def url(node):
 	printWrapper('<a href="' + node.text + '" target="blank">'+node.text+'</a>')
 
+def figure(node):
+	global figures
+	global float_name
+	global float_type
+	global labels
+	figures=figures + 1
+	float_name=str(chapters)+'.'+str(figures)
+	float_type='Figure'
+	labels[node.attrib["id"]]=[float_type,float_name]
+	printWrapper('''<figure id="''' + node.attrib["id"] + '''">
+<picture>''')
+	for altgraphics in node.findall('includegraphics'):
+		includegraphics(altgraphics)
+	last=node.findall('includegraphics[last()]')
+	printWrapper('<img src="' + last[0].attrib["src"]+'"')
+	for cap in node.findall('caption'):
+		printWrapper(' alt="'+cap.text+'"')
+	printWrapper('>')
+	printWrapper('</picture>')
+	caption(node.findall('caption[last()]')[0])
+	printWrapper('</figure>')
+
 def defaultrule(node):
 	printWrapper('''<''' + node.tag + '''>''')
 	if node.text != None:
@@ -264,6 +294,8 @@ def processElements(document):
 			libname(node)
 		elif node.tag=='env':
 			libname(node)
+		elif node.tag=='figure':
+			figure(node)
 		else:
 			defaultrule(node)
 
@@ -275,6 +307,7 @@ def main(argv):
 	global subsection
 	global subsubsections
 	global listings
+	global figures
 	global pass_counter
 
 	print('''<!DOCTYPE html>
@@ -293,6 +326,7 @@ def main(argv):
 	subsections=0
 	subsubsections=0
 	listings=0
+	figures=0
 
 	processElements(document)
 
@@ -301,6 +335,7 @@ def main(argv):
 	subsections=0
 	subsubsections=0
 	listings=0
+	figures=0
 
 	pass_counter=pass_counter + 1
 
