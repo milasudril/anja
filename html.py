@@ -38,7 +38,7 @@ def titlepic(node):
 		includegraphics(altgraphics)
 
 	last=node.findall('includegraphics[last()]')[0]
-	printWrapper('''<img src="''' + last.attrib["src"] + '">')
+	printWrapper('''<img src="''' + last.attrib["src"] + '" alt="Title picture">')
 	printWrapper('''</picture>''')
 
 def abstract(node):
@@ -49,30 +49,35 @@ def abstract(node):
 def tableofcontents(node,document):
 	printWrapper('''<nav id="toc">
 <h2>Table of contents</h2>
-<ol>''')
-	sibling_prev='chapter'
+<ol><li>''')
+	sibling_prev='none'
 	for sibling in document.findall('*'):
 		if sibling.tag=='chapter' or sibling.tag=='section'	\
 			or sibling.tag=='subsection':
 			if (sibling.tag=='chapter' and sibling_prev=='section') \
 				or (sibling.tag=='section' and sibling_prev=='subsection'):
-				printWrapper('''</ol>''')
+				printWrapper('</li></ol>')
 			if sibling.tag=='chapter' and sibling_prev=='subsection':
-				printWrapper('''</ol></ol>''')
+				printWrapper('</li></ol></li></ol>')
+
+
 			if (sibling_prev=='chapter' and sibling.tag=='section') \
 				or (sibling_prev=='section' and sibling.tag=='subsection'):
-				printWrapper('''<ol>''')
-			printWrapper('''<li><a href="#''' + sibling.attrib["id"] + '''">''')
+				printWrapper('<ol><li>')
+			elif sibling_prev!='none':
+				printWrapper('</li><li>')
+
+			printWrapper('<a href="#' + sibling.attrib["id"] + '">')
 			if sibling.text != None:
 				printWrapper(sibling.text)
 			processElements(sibling)
-			printWrapper('''</a></li>''')
+			printWrapper('</a>')
 			sibling_prev=sibling.tag
 
 	if sibling_prev=='subsection':
-		printWrapper('''</ol></ol>''')
+		printWrapper('</li></ol></li></ol>')
 	if sibling_prev=='section':
-		printWrapper('''</ol>''')
+		printWrapper('</li></ol>')
 	printWrapper('''</ol>
 </nav>''')
 
@@ -83,13 +88,13 @@ def chapter(node):
 	global subsubsections
 	global listings
 	chapters=chapters+1
-	printWrapper('<h2 id="' + node.attrib["id"] + '">' + str(chapters) \
-		+ '<span class="fill"></span>')
+	printWrapper('<h2 id="' + node.attrib["id"] + '"><span class="fill">' \
+		+ str(chapters) + '</span>')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
 	printWrapper('</h2>')
-	labels[ node.attrib["id"] ]={'Chapter',str(chapters)}
+	labels[ node.attrib["id"] ]=['Chapter',str(chapters)]
 	sections=0
 	subsections=0
 	subsubsections=0
@@ -101,8 +106,8 @@ def section(node):
 	global subsubsections
 	sections=sections + 1
 	name=str(chapters)+'.'+str(sections)
-	printWrapper('<h3 id="' + node.attrib["id"] + '">' + name \
-		+ '<span class="fill"></span>')
+	printWrapper('<h3 id="' + node.attrib["id"] + '"><span class="fill">' \
+		+ name + '</span>')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -116,8 +121,8 @@ def subsection(node):
 	global subsubsections
 	subsections=subsections + 1
 	name=str(chapters)+'.'+str(sections)+'.'+str(subsections)
-	printWrapper('<h4 id="' + node.attrib["id"] + '">' + name \
-		+ '<span class="fill"></span>')
+	printWrapper('<h4 id="' + node.attrib["id"] + '"><span class="fill">' \
+		+ name + '</span>')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -129,8 +134,8 @@ def subsubsection(node):
 	global subsubsections
 	subsubsections=subsections + 1
 	name=str(chapters)+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
-	printWrapper('<h5 id="' + node.attrib["id"] + '">' + name \
-		+ '<span class="fill"></span>')
+	printWrapper('<h5 id="' + node.attrib["id"] + '"><span class="fill">'
+		+ name + '</span>')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -257,9 +262,10 @@ def processElements(document):
 			libname(node)
 		elif node.tag=='prgname':
 			libname(node)
+		elif node.tag=='env':
+			libname(node)
 		else:
 			defaultrule(node)
-
 
 def main(argv):
 	tree=ET.parse(sys.stdin)

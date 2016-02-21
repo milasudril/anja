@@ -7,4 +7,4 @@ anjalogo-hires.png: ../anjalogo-hires.png
 	cp ../anjalogo-hires.png anjalogo-hires.png
 
 index.html: html.py index.xml
-	./html.py < index.xml > index.html
+	./html.py < index.xml | tidy > index.html
