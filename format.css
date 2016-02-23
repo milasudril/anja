@@ -29,10 +29,11 @@ span.fill{margin-right:18pt}
 ol,ul{padding-left:14pt;}
 nav{padding-right:0.05em;}
 
-h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","CMU Serif",Serif;}
-code,pre{font-family:"Latin Modern Mono",Monospace}
-pre > code{font-size:10pt}
-
+h1,h2,h3,h4,h5,h6,p,li,td,th{font-family:"Latin Modern","Latin Modern Roman","CMU Serif","Century Schoolbook",Serif;}
+code,pre,kbd{font-family:"Latin Modern Mono",Monospace}
+pre > code,kbd,ui-button{font-size:10pt}
+ui-button{font-family: "Latin Modern Sans", sans-serif;}
+ui-formfield{font-family: "Latin Modern Sans", sans-serif;}
 div.listing,figure,titlepic{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
 img{position:relative;width:100%}
 
@@ -48,7 +49,7 @@ img{position:relative;width:100%}
 	nav > h2,nav > ol{position:static}
 
 	div.listing,figure,titlepic{position:relative;width:calc(100% - 200px - 80pt);left:200px;margin-left:40pt;}
-	
+
 	}
 
 
@@ -56,3 +57,6 @@ img{position:relative;width:100%}
     h2 {page-break-before: right;}
 	pre,code{overflow-x: visible;overflow-y:visible}
 }
+
+kbd{border:1px solid;width:2em;height:1.5em;display:inline-block;text-align:center;border-radius:0.2em;}
+ui-button{padding-left:0.25em;padding-right:0.25em;border:1px solid;height:1.5em;display:inline-block;text-align:center;border-radius:0.2em;}

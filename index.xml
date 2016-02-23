@@ -78,7 +78,7 @@ sudo apt-get install libjack-jackd2-dev</code>
 	</listing>
 
 	<chapter id="using">Using Anja</chapter>
-	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
+	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine. The meaning of all possible messages are listed in <ref>anjastate</ref>.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindow-start.png" />
@@ -87,14 +87,38 @@ sudo apt-get install libjack-jackd2-dev</code>
 
 	<figure id="anjaworkspace">
 		<includegraphics src="anjaworkspace.png" />
-		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard View</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>
+		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>
 	</figure>
 
-	<section id="addfx">Adding sound effects</section>
-	<p>To be written</p>
+	<section id="addfx">Loading a waveform</section>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in th <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
-	<section id="play">Playing sound effects</section>
-	<p>To be written</p>
+	<section id="play">Playing waveforms</section>
+	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
+
+	<code language="bash">jack_lsp</code>
+
+	<p>If you did not load any old session, or has not modified the session new, you will then see something like</p>
+	<code language="nohighlight">system:capture_1
+system:capture_2
+system:playback_1
+system:playback_2
+New session.anja:Master out
+New session.anja:Audio capture
+New session.anja:MIDI in
+New session.anja:MIDI out</code>
+<p>The interesting port in this case is <dirname>New session.anja:Master out</dirname>. Connecting this port to <dirname>system:playback_1</dirname> and <dirname>system:playback_2</dirname> will enable sound output from Anja to the left and right speaker (or what ever is connected to the corresponding audio output ports of the computer). JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. The command to connect these ports would be</p>
+<code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
+jack_connect 'New session.anja:Master out' 'system:playback_2'
+</code>
+<p>The status message (see <ref>anjastate</ref>) suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catia</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
+
+<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. The playback is only active as long as the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</p>
+
+<figure id="catia">
+	<includegraphics src="catiaanja.png"/>
+	<caption>Anja with an Anja session started</caption>
+</figure>
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
@@ -102,5 +126,7 @@ sudo apt-get install libjack-jackd2-dev</code>
 		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
 		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
+		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
+		<item id="catia">... <url>http://kxstudio.org</url></item>
 	</bibliography>
 </document>

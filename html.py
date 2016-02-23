@@ -315,8 +315,9 @@ def main(argv):
 <head>
 <meta charset="UTF-8">
 <title>''' + document.findall('title')[0].text + '''</title>
-<link rel="stylesheet" href="highlight/styles/default.css" type="text/css" />
-<link rel="stylesheet" href="format.css" type="text/css" />
+<link rel="stylesheet" href="highlight/styles/default.css" type="text/css">
+<link rel="stylesheet" href="format.css" type="text/css">
+<link rel="stylesheet" href="color.css" type="text/css">
 <script src="highlight/highlight.pack.js" type="text/javascript"></script>
 <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
 </head>
