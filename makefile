@@ -1,4 +1,4 @@
-all: anjalogo-hires.png anja
+all: anja
 
 __anjalogo.dat: anjalogo.png framework/rgbadump.sh
 	bash framework/rgbadump.sh anjalogo.png

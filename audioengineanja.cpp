@@ -296,6 +296,7 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event
 			{
 			auto slot=event.status_word[2];
 			auto& waveform=(*r_waveforms)[slot];
+		//	FIXME: This should be handled by the NOTE_OFF handler
 		//	NOTE: Only try to stop the recording if the waveform is used
 			if(waveform.flagsGet() & Waveform::RECORD_RUNNING)
 				{

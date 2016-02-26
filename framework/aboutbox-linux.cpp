@@ -23,6 +23,7 @@ target[
 #include "programinfo.h"
 #include "rgbablock.h"
 #include "array_simple.h"
+#include "color.h"
 #include <gtk/gtk.h>
 #include <cstring>
 
@@ -64,10 +65,8 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 	AboutBoxGtk* _this=reinterpret_cast<AboutBoxGtk*>(aboutboxgtk);
 	if(_this->r_logo!=nullptr)
 		{
-
 		auto width=gtk_widget_get_allocated_width(widget);
 		auto height=gtk_widget_get_allocated_height(widget);
-	//	gtk_render_background(gtk_widget_get_style_context(widget),cr,0,0,width,height);
 
 		auto width_in=_this->r_logo->width;
 
@@ -77,10 +76,7 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 		auto height_out=size_t(ratio_out > ratio_in? height : width/ratio_in);
 		auto width_out=size_t(ratio_out > ratio_in? height*ratio_in : width);
 
-
 		auto factor=double(width_in)/width_out;
-
-	//	printf("Hello %.15g  %.15g\n",factor,double(_this->r_logo->height)/height_out);
 
 		ArraySimple<Pixel> pixels(width_out*height_out);
 		auto ptr=pixels.begin();
@@ -88,14 +84,6 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 		auto ptr_src=reinterpret_cast<const Pixel*>( _this->r_logo->pixelsGet() );
 		unsigned int row=0;
 		unsigned int col=0;
-		GdkColor color = gtk_widget_get_style(widget)->bg[GTK_STATE_NORMAL];
-		Pixel color_blend
-			{
-			 uint8_t(255*color.red/65535.0f)
-			,uint8_t(255*color.green/65535.0f)
-			,uint8_t(255*color.blue/65535.0f)
-			,255
-			};
 		while(ptr!=ptr_end)
 			{
 		//	TODO: Interpolate
@@ -103,17 +91,22 @@ gboolean AboutBoxGtk::logo_draw(GtkWidget *widget, cairo_t *cr,void* aboutboxgtk
 			auto col_src=size_t(col*factor);
 
 			auto alpha=ptr_src[row_src*width_in + col_src].v3/255.0f;
+
+		//	Cairo requires that RGB values are multiplied by alpha
+			ColorRGBA v_source
+				{
+				 alpha*ptr_src[row_src*width_in + col_src].v0/255.0f
+				,alpha*ptr_src[row_src*width_in + col_src].v1/255.0f
+				,alpha*ptr_src[row_src*width_in + col_src].v2/255.0f
+				,alpha
+				};
+
 			*ptr=
 				{
-				 uint8_t(alpha*ptr_src[row_src*width_in + col_src].v2 + (1-alpha)*color_blend.v2)
-				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v1 + (1-alpha)*color_blend.v1)
-				,uint8_t(alpha*ptr_src[row_src*width_in + col_src].v0 + (1-alpha)*color_blend.v0)
-				,255
-			/*	Broken in Cairo?
-				 ptr_src[row_src*width_in + col_src].v2
-				,ptr_src[row_src*width_in + col_src].v1
-				,ptr_src[row_src*width_in + col_src].v0
-				,ptr_src[row_src*width_in + col_src].v3*/
+				 uint8_t(255*v_source.blue)
+				,uint8_t(255*v_source.green)
+				,uint8_t(255*v_source.red)
+				,uint8_t(255*v_source.alpha)
 				};
 
 			++col;

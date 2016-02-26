@@ -232,7 +232,7 @@ void Session::audioServerConnect()
 	{
 	audioServerDisconnect();
 	m_engine.multioutputSet(flagGet(MULTIOUTPUT));
-	m_connection=AudioConnection::create(m_title.begin(),m_engine);
+	m_connection=AudioConnection::create(m_title.truncate().append(".anja").begin(),m_engine);
 
 	m_engine.waitForFrame();
 
