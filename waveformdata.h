@@ -42,6 +42,8 @@ class WaveformData
 
 		void fileSave(unsigned int k,const ArrayDynamicShort<char>& path);
 
+		void sampleRateSet(float fs);
+
 
 
 		const ArrayDynamicShort<char>& descriptionGet() const noexcept

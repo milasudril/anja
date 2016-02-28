@@ -292,21 +292,6 @@ void AudioEngineAnja::eventControlProcess(const AudioEngineAnja::Event& event
 			}
 			break;
 
-		case MIDIConstants::ControlCodes::GENERAL_PURPOSE_2: //Record stop
-			{
-			auto slot=event.status_word[2];
-			auto& waveform=(*r_waveforms)[slot];
-		//	FIXME: This should be handled by the NOTE_OFF handler
-		//	NOTE: Only try to stop the recording if the waveform is used
-			if(waveform.flagsGet() & Waveform::RECORD_RUNNING)
-				{
-				m_rec_buffers->readySet();
-				m_record_task.disable();
-				}
-			m_record_complete->set();
-			}
-			break;
-
 		case MIDIConstants::ControlCodes::GENERAL_PURPOSE_3: //Record stop
 			{
 			m_rec_buffers->readySet();
@@ -381,18 +366,30 @@ void AudioEngineAnja::eventProcess(const AudioEngineAnja::Event& event
 
 		case MIDIConstants::StatusCodes::NOTE_OFF:
 			{
-		//	NOTE: The replace lock cannot be released here, due to the possible
-		//	sustain flag. Instead, it has to be done in audioProcess, when
-		//	the rendering loop detects that the clip should not continue.
 			auto slot=event.status_word[1];
-			auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
 
-		//	NOTE: When note is stopped in sustain mode, ensure that the LOOP
-		//	flag is is disabled to prevent infinite sound
-			if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
-				{playback_buffer.flagsUnset(Waveform::LOOP);}
+			auto& waveform=(*r_waveforms)[slot];
+		//	If the slot is used for record
+			if(waveform.flagsGet() & Waveform::RECORD_RUNNING)
+				{
+				m_rec_buffers->readySet();
+				m_record_task.disable();
+				}
 			else
-				{playback_buffer.stop(time_offset);}
+				{
+				auto& playback_buffer=m_source_buffers[ r_source_buffers[slot] ];
+			//	NOTE: The replace lock cannot be released here, due to the possible
+			//	sustain flag. Instead, it has to be done in audioProcess, when
+			//	the rendering loop detects that the clip should not continue.
+
+			//	NOTE: When note is stopped in sustain mode, ensure that the LOOP
+			//	flag is is disabled to prevent infinite sound
+				if(playback_buffer.flagsGet()&Waveform::SUSTAIN)
+					{playback_buffer.flagsUnset(Waveform::LOOP);}
+				else
+					{playback_buffer.stop(time_offset);}
+				}
+			m_record_complete->set();
 			}
 			break;
 

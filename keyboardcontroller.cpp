@@ -94,19 +94,20 @@ void KeyboardController::onKeyUp(KeyboardView& source,uint8_t scancode)
 	if(slot!=255)
 		{
 		auto channel=r_session->waveformGet(slot).channelGet();
-		if(m_keystates[110]) //We were recording
+		engine.eventPost(MIDIConstants::StatusCodes::NOTE_OFF|channel,slot,1.0f);
+	//	Update waveform if it was used for recording
+
+	//	FIXME: It is possible to start stop recording through an external MIDI
+	//	NOTE_OFF event. Also in this case, The corresponding waveform needs to
+	//	be updated. This will require an asynchronous message from the engine.
+		if(m_keystates[110])
 			{
-			engine.eventPost(MIDIConstants::StatusCodes::CONTROLLER|channel
-				,MIDIConstants::ControlCodes::GENERAL_PURPOSE_2
-				,slot);
 			engine.waitForRecordComplete();
 			r_session->slotActiveSet(slot);
 			r_session->keyHighlight(scancode);
 			source.update();
 			r_view->slotDisplay(slot);
 			}
-		else
-			{engine.eventPost(MIDIConstants::StatusCodes::NOTE_OFF|channel,slot,1.0f);}
 		}
 	else
 	if(scancode==110) //Stop any ongoing recording
