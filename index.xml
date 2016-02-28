@@ -93,6 +93,9 @@ sudo apt-get install libjack-jackd2-dev</code>
 	<section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in th <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
+	<infobox type="warning">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>playback_advanced</ref>.
+	</infobox>
+
 	<section id="play">Playing waveforms</section>
 	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
 

@@ -1,6 +1,6 @@
 * {box-sizing: border-box;}
 
-h1{font-size:30pt}
+h1{font-size:30pt;text-align:center}
 
 h2{font-size:20.74pt;margin-bottom:40pt;margin-top:20pt}
 
@@ -23,7 +23,7 @@ cite{font-style:normal}
 p.bibitem{text-indent:0pt;margin-top:1.25ex;margin-bottom:1.5ex}
 
 div.abstract{margin-top:2ex; font-style:italic}
-p.titlepage{font-size:14.4pt}
+p.titlepage{font-size:14.4pt;text-align:center}
 span.fill{margin-right:18pt}
 
 ol,ul{padding-left:14pt;}

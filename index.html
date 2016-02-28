@@ -66,6 +66,15 @@ sudo apt-get install libjack-jackd2-dev</code></pre></div><h2 id="using"><span c
 <picture><source srcset="mainwindow-start.png"><img src="mainwindow-start.png" alt="The Anja window, as shown after launching Anja without any command line arguments"></picture><p><strong>Figure 3.1</strong>: The Anja window, as shown after launching Anja without any command line arguments</p></figure><figure id="anjaworkspace">
 <picture><source srcset="anjaworkspace.png"><img src="anjaworkspace.png" alt="The different parts of the Anja workspace. (1) is the "></picture><p><strong>Figure 3.2</strong>: The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</p></figure><h3 id="addfx"><span class="fill">3.1</span>Loading a waveform</h3><p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in th <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
+	<div class="infobox_warning ">
+<picture>
+<source srcset="warning.svg">
+<img src="warning.gif">
+</picture>
+<div>In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see ??.
+	</div>
+</div>
+
 	<h3 id="play"><span class="fill">3.2</span>Playing waveforms</h3><p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <code>New session.anja</code>. To list all JACK clients and ports open a teminal and type</p>
 
 	<pre><code class="bash">jack_lsp</code></pre><p>If you did not load any old session, or have not modified the default session, you will see something like</p>
