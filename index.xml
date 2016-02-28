@@ -98,7 +98,7 @@ sudo apt-get install libjack-jackd2-dev</code>
 
 	<code language="bash">jack_lsp</code>
 
-	<p>If you did not load any old session, or has not modified the session new, you will then see something like</p>
+	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
 	<code language="nohighlight">system:capture_1
 system:capture_2
 system:playback_1
@@ -113,7 +113,9 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 </code>
 <p>The status message (see <ref>anjastate</ref>) suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catia</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
 
-<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. The playback is only active as long as the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</p>
+<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard.</p>
+
+<infobox type="warning">Trigging playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
 <figure id="catia">
 	<includegraphics src="catiaanja.png"/>

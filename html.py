@@ -250,6 +250,22 @@ def defaultrule(node):
 	if node.tail != None:
 		printWrapper(node.tail)
 
+def infobox(node):
+	printWrapper('''<div class="infobox_''' + node.attrib["type"] + ''' ">
+<picture>
+<source srcset="''' + node.attrib["type"] + '''.svg">
+<img src="''' + node.attrib["type"] + '''.gif">
+</picture>
+<div>''')
+	if node.text != None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('''</div>
+</div>''')
+	if node.tail != None:
+		printWrapper(node.tail)
+
+
 def processElements(document):
 	for node in document.findall('*'):
 		if node.tag=='title':
@@ -296,6 +312,8 @@ def processElements(document):
 			libname(node)
 		elif node.tag=='figure':
 			figure(node)
+		elif node.tag=='infobox':
+			infobox(node)
 		else:
 			defaultrule(node)
 

@@ -68,7 +68,7 @@ sudo apt-get install libjack-jackd2-dev</code></pre></div><h2 id="using"><span c
 
 	<h3 id="play"><span class="fill">3.2</span>Playing waveforms</h3><p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <code>New session.anja</code>. To list all JACK clients and ports open a teminal and type</p>
 
-	<pre><code class="bash">jack_lsp</code></pre><p>If you did not load any old session, or has not modified the session new, you will then see something like</p>
+	<pre><code class="bash">jack_lsp</code></pre><p>If you did not load any old session, or have not modified the default session, you will see something like</p>
 	<pre><code class="nohighlight">system:capture_1
 system:capture_2
 system:playback_1
@@ -81,7 +81,15 @@ New session.anja:MIDI out</code></pre><p>The interesting port in this case is <c
 jack_connect 'New session.anja:Master out' 'system:playback_2'
 </code></pre><p>The status message (see ??) suggests using a JACK patchbay tool such as <code>Catia</code>&#160;<cite><a href="#catia">[7]</a></cite> shown in <a href="#catia">Figure 3.3</a>. In <code>Catia</code> ports can be connected using "Drag and drop".</p>
 
-<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. The playback is only active as long as the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</p>
+<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard.</p>
+
+<div class="infobox_warning ">
+<picture>
+<source srcset="warning.svg">
+<img src="warning.gif">
+</picture>
+<div>Trigging playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</div>
+</div>
 
 <figure id="catia">
 <picture><source srcset="catiaanja.png"><img src="catiaanja.png" alt="Anja with an Anja session started"></picture><p><strong>Figure 3.3</strong>: Anja with an Anja session started</p></figure><h2>References</h2><p class="bibitem" id="jack"> [1] 
