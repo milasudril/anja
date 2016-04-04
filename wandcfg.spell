@@ -9,10 +9,23 @@ config_set[
 ]
 
 config_set[
+	profile[debug]
+	components[
+		Wand[
+			paths[
+				targets[__wand_targets_rel]
+			]
+		]
+	]
+]
+
+config_set[
 	profile[release]
 	components[
 		Wand[
-			actions[makeexport]
+			paths[
+				targets[__wand_targets_rel]
+			]
 		]
 	]
 ]
