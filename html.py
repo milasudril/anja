@@ -10,6 +10,7 @@ subsubsections=0
 listings=0
 figures=0
 tables=0
+countmode=0
 
 labels={}
 float_name=''
@@ -95,9 +96,12 @@ def chapter(node):
 	global subsubsections
 	global listings
 	global figures
+	global countmode
 	chapters=chapters+1
+
+
 	printWrapper('<h2 id="' + node.attrib["id"] + '"><span class="fill">' \
-		+ str(chapters) + '</span> ')
+		+ chapstr() + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -174,13 +178,21 @@ def libname(node):
 def quantity(node):
 	printWrapper(node.text + '&#160;' + node.attrib["unit"] + ' ' + node.tail)
 
+def chapstr():
+	global chapters
+	chapnum=['A','B','C','D','E','F','G','H']
+	if countmode:
+		return chapnum[chapters-1]
+	else:
+		return str(chapters);
+
 def listing(node):
 	global listings
 	global float_name
 	global float_type
 	global labels
 	listings=listings + 1
-	float_name=str(chapters)+'.'+str(listings)
+	float_name=chapstr()+'.'+str(listings)
 	float_type='Listing'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<div class="listing" id="''' + node.attrib["id"] + '''">''')
@@ -226,7 +238,7 @@ def figure(node):
 	global float_type
 	global labels
 	figures=figures + 1
-	float_name=str(chapters)+'.'+str(figures)
+	float_name=chapstr()+'.'+str(figures)
 	float_type='Figure'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<figure id="''' + node.attrib["id"] + '''">
@@ -246,7 +258,7 @@ def table(node):
 	global float_type
 
 	tables=tables + 1
-	float_name=str(chapters)+'.'+str(tables)
+	float_name=chapstr()+'.'+str(tables)
 	float_type='Table'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<figure id="''' + node.attrib["id"] + '''">''')
@@ -299,6 +311,11 @@ def infobox(node):
 	if node.tail != None:
 		printWrapper(node.tail)
 
+def appendix():
+	global chapters
+	global countmode
+	countmode=1
+	chapters=0
 
 def processElements(document):
 	for node in document.findall('*'):
@@ -358,6 +375,8 @@ def processElements(document):
 			col(node)
 		elif node.tag=='row':
 			row(node)
+		elif node.tag=='appendix':
+			appendix()
 		else:
 			defaultrule(node)
 
