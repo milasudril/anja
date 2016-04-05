@@ -97,6 +97,7 @@ def chapter(node):
 	global listings
 	global figures
 	global countmode
+	global tables
 	chapters=chapters+1
 
 
@@ -112,6 +113,7 @@ def chapter(node):
 	subsubsections=0
 	listings=0
 	figures=0
+	tables=0
 
 def section(node):
 	global sections
