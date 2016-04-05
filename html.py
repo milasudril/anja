@@ -391,6 +391,7 @@ def main(argv):
 	global figures
 	global tables
 	global pass_counter
+	global countmode
 
 	print('''<!DOCTYPE html>
 <html>
