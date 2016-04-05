@@ -162,7 +162,7 @@ AboutBoxGtk::AboutBoxGtk(const Widget& owner,const ProgramInfo& info):
 	buffer=info.name;
 	if(info.version!=nullptr)
 		{
-		buffer.truncate().append(info.version);
+		buffer.truncate().append(' ').append(info.version);
 		}
 	m_title=gtk_label_new(buffer.begin());
 	g_object_ref_sink(m_title);

@@ -11,11 +11,15 @@ target[name[anja] type[application]]
 #include "sessiondataupdater.h"
 #include "sessioncontrol.h"
 #include "mainwinhandler.h"
+#include "anjainfo.h"
 #include "framework/window.h"
+#include "framework/programinfo.h"
 #include <cstring>
 
 static constexpr unsigned int LIGHT=0x1;
 static constexpr unsigned int FULLSCREEN=0x2;
+static constexpr unsigned int HELP_SHOW=0x4;
+static constexpr unsigned int ABOUT_SHOW=0x8;
 
 int main(int argc,char* argv[])
 	{
@@ -45,7 +49,75 @@ int main(int argc,char* argv[])
 				break;
 				}
 			else
-				{throw "Unknown option";}
+			if(strcmp(argv[k],"--help")==0)
+				{flags|=HELP_SHOW;}
+			else
+			if(strcmp(argv[k],"--about")==0)
+				{flags|=ABOUT_SHOW;}
+			else
+				{throw "Unknown option. Try anja --help";}
+			}
+
+		if(flags&HELP_SHOW)
+			{
+			printf("Usage: anja [OPTIONS] [--] FILE\n\n"
+				"OPTIONS can be any of the following flags:\n\n"
+				"    --about\n"
+				"          prints an about message to standard output and exits\n\n"
+				"    --dark\n"
+				"          starts Anja in dark mode. This is default\n\n"
+				"    --fullscreen\n"
+				"          starts Anja in fullscreen mode\n\n"
+				"    --light\n"
+				"          starts Anja in light mode\n\n"
+				"    --windowed\n"
+				"          starts Anja in windowed mode. This is default\n\n"
+				"    --help\n"
+				"          prints this message to standard output and exits\n\n"
+				"For more information, see Anja user's guide.\n");
+			return 0;
+			}
+
+		if(flags&ABOUT_SHOW)
+			{
+			printf(
+				"%s---%s\n"
+				"version %s\n\n"
+				"Written %u by\n"
+				,ANJAINFO.name,ANJAINFO.description
+				,ANJAINFO.version
+				,ANJAINFO.year);
+
+				{
+				auto ptr=ANJAINFO.authors;
+				while(*ptr!=nullptr)
+					{
+					printf("    %s\n",*ptr);
+					++ptr;
+					}
+				}
+
+			printf("\nAcknowledgement\n");
+				{
+				auto ptr=ANJAINFO.acknowledgement;
+				while(*ptr!=nullptr)
+					{
+					printf("    %s\n",*ptr);
+					++ptr;
+					}
+				}
+
+			printf("\n%s\n\nThis Anja was compiled ",ANJAINFO.disclaimer);
+				{
+				auto ptr=ANJAINFO.compileinfo;
+				while(*ptr!=nullptr)
+					{
+					printf("%s",*ptr);
+					++ptr;
+					}
+				}
+
+			return 0;
 			}
 
 		if(k<argc)

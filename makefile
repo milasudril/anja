@@ -16,8 +16,7 @@ __cxxtag.dat: makefile
 	g++ --version | head -n1 | tr '\n' '\000' > __cxxtag.dat
 
 __vertag.dat: makefile
-	echo -n ", build from " > __vertag.dat
-	git describe --all --long | tr '\n' '\000' >> __vertag.dat
+	git describe --all --long | tr '\n' '\000' > __vertag.dat
 
 anja: __vertag.dat __cxxtag.dat __anjalogo.dat build.sh
 	touch anjainfo.cpp
