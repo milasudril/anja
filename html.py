@@ -414,6 +414,7 @@ def main(argv):
 
 	processElements(document)
 
+	countmode=0
 	chapters=0
 	sections=0
 	subsections=0
