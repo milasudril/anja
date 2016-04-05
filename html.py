@@ -9,6 +9,7 @@ subsection=0
 subsubsections=0
 listings=0
 figures=0
+tables=0
 
 labels={}
 float_name=''
@@ -96,7 +97,7 @@ def chapter(node):
 	global figures
 	chapters=chapters+1
 	printWrapper('<h2 id="' + node.attrib["id"] + '"><span class="fill">' \
-		+ str(chapters) + '</span>')
+		+ str(chapters) + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -233,13 +234,46 @@ def figure(node):
 	for altgraphics in node.findall('includegraphics'):
 		includegraphics(altgraphics)
 	last=node.findall('includegraphics[last()]')
-	printWrapper('<img src="' + last[0].attrib["src"]+'"')
-	for cap in node.findall('caption'):
-		printWrapper(' alt="'+cap.text+'"')
-	printWrapper('>')
+	printWrapper('<img src="' + last[0].attrib["src"]+'" alt="'
+		+node.findall('caption[last()]')[0].text+'">')
 	printWrapper('</picture>')
 	caption(node.findall('caption[last()]')[0])
 	printWrapper('</figure>')
+
+def table(node):
+	global tables
+	global float_name
+	global float_type
+
+	tables=tables + 1
+	float_name=str(chapters)+'.'+str(tables)
+	float_type='Table'
+	labels[node.attrib["id"]]=[float_type,float_name]
+	printWrapper('''<figure id="''' + node.attrib["id"] + '''">''')
+	processElements(node)
+	printWrapper('''</figure>''')
+
+def tabular(node):
+	printWrapper('''<table>\n''')
+	processElements(node)
+	printWrapper('''</table>\n''')
+
+def colheaders(node):
+	printWrapper('''<tr class="colheaders">''')
+	processElements(node)
+	printWrapper('''</tr>\n''')
+
+def row(node):
+	printWrapper('''<tr>''')
+	processElements(node)
+	printWrapper('''</tr>\n''')
+
+def col(node):
+	printWrapper('<td>')
+	if node.text!=None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('</td>')
 
 def defaultrule(node):
 	printWrapper('''<''' + node.tag + '''>''')
@@ -314,6 +348,16 @@ def processElements(document):
 			figure(node)
 		elif node.tag=='infobox':
 			infobox(node)
+		elif node.tag=='table':
+			table(node)
+		elif node.tag=='tabular':
+			tabular(node)
+		elif node.tag=='colheaders':
+			colheaders(node)
+		elif node.tag=='col':
+			col(node)
+		elif node.tag=='row':
+			row(node)
 		else:
 			defaultrule(node)
 
@@ -326,6 +370,7 @@ def main(argv):
 	global subsubsections
 	global listings
 	global figures
+	global tables
 	global pass_counter
 
 	print('''<!DOCTYPE html>
@@ -346,6 +391,7 @@ def main(argv):
 	subsubsections=0
 	listings=0
 	figures=0
+	tables=0
 
 	processElements(document)
 
@@ -355,6 +401,7 @@ def main(argv):
 	subsubsections=0
 	listings=0
 	figures=0
+	tables=0
 
 	pass_counter=pass_counter + 1
 

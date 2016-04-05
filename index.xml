@@ -31,54 +31,61 @@
 	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also a kill-all-softly feature.</p>
 
 	<chapter id="install">Installing Anja</chapter>
-	<p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure</p>
+
+	<p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure.</p>
 
 	<section id="installlinux">Installing on a GNU/Linux system</section>
 
-	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it. Assuming all dependencies are met, following the procedure in <ref>installscript</ref> should work.</p>
-	<listing id="installscript">
-		<caption>Installation script that can be used on a GNU/Linux system</caption>
-		<code language="bash">#!/bin/bash
-#This script downloads and compiles the latest Anja release
+	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
-#Get the download URL
-ANJA_SRC=`wget -q -O - https://api.github.com/repos/milasudril/anja/releases \
-	| grep 'tarball_url' | head -n 1 | cut -d '"' -f 4`
+	<section id="compile">Compiling Anja</section>
+	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in <ref>depstab</ref>, together with their purpose. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually haave the suffix <em>dev</em>. Anja has been written using the <prgname>wand</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>wand</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>wand</prgname>, a package containing <prgname>wand</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname>.</p>
 
-#Download anja
-wget -O anja.tar.gz "$ANJA_SRC"
+<table id="depstab">
+	<caption>Programs and packages needed to compile Anja. Packages marked with a ✻ symbol are libraries that may need a corresponding development package.</caption>
+	<tabular>
+		<colheaders><col/><col>Name</col><col>Purpose</col></colheaders>
+		<row><col></col><col><prgname>bash</prgname></col><col>Command line interpreter used to interpret commands given by <prgname>make</prgname></col></row>
+		<row><col></col><col>Blender</col><col>Used to render Anja's logo.</col></row>
+		<row><col></col><col><prgname>g++</prgname></col><col>The GNU C++ compiler</col></row>
+		<row><col></col><col><prgname>git</prgname></col><col>Used to retrieve version info</col></row>
+		<row><col></col><col><prgname>head</prgname></col><col>Used to extract information about the compiler</col></row>
+		<row><col></col><col><prgname>jackd</prgname></col><col>Audio backend server</col></row>
+		<row><col>✻</col><col><libname>libgtk-3</libname></col><col>GUI backend on GNU/Linux</col></row>
+		<row><col>✻</col><col><libname>libjack</libname></col><col>Audio backend server, client library</col></row>
+		<row><col>✻</col><col><libname>libsndfile</libname></col><col>Library used to load sound files</col></row>
+		<row><col></col><col><prgname>make</prgname></col><col>Build script interpreter</col></row>
+		<row><col></col><col><prgname>mv</prgname></col><col>Used to rename Blender output files</col></row>
+		<row><col></col><col>ImageMagick</col><col>Used to generate an RGBA dump from a PNG file</col></row>
+		<row><col></col><col><prgname>tr</prgname></col><col>Used to extract information about the compiler. Also used to replace newlines with null terminator in compilation information strings.</col></row>
+		<row><col></col><col><prgname>touch</prgname></col><col>Used to force recompilation of the program information module</col></row>
+		<row><col></col><col><prgname>wand</prgname> (from Gabi)</col><col>Used as compiler frontend</col></row>
+		<row><col></col><col><prgname>wget</prgname></col><col>In abscence of <prgname>wand</prgname>, <prgname>wget</prgname> is used to download <prgname>wand</prgname> version 5.77 from the author's GitHub repository.</col></row>
+		<row><col></col><col><prgname>xxd</prgname></col><col>Used to generate an RGBA dump from the PNG file produced by <prgname>Blender</prgname></col></row>
+	</tabular>
+</table>
 
-#Extract the contents
-SRC_DIR=`tar -xvf anja.tar.gz | head -n 1`
-tar -xf anja.tar.gz
+<p>As mentioned above, the Anja source package can be obtained from <cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball, which is assumed to be called <var>filename</var>, issue the command</p>
 
-#Change directory
-cd "$SRC_DIR"
+	<code language="bash">tar -xf filename</code>
 
-#Complie
+	<p>This will create a directory with a name derived from the name of the downloaded file, in the current working directory. If <var>filename</var> is <dirname>anja-release-2-2.tar.gz</dirname>, it will be called <dirname>anja-release-2-2</dirname>. Now <prgname>cd</prgname> into that directory and run <prgname>make</prgname>:</p>
+
+	<code language="bash">cd anja-release-2-2
 make</code>
-</listing>
+
 <p>When running <prgname>make</prgname>, files are written to <dirname>__wand_targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
 <code language="bash">__wand_targets_rel/anja</code>
+
+<infobox type="warning">Normally, Anja is distributed with pre-rendered logo images. It may happen that the corresponding <prgname>Blender</prgname> file has been updated and not the logo images. In this case, it will take a much longer time than normal, to compile Anja, since the <dfn>makefile</dfn> will need to rerender the logo.</infobox>
 
 	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do</p>
 <code language="bash">sudo mv __wand_targets_rel/anja /usr/local/bin</code>
 <p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
 <code language="bash">mv __wand_targets_rel/anja ~/bin</code>
 
-	<subsection id="deps">Obtaining all dependencies</subsection>
-	<p>The procedure listed in <ref>installscript</ref> assumed that all dependencies already are satisfied. On a Debian based system, all dependencies can be obtained by invoking the commands listed in <ref>debs</ref>.</p>
-	<listing id="debs"><caption>Commands used to install all dependencies before compiling Anja on a Debian based system</caption><code language="bash">#!/bin/bash
-#Install dependencies. These commands needs to be run before compiling Anja
-
-sudo apt-get install libgtk-3-dev
-sudo apt-get install libsndfile1-dev
-sudo apt-get install jackd
-sudo apt-get install libjack-jackd2-dev</code>
-	</listing>
-
 	<chapter id="using">Using Anja</chapter>
-	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine. The meaning of all possible messages are listed in <ref>anjastate</ref>.</p>
+	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindow-start.png" />
@@ -114,7 +121,7 @@ New session.anja:MIDI out</code>
 <code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
 jack_connect 'New session.anja:Master out' 'system:playback_2'
 </code>
-<p>The status message (see <ref>anjastate</ref>) suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catia</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
+<p>The status message shown when the audio engine is running suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catia</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
 
 <p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard.</p>
 
@@ -134,4 +141,27 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">... <url>http://kxstudio.org</url></item>
 	</bibliography>
+
+<appendix />
+
+<chapter id="cmdopts">Command line options</chapter>
+	<p>It is possible to control how Anja is started from the command line. The general syntax is</p>
+
+	<code language="bash">anja [OPTIONS] [--] session</code>
+
+	<p>All possible options are listed in <ref>cmdoptstab</ref>.</p>
+
+	<table id="cmdoptstab">
+		<caption>Command line options for Anja</caption>
+		<tabular>
+			<colheaders><col>Option</col><col>Description</col></colheaders>
+			<row><col>--about</col><col>prints an about message to standard output and exits</col></row>
+			<row><col>--dark</col><col>starts Anja in dark mode. This is default.</col></row>
+			<row><col>--fullscreen</col><col>starts Anja in fullscreen mode</col></row>
+			<row><col>--light</col><col>starts Anja in light mode</col></row>
+			<row><col>--windowed</col><col>starts Anja in windowed mode. This is default.</col></row>
+			<row><col>--help</col><col>prints a summary of command line options to standard output and exits</col></row>
+		</tabular>
+	</table>
+
 </document>

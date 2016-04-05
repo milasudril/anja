@@ -20,7 +20,7 @@ h1+p,h2+p,h3+p,h4+p,h5+p,p:first-of-type,li{text-indent:0pt}
 
 cite{font-style:normal}
 
-p.bibitem{text-indent:0pt;margin-top:1.25ex;margin-bottom:1.5ex}
+p.bibitem,table{text-indent:0pt;margin-top:1.25ex;margin-bottom:1.5ex}
 
 div.abstract{margin-top:2ex; font-style:italic}
 p.titlepage{font-size:14.4pt;text-align:center}
@@ -46,7 +46,7 @@ img{position:relative;width:100%}
 	{
 	body > * {width:calc(100% - 200px);position:relative;left:200px;}
 
-		nav{top:0;position:fixed;width:200px;left:0pt;padding-left:8px;height: 100%;background-color:#d0d0d0}
+	nav{top:0;position:fixed;width:200px;left:0pt;padding-left:8px;height: 100%;overflow-y:auto}
 
 	nav > h2,nav > ol{position:static}
 
@@ -61,10 +61,13 @@ img{position:relative;width:100%}
 	pre,code{overflow-x: visible;overflow-y:visible}
 }
 
-kbd{border:1px solid;width:2em;height:1.5em;display:inline-block;text-align:center;border-radius:0.2em;}
+kbd{padding-left:0.25em;padding-right:0.25em;border:1px solid;width:2em;height:1.5em;display:inline-block;text-align:center;border-radius:0.2em;}
 ui-button{padding-left:0.25em;padding-right:0.25em;border:1px solid;height:1.5em;display:inline-block;text-align:center;border-radius:0.2em;}
 
 div.infobox_warning{padding:0.25em;display:table;}
 div.infobox_warning > picture{display:table-cell;width:4em;}
 div.infobox_warning > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
 
+table{border-top:2px solid;border-bottom:2px solid;border-collapse:collapse}
+td{vertical-align: top;}
+tr.colheaders>td{border-bottom:1px solid;font-weight: bold;padding-right:}
