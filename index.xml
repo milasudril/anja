@@ -239,7 +239,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 	The knob for controlling the <dfn>time constant</dfn> for autofade works in polar coordinates. If it is hard to find the right value, try to increase the distance to the knob center when adjusting the corresponding value
 </infobox>
 
-<p>Automatic fade-in/out is triggered by hitting <kbd>F<var>k</var></kbd> while pressing <kbd>↑</kbd>/<kbd>↓</kbd>, where <var>k</var> is the channel number. After fade-out, the channel is muted until it is unmuted or a fade-in occures. Mute and unmuting a channel is done by hitting the corresponding channel key (<kbd>F<var>k</var></kbd>) while pressing <kbd>←</kbd> or <kbd>←</kbd> respectively.</p>
+<p>Automatic fade-in/out is triggered by hitting <kbd>F<var>k</var></kbd> while pressing <kbd>↑</kbd>/<kbd>↓</kbd>, where <var>k</var> is the channel number. After fade-out, the channel is muted until it is unmuted or a fade-in occures. Mute and unmuting a channel is done by hitting the corresponding channel key (<kbd>F<var>k</var></kbd>) while pressing <kbd>←</kbd> or <kbd>→</kbd> respectively.</p>
 
 <infobox type="info">
 	It is only possible to access channel 1 to 12 from the PC keyboard. In order to autofade channel 13-16, an external MIDI controller can be used, see <ref>midi</ref>.
@@ -251,8 +251,24 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 
 <section id="multichannel">Multi-channel output</section>
 
-<section id="midi">Using MIDI</section>
+<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. The option is activated by checking the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>Session properties</dfn> (see <ref>sessprops</ref>) panel. When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname>. The signal sent to these channels are taken after the corresponding channel strip, but before the master gain adjustment.</p>
 
+<p>If the split signal needs to be mixed before sent to another JACK client, it is possible to connect all ports to the same input port. In this case, it might be good to use <prgname>non-mixer</prgname> to adjust the total output gain.</p>
+
+<infobox type="info">
+	Toggeling multi-channel output requires the engine to be restarted.
+</infobox>
+
+<section id="sessprops">Modifying session properties</section>
+<p></p>
+
+<figure id="sesspropspanel">
+	<includegraphics src="anja-sessionprops.png"/>
+	<caption>The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multichannel output (see <ref>multichannel</ref>). </caption>
+</figure>
+
+
+<section id="midi">Using MIDI</section>
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
