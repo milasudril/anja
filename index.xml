@@ -129,7 +129,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 
 <figure id="catia">
 	<includegraphics src="catiaanja.png"/>
-	<caption>Anja with an Anja session started</caption>
+	<caption>Catia with an Anja session started</caption>
 </figure>
 
 <section id="rec">Capturing waveforms</section>
