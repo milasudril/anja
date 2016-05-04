@@ -135,7 +135,7 @@ def subsection(node):
 	global subsections
 	global subsubsections
 	subsections=subsections + 1
-	name=str(chapters)+'.'+str(sections)+'.'+str(subsections)
+	name=chapstr()+'.'+str(sections)+'.'+str(subsections)
 	printWrapper('<h4 id="' + node.attrib["id"] + '"><span class="fill">' \
 		+ name + '</span>')
 	if node.text != None:
@@ -147,8 +147,8 @@ def subsection(node):
 
 def subsubsection(node):
 	global subsubsections
-	subsubsections=subsections + 1
-	name=str(chapters)+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
+	subsubsections=subsubsections + 1
+	name=chapstr()+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
 	printWrapper('<h5 id="' + node.attrib["id"] + '"><span class="fill">'
 		+ name + '</span>')
 	if node.text != None:
@@ -178,7 +178,7 @@ def libname(node):
 		printWrapper(node.tail)
 
 def quantity(node):
-	printWrapper(node.text + '&#160;' + node.attrib["unit"] + ' ' + node.tail)
+	printWrapper(node.text + '&#160;' + node.attrib["unit"] + node.tail)
 
 def chapstr():
 	global chapters
