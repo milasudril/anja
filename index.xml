@@ -188,7 +188,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 <subsection id="pbgainrandom">Playback gain randomization</subsection>
 <p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Playback gain random level</ui-formfield> sets how much the random component is amplified.</p>
 
-<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual retriggering, or for each iteration when playback loop is active. This can be useful on machinegun effects.</infobox>
+<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful on machinegun effects.</infobox>
 
 <subsection id="pboptions">Controlling playback behavior</subsection>
 <p>There are different options for controlling the playback behavior. These are <dfn>Loop</dfn>, <dfn>Sustain</dfn>, <dfn>Readonly</dfn>, and <dfn>Set gain on loop</dfn>.</p>
@@ -203,7 +203,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 <p>The <dfn>Readonly</dfn> flag controls whether or not it is possible to overwrite a loaded waveform with captured audio (see <ref>rec</ref>). Enabling <dfn>Readonly</dfn> prevents that a loaded waveform is accidentally overwritten.</p>
 
 <subsubsection id="pboptgainrand">Set gain on loop</subsubsection>
-<p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possble set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
+<p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possible set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
 
 <subsection id="rangeadjust">Adjusting playback range</subsection>
 <p>It may happen that only a portion of a loaded waveform is interesting. With the <dfn>Trim panel</dfn>, it is possible to select the part of the waveform that should be played. The graph shows in dBFS, the root mean square power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On to of the power function, there are three <dfn>cursors</dfn> that can be moved by click and drag.</p>
@@ -236,17 +236,17 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 </infobox>
 
 <infobox type="info">
-	The knob for controlling the <dfn>time constant</dfn> for autofade works in polar coordinates. If it is hard to find the right value, try to increase the distance to the knob center when adjusting the corresponding value
+	The knob for controlling the <dfn>time constant</dfn> for auto-fade works in polar coordinates. If it is hard to find the right value, try to increase the distance to the knob center when adjusting the corresponding value
 </infobox>
 
 <p>Automatic fade-in/out is triggered by hitting <kbd>F<var>k</var></kbd> while pressing <kbd>↑</kbd>/<kbd>↓</kbd>, where <var>k</var> is the channel number. After fade-out, the channel is muted until it is unmuted or a fade-in occures. Mute and unmuting a channel is done by hitting the corresponding channel key (<kbd>F<var>k</var></kbd>) while pressing <kbd>←</kbd> or <kbd>→</kbd> respectively.</p>
 
 <infobox type="info">
-	It is only possible to access channel 1 to 12 from the PC keyboard. In order to autofade channel 13-16, an external MIDI controller can be used, see <ref>midi</ref>.
+	It is only possible to access channel 1 to 12 from the PC keyboard. In order to auto-fade channel 13-16, an external MIDI controller can be used, see <ref>midi</ref>.
 </infobox>
 
 <infobox type="info">
-	Using the PC keyboard to trigg fade-in/out is only possible when the <dfn>Keybord view</dfn> is active.
+	Using the PC keyboard to trigger fade-in/out is only possible when the <dfn>Keybord view</dfn> is active.
 </infobox>
 
 <section id="multichannel">Multi-channel output</section>
@@ -263,12 +263,12 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 <p>The <dfn>Session properties panel</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <ref>multichannel</ref>.</p>
 
 <infobox type="info">
-	Both toggeling multi-channel output and setting a new title requires the engine to be restarted.
+	Both toggling multi-channel output and setting a new title requires the engine to be restarted.
 </infobox>
 
 <figure id="sesspropspanel">
 	<includegraphics src="anja-sessionprops.png"/>
-	<caption>The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multichannel output (see <ref>multichannel</ref>). </caption>
+	<caption>The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multi-channel output (see <ref>multichannel</ref>). </caption>
 </figure>
 
 
@@ -277,7 +277,12 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 
 <subsection id="midi_in">Controlling Anja with other devices or software applications</subsection>
 
-<p>Before Anja can be controlled, the corresponding <dirname>MIDI in</dirname>, to the MIDI output of the device or software application that should be used to controll Anja.<!--TODO: Add name for the system input--></p>
+<p>Before Anja can be controlled, the corresponding <dirname>MIDI in</dirname>, to the MIDI output of the device or software application that should be used to controll Anja. For control from other hardware, a suitable output port is usually <dirname>midi_capture_1</dirname>.</p>
+
+<subsection id="midi_out">Using Anja to control other devices or software applications</subsection>
+
+<p>A suitable input port for controlling external devices is usually <dirname>midi_playback_1</dirname>.</p>
+
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
@@ -287,7 +292,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">... <url>http://kxstudio.org</url></item>
-		<item id="mma">MIDI Manufacturers Association <url>http://mma.com</url></item>
+		<item id="mma">MIDI Association <url>http://mma.org</url></item>
 	</bibliography>
 
 <appendix />
