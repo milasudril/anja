@@ -15,7 +15,7 @@
 </div><div class="abstract"><p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featrues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
 	</div><nav id="toc">
 <h2>Table of contents</h2>
-<ol><li><a href="#intro">Introduction</a><ol><li><a href="#requirements">System requirements</a></li><li><a href="#comparison">Anja compared to other software</a></li></ol></li><li><a href="#install">Installing Anja</a><ol><li><a href="#installlinux">Installing on a GNU/Linux system</a></li><li><a href="#compile">Compiling Anja</a></li></ol></li><li><a href="#using">Using Anja</a><ol><li><a href="#addfx">Loading a waveform</a></li><li><a href="#play">Playing waveforms</a></li><li><a href="#rec">Capturing waveforms</a></li><li><a href="#waveformprop">Configuring waveform playback</a><ol><li><a href="#wavesource">Source file selection</a></li><li><a href="#description">Waveform description</a></li><li><a href="#wavecolor">Waveform color</a></li><li><a href="#pbchannel">Playback channel</a></li><li><a href="#pbgain">Playback gain</a></li><li><a href="#pbgainrandom">Playback gain randomization</a></li><li><a href="#pboptions">Controlling playback behavior</a></li><li><a href="#rangeadjust">Adjusting playback range</a></li></ol></li><li><a href="#chmixer">Configuring playback channels</a></li><li><a href="#multichannel">Multi-channel output</a></li><li><a href="#sessprops">Modifying session properties</a></li><li><a href="#midi">Using MIDI</a></li></ol></li><li><a href="#cmdopts">Command line options</a></li><li><a href="#fileformats">Supported file formats</a></ol>
+<ol><li><a href="#intro">Introduction</a><ol><li><a href="#requirements">System requirements</a></li><li><a href="#comparison">Anja compared to other software</a></li></ol></li><li><a href="#install">Installing Anja</a><ol><li><a href="#installlinux">Installing on a GNU/Linux system</a></li><li><a href="#compile">Compiling Anja</a></li></ol></li><li><a href="#using">Using Anja</a><ol><li><a href="#addfx">Loading a waveform</a></li><li><a href="#play">Playing waveforms</a></li><li><a href="#rec">Capturing waveforms</a></li><li><a href="#waveformprop">Configuring waveform playback</a><ol><li><a href="#wavesource">Source file selection</a></li><li><a href="#description">Waveform description</a></li><li><a href="#wavecolor">Waveform color</a></li><li><a href="#pbchannel">Playback channel</a></li><li><a href="#pbgain">Playback gain</a></li><li><a href="#pbgainrandom">Playback gain randomization</a></li><li><a href="#pboptions">Controlling playback behavior</a></li><li><a href="#rangeadjust">Adjusting playback range</a></li></ol></li><li><a href="#chmixer">Configuring playback channels</a></li><li><a href="#multichannel">Multi-channel output</a></li><li><a href="#sessprops">Modifying session properties</a></li><li><a href="#midi">Using MIDI</a><ol><li><a href="#midi_in">Controlling Anja with other devices or software applications</a></li></ol></li></ol></li><li><a href="#cmdopts">Command line options</a></li><li><a href="#fileformats">Supported file formats</a></ol>
 </nav><h2 id="intro"><span class="fill">1</span> Introduction</h2><p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
 
 	<p>Anja also features a channel mixer with 16 channels. All sound effects are routed through one of these channels. The channel mixer makes it possible to fade a group of sound effects together. As with sound effects, each channel has a color and a description. In addition to color, description and channel gain, each channel also has an adjustable fade time, that is used to automatically fade the channel.</p>
@@ -307,17 +307,30 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 </div>
 </div>
 
-<h3 id="sessprops"><span class="fill">3.7</span>Modifying session properties</h3><p></p>
+<h3 id="sessprops"><span class="fill">3.7</span>Modifying session properties</h3><p>The <dfn>Session properties panel</dfn>, shown in <a href="#sesspropspanel">Figure 3.6</a>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <a href="#multichannel">Section 3.6</a>.</p>
+
+<div class="infobox_info ">
+<picture>
+<source srcset="info.svg">
+<img src="info.gif">
+</picture>
+<div>
+	Both toggeling multi-channel output and setting a new title requires the engine to be restarted.
+</div>
+</div>
 
 <figure id="sesspropspanel">
-<picture><source srcset="anja-sessionprops.png"><img src="anja-sessionprops.png" alt="The "></picture><p><strong>Figure 3.6</strong>: The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multichannel output (see <a href="#multichannel">Section 3.6</a>). </p></figure><h3 id="midi"><span class="fill">3.8</span>Using MIDI</h3><h2>References</h2><p class="bibitem" id="jack"> [1] 
+<picture><source srcset="anja-sessionprops.png"><img src="anja-sessionprops.png" alt="The "></picture><p><strong>Figure 3.6</strong>: The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multichannel output (see <a href="#multichannel">Section 3.6</a>). </p></figure><h3 id="midi"><span class="fill">3.8</span>Using MIDI</h3><p>MIDI is a standard for communications between musical instruments, and other equipment&#160;<cite><a href="#mma">[8]</a></cite>. Through MIDI, Anja can be controlled by another MIDI enabled device or software. Anja can also be used to controll other MIDI enabled devices or software applications.</p>
+
+<h4 id="midi_in"><span class="fill">3.8.1</span>Controlling Anja with other devices or software applications</h4><h2>References</h2><p class="bibitem" id="jack"> [1] 
 		<a href="http://jackaudio.org" target="blank">http://jackaudio.org</a></p><p class="bibitem" id="markdown"> [2] 
 		<a href="https://daringfireball.net/projects/markdown" target="blank">https://daringfireball.net/projects/markdown</a></p><p class="bibitem" id="doomwiki"> [3] 
 		<a href="http://doom.wikia.com/wiki/Doom_file_template" target="blank">http://doom.wikia.com/wiki/Doom_file_template</a></p><p class="bibitem" id="hydrogen"> [4] 
 		<a href="http://www.hydrogen-music.org/hcms" target="blank">http://www.hydrogen-music.org/hcms</a></p><p class="bibitem" id="anjasrc"> [5] 
 		<a href="https://github.com/milasudril/anja/releases/latest" target="blank">https://github.com/milasudril/anja/releases/latest</a></p><p class="bibitem" id="manjack"> [6] 
 		<code>jack_connect</code> manual page</p><p class="bibitem" id="catia"> [7] 
-		<a href="http://kxstudio.org" target="blank">http://kxstudio.org</a></p><h2 id="cmdopts"><span class="fill">A</span> Command line options</h2><p>It is possible to control how Anja is started from the command line. The general syntax is</p>
+		<a href="http://kxstudio.org" target="blank">http://kxstudio.org</a></p><p class="bibitem" id="mma"> [8] 
+		<a href="http://mma.com" target="blank">http://mma.com</a></p><h2 id="cmdopts"><span class="fill">A</span> Command line options</h2><p>It is possible to control how Anja is started from the command line. The general syntax is</p>
 
 	<pre><code class="bash">anja [OPTIONS] [--] session</code></pre><p>All possible options are listed in <a href="#cmdoptstab">Table A.1</a>.</p>
 
