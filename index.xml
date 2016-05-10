@@ -292,7 +292,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">... <url>http://kxstudio.org</url></item>
-		<item id="mma">MIDI Association <url>http://mma.org</url></item>
+		<item id="mma">MIDI Association <url>http://midi.org</url></item>
 	</bibliography>
 
 <appendix />
