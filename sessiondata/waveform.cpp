@@ -4,8 +4,8 @@
 #include "optionstring.hpp"
 #include "wavefilereader.hpp"
 #include "wavefileinfo.hpp"
-#include "wavefilewriter.h"
-#include "arraysimple.hpp"
+#include "wavefilewriter.hpp"
+#include "../common/arraysimple.hpp"
 
 using namespace Anja;
 
@@ -39,7 +39,7 @@ void Waveform::fileLoad(const char* filename)
 
 //	Try to load the file
 	WavefileInfo info;
-	auto reader=WavefileReader::create(filename,info);
+	WavefileReader reader(filename,info);
 	clear();
 	sampleRateSet(info.fs);
 	capacitySet(info.n_frames);
@@ -47,7 +47,7 @@ void Waveform::fileLoad(const char* filename)
 	uint32_t n_read=0;
 	do
 		{
-		n_read=reader->dataRead(buffer_tmp.begin(),BUFFER_SIZE);
+		n_read=reader.dataRead(buffer_tmp.begin(),BUFFER_SIZE);
 		append(buffer_tmp.begin(),n_read);
 		}
 	while(n_read==BUFFER_SIZE);
@@ -71,12 +71,12 @@ void Waveform::fileSave(const char* filename)
 
 	WavefileInfo info{lengthFull(),sampleRateGet(),1};
 
-	auto writer=WavefileWriter::create(filename,info);
+	WavefileWriter writer(filename,info);
 	auto ptr=beginFull();
 	auto n=lengthFull();
 	while(n!=0)
 		{
-		auto n_written=writer->dataWrite(ptr,std::min(BUFFER_SIZE,n));
+		auto n_written=writer.dataWrite(ptr,std::min(BUFFER_SIZE,n));
 		n-=n_written;
 		ptr+=n_written;
 		}

@@ -45,7 +45,7 @@ WavefileWriter::Impl::~Impl()
 	sf_close(m_handle);
 	}
 
-unsigned int WavefileWriterSndfile::dataWrite(const float* buffer, unsigned int n_frames)
+unsigned int WavefileWriter::Impl::dataWrite(const float* buffer, unsigned int n_frames)
 	{
 	return sf_write_float(m_handle,buffer,n_frames);
 	}

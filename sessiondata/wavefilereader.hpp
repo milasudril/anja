@@ -18,7 +18,7 @@ namespace Anja
 			WavefileReader(const char* path,WavefileInfo& info);
 			~WavefileReader();
 
-			unsigned int dataRread(float* buffer,unsigned int n_frames);
+			unsigned int dataRead(float* buffer,unsigned int n_frames);
 
 		private:
 			class Impl;

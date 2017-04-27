@@ -54,9 +54,9 @@ namespace Anja
 				return *this;
 				}
 
-			Waveform& offsetBeginSet(uint32_t value_new) noexcept
+			Waveform& offsetBeginSet(int32_t value_new) noexcept
 				{
-				auto temp=std::min(value_new,m_data.length());
+				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
 				m_flags|=(temp!=m_offset_begin? DIRTY : 0);
 				m_offset_begin=temp;
 				return *this;
@@ -65,9 +65,9 @@ namespace Anja
 			uint32_t offsetEndGet() const noexcept
 				{return m_offset_end;}
 
-			Waveform& offsetEndSet(uint32_t value_new) noexcept
+			Waveform& offsetEndSet(int32_t value_new) noexcept
 				{
-				auto temp=std::min(value_new,m_data.length());
+				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
 				m_flags|=(temp!=m_offset_end? DIRTY : 0);
 				m_offset_end=temp;
 				return *this;
@@ -107,7 +107,7 @@ namespace Anja
 			uint32_t channelGet() const noexcept
 				{return m_channel;}
 
-			Waveform& channelSet(uint32_t x) noexcept
+			Waveform& channelSet(int32_t x) noexcept
 				{
 				m_flags|=(x!=m_channel? DIRTY : 0);
 				m_channel=x;
