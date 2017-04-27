@@ -12,6 +12,8 @@
       <File Name="sessiondata/waveform.cpp"/>
       <File Name="sessiondata/optionstring.hpp"/>
       <File Name="sessiondata/optionstring.cpp"/>
+      <File Name="sessiondata/wavefilereader.hpp"/>
+      <File Name="sessiondata/wavefilereader.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
