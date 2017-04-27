@@ -5,7 +5,7 @@
 #include "wavefilereader.hpp"
 #include "wavefileinfo.hpp"
 #include "wavefilewriter.h"
-#include "framework/array_simple.h"
+#include "arraysimple.hpp"
 
 using namespace Anja;
 
