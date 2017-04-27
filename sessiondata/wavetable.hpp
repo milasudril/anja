@@ -8,7 +8,7 @@
 
 namespace Anja
 	{
-	class Wavetable:public ArrayFixed<Waveform,128>
+	class Wavetable final:public ArrayFixed<Waveform,128>
 		{};
 	}
 
