@@ -1,4 +1,4 @@
-//@	{"targets":[{"name":"wavetable.hpp","type":"include"}]}
+//	{"targets":[{"name":"wavetable.hpp","type":"include"}]}
 
 #ifndef ANJA_WAVETABLE_H
 #define ANJA_WAVETABLE_H

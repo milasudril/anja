@@ -9,6 +9,9 @@
       <File Name="sessiondata/session.hpp"/>
       <File Name="sessiondata/wavetable.hpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="common">
+      <File Name="common/arrayfixed.hpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

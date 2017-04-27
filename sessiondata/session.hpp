@@ -1,7 +1,7 @@
-//@	{
-//@	"targets":[{"name":"session.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"session.o","rel":"implementation"}]
-//@	}
+//	{
+//	"targets":[{"name":"session.hpp","type":"include"}]
+//	,"dependencies_extra":[{"ref":"session.o","rel":"implementation"}]
+//	}
 
 #ifndef ANJA_SESSION_HPP
 #define ANJA_SESSION_HPP

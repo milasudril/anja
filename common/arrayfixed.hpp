@@ -1,9 +1,7 @@
-#ifdef __WAND__
-target[name[array_fixed.h] type[include]]
-#endif
+//@	{"targets":[{"name":"wavetable.hpp","type":"include"}]}
 
-#ifndef ARRAYFIXED_H
-#define ARRAYFIXED_H
+#ifndef ANJA_ARRAYFIXED_H
+#define ANJA_ARRAYFIXED_H
 
 #include <cstddef>
 
@@ -35,6 +33,14 @@ class ArrayFixed
 		static constexpr size_t size()
 			{return N*sizeof(T);}
 
+		constexpr ArrayFixed() noexcept:data{}
+			{}
+
+		template<class ... Vals>
+		constexpr ArrayFixed(const T& x,Vals ... v) noexcept:data{x,v...}
+			{}
+
+	private:
 		T data[N];
 	};
 
