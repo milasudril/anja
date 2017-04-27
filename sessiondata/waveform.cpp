@@ -7,6 +7,8 @@
 #include "wavefilewriter.h"
 #include "framework/array_simple.h"
 
+using namespace Anja;
+
 static constexpr unsigned int BUFFER_SIZE=1024;
 
 static constexpr const char* FLAG_NAMES[]=
