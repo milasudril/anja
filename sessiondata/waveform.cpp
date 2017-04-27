@@ -3,7 +3,7 @@
 #include "waveform.hpp"
 #include "optionstring.hpp"
 #include "wavefilereader.hpp"
-#include "wavefileinfo.h"
+#include "wavefileinfo.hpp"
 #include "wavefilewriter.h"
 #include "framework/array_simple.h"
 

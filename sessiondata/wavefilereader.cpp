@@ -2,7 +2,7 @@
 
 
 #include "wavefilereader.hpp"
-#include "wavefileinfo.h"
+#include "wavefileinfo.hpp"
 #include "framework/array_simple.h"
 
 #include <sndfile.h>
