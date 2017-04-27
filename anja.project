@@ -5,7 +5,9 @@
   <VirtualDirectory Name="src">
     <File Name="main.cpp"/>
     <File Name="maikeconfig.json"/>
-    <VirtualDirectory Name="sessiondata"/>
+    <VirtualDirectory Name="sessiondata">
+      <File Name="sessiondata/session.hpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
