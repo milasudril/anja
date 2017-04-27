@@ -18,7 +18,7 @@ namespace Anja
 			WavefileWriter(const char* path,WavefileInfo& info);
 			~WavefileWriter();
 				
-			unsigned int dataWrite(const float* buffer, unsigned int n_frames)=0;
+			unsigned int dataWrite(const float* buffer, unsigned int n_frames);
 		
 		private:
 			class Impl;

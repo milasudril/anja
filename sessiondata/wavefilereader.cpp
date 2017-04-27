@@ -28,6 +28,11 @@ WavefileReader::WavefileReader(const char* path,WavefileInfo& info)
 WavefileReader::~WavefileReader()
 	{}
 
+unsigned int WavefileReader::dataRead(float* buffer, unsigned int n_frames)
+	{return m_impl->dataRead(buffer,n_frames);}
+
+
+
 WavefileReader::Impl::Impl(const char* path,WavefileInfo& info)
 	{
 	memset(&m_info,0,sizeof(m_info));
