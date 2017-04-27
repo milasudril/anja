@@ -1,7 +1,7 @@
 //@	 {"targets":[{"name":"waveform.o","type":"object"}]}
 
 #include "waveform.hpp"
-#include "optionstring.h"
+#include "optionstring.hpp"
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
 #include "wavefilewriter.h"
