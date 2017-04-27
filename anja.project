@@ -7,6 +7,7 @@
     <File Name="maikeconfig.json"/>
     <VirtualDirectory Name="sessiondata">
       <File Name="sessiondata/session.hpp"/>
+      <File Name="sessiondata/wavetable.hpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
