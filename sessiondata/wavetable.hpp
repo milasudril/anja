@@ -1,7 +1,7 @@
 //	{"targets":[{"name":"wavetable.hpp","type":"include"}]}
 
-#ifndef ANJA_WAVETABLE_H
-#define ANJA_WAVETABLE_H
+#ifndef ANJA_WAVETABLE_HPP
+#define ANJA_WAVETABLE_HPP
 
 #include "waveform.hpp"
 #include "arrayfixed.hpp"

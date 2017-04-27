@@ -1,47 +1,49 @@
-//@	{"targets":[{"name":"wavetable.hpp","type":"include"}]}
+//@	{"targets":[{"name":"arrayfixed.hpp","type":"include"}]}
 
-#ifndef ANJA_ARRAYFIXED_H
-#define ANJA_ARRAYFIXED_H
+#ifndef ANJA_ARRAYFIXED_HPP
+#define ANJA_ARRAYFIXED_HPP
 
 #include <cstddef>
 
-template<class T,size_t N>
-class ArrayFixed
+namespace Anja
 	{
-	public:
-		constexpr const T& operator[](size_t i) const
-			{return data[i];}
+	template<class T,size_t N>
+	class ArrayFixed
+		{
+		public:
+			constexpr const T& operator[](size_t i) const
+				{return data[i];}
 
-		T& operator[](size_t i)
-			{return data[i];}
+			T& operator[](size_t i)
+				{return data[i];}
 
-		constexpr const T* begin() const
-			{return data;}
+			constexpr const T* begin() const
+				{return data;}
 
-		constexpr const T* end() const
-			{return data+N;}
+			constexpr const T* end() const
+				{return data+N;}
 
-		T* begin()
-			{return data;}
+			T* begin()
+				{return data;}
 
-		T* end()
-			{return data+N;}
+			T* end()
+				{return data+N;}
 
-		static constexpr size_t length()
-			{return N;}
+			static constexpr size_t length()
+				{return N;}
 
-		static constexpr size_t size()
-			{return N*sizeof(T);}
+			static constexpr size_t size()
+				{return N*sizeof(T);}
 
-		constexpr ArrayFixed() noexcept:data{}
-			{}
+			constexpr ArrayFixed() noexcept:data{}
+				{}
 
-		template<class ... Vals>
-		constexpr ArrayFixed(const T& x,Vals ... v) noexcept:data{x,v...}
-			{}
+			template<class ... Vals>
+			constexpr ArrayFixed(const T& x,Vals ... v) noexcept:data{x,v...}
+				{}
 
-	private:
-		T data[N];
-	};
-
+		private:
+			T data[N];
+		};
+	}
 #endif
