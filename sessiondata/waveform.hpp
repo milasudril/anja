@@ -6,7 +6,7 @@
 #ifndef ANJA_WAVEFORM_HPP
 #define ANJA_WAVEFORM_HPP
 
-#include "framework/arraydynamicshort.h"
+#include "../common/arraydynamicshort.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -145,8 +145,6 @@ namespace Anja
 			static constexpr uint32_t RECORDED=0x10000000;
 			static constexpr uint32_t PLAYBACK_RUNNING=0x20000000;
 			static constexpr uint32_t RECORD_RUNNING=0x40000000;
-
-			static const char* FLAG_NAMES[];
 
 			uint32_t flagsGet() const noexcept
 				{return m_flags;}

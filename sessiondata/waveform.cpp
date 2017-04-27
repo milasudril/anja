@@ -1,8 +1,6 @@
-#ifdef __WAND__
-target[name[waveform.o] type[object]]
-#endif
+//@	 {"targets":[{"name":"waveform.o","type":"object"}]}
 
-#include "waveform.h"
+#include "waveform.hpp"
 #include "optionstring.h"
 #include "wavefilereader.h"
 #include "wavefileinfo.h"
@@ -11,7 +9,7 @@ target[name[waveform.o] type[object]]
 
 static constexpr unsigned int BUFFER_SIZE=1024;
 
-const char* Waveform::FLAG_NAMES[]=
+static constexpr const char* FLAG_NAMES[]=
 	{"Loop","Sustain","Readonly","Set gain on loop",nullptr};
 
 void Waveform::fileLoad(const char* filename)

@@ -9,6 +9,7 @@
       <File Name="sessiondata/session.hpp"/>
       <File Name="sessiondata/wavetable.hpp"/>
       <File Name="sessiondata/waveform.hpp"/>
+      <File Name="sessiondata/waveform.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
