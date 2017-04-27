@@ -15,6 +15,7 @@
       <File Name="sessiondata/wavefilereader.hpp"/>
       <File Name="sessiondata/wavefilereader.cpp"/>
       <File Name="sessiondata/wavefileinfo.hpp"/>
+      <File Name="sessiondata/wavefilewriter.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
