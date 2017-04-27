@@ -3,7 +3,7 @@
 
 #include "wavefilereader.hpp"
 #include "wavefileinfo.hpp"
-#include "framework/array_simple.h"
+#include "arraysimple.hpp"
 
 #include <sndfile.h>
 #include <cstring>

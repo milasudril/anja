@@ -19,6 +19,7 @@
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
       <File Name="common/arraydynamicshort.hpp"/>
+      <File Name="common/arraysimple.hpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
