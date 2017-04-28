@@ -40,7 +40,7 @@ namespace Anja
 					{
 					auto obj=reinterpret_cast<PropertyEnumerator*>(cb_obj);
 					return obj->sessionFileRecord(name,value);
-					}
+					};
 				return propertiesEnum(cb_func,&cb);
 				}
 

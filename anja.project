@@ -27,6 +27,14 @@
       <File Name="common/arraysimple.hpp"/>
       <File Name="common/color.hpp"/>
       <File Name="common/color.cpp"/>
+      <File Name="common/colorstring.hpp"/>
+      <File Name="common/colorstring.cpp"/>
+      <File Name="common/floatconv.hpp"/>
+      <File Name="common/floatconv.cpp"/>
+      <File Name="common/localeguard.hpp"/>
+      <File Name="common/localeguard-linux.cpp"/>
+      <File Name="common/pathutils.hpp"/>
+      <File Name="common/pathutils-linux.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">

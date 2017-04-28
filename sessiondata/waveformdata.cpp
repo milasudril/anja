@@ -2,8 +2,8 @@
 
 #include "waveformdata.hpp"
 #include "sessionfilerecord.hpp"
-#include "colorstring.hpp"
 #include "optionstring.hpp"
+#include "../common/colorstring.hpp"
 #include "../common/pathutils.hpp"
 #include "../common/floatconv.hpp"
 #include "../common/localeguard.hpp"
@@ -15,11 +15,8 @@ using namespace Anja;
 
 WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path):m_filename(""),m_description("")
-	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f)
-	,r_key(key),r_waveform(&waveform),m_stateflags(0)
+	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f),m_stateflags(0)
 	{
-	r_waveform->valuesInit();
-
 	auto value=record.propertyGet("Filename");
 	if(value!=nullptr)
 		{fileLoad(*value,load_path);}
@@ -31,6 +28,8 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	value=record.propertyGet("Color");
 	if(value!=nullptr)
 		{keyColorSet(colorFromString(value->begin()));}
+
+/*	TODO: Move these to Waveform class
 
 	value=record.propertyGet("Playback gain/dB");
 	if(value!=nullptr)
@@ -75,7 +74,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 		LocaleGuard locale("C");
 		auto pos=atol(value->begin());
 		r_waveform->offsetEndSet(pos);
-		}
+		}*/
 //	TODO Store other data not interpreted by Anja
 
 	dirtyClear();
@@ -97,6 +96,7 @@ void WaveformData::dataGet(SessionFileRecord& record
 	record.propertySet("Description",m_description);
 	record.propertySet("Color",ColorString(m_color).begin());
 	char buffer[32];
+/* TODO: Move these to waveform class
 	sprintf(buffer,"%u",r_waveform->channelGet() + 1);
 	record.propertySet("Playback channel",buffer);
 	sprintf(buffer,"%.7g",r_waveform->gainGet());
@@ -109,11 +109,12 @@ void WaveformData::dataGet(SessionFileRecord& record
 	record.propertySet("Playback end position/frames",buffer);
 	record.propertySet("Options",stringFromOptions(r_waveform->flagsGet()
 		,Waveform::FLAG_NAMES));
+*/
 //	TODO Save other data not interpreted by Anja
 	}
 
 WaveformData::WaveformData():m_filename(""),m_description("")
-	,m_color{0.0f,0.0f,0.0f,1},r_key(nullptr),r_waveform(nullptr),m_stateflags(0)
+	,m_color{0.0f,0.0f,0.0f,1},m_stateflags(0)
 	{}
 
 void WaveformData::fileLoad(const char* filename)
