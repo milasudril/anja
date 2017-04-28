@@ -178,7 +178,7 @@ namespace Anja
 				return *this;
 				}
 
-
+			static const char* const* flagNames() noexcept;
 
 			Waveform& append(float x)
 				{

@@ -14,6 +14,9 @@ static constexpr unsigned int BUFFER_SIZE=1024;
 static constexpr const char* FLAG_NAMES[]=
 	{"Loop","Sustain","Readonly","Set gain on loop",nullptr};
 
+const char* const* Waveform::flagNames() noexcept
+	{return FLAG_NAMES;}
+
 void Waveform::fileLoad(const char* filename)
 	{
 //	Stop loading new data into this slot if it is already in use by an audio
