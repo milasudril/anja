@@ -1,7 +1,7 @@
-//	{
-//	"targets":[{"name":"session.hpp","type":"include"}]
-//	,"dependencies_extra":[{"ref":"session.o","rel":"implementation"}]
-//	}
+//@	{
+//@	"targets":[{"name":"session.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"session.o","rel":"implementation"}]
+//@	}
 
 #ifndef ANJA_SESSION_HPP
 #define ANJA_SESSION_HPP
@@ -11,27 +11,15 @@ namespace Anja
 	class Session
 		{
 		public:
-			Session& operator=(const Session&)=delete;
-			Session(const Session&)=delete;
-
-			Session():m_engine(m_waveforms),m_connection(nullptr)
-				,r_key_active(nullptr),m_slot_active(0),m_state_flags(0)
+			Session():m_slot_active(0),m_state_flags(0)
 				{clear();}
 
-			Session(const char* filename):m_engine(m_waveforms)
-				,m_connection(nullptr),r_key_active(nullptr),m_slot_active(0)
-				{
-				load(filename);
-				}
-
-			~Session()
-				{
-				audioServerDisconnect();
-				}
+			Session(const char* filename):m_state_flags(0)
+				{load(filename);}
 
 			void load(const char* filename);
 
-			void save(const char* filename);
+			void save(const char* filename) const;
 
 			const ArrayDynamicShort<char>& filenameGet() const noexcept
 				{return m_filename;}
@@ -119,25 +107,6 @@ namespace Anja
 
 			void clear();
 
-			void audioServerConnect();
-
-			void audioServerDisconnect();
-
-			AudioConnection* audioConnectionGet() noexcept
-				{return m_connection;}
-
-			AudioEngineAnja& audioEngineGet() noexcept
-				{return m_engine;}
-
-			bool connectedIs() const noexcept
-				{return m_connection!=nullptr;}
-
-
-
-			void keyHighlight(uint8_t scancode);
-
-
-
 			static const char* FLAG_NAMES[];
 
 			unsigned int flagsGet() const noexcept
@@ -190,38 +159,40 @@ namespace Anja
 				{m_state_flags&=~SESSION_DIRTY;}
 
 		private:
-			AudioEngineAnja m_engine;
-			AudioConnection* m_connection;
-
-			ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;
-			ArrayFixed<uint8_t,128> m_scancode_to_slot;
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;
+
+			typedef int8_t WaveformIndex;
+			ArrayFixed<WaveformIndex,Wavetable::length()>  m_slot_to_scancode;
+
+			typedef int8_t Scancode;
+			ArrayFixed<Scancode,Wavetable::length()> m_scancode_to_slot;
+
+			typedef int8_t ChannelIndex;
+			ArrayFixed<ChannelIndex,ChannelIndex::length()> m_channel_to_scancode; //Needed?
+			typedef int8_t Channel;
+			ArrayFixed<Scancode,ChannelMixer::length()> m_scancode_to_channel;
+
 			ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 			ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
+
 			KeyboardLayout m_keyboard;
-
-
-			ArrayFixed<uint8_t,ChannelMixer::length()> m_channel_to_scancode;
-			ArrayFixed<uint8_t,128> m_scancode_to_channel;
-
 			ArrayDynamicShort<char> m_filename;
 			ArrayDynamicShort<char> m_directory;
 			ArrayDynamicShort<char> m_title;
 			ArrayDynamicShort<char> m_description;
 			ArrayFixed<ColorRGBA,64> m_color_presets;
+			uint8_t m_slot_current;
 
-
-			KeyboardLayout::KeyDescriptor* r_key_active;
-			uint8_t m_slot_active;
 			static constexpr unsigned int MULTIOUTPUT=0x1;
 			unsigned int m_flags;
-
 
 			static constexpr unsigned int RESTART_NEEDED=0x1;
 			static constexpr unsigned int SESSION_DIRTY=0x2;
 
 			unsigned int m_state_flags;
+
+			void keyHighlight(uint8_t scancode);
 		};
 	}
 #endif

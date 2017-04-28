@@ -20,6 +20,10 @@
       <File Name="sessiondata/waveformdata.hpp"/>
       <File Name="sessiondata/waveformdata.cpp"/>
       <File Name="sessiondata/sessionfilerecord.hpp"/>
+      <File Name="sessiondata/channelmixer.hpp"/>
+      <File Name="sessiondata/channel.hpp"/>
+      <File Name="sessiondata/channeldata.hpp"/>
+      <File Name="sessiondata/channeldata.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
