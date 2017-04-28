@@ -17,11 +17,14 @@
       <File Name="sessiondata/wavefileinfo.hpp"/>
       <File Name="sessiondata/wavefilewriter.hpp"/>
       <File Name="sessiondata/wavefilewriter.cpp"/>
+      <File Name="sessiondata/waveformdata.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
       <File Name="common/arraydynamicshort.hpp"/>
       <File Name="common/arraysimple.hpp"/>
+      <File Name="common/color.hpp"/>
+      <File Name="common/color.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">

@@ -193,7 +193,7 @@ namespace Anja
 			AudioEngineAnja m_engine;
 			AudioConnection* m_connection;
 
-			ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;;
+			ArrayFixed<uint8_t,Wavetable::length()> m_slot_to_scancode;
 			ArrayFixed<uint8_t,128> m_scancode_to_slot;
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;
