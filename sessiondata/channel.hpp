@@ -1,4 +1,7 @@
-//@	{"targets":[{"name":"channel.hpp","type":"include"}]}
+//@	{
+//@	"targets":[{"name":"channel.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"channel.o","rel":"implementation"}]
+//@	}
 
 
 #ifndef ANJA_CHANNEL_HPP
@@ -9,6 +12,8 @@
 
 namespace Anja
 	{
+	class SessionFileRecord;
+
 	class Channel
 		{
 		public:

@@ -25,15 +25,6 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 	if(value!=nullptr)
 		{m_label=*value;}
 
-/*	TODO: Move this...
-	value=record.propertyGet("Gain/dB");
-	if(value!=nullptr)
-		{r_channel->gainSet(convert(value->begin()));}
-
-	value=record.propertyGet("Fade time/s");
-	if(value!=nullptr)
-		{r_channel->fadeTimeSet(convert(value->begin()));}
-*/
 	value=record.propertyGet(ArrayDynamicShort<char>("Color"));
 	if(value!=nullptr)
 		{m_color=colorFromString(value->begin());}

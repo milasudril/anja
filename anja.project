@@ -31,6 +31,7 @@
       <File Name="sessiondata/sessionfilerecordimpl.hpp"/>
       <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
       <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
+      <File Name="sessiondata/channel.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
