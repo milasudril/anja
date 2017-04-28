@@ -61,6 +61,10 @@ SessionFileReader::Impl::Impl(const char* filename):
 		{throw "Invalid session file.";}
 	}
 
+SessionFileReader::Impl::~Impl()
+	{}
+
+
 bool SessionFileReader::recordNextGet(SessionFileRecord& record)
 	{
 	return m_impl->recordNextGet(record);

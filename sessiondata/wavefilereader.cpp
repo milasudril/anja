@@ -1,4 +1,4 @@
-//@	 {"targets":[{"name":"wavefilereader.o","type":"object","pkgconfig_libs":"sndfile"}]}
+//@	 {"targets":[{"name":"wavefilereader.o","type":"object","pkgconfig_libs":["sndfile"]}]}
 
 
 #include "wavefilereader.hpp"
