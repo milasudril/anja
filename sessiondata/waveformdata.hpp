@@ -26,12 +26,10 @@ namespace Anja
 			const ArrayDynamicShort<char>& filenameGet() const
 				{return m_filename;}
 
-			void fileLoad(const ArrayDynamicShort<char>& filename
+			void filenameSet(const ArrayDynamicShort<char>& filename
 				,const ArrayDynamicShort<char>& load_path);
 
-			void fileLoad(const char* filename);
-
-			void fileSave(unsigned int k,const ArrayDynamicShort<char>& path);
+			void filenameSet(const char* filename);
 
 			void sampleRateSet(float fs);
 

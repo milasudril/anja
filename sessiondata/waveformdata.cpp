@@ -19,7 +19,7 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	{
 	auto value=record.propertyGet("Filename");
 	if(value!=nullptr)
-		{fileLoad(*value,load_path);}
+		{filenameSet(*value,load_path);}
 
 	value=record.propertyGet("Description");
 	if(value!=nullptr)
@@ -95,8 +95,9 @@ void WaveformData::dataGet(SessionFileRecord& record
 	record.propertySet("Filename",filename_out);
 	record.propertySet("Description",m_description);
 	record.propertySet("Color",ColorString(m_color).begin());
+/*
+TODO: Move these to waveform class
 	char buffer[32];
-/* TODO: Move these to waveform class
 	sprintf(buffer,"%u",r_waveform->channelGet() + 1);
 	record.propertySet("Playback channel",buffer);
 	sprintf(buffer,"%.7g",r_waveform->gainGet());
@@ -117,48 +118,24 @@ WaveformData::WaveformData():m_filename(""),m_description("")
 	,m_color{0.0f,0.0f,0.0f,1},m_stateflags(0)
 	{}
 
-void WaveformData::fileLoad(const char* filename)
+void WaveformData::filenameSet(const char* filename)
 	{
-//	Do not try to load the file if it is the same file
-	if(strcmp(m_filename.begin(),filename)==0 && *filename!='\0')
-		{return;}
-
-	r_waveform->fileLoad(filename);
-
 	m_filename=filename;
 	m_stateflags|=DIRTY;
 	}
 
-void WaveformData::fileLoad(const ArrayDynamicShort<char>& filename
+void WaveformData::filenameSet(const ArrayDynamicShort<char>& filename
 	,const ArrayDynamicShort<char>& load_path)
 	{
 	if(absoluteIs(filename))
-		{
-		fileLoad(filename.begin());
-		}
+		{filenameSet(filename.begin());}
 	else
 	if(*(filename.begin())!='\0')
 		{
 		auto fullpath=load_path;
 		fullpath.truncate().append(filename).append('\0');
-		fileLoad(fullpath.begin());
+		filenameSet(fullpath.begin());
 		}
-	}
-
-void WaveformData::fileSave(unsigned int k,const ArrayDynamicShort<char>& path)
-	{
-	auto filename=m_filename;
-	if(*(filename.begin())=='\0')
-		{
-		char buffer[32];
-		unsigned long long int x=time(NULL);
-		sprintf(buffer,"%llx-%x.wav",x,k);
-		filename=path;
-		filename.truncate().append(buffer);
-		}
-	r_waveform->fileSave(filename.begin());
-	m_filename=filename;
-	m_stateflags|=DIRTY;
 	}
 
 void WaveformData::descriptionSet(const char* description)
@@ -199,10 +176,6 @@ void WaveformData::descriptionSet(const char* description)
 			}
 		}
 	m_key_label.append('\0');
-
-	if(r_key!=nullptr)
-		{r_key->labelSet(m_key_label.begin());}
-
 	m_stateflags|=DIRTY;
 	}
 
@@ -214,18 +187,6 @@ void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
 
 void WaveformData::keyColorSet(const ColorRGBA& color)
 	{
-	if(r_key!=nullptr)
-		{r_key->colorBackgroundSet(color);}
 	m_color=color;
 	m_stateflags|=DIRTY;
-	}
-
-void WaveformData::init(Waveform& storage,KeyboardLayout::KeyDescriptor* key)
-	{
-	r_waveform=&storage;
-	r_key=key;
-	keyColorSet(COLORS[ColorID::BLACK]);
-	descriptionSet("");
-	fileLoad("");
-	dirtyClear();
 	}
