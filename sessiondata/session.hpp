@@ -84,11 +84,10 @@ namespace Anja
 
 			void slotActiveSet(uint8_t slot)
 				{
+				keyReset(m_slot_to_scancode[m_slot_active]);
 				m_slot_active=slot;
 				keyHighlight(m_slot_to_scancode[slot]);
 				}
-
-
 
 			void channelsClear();
 
@@ -207,6 +206,7 @@ namespace Anja
 			unsigned int m_state_flags;
 
 			void keyHighlight(uint8_t scancode);
+			void keyReset(uint8_t scancode);
 		};
 	}
 #endif

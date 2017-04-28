@@ -197,14 +197,16 @@ void Session::load(const char* filename)
 
 void Session::keyHighlight(uint8_t scancode)
 	{
-/*	auto key_active=m_keyboard.keyFromScancode(scancode);
+	auto key_active=m_keyboard.keyFromScancode(scancode);
 	if(key_active!=nullptr)
-		{
-		if(r_key_active!=nullptr)
-			{r_key_active->colorBorderSet({0.5f,0.5f,0.5f,1.0f});}
-		key_active->colorBorderSet(COLORS[ColorID::GREEN]);
-		r_key_active=key_active;
-		}*/
+		{key_active->colorBorderSet(COLORS[ColorID::GREEN]);}
+	}
+
+void Session::keyReset(uint8_t scancode)
+	{
+	auto key_active=m_keyboard.keyFromScancode(scancode);
+	if(key_active!=nullptr)
+		{key_active->colorBorderSet(COLORS[ColorID::GRAY]);}
 	}
 
 void Session::save(const char* filename)
