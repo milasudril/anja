@@ -18,7 +18,16 @@ static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channe
 
 const char* const* Session::flagNames() noexcept
 	{return FLAG_NAMES;}
-	
+
+static ArrayDynamicShort<char> filenameGet(const ArrayDynamicShort<char>& filename
+	,const ArrayDynamicShort<char>& load_path)
+	{
+	if(absoluteIs(filename))
+		{return filename;}
+	auto fullpath=load_path;
+	fullpath.truncate().append(filename).append('\0');
+	return fullpath;
+	}
 
 Session::Session(const char* filename)
 	{
@@ -83,7 +92,17 @@ Session::Session(const char* filename)
 			if(slot_num<1 || slot_num>128)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
 			--slot_num;
-			m_waveform_data[slot_num]=WaveformData{record,m_directory};
+
+			m_waveform_data[slot_num]=WaveformData{record};
+			m_waveforms[slot_num]=Waveform{record};
+
+			auto filename=record.propertyGet(ArrayDynamicShort<char>("Filename"));
+			if(filename!=nullptr && filename->length()!=0)
+				{
+				auto f=::filenameGet(*filename,m_directory);
+				m_waveform_data[slot_num].filenameSet(f);
+				m_waveforms[slot_num].fileLoad(f.begin());
+				}
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -98,6 +117,7 @@ Session::Session(const char* filename)
 				{throw "The channel number has to be between 1 and 16 inclusive";}
 			--ch;
 			m_channel_data[ch]=ChannelData{record};
+			m_channels[ch]=Channel{record};
 			}
 		}
 	m_state_flags=0;
@@ -212,6 +232,13 @@ void Session::keyReset(uint8_t scancode)
 		{key_active->colorBorderSet(COLORS[ColorID::GRAY]);}
 	}
 
+static ArrayDynamicShort<char> filenameGenerate(int k)
+	{
+	char buffer[32];
+	sprintf(buffer,"slot-%d.wav",k);
+	return ArrayDynamicShort<char>(buffer);
+	}
+
 void Session::save(const char* filename)
 	{
 	char buffer[32];
@@ -243,17 +270,29 @@ void Session::save(const char* filename)
 		auto k=0;
 		while(waveform!=waveforms_end)
 			{
+			record_out.clear();
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(ArrayDynamicShort<char>(buffer));
-		/*	auto& w=waveform->waveformGet();
-			if(w.flagsGet()&Waveform::RECORDED)
+
+			if(m_waveforms[k].flagsGet()&Waveform::RECORDED)
 				{
-				waveform->fileSave(k,dir);
-				}*/
-			waveform->dataGet(record_out,dir);
+				auto filename=::filenameGet(filenameGenerate(k),dir);
+				waveform->filenameSet(makeRelativeTo(filename.begin(),dir.begin()));
+				m_waveforms[k].fileSave(filename.begin());
+				}	
+
+			auto filename_out=waveform->filenameGet();
+			if(*filename_out.begin()!='\0')
+				{filename_out=makeRelativeTo(filename_out.begin(),dir.begin());}
+			record_out.propertySet(ArrayDynamicShort<char>("Filename"),filename_out);
+
+			waveform->dataGet(record_out);
+			m_waveforms[k].dataGet(record_out);
 			writer.recordWrite(record_out);
+		
 			waveform->dirtyClear();
+			m_waveforms[k].dirtyClear();
 			++waveform;
 			++k;
 			}
@@ -266,16 +305,18 @@ void Session::save(const char* filename)
 		auto k=0;
 		while(channel!=channels_end)
 			{
+			record_out.clear();
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
 			record_out.sectionTitleSet(ArrayDynamicShort<char>(buffer));
 			channel->dataGet(record_out);
+			m_channels[k].dataGet(record_out);
 			writer.recordWrite(record_out);
 			++k;
 			++channel;
 			}
 		}
-
+	m_directory=dir;
 	dirtyClear();
 	}
 
@@ -288,11 +329,13 @@ bool Session::dirtyIs() const noexcept
 		{
 		auto ptr_wfd=m_waveform_data.begin();
 		auto ptr_end=m_waveform_data.end();
+		int k=0;
 		while(ptr_wfd!=ptr_end)
 			{
-			if(ptr_wfd->dirtyIs())
+			if(ptr_wfd->dirtyIs() || m_waveforms[k].dirtyIs())
 				{return 1;}
 			++ptr_wfd;
+			++k;
 			}
 		}
 
@@ -300,11 +343,13 @@ bool Session::dirtyIs() const noexcept
 		{
 		auto ptr_channel=m_channel_data.begin();
 		auto ptr_end=m_channel_data.end();
+		int k=0;
 		while(ptr_channel!=ptr_end)
 			{
-			if(ptr_channel->dirtyIs())
+			if(ptr_channel->dirtyIs() ||  m_channels[k].dirtyIs())
 				{return 1;}
 			++ptr_channel;
+			++k;
 			}
 		}
 

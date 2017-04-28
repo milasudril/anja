@@ -13,6 +13,8 @@
 
 namespace Anja
 	{
+	class SessionFileRecord;
+
 	class Waveform
 		{
 		public:
@@ -25,9 +27,13 @@ namespace Anja
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 				{}
 
+			explicit Waveform(const SessionFileRecord& record);
+
 			void fileLoad(const char* filename);
 
 			void fileSave(const char* filename);
+
+			void dataGet(SessionFileRecord& record) const;
 
 			const float* begin() const noexcept
 				{return m_data.begin() + m_offset_begin;}

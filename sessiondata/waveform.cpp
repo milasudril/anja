@@ -5,7 +5,10 @@
 #include "wavefilereader.hpp"
 #include "wavefileinfo.hpp"
 #include "wavefilewriter.hpp"
+#include "sessionfilerecord.hpp"
 #include "../common/arraysimple.hpp"
+#include "../common/floatconv.hpp"
+#include "../common/localeguard.hpp"
 
 using namespace Anja;
 
@@ -16,6 +19,72 @@ static constexpr const char* FLAG_NAMES[]=
 
 const char* const* Waveform::flagNames() noexcept
 	{return FLAG_NAMES;}
+
+Waveform::Waveform(const SessionFileRecord& record)
+	{
+	auto value=record.propertyGet(ArrayDynamicShort<char>("Playback gain/dB"));
+	if(value!=nullptr)
+		{gainSet(convert(value->begin()));}
+
+	value=record.propertyGet(ArrayDynamicShort<char>("Playback gain random level/dB"));
+	if(value!=nullptr)
+		{gainRandomSet(convert(value->begin()));}
+
+	value=record.propertyGet(ArrayDynamicShort<char>("Options"));
+	if(value!=nullptr)
+		{flagsSet(optionsFromString(value->begin(),FLAG_NAMES));}
+
+	value=record.propertyGet(ArrayDynamicShort<char>("Playback channel"));
+	if(value!=nullptr)
+		{
+		long ch;
+			{
+			LocaleGuard locale("C");
+			ch=atol(value->begin());
+			}
+		if(ch<1 || ch>16)
+			{throw "A sound effect must be mapped to a channel number between 1 to 16 inclusive";}
+		channelSet(ch-1);
+		}
+
+	value=record.propertyGet(ArrayDynamicShort<char>("Playback starting position/frames"));
+	if(value!=nullptr)
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		offsetBeginSet(pos);
+		}
+
+	value=record.propertyGet(ArrayDynamicShort<char>("Playback end position/frames"));
+	if(value!=nullptr)
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		offsetEndSet(pos);
+		}
+	}
+
+void Waveform::dataGet(SessionFileRecord& record) const
+	{
+	char buffer[32];
+	sprintf(buffer,"%u",channelGet() + 1);
+	record.propertySet(ArrayDynamicShort<char>("Playback channel")
+		,ArrayDynamicShort<char>(buffer));
+	sprintf(buffer,"%.7g",gainGet());
+	record.propertySet(ArrayDynamicShort<char>("Playback gain/dB")
+		,ArrayDynamicShort<char>(buffer));
+	sprintf(buffer,"%.7g",gainRandomGet());
+	record.propertySet(ArrayDynamicShort<char>("Playback gain random level/dB")
+		,ArrayDynamicShort<char>(buffer));
+	sprintf(buffer,"%u",offsetBeginGet());
+	record.propertySet(ArrayDynamicShort<char>("Playback starting position/frames")
+		,ArrayDynamicShort<char>(buffer));
+	sprintf(buffer,"%u",offsetEndGet());
+	record.propertySet(ArrayDynamicShort<char>("Playback end position/frames")
+		,ArrayDynamicShort<char>(buffer));
+	record.propertySet(ArrayDynamicShort<char>("Options")
+		,stringFromOptions(flagsGet(),FLAG_NAMES));
+	}
 
 void Waveform::fileLoad(const char* filename)
 	{
@@ -61,8 +130,6 @@ void Waveform::fileLoad(const char* filename)
 
 	dirtyClear();
 	}
-
-
 
 void Waveform::fileSave(const char* filename)
 	{

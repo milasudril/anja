@@ -15,6 +15,10 @@ namespace Anja
 			Channel() noexcept
 				{valuesInit();}
 
+			explicit Channel(const SessionFileRecord& record);
+
+			void dataGet(SessionFileRecord& record) const;
+
 			void valuesInit() noexcept
 				{
 				m_gain=0.0f;

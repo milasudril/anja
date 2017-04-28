@@ -51,7 +51,6 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 
 void ChannelData::dataGet(SessionFileRecord& record) const
 	{
-	record.clear();
 	record.propertySet(ArrayDynamicShort<char>("Label"),m_label);
 
 /*	TODO: Move this

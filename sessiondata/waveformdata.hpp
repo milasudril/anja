@@ -20,8 +20,7 @@ namespace Anja
 			WaveformData()
 				{clear();}
 
-			explicit WaveformData(const SessionFileRecord& record
-				,const ArrayDynamicShort<char>& load_path);
+			explicit WaveformData(const SessionFileRecord& record);
 
 			void clear();
 
@@ -29,10 +28,7 @@ namespace Anja
 			const ArrayDynamicShort<char>& filenameGet() const
 				{return m_filename;}
 
-			void filenameSet(const ArrayDynamicShort<char>& filename
-				,const ArrayDynamicShort<char>& load_path);
-
-			void filenameSet(const char* filename);
+			void filenameSet(const ArrayDynamicShort<char>& filename);
 
 			void sampleRateSet(float fs);
 
@@ -55,8 +51,7 @@ namespace Anja
 
 			void keyColorSet(const ColorRGBA& color_new);
 
-			void dataGet(SessionFileRecord& record
-				,const ArrayDynamicShort<char>& load_path) const;
+			void dataGet(SessionFileRecord& record) const;
 
 			bool dirtyIs() const noexcept
 				{return m_stateflags&DIRTY;}
