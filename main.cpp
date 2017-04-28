@@ -7,6 +7,8 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::Session s("testbank/testbank.txt");
+		s.save("__targets_dbg/output.txt");
+
 		}
 	catch(const char* err)
 		{

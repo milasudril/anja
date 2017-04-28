@@ -185,7 +185,7 @@ void Session::channelsClear()
 			++ptr;
 			}
 		}
-/*
+
 	//	Reset channel data
 		{
 		auto ptr=m_channel_data.begin();
@@ -200,14 +200,14 @@ void Session::channelsClear()
 			++k;
 			++ptr;
 			}
-		}*/
+		}
 	}
 
 void Session::clear()
 	{
 	waveformsClear();
 	channelsClear();
-/*	m_filename.clear();
+	m_filename.clear();
 	m_filename.append('\0');
 	m_title=ArrayDynamicShort<char>("New session");
 	m_description.clear();
@@ -216,7 +216,7 @@ void Session::clear()
 	memcpy(m_color_presets.begin(),COLORS
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	m_state_flags=0;
-	m_flags=0;*/
+	m_flags=0;
 	}
 
 void Session::keyHighlight(uint8_t scancode)
