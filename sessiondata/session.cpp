@@ -14,7 +14,94 @@
 
 using namespace Anja;
 
-const char* Session::FLAG_NAMES[]={"Use individual ports for each channel",nullptr};
+static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channel",nullptr};
+
+const char* const* Session::flagNames() noexcept
+	{return FLAG_NAMES;}
+	
+
+Session::Session(const char* filename)
+	{
+	clear();
+	SessionFileReader reader(filename);
+	SessionFileRecordImpl record;
+
+	if(!reader.recordNextGet(record))
+		{throw "Invalid session file";}
+
+	if(record.sectionLevelGet()!=0)
+		{throw "Invalid session file";}
+
+	clear();
+
+//	Get data from file header
+		{
+		m_filename=ArrayDynamicShort<char>(filename);
+		m_directory=parentDirectory(realpath(m_filename));
+		titleSet(record.titleGet());
+		auto slot_num_str=record.propertyGet(ArrayDynamicShort<char>("Active slot"));
+		if(slot_num_str!=nullptr)
+			{
+			LocaleGuard locale("C");
+			auto slot_num=atol(slot_num_str->begin());
+			if(slot_num<1 || slot_num>128)
+				{throw "Invalid slot number";}
+			slotActiveSet(slot_num-1);
+			}
+
+		auto value=record.propertyGet(ArrayDynamicShort<char>("Description"));
+		if(value!=nullptr)
+			{descriptionSet(*value);}
+
+		value=record.propertyGet(ArrayDynamicShort<char>("Master gain/dB"));
+		if(value!=nullptr)
+			{gainSet(convert(value->begin()));}
+
+		value=record.propertyGet(ArrayDynamicShort<char>("Options"));
+		if(value!=nullptr)
+			{
+			flagsSet(optionsFromString(value->begin(),FLAG_NAMES));
+			}
+	//	TODO Store other data not interpreted by Anja
+		}
+
+//	Read records
+	while(reader.recordNextGet(record))
+		{
+		if(record.sectionLevelGet()==0)
+			{break;}
+
+		auto title_ptr=record.titleGet().begin();
+		if(strncmp(title_ptr,"Slot ",5)==0)
+			{
+			title_ptr+=5;
+			long slot_num;
+				{
+				LocaleGuard locale("C");
+				slot_num=atol(title_ptr);
+				}
+			if(slot_num<1 || slot_num>128)
+				{throw "The slot number has to be between 1 and 128 inclusive";}
+			--slot_num;
+			m_waveform_data[slot_num]=WaveformData{record,m_directory};
+			}
+		else
+		if(strncmp(title_ptr,"Channel ",8)==0)
+			{
+			title_ptr+=8;
+			int ch;
+				{
+				LocaleGuard locale("C");
+				ch=atol(title_ptr);
+				}
+			if(ch<1 || ch>16)
+				{throw "The channel number has to be between 1 and 16 inclusive";}
+			--ch;
+			m_channel_data[ch]=ChannelData{record};
+			}
+		}
+	m_state_flags=0;
+	}
 
 void Session::waveformsClear()
 	{
@@ -109,90 +196,6 @@ void Session::clear()
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	m_state_flags=0;
 	m_flags=0;
-	}
-
-void Session::load(const char* filename)
-	{
-	SessionFileReader reader(filename);
-	SessionFileRecordImpl record;
-
-	if(!reader.recordNextGet(record))
-		{throw "Invalid session file";}
-
-	if(record.sectionLevelGet()!=0)
-		{throw "Invalid session file";}
-
-	clear();
-
-	dirtyClear();
-
-//	Get data from file header
-		{
-		m_filename=ArrayDynamicShort<char>(filename);
-		m_directory=parentDirectory(realpath(m_filename));
-		titleSet(record.titleGet());
-		auto slot_num_str=record.propertyGet(ArrayDynamicShort<char>("Active slot"));
-		if(slot_num_str!=nullptr)
-			{
-			LocaleGuard locale("C");
-			auto slot_num=atol(slot_num_str->begin());
-			if(slot_num<1 || slot_num>128)
-				{throw "Invalid slot number";}
-			slotActiveSet(slot_num-1);
-			}
-
-		auto value=record.propertyGet(ArrayDynamicShort<char>("Description"));
-		if(value!=nullptr)
-			{descriptionSet(*value);}
-
-		value=record.propertyGet(ArrayDynamicShort<char>("Master gain/dB"));
-		if(value!=nullptr)
-			{gainSet(convert(value->begin()));}
-
-		value=record.propertyGet(ArrayDynamicShort<char>("Options"));
-		if(value!=nullptr)
-			{
-			flagsSet(optionsFromString(value->begin(),FLAG_NAMES));
-			}
-	//	TODO Store other data not interpreted by Anja
-		}
-
-//	Read records
-	while(reader.recordNextGet(record))
-		{
-		if(record.sectionLevelGet()==0)
-			{break;}
-
-		auto title_ptr=record.titleGet().begin();
-		if(strncmp(title_ptr,"Slot ",5)==0)
-			{
-			title_ptr+=5;
-			long slot_num;
-				{
-				LocaleGuard locale("C");
-				slot_num=atol(title_ptr);
-				}
-			if(slot_num<1 || slot_num>128)
-				{throw "The slot number has to be between 1 and 128 inclusive";}
-			--slot_num;
-			m_waveform_data[slot_num]=WaveformData{record,m_directory};
-			}
-		else
-		if(strncmp(title_ptr,"Channel ",8)==0)
-			{
-			title_ptr+=8;
-			int ch;
-				{
-				LocaleGuard locale("C");
-				ch=atol(title_ptr);
-				}
-			if(ch<1 || ch>16)
-				{throw "The channel number has to be between 1 and 16 inclusive";}
-			--ch;
-			m_channel_data[ch]=ChannelData{record};
-			}
-		}
-	m_state_flags=0;
 	}
 
 void Session::keyHighlight(uint8_t scancode)

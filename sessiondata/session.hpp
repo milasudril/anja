@@ -22,10 +22,10 @@ namespace Anja
 			Session():m_slot_active(0),m_state_flags(0)
 				{clear();}
 
-			explicit Session(const char* filename):m_state_flags(0)
-				{load(filename);}
+			explicit Session(const char* filename);
 
-			void load(const char* filename);
+			void load(const char* filename)
+				{*this=Session(filename);}
 
 			void save(const char* filename);
 
@@ -114,7 +114,7 @@ namespace Anja
 
 			void clear();
 
-			static const char* FLAG_NAMES[];
+			static const char* const* flagNames() noexcept;
 
 			unsigned int flagsGet() const noexcept
 				{return m_flags;}
