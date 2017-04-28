@@ -18,6 +18,8 @@
       <File Name="sessiondata/wavefilewriter.hpp"/>
       <File Name="sessiondata/wavefilewriter.cpp"/>
       <File Name="sessiondata/waveformdata.hpp"/>
+      <File Name="sessiondata/waveformdata.cpp"/>
+      <File Name="sessiondata/sessionfilerecord.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

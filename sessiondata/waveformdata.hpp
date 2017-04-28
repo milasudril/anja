@@ -9,67 +9,69 @@
 #include "waveform.hpp"
 #include "../common/color.hpp"
 
-class SessionFileRecord;
-class ColorString;
-
-class WaveformData
+namespace Anja
 	{
-	public:
-		WaveformData();
+	class SessionFileRecord;
+	class ColorString;
 
-		WaveformData(const SessionFileRecord& record
-			,const ArrayDynamicShort<char>& load_path);
+	class WaveformData
+		{
+		public:
+			WaveformData();
 
-
-		const ArrayDynamicShort<char>& filenameGet() const
-			{return m_filename;}
-
-		void fileLoad(const ArrayDynamicShort<char>& filename
-			,const ArrayDynamicShort<char>& load_path);
-
-		void fileLoad(const char* filename);
-
-		void fileSave(unsigned int k,const ArrayDynamicShort<char>& path);
-
-		void sampleRateSet(float fs);
+			WaveformData(const SessionFileRecord& record
+				,const ArrayDynamicShort<char>& load_path);
 
 
+			const ArrayDynamicShort<char>& filenameGet() const
+				{return m_filename;}
 
-		const ArrayDynamicShort<char>& descriptionGet() const noexcept
-			{return m_description;}
+			void fileLoad(const ArrayDynamicShort<char>& filename
+				,const ArrayDynamicShort<char>& load_path);
 
-		void descriptionSet(const ArrayDynamicShort<char>& description);
+			void fileLoad(const char* filename);
 
-		void descriptionSet(const char* description);
+			void fileSave(unsigned int k,const ArrayDynamicShort<char>& path);
 
-		const ArrayDynamicShort<char>& keyLabelGet() const noexcept
-			{return m_key_label;}
+			void sampleRateSet(float fs);
 
 
 
-		const ColorRGBA& keyColorGet() const noexcept
-			{return m_color;}
+			const ArrayDynamicShort<char>& descriptionGet() const noexcept
+				{return m_description;}
 
-		void keyColorSet(const ColorRGBA& color_new);
+			void descriptionSet(const ArrayDynamicShort<char>& description);
 
-		void dataGet(SessionFileRecord& record
-			,const ArrayDynamicShort<char>& load_path) const;
+			void descriptionSet(const char* description);
 
-		bool dirtyIs() const noexcept
-			{return m_stateflags&DIRTY;}
+			const ArrayDynamicShort<char>& keyLabelGet() const noexcept
+				{return m_key_label;}
 
-		void dirtyClear()
-			{m_stateflags&=~DIRTY;}
 
-	private:
-		ArrayDynamicShort<char> m_filename;
-		ArrayDynamicShort<char> m_description;
-		ArrayDynamicShort<char> m_key_label;
-		ColorRGBA m_color;
 
-		static constexpr unsigned int DIRTY=0x1;
+			const ColorRGBA& keyColorGet() const noexcept
+				{return m_color;}
 
-		unsigned int m_stateflags;
-	};
+			void keyColorSet(const ColorRGBA& color_new);
 
+			void dataGet(SessionFileRecord& record
+				,const ArrayDynamicShort<char>& load_path) const;
+
+			bool dirtyIs() const noexcept
+				{return m_stateflags&DIRTY;}
+
+			void dirtyClear()
+				{m_stateflags&=~DIRTY;}
+
+		private:
+			ArrayDynamicShort<char> m_filename;
+			ArrayDynamicShort<char> m_description;
+			ArrayDynamicShort<char> m_key_label;
+			ColorRGBA m_color;
+
+			static constexpr unsigned int DIRTY=0x1;
+
+			unsigned int m_stateflags;
+		};
+	}
 #endif
