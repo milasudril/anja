@@ -29,7 +29,7 @@ static ArrayDynamicShort<char> filenameGet(const ArrayDynamicShort<char>& filena
 	return fullpath;
 	}
 
-Session::Session(const char* filename)
+Session::Session(const char* filename):m_slot_active(0)
 	{
 	clear();
 	SessionFileReader reader(filename);
@@ -40,8 +40,6 @@ Session::Session(const char* filename)
 
 	if(record.sectionLevelGet()!=0)
 		{throw "Invalid session file";}
-
-	clear();
 
 //	Get data from file header
 		{
@@ -95,6 +93,9 @@ Session::Session(const char* filename)
 
 			m_waveform_data[slot_num]=WaveformData{record};
 			m_waveforms[slot_num]=Waveform{record};
+			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
+			key->labelSet(m_waveform_data[slot_num].keyLabelGet().begin());
+			key->colorBackgroundSet(m_waveform_data[slot_num].keyColorGet());
 
 			auto filename=record.propertyGet(ArrayDynamicShort<char>("Filename"));
 			if(filename!=nullptr && filename->length()!=0)
@@ -184,7 +185,7 @@ void Session::channelsClear()
 			++ptr;
 			}
 		}
-
+/*
 	//	Reset channel data
 		{
 		auto ptr=m_channel_data.begin();
@@ -199,14 +200,14 @@ void Session::channelsClear()
 			++k;
 			++ptr;
 			}
-		}
+		}*/
 	}
 
 void Session::clear()
 	{
 	waveformsClear();
 	channelsClear();
-	m_filename.clear();
+/*	m_filename.clear();
 	m_filename.append('\0');
 	m_title=ArrayDynamicShort<char>("New session");
 	m_description.clear();
@@ -215,7 +216,7 @@ void Session::clear()
 	memcpy(m_color_presets.begin(),COLORS
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	m_state_flags=0;
-	m_flags=0;
+	m_flags=0;*/
 	}
 
 void Session::keyHighlight(uint8_t scancode)

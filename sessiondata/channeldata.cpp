@@ -44,13 +44,6 @@ void ChannelData::dataGet(SessionFileRecord& record) const
 	{
 	record.propertySet(ArrayDynamicShort<char>("Label"),m_label);
 
-/*	TODO: Move this
-	char buffer[32];
-	sprintf(buffer,"%.7g",r_channel->gainGet());
-	record.propertySet("Gain/dB",buffer);
-	sprintf(buffer,"%.7g",r_channel->fadeTimeGet());
-	record.propertySet("Fade time/s",buffer);
-*/
 	record.propertySet(ArrayDynamicShort<char>("Color")
 		,ArrayDynamicShort<char>((ColorString(m_color).begin())));
 //	TODO Save other data not interpreted by Anja

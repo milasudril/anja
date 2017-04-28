@@ -22,6 +22,8 @@ const char* const* Waveform::flagNames() noexcept
 
 Waveform::Waveform(const SessionFileRecord& record)
 	{
+	valuesInit();
+
 	auto value=record.propertyGet(ArrayDynamicShort<char>("Playback gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}

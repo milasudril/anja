@@ -184,7 +184,7 @@ namespace Anja
 
 			typedef int8_t ChannelIndex;
 			ArrayFixed<ChannelIndex,ChannelMixer::length()> m_channel_to_scancode; //Needed?
-			ArrayFixed<Scancode,ChannelMixer::length()> m_scancode_to_channel;
+			ArrayFixed<Scancode,128> m_scancode_to_channel;
 
 			ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 			ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;

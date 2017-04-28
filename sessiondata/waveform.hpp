@@ -113,11 +113,10 @@ namespace Anja
 			uint32_t channelGet() const noexcept
 				{return m_channel;}
 
-			Waveform& channelSet(int32_t x) noexcept
+			void channelSet(int32_t x) noexcept
 				{
 				m_flags|=(x!=m_channel? DIRTY : 0);
 				m_channel=x;
-				return *this;
 				}
 
 
@@ -125,21 +124,19 @@ namespace Anja
 			float gainGet() const noexcept
 				{return m_gain;}
 
-			Waveform& gainSet(float gain) noexcept
+			void gainSet(float gain) noexcept
 				{
 				m_flags|=(std::abs(gain - m_gain)>1e-4? DIRTY : 0);
 				m_gain=gain;
-				return *this;
 				}
 
 			float gainRandomGet() const noexcept
 				{return m_gain_random;}
 
-			Waveform& gainRandomSet(float value) noexcept
+			void gainRandomSet(float value) noexcept
 				{
 				m_flags|=(std::abs(value - m_gain_random)>1e-4? DIRTY : 0);;
 				m_gain_random=value;
-				return *this;
 				}
 
 
@@ -226,6 +223,7 @@ namespace Anja
 				m_channel=0;
 				m_flags=0.0f;
 				m_offset_begin=0;
+				m_fs=1000.0f;
 				m_offset_end=m_data.length();
 				m_flags|=DIRTY;
 				return *this;

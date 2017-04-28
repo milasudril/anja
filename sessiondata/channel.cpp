@@ -9,6 +9,8 @@ using namespace Anja;
 
 Channel::Channel(const SessionFileRecord& record)
 	{
+	valuesInit();
+
 	auto value=record.propertyGet(ArrayDynamicShort<char>("Gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}

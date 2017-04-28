@@ -39,7 +39,7 @@ namespace Anja
 				append(obj.begin(),obj.length());
 				}
 
-			ArrayDynamicShort(ArrayDynamicShort&& obj):
+			ArrayDynamicShort(ArrayDynamicShort&& obj) noexcept:
 				m_data(obj.m_data),m_length(obj.m_length),m_capacity(obj.m_capacity)
 				{
 				obj.m_data=nullptr;
@@ -55,7 +55,7 @@ namespace Anja
 				return *this;
 				}
 
-			ArrayDynamicShort& operator=(ArrayDynamicShort&& obj)
+			ArrayDynamicShort& operator=(ArrayDynamicShort&& obj) noexcept
 				{
 				std::swap(obj.m_data,m_data);
 				std::swap(obj.m_length,m_length);
