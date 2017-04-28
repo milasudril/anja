@@ -40,5 +40,5 @@ ColorRGBA colorFromString(const char* colorstring)
 		values[count]=convert(buffer.begin());
 		}
 
-	return {values[0],values[1],values[2],values[3]};
+	return ColorRGBA{values[0],values[1],values[2],values[3]};
 	}

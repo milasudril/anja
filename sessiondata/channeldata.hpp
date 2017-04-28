@@ -15,8 +15,12 @@ namespace Anja
 	class ChannelData
 		{
 		public:
-			ChannelData();
-			ChannelData(const SessionFileRecord& record);
+			ChannelData()
+				{clear();}
+
+			void clear();
+
+			explicit ChannelData(const SessionFileRecord& record);
 
 			const ArrayDynamicShort<char>& labelGet() const noexcept
 				{return m_label;}

@@ -25,7 +25,7 @@ ArrayDynamicShort<char> Anja::stringFromOptions(unsigned int option_bits
 			{
 			if(ret.length() > 0)
 				{ret.append('|');}
-			ret.append(*option_names).truncate();
+			ret.append(ArrayDynamicShort<char>(*option_names)).truncate();
 			}
 
 		++option_names;

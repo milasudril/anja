@@ -32,14 +32,14 @@ namespace Anja
 				,const ArrayDynamicShort<char>& property)=0;
 
 			template<class PropertyEnumerator>
-			bool propertiesEnum(PropertyEnumerator&& cb)
+			bool propertiesEnum(PropertyEnumerator&& cb) const
 				{
 				auto cb_func=[](void* cb_obj
 					,const ArrayDynamicShort<char>& name
 					,const ArrayDynamicShort<char>& value)
 					{
 					auto obj=reinterpret_cast<PropertyEnumerator*>(cb_obj);
-					return obj->sessionFileRecord(name,value);
+					return (*obj)(name,value);
 					};
 				return propertiesEnum(cb_func,&cb);
 				}

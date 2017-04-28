@@ -32,21 +32,21 @@ ColorRGBA::ColorRGBA(const ColorHSLA& hsla)
 
 	ColorRGBA ret;
 	if(h < 1.0f/6.0f)
-		{ret={c,x,0.0f,a};}
+		{ret=ColorRGBA{c,x,0.0f,a};}
 	else
 	if(h < 2.0f/6.0f)
-		{ret={x,c,0.0f,a};}
+		{ret=ColorRGBA{x,c,0.0f,a};}
 	else
 	if(h < 3.f/6.0f)
-		{ret={0.0f,c,x,a};}
+		{ret=ColorRGBA{0.0f,c,x,a};}
 	else
 	if(h < 4.0f/6.0f)
-		{ret={0.0f,x,c,a};}
+		{ret=ColorRGBA{0.0f,x,c,a};}
 	else
 	if(h < 5.0f/6.0f)
-		{ret={x,0.0f,c,a};}
+		{ret=ColorRGBA{x,0.0f,c,a};}
 	else
-		{ret={c,0.0f,x,a};}
+		{ret=ColorRGBA{c,0.0f,x,a};}
 
 	auto m=l-c/2;
 
@@ -68,21 +68,21 @@ ColorRGBA::ColorRGBA(const ColorHSVA& hsva)
 	auto x=c*(1.0f-std::abs( std::fmod(6.0f*h,2.0f) - 1.0f ));
 	ColorRGBA ret;
 	if(h < 1.0f/6.0f)
-		{ret={c,x,0.0f,a};}
+		{ret=ColorRGBA{c,x,0.0f,a};}
 	else
 	if(h < 2.0f/6.0f)
-		{ret={x,c,0.0f,a};}
+		{ret=ColorRGBA{x,c,0.0f,a};}
 	else
 	if(h < 3.f/6.0f)
-		{ret={0.0f,c,x,a};}
+		{ret=ColorRGBA{0.0f,c,x,a};}
 	else
 	if(h < 4.0f/6.0f)
-		{ret={0.0f,x,c,a};}
+		{ret=ColorRGBA{0.0f,x,c,a};}
 	else
 	if(h < 5.0f/6.0f)
-		{ret={x,0.0f,c,a};}
+		{ret=ColorRGBA{x,0.0f,c,a};}
 	else
-		{ret={c,0.0f,x,a};}
+		{ret=ColorRGBA{c,0.0f,x,a};}
 
 	auto m=v-c;
 

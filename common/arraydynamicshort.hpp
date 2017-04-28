@@ -20,7 +20,7 @@ namespace Anja
 			typedef std::reverse_iterator<iterator> reverse_iterator;
 			typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-			ArrayDynamicShort(const T* source);
+			explicit ArrayDynamicShort(const T* source);
 
 			ArrayDynamicShort(const T* source,uint32_t N):
 				m_data(new T[N]),m_length(0),m_capacity(N)

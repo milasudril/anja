@@ -17,10 +17,13 @@ namespace Anja
 	class WaveformData
 		{
 		public:
-			WaveformData();
+			WaveformData()
+				{clear();}
 
-			WaveformData(const SessionFileRecord& record
+			explicit WaveformData(const SessionFileRecord& record
 				,const ArrayDynamicShort<char>& load_path);
+
+			void clear();
 
 
 			const ArrayDynamicShort<char>& filenameGet() const

@@ -11,7 +11,10 @@ namespace Anja
 	class LocaleGuard
 		{
 		public:
-			LocaleGuard(const char* locale_new);
+			LocaleGuard(const LocaleGuard&)=delete;
+			LocaleGuard& operator=(const LocaleGuard&)=delete;
+
+			explicit LocaleGuard(const char* locale_new);
 			~LocaleGuard();
 
 		private:

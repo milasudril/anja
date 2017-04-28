@@ -6,6 +6,14 @@
 #ifndef ANJA_SESSION_HPP
 #define ANJA_SESSION_HPP
 
+#include "../common/arraydynamicshort.hpp"
+#include "../common/keyboardlayout.hpp"
+#include "waveformdata.hpp"
+#include "channeldata.hpp"
+#include "channel.hpp"
+#include "wavetable.hpp"
+#include "channelmixer.hpp"
+
 namespace Anja
 	{
 	class Session
@@ -14,12 +22,12 @@ namespace Anja
 			Session():m_slot_active(0),m_state_flags(0)
 				{clear();}
 
-			Session(const char* filename):m_state_flags(0)
+			explicit Session(const char* filename):m_state_flags(0)
 				{load(filename);}
 
 			void load(const char* filename);
 
-			void save(const char* filename) const;
+			void save(const char* filename);
 
 			const ArrayDynamicShort<char>& filenameGet() const noexcept
 				{return m_filename;}
@@ -146,9 +154,15 @@ namespace Anja
 				{return m_color_presets.length();}
 
 
-			float masterGainGet() const noexcept;
+			float gainGet() const noexcept
+				{return m_gain;}
 
-			Session& masterGainSet(float value) noexcept;
+			void gainSet(float value) noexcept
+				{
+				m_gain=value;
+				m_state_flags|=SESSION_DIRTY;
+				}
+
 
 			bool restartNeeded() const noexcept
 				{return m_state_flags&RESTART_NEEDED;}
@@ -161,6 +175,7 @@ namespace Anja
 		private:
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;
+			float m_gain;
 
 			typedef int8_t WaveformIndex;
 			ArrayFixed<WaveformIndex,Wavetable::length()>  m_slot_to_scancode;
@@ -169,8 +184,7 @@ namespace Anja
 			ArrayFixed<Scancode,Wavetable::length()> m_scancode_to_slot;
 
 			typedef int8_t ChannelIndex;
-			ArrayFixed<ChannelIndex,ChannelIndex::length()> m_channel_to_scancode; //Needed?
-			typedef int8_t Channel;
+			ArrayFixed<ChannelIndex,ChannelMixer::length()> m_channel_to_scancode; //Needed?
 			ArrayFixed<Scancode,ChannelMixer::length()> m_scancode_to_channel;
 
 			ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
@@ -182,7 +196,7 @@ namespace Anja
 			ArrayDynamicShort<char> m_title;
 			ArrayDynamicShort<char> m_description;
 			ArrayFixed<ColorRGBA,64> m_color_presets;
-			uint8_t m_slot_current;
+			int8_t m_slot_active;
 
 			static constexpr unsigned int MULTIOUTPUT=0x1;
 			unsigned int m_flags;

@@ -20,7 +20,7 @@ namespace Anja
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
 				{}
 
-			Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
+			explicit Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
 				m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 				{}

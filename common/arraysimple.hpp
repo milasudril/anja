@@ -28,7 +28,7 @@ namespace Anja
 				return *this;
 				}
 
-			ArraySimple(size_t N):m_data(new T[N]),m_N(N)
+			explicit ArraySimple(size_t N):m_data(new T[N]),m_N(N)
 				{}
 
 			const T* begin() const

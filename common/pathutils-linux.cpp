@@ -31,7 +31,7 @@ ArrayDynamicShort<char> Anja::parentDirectory(const ArrayDynamicShort<char>& pat
 		if(*end=='/')
 			{break;}
 		}
-	ret.append("/");
+	ret.append("/",2);
 	return ret;
 	}
 
@@ -65,11 +65,9 @@ ArrayDynamicShort<char> Anja::makeRelativeTo(const char* path, const char* refer
 	ArrayDynamicShort<char> ref_temp(reference);
 	ref_temp.truncate();
 	if(*(ref_temp.end()-1)!='/')
-		{ref_temp.append("/");}
+		{ref_temp.append("/",2);}
 	reference=ref_temp.begin();
 
-
-	auto ref_begin=reference;
 	unsigned int gen_count_target=0;
 	auto path_old=path;
 //	Count the number of generations the the common stem
@@ -100,7 +98,7 @@ ArrayDynamicShort<char> Anja::makeRelativeTo(const char* path, const char* refer
 			{
 		//	Since we have processed both paths, the only difference must be in the
 		//	last component. Just go up and down
-			ret.append("../").truncate().append(path_tok.begin());
+			ret.append("../",3).append(path_tok);
 			return ret;
 			}
 		else
@@ -108,7 +106,7 @@ ArrayDynamicShort<char> Anja::makeRelativeTo(const char* path, const char* refer
 	//	the remaining part of path
 		if(strcmp(path_tok.begin(),ref_tok.begin())==0)
 			{
-			ret.append(path);
+			ret.append(path,strlen(path)+1);
 			return ret;
 			}
 		}
@@ -132,11 +130,11 @@ ArrayDynamicShort<char> Anja::makeRelativeTo(const char* path, const char* refer
 //	Go up from the reference path
 	while(gen_count_tot!=gen_count_target)
 		{
-		ret.append("../").truncate();
+		ret.append("../",3);
 		--gen_count_tot;
 		}
 	if(path_val_last!='\0' || ref_val_last=='\0')
-		{ret.append(path_old);}
+		{ret.append(path_old,strlen(path_old));}
 	ret.append('\0');
 	return ret;
 	}

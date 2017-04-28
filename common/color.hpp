@@ -27,7 +27,7 @@ namespace Anja
 		constexpr ColorRGBA():red(0),green(0),blue(0),alpha(1)
 			{}
 
-		constexpr ColorRGBA(float r,float g,float b,float a):
+		explicit constexpr ColorRGBA(float r,float g,float b,float a):
 			 red(clamp(r,0.0f,1.0f))
 			,green(clamp(g,0.0f,1.0f))
 			,blue(clamp(b,0.0f,1.0f))
@@ -45,22 +45,22 @@ namespace Anja
 
 	constexpr ColorRGBA COLORS[]=
 		{
-		 {1.0f,1.0f,1.0f,1.0f}    //WHITE
-		,{0.75f,0.75f,0.75f,1.0f} //GRAY
-		,{0.25f,0.25f,0.25f,1.0f} //GRAY_DARK
-		,{0.0f,0.0f,0.0f,1.0f}    //BLACK
-		,{1.0f,0.0f,0.0f,1.0f}    //RED
-		,{1.0f,0.5f,0.0f,1.0f}    //ORANGE
-		,{1.0f,1.0f,0.0f,1.0f}    //YELLOW
-		,{0.5f,1.0f,0.0f,1.0f}    //LIME
-		,{0.0f,1.0f,0.0f,1.0f}    //GREEN
-		,{0.0f,1.0f,0.5f,1.0f}    //TURQUOISE
-		,{0.0f,1.0f,1.0f,1.0f}    //CYAN
-		,{0.0f,0.5f,1.0f,1.0f}    //SKY
-		,{0.0f,0.0f,1.0f,1.0f}    //BLUE
-		,{0.5f,0.0f,1.0f,1.0f}    //VIOLETT
-		,{1.0f,0.0f,1.0f,1.0f}    //MAGENTA
-		,{1.0f,0.0f,0.5f,1.0f}    //PINK
+		 ColorRGBA{1.0f,1.0f,1.0f,1.0f}    //WHITE
+		,ColorRGBA{0.75f,0.75f,0.75f,1.0f} //GRAY
+		,ColorRGBA{0.25f,0.25f,0.25f,1.0f} //GRAY_DARK
+		,ColorRGBA{0.0f,0.0f,0.0f,1.0f}    //BLACK
+		,ColorRGBA{1.0f,0.0f,0.0f,1.0f}    //RED
+		,ColorRGBA{1.0f,0.5f,0.0f,1.0f}    //ORANGE
+		,ColorRGBA{1.0f,1.0f,0.0f,1.0f}    //YELLOW
+		,ColorRGBA{0.5f,1.0f,0.0f,1.0f}    //LIME
+		,ColorRGBA{0.0f,1.0f,0.0f,1.0f}    //GREEN
+		,ColorRGBA{0.0f,1.0f,0.5f,1.0f}    //TURQUOISE
+		,ColorRGBA{0.0f,1.0f,1.0f,1.0f}    //CYAN
+		,ColorRGBA{0.0f,0.5f,1.0f,1.0f}    //SKY
+		,ColorRGBA{0.0f,0.0f,1.0f,1.0f}    //BLUE
+		,ColorRGBA{0.5f,0.0f,1.0f,1.0f}    //VIOLETT
+		,ColorRGBA{1.0f,0.0f,1.0f,1.0f}    //MAGENTA
+		,ColorRGBA{1.0f,0.0f,0.5f,1.0f}    //PINK
 		};
 
 	namespace ColorID

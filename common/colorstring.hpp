@@ -14,7 +14,7 @@ namespace Anja
 	class ColorString:public ArrayFixed<char,64>
 		{
 		public:
-			ColorString(const ColorRGBA& color);
+			explicit ColorString(const ColorRGBA& color);
 		};
 
 	ColorRGBA colorFromString(const char* colorstring);

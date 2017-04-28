@@ -29,7 +29,6 @@ namespace Anja
 				{
 				m_state_flags|=(std::abs(gain-m_gain)>1e-4? DIRTY : 0);
 				m_gain=gain;
-				return *this;
 				}
 
 			float fadeTimeGet() const noexcept

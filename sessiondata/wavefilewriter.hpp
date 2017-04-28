@@ -15,7 +15,7 @@ namespace Anja
 	class WavefileWriter
 		{
 		public:
-			WavefileWriter(const char* path,WavefileInfo& info);
+			explicit WavefileWriter(const char* path,WavefileInfo& info);
 			~WavefileWriter();
 				
 			unsigned int dataWrite(const float* buffer, unsigned int n_frames);

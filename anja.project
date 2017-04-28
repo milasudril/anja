@@ -24,6 +24,13 @@
       <File Name="sessiondata/channel.hpp"/>
       <File Name="sessiondata/channeldata.hpp"/>
       <File Name="sessiondata/channeldata.cpp"/>
+      <File Name="sessiondata/session.cpp"/>
+      <File Name="sessiondata/sessionfilereader.hpp"/>
+      <File Name="sessiondata/sessionfilereader-stdio.cpp"/>
+      <File Name="sessiondata/sessionfilewriter.hpp"/>
+      <File Name="sessiondata/sessionfilerecordimpl.hpp"/>
+      <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
+      <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
@@ -39,6 +46,10 @@
       <File Name="common/localeguard-linux.cpp"/>
       <File Name="common/pathutils.hpp"/>
       <File Name="common/pathutils-linux.cpp"/>
+      <File Name="common/units.hpp"/>
+      <File Name="common/range.hpp"/>
+      <File Name="common/keyboardlayout.hpp"/>
+      <File Name="common/keyboardlayout.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">

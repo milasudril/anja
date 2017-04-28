@@ -17,15 +17,15 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path):m_filename(""),m_description("")
 	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f),m_stateflags(0)
 	{
-	auto value=record.propertyGet("Filename");
+	auto value=record.propertyGet(ArrayDynamicShort<char>("Filename"));
 	if(value!=nullptr)
 		{filenameSet(*value,load_path);}
 
-	value=record.propertyGet("Description");
+	value=record.propertyGet(ArrayDynamicShort<char>("Description"));
 	if(value!=nullptr)
 		{descriptionSet(*value);}
 
-	value=record.propertyGet("Color");
+	value=record.propertyGet(ArrayDynamicShort<char>("Color"));
 	if(value!=nullptr)
 		{keyColorSet(colorFromString(value->begin()));}
 
@@ -80,6 +80,16 @@ WaveformData::WaveformData(const SessionFileRecord& record
 	dirtyClear();
 	}
 
+void WaveformData::clear()
+	{
+	m_filename.clear();
+	m_filename.append('\0');
+	m_description.clear();
+	m_description.append('\0');
+	m_color=COLORS[ColorID::BLACK];
+	m_stateflags=0;
+	}
+
 void WaveformData::dataGet(SessionFileRecord& record
 	,const ArrayDynamicShort<char>& load_path) const
 	{
@@ -92,9 +102,9 @@ void WaveformData::dataGet(SessionFileRecord& record
 		}
 
 
-	record.propertySet("Filename",filename_out);
-	record.propertySet("Description",m_description);
-	record.propertySet("Color",ColorString(m_color).begin());
+	record.propertySet(ArrayDynamicShort<char>("Filename"),filename_out);
+	record.propertySet(ArrayDynamicShort<char>("Description"),m_description);
+	record.propertySet(ArrayDynamicShort<char>("Color"),ArrayDynamicShort<char>(ColorString(m_color).begin()));
 /*
 TODO: Move these to waveform class
 	char buffer[32];
@@ -114,13 +124,9 @@ TODO: Move these to waveform class
 //	TODO Save other data not interpreted by Anja
 	}
 
-WaveformData::WaveformData():m_filename(""),m_description("")
-	,m_color{0.0f,0.0f,0.0f,1},m_stateflags(0)
-	{}
-
 void WaveformData::filenameSet(const char* filename)
 	{
-	m_filename=filename;
+	m_filename=ArrayDynamicShort<char>(filename);
 	m_stateflags|=DIRTY;
 	}
 
@@ -142,7 +148,7 @@ void WaveformData::descriptionSet(const char* description)
 	{
 	if(strcmp(m_description.begin(),description)==0)
 		{return;}
-	m_description=description;
+	m_description=ArrayDynamicShort<char>(description);
 	m_key_label.clear();
 	auto state=0;
 	auto ptr=description;

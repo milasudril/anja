@@ -15,7 +15,7 @@ namespace Anja
 	class WavefileReader
 		{
 		public:
-			WavefileReader(const char* path,WavefileInfo& info);
+			explicit WavefileReader(const char* path,WavefileInfo& info);
 			~WavefileReader();
 
 			unsigned int dataRead(float* buffer,unsigned int n_frames);

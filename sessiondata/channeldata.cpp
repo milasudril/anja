@@ -9,15 +9,19 @@
 
 using namespace Anja;
 
-ChannelData::ChannelData():m_label(""),m_color(COLORS[ColorID::BLACK])
-	,m_state_flags(0)
-	{}
+void ChannelData::clear()
+	{
+	m_label.clear();
+	m_label.append('\0');
+	m_color=COLORS[ColorID::BLACK];
+	m_state_flags=0;
+	}
 
 ChannelData::ChannelData(const SessionFileRecord& record):
 	m_label(""),m_color{COLORS[ColorID::BLACK]}
 	,m_state_flags(0)
 	{
-	auto value=record.propertyGet("Label");
+	auto value=record.propertyGet(ArrayDynamicShort<char>("Label"));
 	if(value!=nullptr)
 		{m_label=*value;}
 
@@ -30,7 +34,7 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 	if(value!=nullptr)
 		{r_channel->fadeTimeSet(convert(value->begin()));}
 */
-	value=record.propertyGet("Color");
+	value=record.propertyGet(ArrayDynamicShort<char>("Color"));
 	if(value!=nullptr)
 		{m_color=colorFromString(value->begin());}
 
@@ -48,7 +52,7 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 void ChannelData::dataGet(SessionFileRecord& record) const
 	{
 	record.clear();
-	record.propertySet("Label",m_label);
+	record.propertySet(ArrayDynamicShort<char>("Label"),m_label);
 
 /*	TODO: Move this
 	char buffer[32];
@@ -57,12 +61,13 @@ void ChannelData::dataGet(SessionFileRecord& record) const
 	sprintf(buffer,"%.7g",r_channel->fadeTimeGet());
 	record.propertySet("Fade time/s",buffer);
 */
-	record.propertySet("Color",ColorString(m_color).begin());
+	record.propertySet(ArrayDynamicShort<char>("Color")
+		,ArrayDynamicShort<char>((ColorString(m_color).begin())));
 //	TODO Save other data not interpreted by Anja
 	}
 
 void ChannelData::labelSet(const char* label) noexcept
 	{
-	m_label=label;
+	m_label=ArrayDynamicShort<char>(label);
 	m_state_flags|=DIRTY;
 	}
