@@ -8,6 +8,7 @@
 
 #include "waveform.hpp"
 #include "waveformdata.hpp"
+#include "../common/keyboardlayout.hpp"
 
 namespace Anja
 	{
@@ -16,33 +17,40 @@ namespace Anja
 	class WaveformView
 		{
 		public:
-			explicit WaveformView(Waveform& wf,WaveformData& wd) noexcept:
-				r_waveform(wf),r_waveform_data(wd)
+			explicit WaveformView(Waveform& wf,WaveformData& wd
+				,KeyboardLayout::KeyDescriptor& key) noexcept:
+				r_waveform(wf),r_waveform_data(wd),r_key(key)
 				{}
 
-			void load(const SessionFileRecord& rec);
-			void store(SessionFileRecord& rec);
+			void load(const SessionFileRecord& rec,const String& dir_current);
 
+			void store(SessionFileRecord& rec,const String& dir_current);
 
-			const ArrayDynamicShort<char>& filenameGet() const
+			const String& filenameGet() const
 				{return r_waveform_data.filenameGet();}
 
-			void filenameSet(const ArrayDynamicShort<char>& filename);
+			void filenameSet(const String& filename);
 
-			const ArrayDynamicShort<char>& descriptionGet() const noexcept
+			const String& descriptionGet() const noexcept
 				{return r_waveform_data.descriptionGet();}
 
-			void descriptionSet(const ArrayDynamicShort<char>& description)
-				{r_waveform_data.descriptionSet(description);}
+			void descriptionSet(const String& description)
+				{
+				r_waveform_data.descriptionSet(description);
+				r_key.labelSet(r_waveform_data.keyLabelGet().begin());
+				}
 
-			const ArrayDynamicShort<char>& keyLabelGet() const noexcept
+			const String& keyLabelGet() const noexcept
 				{return r_waveform_data.keyLabelGet();;}
 
 			const ColorRGBA& keyColorGet() const noexcept
 				{return r_waveform_data.keyColorGet();;}
 
 			void keyColorSet(const ColorRGBA& color_new)
-				{r_waveform_data.keyColorSet(color_new);}
+				{
+				r_waveform_data.keyColorSet(color_new);
+				r_key.colorBackgroundSet(r_waveform_data.keyColorGet());
+				}
 
 			bool dirtyIs() const noexcept
 				{return r_waveform_data.dirtyIs() || r_waveform.dirtyIs();}
@@ -57,6 +65,7 @@ namespace Anja
 		private:
 			Waveform& r_waveform;
 			WaveformData& r_waveform_data;
+			KeyboardLayout::KeyDescriptor& r_key;
 		};
 	}
 

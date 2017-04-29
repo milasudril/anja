@@ -21,11 +21,11 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 	m_label(""),m_color{COLORS[ColorID::BLACK]}
 	,m_state_flags(0)
 	{
-	auto value=record.propertyGet(ArrayDynamicShort<char>("Label"));
+	auto value=record.propertyGet(String("Label"));
 	if(value!=nullptr)
 		{m_label=*value;}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Color"));
+	value=record.propertyGet(String("Color"));
 	if(value!=nullptr)
 		{m_color=colorFromString(value->begin());}
 
@@ -42,15 +42,15 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 
 void ChannelData::dataGet(SessionFileRecord& record) const
 	{
-	record.propertySet(ArrayDynamicShort<char>("Label"),m_label);
+	record.propertySet(String("Label"),m_label);
 
-	record.propertySet(ArrayDynamicShort<char>("Color")
-		,ArrayDynamicShort<char>((ColorString(m_color).begin())));
+	record.propertySet(String("Color")
+		,String((ColorString(m_color).begin())));
 //	TODO Save other data not interpreted by Anja
 	}
 
 void ChannelData::labelSet(const char* label) noexcept
 	{
-	m_label=ArrayDynamicShort<char>(label);
+	m_label=String(label);
 	m_state_flags|=DIRTY;
 	}

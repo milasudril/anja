@@ -14,13 +14,18 @@ using namespace Anja;
 WaveformData::WaveformData(const SessionFileRecord& record):m_filename(""),m_description("")
 	,m_key_label(""),m_color(0.25f,0.0f,.5f,1.0f),m_stateflags(0)
 	{
-	auto value=record.propertyGet(ArrayDynamicShort<char>("Description"));
+	auto value=record.propertyGet(String("Description"));
 	if(value!=nullptr)
 		{descriptionSet(*value);}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Color"));
+	value=record.propertyGet(String("Color"));
 	if(value!=nullptr)
 		{keyColorSet(colorFromString(value->begin()));}
+
+
+	value=record.propertyGet(String("Filename"));
+	if(value!=nullptr)
+		{m_filename=*value;}
 
 	dirtyClear();
 	}
@@ -37,13 +42,13 @@ void WaveformData::clear()
 
 void WaveformData::dataGet(SessionFileRecord& record) const
 	{
-	record.propertySet(ArrayDynamicShort<char>("Description"),m_description);
-	record.propertySet(ArrayDynamicShort<char>("Color"),ArrayDynamicShort<char>(ColorString(m_color).begin()));
+	record.propertySet(String("Description"),m_description);
+	record.propertySet(String("Color"),String(ColorString(m_color).begin()));
 
 //	TODO Save other data not interpreted by Anja
 	}
 
-void WaveformData::filenameSet(const ArrayDynamicShort<char>& filename)
+void WaveformData::filenameSet(const String& filename)
 	{
 	m_filename=filename;
 	m_stateflags|=DIRTY;
@@ -53,7 +58,7 @@ void WaveformData::descriptionSet(const char* description)
 	{
 	if(strcmp(m_description.begin(),description)==0)
 		{return;}
-	m_description=ArrayDynamicShort<char>(description);
+	m_description=String(description);
 	m_key_label.clear();
 	auto state=0;
 	auto ptr=description;
@@ -90,7 +95,7 @@ void WaveformData::descriptionSet(const char* description)
 	m_stateflags|=DIRTY;
 	}
 
-void WaveformData::descriptionSet(const ArrayDynamicShort<char>& description)
+void WaveformData::descriptionSet(const String& description)
 	{
 	descriptionSet(description.begin());
 	}

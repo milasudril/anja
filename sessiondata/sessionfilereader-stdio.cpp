@@ -31,7 +31,7 @@ class SessionFileReader::Impl
 
 		struct Token
 			{
-			ArrayDynamicShort<char> buffer;
+			String buffer;
 			TokenType type;
 			};
 
@@ -73,7 +73,7 @@ bool SessionFileReader::recordNextGet(SessionFileRecord& record)
 bool SessionFileReader::Impl::recordNextGet(SessionFileRecord& record)
 	{
 	record.clear();
-	ArrayDynamicShort<char> key_temp;
+	String key_temp;
 
 	do
 		{

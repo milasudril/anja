@@ -10,7 +10,7 @@ bool Anja::convert(const char* string,double& result)
 	{
 	auto ptr=string;
 	bool got_separator=0;
-	ArrayDynamicShort<char> buffer;
+	String buffer;
 	while(*ptr!='\0')
 		{
 		if(*ptr>=1 && *ptr<=' ')

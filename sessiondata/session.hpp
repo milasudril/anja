@@ -29,10 +29,10 @@ namespace Anja
 
 			void save(const char* filename);
 
-			const ArrayDynamicShort<char>& filenameGet() const noexcept
+			const String& filenameGet() const noexcept
 				{return m_filename;}
 
-			const ArrayDynamicShort<char>& directoryGet() const noexcept
+			const String& directoryGet() const noexcept
 				{return m_directory;}
 
 
@@ -50,22 +50,22 @@ namespace Anja
 
 
 
-			void titleSet(const ArrayDynamicShort<char>& title_new) noexcept
+			void titleSet(const String& title_new) noexcept
 				{
 				m_title=title_new;
 				m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
 				}
 
-			const ArrayDynamicShort<char>& titleGet() const noexcept
+			const String& titleGet() const noexcept
 				{return m_title;}
 
-			void descriptionSet(const ArrayDynamicShort<char>& description_new) noexcept
+			void descriptionSet(const String& description_new) noexcept
 				{
 				m_description=description_new;
 				m_state_flags|=SESSION_DIRTY;
 				}
 
-			const ArrayDynamicShort<char>& descriptionGet() const noexcept
+			const String& descriptionGet() const noexcept
 				{return m_description;}
 
 
@@ -190,10 +190,10 @@ namespace Anja
 			ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
 
 			KeyboardLayout m_keyboard;
-			ArrayDynamicShort<char> m_filename;
-			ArrayDynamicShort<char> m_directory;
-			ArrayDynamicShort<char> m_title;
-			ArrayDynamicShort<char> m_description;
+			String m_filename;
+			String m_directory;
+			String m_title;
+			String m_description;
 			ArrayFixed<ColorRGBA,64> m_color_presets;
 			int8_t m_slot_active;
 

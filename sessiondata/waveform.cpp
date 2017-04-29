@@ -24,19 +24,19 @@ Waveform::Waveform(const SessionFileRecord& record)
 	{
 	valuesInit();
 
-	auto value=record.propertyGet(ArrayDynamicShort<char>("Playback gain/dB"));
+	auto value=record.propertyGet(String("Playback gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Playback gain random level/dB"));
+	value=record.propertyGet(String("Playback gain random level/dB"));
 	if(value!=nullptr)
 		{gainRandomSet(convert(value->begin()));}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Options"));
+	value=record.propertyGet(String("Options"));
 	if(value!=nullptr)
 		{flagsSet(optionsFromString(value->begin(),FLAG_NAMES));}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Playback channel"));
+	value=record.propertyGet(String("Playback channel"));
 	if(value!=nullptr)
 		{
 		long ch;
@@ -49,7 +49,7 @@ Waveform::Waveform(const SessionFileRecord& record)
 		channelSet(ch-1);
 		}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Playback starting position/frames"));
+	value=record.propertyGet(String("Playback starting position/frames"));
 	if(value!=nullptr)
 		{
 		LocaleGuard locale("C");
@@ -57,7 +57,7 @@ Waveform::Waveform(const SessionFileRecord& record)
 		offsetBeginSet(pos);
 		}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Playback end position/frames"));
+	value=record.propertyGet(String("Playback end position/frames"));
 	if(value!=nullptr)
 		{
 		LocaleGuard locale("C");
@@ -70,21 +70,21 @@ void Waveform::dataGet(SessionFileRecord& record) const
 	{
 	char buffer[32];
 	sprintf(buffer,"%u",channelGet() + 1);
-	record.propertySet(ArrayDynamicShort<char>("Playback channel")
-		,ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Playback channel")
+		,String(buffer));
 	sprintf(buffer,"%.7g",gainGet());
-	record.propertySet(ArrayDynamicShort<char>("Playback gain/dB")
-		,ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Playback gain/dB")
+		,String(buffer));
 	sprintf(buffer,"%.7g",gainRandomGet());
-	record.propertySet(ArrayDynamicShort<char>("Playback gain random level/dB")
-		,ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Playback gain random level/dB")
+		,String(buffer));
 	sprintf(buffer,"%u",offsetBeginGet());
-	record.propertySet(ArrayDynamicShort<char>("Playback starting position/frames")
-		,ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Playback starting position/frames")
+		,String(buffer));
 	sprintf(buffer,"%u",offsetEndGet());
-	record.propertySet(ArrayDynamicShort<char>("Playback end position/frames")
-		,ArrayDynamicShort<char>(buffer));
-	record.propertySet(ArrayDynamicShort<char>("Options")
+	record.propertySet(String("Playback end position/frames")
+		,String(buffer));
+	record.propertySet(String("Options")
 		,stringFromOptions(flagsGet(),FLAG_NAMES));
 	}
 

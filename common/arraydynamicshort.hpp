@@ -245,6 +245,8 @@ namespace Anja
 		m_length+=N;
 		return *this;
 		}
+
+	typedef ArrayDynamicShort<char> String;
 	}
 
 #endif

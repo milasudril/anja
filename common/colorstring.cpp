@@ -15,7 +15,7 @@ ColorString::ColorString(const ColorRGBA& color)
 
 ColorRGBA Anja::colorFromString(const char* colorstring)
 	{
-	ArrayDynamicShort<char> buffer;
+	String buffer;
 	float values[4]={0.0f,0.0f,0.0f,1.0f};
 	uint8_t count=0;
 	while(*colorstring!='\0' && count!=4)

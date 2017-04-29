@@ -4,6 +4,7 @@
 #include "sessionfilereader.hpp"
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecordimpl.hpp"
+#include "waveformview.hpp"
 #include "../common/units.hpp"
 #include "optionstring.hpp"
 #include "../common/localeguard.hpp"
@@ -19,8 +20,8 @@ static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channe
 const char* const* Session::flagNames() noexcept
 	{return FLAG_NAMES;}
 
-static ArrayDynamicShort<char> filenameGet(const ArrayDynamicShort<char>& filename
-	,const ArrayDynamicShort<char>& load_path)
+static String filenameGet(const String& filename
+	,const String& load_path)
 	{
 	if(absoluteIs(filename))
 		{return filename;}
@@ -43,10 +44,10 @@ Session::Session(const char* filename):m_slot_active(0)
 
 //	Get data from file header
 		{
-		m_filename=ArrayDynamicShort<char>(filename);
+		m_filename=String(filename);
 		m_directory=parentDirectory(realpath(m_filename));
 		titleSet(record.titleGet());
-		auto slot_num_str=record.propertyGet(ArrayDynamicShort<char>("Active slot"));
+		auto slot_num_str=record.propertyGet(String("Active slot"));
 		if(slot_num_str!=nullptr)
 			{
 			LocaleGuard locale("C");
@@ -56,15 +57,15 @@ Session::Session(const char* filename):m_slot_active(0)
 			slotActiveSet(slot_num-1);
 			}
 
-		auto value=record.propertyGet(ArrayDynamicShort<char>("Description"));
+		auto value=record.propertyGet(String("Description"));
 		if(value!=nullptr)
 			{descriptionSet(*value);}
 
-		value=record.propertyGet(ArrayDynamicShort<char>("Master gain/dB"));
+		value=record.propertyGet(String("Master gain/dB"));
 		if(value!=nullptr)
 			{gainSet(convert(value->begin()));}
 
-		value=record.propertyGet(ArrayDynamicShort<char>("Options"));
+		value=record.propertyGet(String("Options"));
 		if(value!=nullptr)
 			{
 			flagsSet(optionsFromString(value->begin(),FLAG_NAMES));
@@ -91,19 +92,9 @@ Session::Session(const char* filename):m_slot_active(0)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
 			--slot_num;
 
-			m_waveform_data[slot_num]=WaveformData{record};
-			m_waveforms[slot_num]=Waveform{record};
-			auto key=m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]);
-			key->labelSet(m_waveform_data[slot_num].keyLabelGet().begin());
-			key->colorBackgroundSet(m_waveform_data[slot_num].keyColorGet());
-
-			auto filename=record.propertyGet(ArrayDynamicShort<char>("Filename"));
-			if(filename!=nullptr && filename->length()!=0)
-				{
-				auto f=::filenameGet(*filename,m_directory);
-				m_waveform_data[slot_num].filenameSet(f);
-				m_waveforms[slot_num].fileLoad(f.begin());
-				}
+			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num]
+				,*m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]))
+				.load(record,m_directory);
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -209,7 +200,7 @@ void Session::clear()
 	channelsClear();
 	m_filename.clear();
 	m_filename.append('\0');
-	m_title=ArrayDynamicShort<char>("New session");
+	m_title=String("New session");
 	m_description.clear();
 	m_description.append('\0');
 	gainSet(-6);
@@ -233,11 +224,11 @@ void Session::keyReset(uint8_t scancode)
 		{key_active->colorBorderSet(COLORS[ColorID::GRAY]);}
 	}
 
-static ArrayDynamicShort<char> filenameGenerate(int k)
+static String filenameGenerate(int k)
 	{
 	char buffer[32];
 	sprintf(buffer,"slot-%d.wav",k);
-	return ArrayDynamicShort<char>(buffer);
+	return String(buffer);
 	}
 
 void Session::save(const char* filename)
@@ -245,19 +236,19 @@ void Session::save(const char* filename)
 	char buffer[32];
 	SessionFileWriter writer(filename);
 	SessionFileRecordImpl record_out;
-	auto dir=parentDirectory(realpath(ArrayDynamicShort<char>(filename)));
+	auto dir=parentDirectory(realpath(String(filename)));
 	record_out.sectionLevelSet(0);
 	record_out.sectionTitleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);
-	record_out.propertySet(ArrayDynamicShort<char>("Active slot")
-		,ArrayDynamicShort<char>(buffer));
-	record_out.propertySet(ArrayDynamicShort<char>("Description")
+	record_out.propertySet(String("Active slot")
+		,String(buffer));
+	record_out.propertySet(String("Description")
 		,m_description);
 
 	sprintf(buffer,"%.7g",gainGet());
-	record_out.propertySet(ArrayDynamicShort<char>("Master gain/dB")
-		,ArrayDynamicShort<char>(buffer));
-	record_out.propertySet(ArrayDynamicShort<char>("Options")
+	record_out.propertySet(String("Master gain/dB")
+		,String(buffer));
+	record_out.propertySet(String("Options")
 		,stringFromOptions(flagsGet(),FLAG_NAMES));
 
 //	TODO Save other data not interpreted by Anja
@@ -274,7 +265,7 @@ void Session::save(const char* filename)
 			record_out.clear();
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Slot %u",k+1);
-			record_out.sectionTitleSet(ArrayDynamicShort<char>(buffer));
+			record_out.sectionTitleSet(String(buffer));
 
 			if(m_waveforms[k].flagsGet()&Waveform::RECORDED)
 				{
@@ -286,7 +277,7 @@ void Session::save(const char* filename)
 			auto filename_out=waveform->filenameGet();
 			if(*filename_out.begin()!='\0')
 				{filename_out=makeRelativeTo(filename_out.begin(),dir.begin());}
-			record_out.propertySet(ArrayDynamicShort<char>("Filename"),filename_out);
+			record_out.propertySet(String("Filename"),filename_out);
 
 			waveform->dataGet(record_out);
 			m_waveforms[k].dataGet(record_out);
@@ -309,7 +300,7 @@ void Session::save(const char* filename)
 			record_out.clear();
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
-			record_out.sectionTitleSet(ArrayDynamicShort<char>(buffer));
+			record_out.sectionTitleSet(String(buffer));
 			channel->dataGet(record_out);
 			m_channels[k].dataGet(record_out);
 			writer.recordWrite(record_out);

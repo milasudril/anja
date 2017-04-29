@@ -63,8 +63,8 @@ void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 
 	fprintf(m_sink.get(),"%c%s%c\n",marker,record.titleGet().begin(),marker);
 
-	record.propertiesEnum([this](const ArrayDynamicShort<char>& name
-		,const ArrayDynamicShort<char>& value)
+	record.propertiesEnum([this](const String& name
+		,const String& value)
 			{
 			fprintf(m_sink.get(),"%s: %s\n\n",name.begin(),value.begin());
 			return true;

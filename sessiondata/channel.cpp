@@ -11,11 +11,11 @@ Channel::Channel(const SessionFileRecord& record)
 	{
 	valuesInit();
 
-	auto value=record.propertyGet(ArrayDynamicShort<char>("Gain/dB"));
+	auto value=record.propertyGet(String("Gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}
 
-	value=record.propertyGet(ArrayDynamicShort<char>("Fade time/s"));
+	value=record.propertyGet(String("Fade time/s"));
 	if(value!=nullptr)
 		{fadeTimeSet(convert(value->begin()));}
 	}
@@ -24,7 +24,7 @@ void Channel::dataGet(SessionFileRecord& record) const
 	{
 	char buffer[32];
 	sprintf(buffer,"%.7g",gainGet());
-	record.propertySet(ArrayDynamicShort<char>("Gain/dB"),ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Gain/dB"),String(buffer));
 	sprintf(buffer,"%.7g",fadeTimeGet());
-	record.propertySet(ArrayDynamicShort<char>("Fade time/s"),ArrayDynamicShort<char>(buffer));
+	record.propertySet(String("Fade time/s"),String(buffer));
 	}

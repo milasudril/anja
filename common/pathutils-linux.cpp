@@ -12,14 +12,14 @@
 
 using namespace Anja;
 
-ArrayDynamicShort<char> Anja::realpath(const ArrayDynamicShort<char>& path)
+String Anja::realpath(const String& path)
 	{
 	std::unique_ptr<char,decltype(&free)> result
 		{::realpath(path.begin(),NULL),free};
-	return ArrayDynamicShort<char>(result.get());
+	return String(result.get());
 	}
 
-ArrayDynamicShort<char> Anja::parentDirectory(const ArrayDynamicShort<char>& path)
+String Anja::parentDirectory(const String& path)
 	{
 	auto ret=path;
 	auto end=path.end();
@@ -35,12 +35,12 @@ ArrayDynamicShort<char> Anja::parentDirectory(const ArrayDynamicShort<char>& pat
 	return ret;
 	}
 
-bool Anja::absoluteIs(const ArrayDynamicShort<char>& path)
+bool Anja::absoluteIs(const String& path)
 	{
 	return *(path.begin())=='/';
 	}
 
-static const char* pathTokenGet(const char* path,ArrayDynamicShort<char>& token)
+static const char* pathTokenGet(const char* path,String& token)
 	{
 	token.clear();
 	while(*path!='/' && *path!='\0')
@@ -54,15 +54,15 @@ static const char* pathTokenGet(const char* path,ArrayDynamicShort<char>& token)
 	return path;
 	}
 
-ArrayDynamicShort<char> Anja::makeRelativeTo(const char* path, const char* reference)
+String Anja::makeRelativeTo(const char* path, const char* reference)
 	{
 //	Assume that path and reference are absolute paths
-	ArrayDynamicShort<char> ret;
-	ArrayDynamicShort<char> path_tok;
-	ArrayDynamicShort<char> ref_tok;
+	String ret;
+	String path_tok;
+	String ref_tok;
 
 //	Make shure the reference path ends with '/'
-	ArrayDynamicShort<char> ref_temp(reference);
+	String ref_temp(reference);
 	ref_temp.truncate();
 	if(*(ref_temp.end()-1)!='/')
 		{ref_temp.append("/",2);}

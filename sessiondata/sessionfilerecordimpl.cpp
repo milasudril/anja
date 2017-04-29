@@ -7,7 +7,7 @@
 using namespace Anja;
 
 SessionFileRecordImpl::SessionFileRecordImpl():
-	m_props(compareLexicographical< ArrayDynamicShort<char> >)
+	m_props(compareLexicographical< String >)
 	{}
 
 SessionFileRecordImpl::~SessionFileRecordImpl(){}
@@ -17,8 +17,8 @@ void SessionFileRecordImpl::clear()
 	m_props.clear();
 	}
 
-const ArrayDynamicShort<char>*
-SessionFileRecordImpl::propertyGet(const ArrayDynamicShort<char>& name) const
+const String*
+SessionFileRecordImpl::propertyGet(const String& name) const
 	{
 	auto i=m_props.find(name);
 	if(i==m_props.end())
@@ -26,14 +26,14 @@ SessionFileRecordImpl::propertyGet(const ArrayDynamicShort<char>& name) const
 	return &(i->second);
 	}
 
-bool SessionFileRecordImpl::propertySet(const ArrayDynamicShort<char>& name
-	,const ArrayDynamicShort<char>& value)
+bool SessionFileRecordImpl::propertySet(const String& name
+	,const String& value)
 	{
 	return m_props.insert({name,value}).second;
 	}
 
-void SessionFileRecordImpl::propertyReplace(const ArrayDynamicShort<char>& name
-	,const ArrayDynamicShort<char>& value)
+void SessionFileRecordImpl::propertyReplace(const String& name
+	,const String& value)
 	{
 	m_props[name]=value;
 	}

@@ -10,7 +10,7 @@
 
 namespace Anja
 	{
-	ArrayDynamicShort<char> stringFromOptions(unsigned int option_bits
+	String stringFromOptions(unsigned int option_bits
 		,const char* const* option_names);
 
 	unsigned int optionsFromString(const char* string

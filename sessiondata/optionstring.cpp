@@ -6,10 +6,10 @@ using namespace Anja;
 
 #include <cstring>
 
-ArrayDynamicShort<char> Anja::stringFromOptions(unsigned int option_bits
+String Anja::stringFromOptions(unsigned int option_bits
 	,const char* const* option_names)
 	{
-	ArrayDynamicShort<char> ret;
+	String ret;
 
 	if(*option_names==nullptr)
 		{
@@ -25,7 +25,7 @@ ArrayDynamicShort<char> Anja::stringFromOptions(unsigned int option_bits
 			{
 			if(ret.length() > 0)
 				{ret.append('|');}
-			ret.append(ArrayDynamicShort<char>(*option_names)).truncate();
+			ret.append(String(*option_names)).truncate();
 			}
 
 		++option_names;
@@ -42,7 +42,7 @@ unsigned int Anja::optionsFromString(const char* string
 	auto ptr=string;
 //	TODO: This function can be implemented without a temporary buffer, by
 //	comparing ranges instead of full strings.
-	ArrayDynamicShort<char> buffer_temp;
+	String buffer_temp;
 	int state=0;
 	while(*ptr!='\0')
 		{

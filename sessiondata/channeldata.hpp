@@ -22,7 +22,7 @@ namespace Anja
 
 			explicit ChannelData(const SessionFileRecord& record);
 
-			const ArrayDynamicShort<char>& labelGet() const noexcept
+			const String& labelGet() const noexcept
 				{return m_label;}
 
 			void labelSet(const char* label) noexcept;
@@ -45,7 +45,7 @@ namespace Anja
 				{m_state_flags&=~DIRTY;}
 
 		private:
-			ArrayDynamicShort<char> m_label;
+			String m_label;
 			ColorRGBA m_color;
 
 			static constexpr unsigned int DIRTY=0x1;

@@ -24,20 +24,23 @@ namespace Anja
 
 			void clear();
 
+			void dataSet(const SessionFileRecord& rec)
+				{*this=WaveformData(rec);}
 
-			const ArrayDynamicShort<char>& filenameGet() const
+
+			const String& filenameGet() const
 				{return m_filename;}
 
-			void filenameSet(const ArrayDynamicShort<char>& filename);
+			void filenameSet(const String& filename);
 
-			const ArrayDynamicShort<char>& descriptionGet() const noexcept
+			const String& descriptionGet() const noexcept
 				{return m_description;}
 
-			void descriptionSet(const ArrayDynamicShort<char>& description);
+			void descriptionSet(const String& description);
 
 			void descriptionSet(const char* description);
 
-			const ArrayDynamicShort<char>& keyLabelGet() const noexcept
+			const String& keyLabelGet() const noexcept
 				{return m_key_label;}
 
 
@@ -56,9 +59,9 @@ namespace Anja
 				{m_stateflags&=~DIRTY;}
 
 		private:
-			ArrayDynamicShort<char> m_filename;
-			ArrayDynamicShort<char> m_description;
-			ArrayDynamicShort<char> m_key_label;
+			String m_filename;
+			String m_description;
+			String m_key_label;
 			ColorRGBA m_color;
 
 			static constexpr unsigned int DIRTY=0x1;

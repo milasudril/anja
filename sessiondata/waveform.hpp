@@ -35,6 +35,9 @@ namespace Anja
 
 			void dataGet(SessionFileRecord& record) const;
 
+			void dataSet(const SessionFileRecord& rec)
+				{*this=Waveform(rec);}
+
 			const float* begin() const noexcept
 				{return m_data.begin() + m_offset_begin;}
 

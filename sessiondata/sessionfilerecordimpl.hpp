@@ -21,10 +21,10 @@ namespace Anja
 
 			void clear();
 
-			void sectionTitleSet(const ArrayDynamicShort<char>& title)
+			void sectionTitleSet(const String& title)
 				{m_title=title;}
 
-			const ArrayDynamicShort<char>& titleGet() const
+			const String& titleGet() const
 				{return m_title;}
 
 			void sectionLevelSet(uint32_t level)
@@ -33,21 +33,21 @@ namespace Anja
 			uint32_t sectionLevelGet() const
 				{return m_level;}
 
-			const ArrayDynamicShort<char>* propertyGet(const ArrayDynamicShort<char>& name) const;
+			const String* propertyGet(const String& name) const;
 
-			bool propertySet(const ArrayDynamicShort<char>& name
-				,const ArrayDynamicShort<char>& value);
+			bool propertySet(const String& name
+				,const String& value);
 
-			void propertyReplace(const ArrayDynamicShort<char>& name
-				,const ArrayDynamicShort<char>& value);
+			void propertyReplace(const String& name
+				,const String& value);
 
 			bool propertiesEnum(PropertyEnumeratorFunc enumerator,void* cb_obj) const;
 
 		private:
-			ArrayDynamicShort<char> m_title;
+			String m_title;
 			uint32_t m_level;
-			std::map<ArrayDynamicShort<char>,ArrayDynamicShort<char>
-				,decltype(&compareLexicographical< ArrayDynamicShort<char> >)> m_props;
+			std::map<String,String
+				,decltype(&compareLexicographical< String >)> m_props;
 		};
 	}
 #endif
