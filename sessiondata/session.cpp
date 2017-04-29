@@ -20,16 +20,6 @@ static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channe
 const char* const* Session::flagNames() noexcept
 	{return FLAG_NAMES;}
 
-static String filenameGet(const String& filename
-	,const String& load_path)
-	{
-	if(absoluteIs(filename))
-		{return filename;}
-	auto fullpath=load_path;
-	fullpath.append(filename);
-	return fullpath;
-	}
-
 Session::Session(const char* filename):m_slot_active(0)
 	{
 	clear();
@@ -222,13 +212,6 @@ void Session::keyReset(uint8_t scancode)
 	auto key_active=m_keyboard.keyFromScancode(scancode);
 	if(key_active!=nullptr)
 		{key_active->colorBorderSet(COLORS[ColorID::GRAY]);}
-	}
-
-static String filenameGenerate(int k)
-	{
-	char buffer[32];
-	sprintf(buffer,"slot-%d.wav",k);
-	return String(buffer);
 	}
 
 void Session::save(const char* filename)

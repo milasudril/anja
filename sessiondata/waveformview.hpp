@@ -54,6 +54,12 @@ namespace Anja
 					{r_key->colorBackgroundSet(r_waveform_data.keyColorGet());}
 				}
 
+			Waveform& waveform() noexcept
+				{return r_waveform;}
+
+			const Waveform& waveform() const noexcept
+				{return r_waveform;}
+
 			bool dirtyIs() const noexcept
 				{return r_waveform_data.dirtyIs() || r_waveform.dirtyIs();}
 

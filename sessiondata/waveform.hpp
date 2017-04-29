@@ -56,45 +56,40 @@ namespace Anja
 			float sampleRateGet() const noexcept
 				{return m_fs;}
 
-			Waveform& sampleRateSet(float fs) noexcept
+			void sampleRateSet(float fs) noexcept
 				{
 				m_flags|=(std::abs(fs-m_fs)>1e-2? DIRTY : 0);
 				m_fs=fs;
-				return *this;
 				}
 
-			Waveform& offsetBeginSet(int32_t value_new) noexcept
+			void offsetBeginSet(int32_t value_new) noexcept
 				{
 				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
 				m_flags|=(temp!=m_offset_begin? DIRTY : 0);
 				m_offset_begin=temp;
-				return *this;
 				}
 
 			uint32_t offsetEndGet() const noexcept
 				{return m_offset_end;}
 
-			Waveform& offsetEndSet(int32_t value_new) noexcept
+			void offsetEndSet(int32_t value_new) noexcept
 				{
 				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
 				m_flags|=(temp!=m_offset_end? DIRTY : 0);
 				m_offset_end=temp;
-				return *this;
 				}
 
-			Waveform& offsetsReset() noexcept
+			void offsetsReset() noexcept
 				{
 				m_offset_end=m_data.length();
 				m_offset_begin=0;
 				m_flags|=DIRTY;
-				return *this;
 				}
 
-			Waveform& reverse() noexcept
+			void reverse() noexcept
 				{
 				std::swap(m_offset_end,m_offset_begin);
 				m_flags|=DIRTY;
-				return *this;
 				}
 
 
@@ -158,53 +153,40 @@ namespace Anja
 			uint32_t flagGet(uint32_t flag_index) const noexcept
 				{return m_flags&(1<<flag_index);}
 
-			Waveform& flagsSet(uint32_t flags) noexcept
+			void flagsSet(uint32_t flags) noexcept
 				{
 				auto flags_new=m_flags|flags;
 				auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
 
 				m_flags=flags_new;
 				m_flags|=( (flags_old== (flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
-				return *this;
 				}
 
-			Waveform& flagSet(uint32_t flag_index) noexcept
-				{return flagsSet(1<<flag_index);}
+			void flagSet(uint32_t flag_index) noexcept
+				{flagsSet(1<<flag_index);}
 
-			Waveform& flagUnset(uint32_t flag_index) noexcept
-				{return flagsUnset(1<<flag_index);}
+			void flagUnset(uint32_t flag_index) noexcept
+				{flagsUnset(1<<flag_index);}
 
-			Waveform& flagsUnset(uint32_t flags) noexcept
+			void flagsUnset(uint32_t flags) noexcept
 				{
 				auto flags_new=m_flags&~flags;
 				auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
 
 				m_flags=flags_new;
 				m_flags|=( (flags_old==(flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
-				return *this;
 				}
 
 			static const char* const* flagNames() noexcept;
 
-			Waveform& append(float x)
-				{
-				m_data.append(x);
-				m_flags|=DIRTY;
-				return *this;
-				}
-
-			Waveform& append(const float* x,uint32_t n)
+			void append(const float* x,uint32_t n)
 				{
 				m_data.append(x,n);
 				m_flags|=DIRTY;
-				return *this;
 				}
 
-			Waveform& capacitySet(uint32_t capacity_new)
-				{
-				m_data.capacitySet(capacity_new);
-				return *this;
-				}
+			void capacitySet(uint32_t capacity_new)
+				{m_data.capacitySet(capacity_new);}
 
 			void clear()
 				{
