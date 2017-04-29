@@ -2,7 +2,7 @@
 
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecord.hpp"
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <cassert>

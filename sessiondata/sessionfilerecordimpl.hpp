@@ -7,7 +7,7 @@
 #define ANJA_SESSIONFILERECORDIMPL_HPP
 
 #include "sessionfilerecord.hpp"
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 #include "../common/range.hpp"
 #include <map>
 

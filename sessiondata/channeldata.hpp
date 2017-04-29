@@ -7,7 +7,7 @@
 #define ANJA_CHANNELDATA_HPP
 
 #include "../common/color.hpp"
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 
 namespace Anja
 	{

@@ -170,6 +170,13 @@ namespace Anja
 				return *this;
 				}
 
+			ArrayDynamicShort& truncate(uint32_t N)
+				{
+				assert(length() >= N);
+				m_length-=N;
+				return *this;
+				}
+
 		private:
 			T* m_data;
 			uint32_t m_length;
@@ -245,8 +252,6 @@ namespace Anja
 		m_length+=N;
 		return *this;
 		}
-
-	typedef ArrayDynamicShort<char> String;
 	}
 
 #endif

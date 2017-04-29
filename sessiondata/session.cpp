@@ -26,7 +26,7 @@ static String filenameGet(const String& filename
 	if(absoluteIs(filename))
 		{return filename;}
 	auto fullpath=load_path;
-	fullpath.truncate().append(filename).append('\0');
+	fullpath.append(filename);
 	return fullpath;
 	}
 

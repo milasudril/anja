@@ -6,7 +6,7 @@
 #ifndef ANJA_OPTIONSTRING_HPP
 #define ANJA_OPTIONSTRING_HPP
 
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 
 namespace Anja
 	{

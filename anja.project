@@ -53,6 +53,8 @@
       <File Name="common/range.hpp"/>
       <File Name="common/keyboardlayout.hpp"/>
       <File Name="common/keyboardlayout.cpp"/>
+      <File Name="common/string.hpp"/>
+      <File Name="common/string.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">

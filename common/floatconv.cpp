@@ -1,7 +1,7 @@
 //@	 {"targets":[{"name":"floatconv.o","type":"object"}]}
 
 #include "floatconv.hpp"
-#include "arraydynamicshort.hpp"
+#include "string.hpp"
 #include "localeguard.hpp"
 
 using namespace Anja;

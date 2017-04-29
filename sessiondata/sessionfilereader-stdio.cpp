@@ -2,7 +2,7 @@
 
 #include "sessionfilereader.hpp"
 #include "sessionfilerecord.hpp"
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -194,7 +194,6 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 			case State::SECTION_TITLE_AFTER:
 				if(ch_in=='\n')
 					{
-					tok.buffer.append('\0');
 					m_state=State::INIT;
 					tok.type=(ch_trigg=='=')?
 						TokenType::SECTION_TITLE_0:TokenType::SECTION_TITLE_1;
@@ -208,7 +207,6 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 			case State::KEY:
 				if(ch_in==':')
 					{
-					tok.buffer.append('\0');
 					m_state=State::VALUE;
 					tok.type=TokenType::KEY;
 					return 1;
@@ -270,7 +268,6 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 
 	if(state_current==State::VALUE || state_prev==State::VALUE)
 		{
-		tok.buffer.append('\0');
 		tok.type=TokenType::VALUE;
 
 		return 1;

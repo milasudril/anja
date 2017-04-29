@@ -3,11 +3,12 @@
 #ifndef ANJA_SESSIONFILERECORD_HPP
 #define ANJA_SESSIONFILERECORD_HPP
 
-#include "../common/arraydynamicshort.hpp"
 #include <cstdint>
 
 namespace Anja
 	{
+	class String;
+
 	class SessionFileRecord
 		{
 		public:

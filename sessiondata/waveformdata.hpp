@@ -7,6 +7,7 @@
 #define ANJA_WAVEFORMDATA_HPP
 
 #include "waveform.hpp"
+#include "../common/string.hpp"
 #include "../common/color.hpp"
 
 namespace Anja

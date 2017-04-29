@@ -1,7 +1,7 @@
 //@	 {"targets":[{"name":"colorstring.o","type":"object"}]}
 
 #include "colorstring.hpp"
-#include "arraydynamicshort.hpp"
+#include "string.hpp"
 #include "floatconv.hpp"
 #include <cstdio>
 
@@ -23,7 +23,6 @@ ColorRGBA Anja::colorFromString(const char* colorstring)
 		switch(*colorstring)
 			{
 			case ';':
-				buffer.append('\0');
 				values[count]=convert(buffer.begin());
 				++count;
 				buffer.clear();
@@ -35,10 +34,7 @@ ColorRGBA Anja::colorFromString(const char* colorstring)
 		++colorstring;
 		}
 	if(count!=4)
-		{
-		buffer.append('\0');
-		values[count]=convert(buffer.begin());
-		}
+		{values[count]=convert(buffer.begin());}
 
 	return ColorRGBA{values[0],values[1],values[2],values[3]};
 	}

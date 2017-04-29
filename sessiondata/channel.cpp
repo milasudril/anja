@@ -2,7 +2,7 @@
 
 #include "channel.hpp"
 #include "sessionfilerecord.hpp"
-#include "../common/arraydynamicshort.hpp"
+#include "../common/string.hpp"
 #include "../common/floatconv.hpp"
 
 using namespace Anja;

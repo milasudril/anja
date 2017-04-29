@@ -6,6 +6,7 @@
 //@	]
 
 #include "pathutils.hpp"
+#include "string.hpp"
 #include <cstdlib>
 #include <memory>
 #include <cstring>
@@ -31,7 +32,7 @@ String Anja::parentDirectory(const String& path)
 		if(*end=='/')
 			{break;}
 		}
-	ret.append("/",2);
+	ret.append("/");
 	return ret;
 	}
 
@@ -50,7 +51,6 @@ static const char* pathTokenGet(const char* path,String& token)
 		}
 	if(*path!='\0')
 		{++path;}
-	token.append('\0');
 	return path;
 	}
 
@@ -65,7 +65,7 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 	String ref_temp(reference);
 	ref_temp.truncate();
 	if(*(ref_temp.end()-1)!='/')
-		{ref_temp.append("/",2);}
+		{ref_temp.append("/");}
 	reference=ref_temp.begin();
 
 	unsigned int gen_count_target=0;
@@ -98,7 +98,7 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 			{
 		//	Since we have processed both paths, the only difference must be in the
 		//	last component. Just go up and down
-			ret.append("../",3).append(path_tok);
+			ret.append("../").append(path_tok);
 			return ret;
 			}
 		else
@@ -106,7 +106,7 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 	//	the remaining part of path
 		if(strcmp(path_tok.begin(),ref_tok.begin())==0)
 			{
-			ret.append(path,strlen(path)+1);
+			ret.append(path);
 			return ret;
 			}
 		}
@@ -130,11 +130,10 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 //	Go up from the reference path
 	while(gen_count_tot!=gen_count_target)
 		{
-		ret.append("../",3);
+		ret.append("../");
 		--gen_count_tot;
 		}
 	if(path_val_last!='\0' || ref_val_last=='\0')
-		{ret.append(path_old,strlen(path_old));}
-	ret.append('\0');
+		{ret.append(path_old);}
 	return ret;
 	}

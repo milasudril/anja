@@ -14,8 +14,18 @@ static String filenameGet(const String& filename,const String& load_path)
 	if(absoluteIs(filename))
 		{return filename;}
 	auto fullpath=load_path;
-	fullpath.truncate().append(filename).append('\0');
+	fullpath.append(filename);
 	return fullpath;
+	}
+
+static String filenameGenerate(const String& label)
+	{
+	String ret(label);
+	if(ret.length()==0)
+		{
+		
+		}
+	ret.append(".wav");
 	}
 
 void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)
@@ -36,4 +46,17 @@ void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)
 
 void WaveformView::store(SessionFileRecord& rec,const String& dir_current)
 	{
+	if(r_waveform.flagsGet()&Waveform::RECORDED)
+		{
+		auto filename=::filenameGet(filenameGenerate(r_waveform_data.keyLabelGet()),dir_current);
+		r_waveform_data.filenameSet(makeRelativeTo(filename.begin(),dir_current.begin()));
+		r_waveform.fileSave(filename.begin());
+		}
+	
+	auto filename_out=r_waveform_data.filenameGet();
+	if(*filename_out.begin()!='\0')
+		{filename_out=makeRelativeTo(filename_out.begin(),dir_current.begin());}
+	rec.propertySet(String("Filename"),filename_out);
+	r_waveform.dataGet(rec);
+	r_waveform_data.dataGet(rec);	
 	}
