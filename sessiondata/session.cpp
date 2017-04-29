@@ -96,8 +96,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			if(ch<1 || ch>16)
 				{throw "The channel number has to be between 1 and 16 inclusive";}
 			--ch;
-			m_channel_data[ch]=ChannelData{record};
-			m_channels[ch]=Channel{record};
+			ChannelView(m_channels[ch],m_channel_data[ch]).load(record);
 			}
 		}
 	m_state_flags=0;
@@ -210,8 +209,7 @@ void Session::save(const char* filename)
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
-			channel->dataGet(record_out);
-			m_channels[k].dataGet(record_out);
+			ChannelView(m_channels[k],*channel).store(record_out);
 			writer.recordWrite(record_out);
 			++k;
 			++channel;

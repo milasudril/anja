@@ -8,7 +8,6 @@
 
 #include "channel.hpp"
 #include "channeldata.hpp"
-#include "../common/keyboardlayout.hpp"
 
 namespace Anja
 	{

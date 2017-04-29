@@ -8,7 +8,6 @@
 
 #include "waveform.hpp"
 #include "waveformdata.hpp"
-#include "../common/keyboardlayout.hpp"
 
 namespace Anja
 	{

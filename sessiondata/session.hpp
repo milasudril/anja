@@ -7,10 +7,8 @@
 #define ANJA_SESSION_HPP
 
 #include "../common/arraydynamicshort.hpp"
-#include "waveformdata.hpp"
 #include "waveformview.hpp"
-#include "channeldata.hpp"
-#include "channel.hpp"
+#include "channelview.hpp"
 #include "wavetable.hpp"
 #include "channelmixer.hpp"
 
@@ -43,10 +41,11 @@ namespace Anja
 			const Waveform& waveformGet(uint8_t slot) const noexcept
 				{return m_waveforms[slot];}
 
-			WaveformView waveformViewGet(uint8_t slot)
-				{
-				return WaveformView(m_waveforms[slot],m_waveform_data[slot]);
-				}
+			WaveformView waveformViewGet(uint8_t slot) noexcept
+				{return WaveformView(m_waveforms[slot],m_waveform_data[slot]);}
+
+			ChannelView channelViewGet(int ch) noexcept
+				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
 
 
 
