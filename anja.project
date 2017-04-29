@@ -3,7 +3,6 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="main.cpp"/>
     <File Name="maikeconfig.json"/>
     <VirtualDirectory Name="sessiondata">
       <File Name="sessiondata/session.hpp"/>
@@ -58,6 +57,22 @@
       <File Name="common/string.hpp"/>
       <File Name="common/string.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="ui">
+      <File Name="ui/sessioneditor.hpp"/>
+      <File Name="ui/container.hpp"/>
+      <File Name="ui/window.cpp"/>
+      <File Name="ui/window.hpp"/>
+      <File Name="ui/uicontext.hpp"/>
+      <File Name="ui/uicontext.cpp"/>
+      <File Name="ui/paned.hpp"/>
+      <File Name="ui/paned.cpp"/>
+      <File Name="ui/tabview.cpp"/>
+      <File Name="ui/tabview.hpp"/>
+      <File Name="ui/textentry.hpp"/>
+      <File Name="ui/textentry.cpp"/>
+    </VirtualDirectory>
+    <File Name="anja-test.cpp"/>
+    <File Name="anja.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
