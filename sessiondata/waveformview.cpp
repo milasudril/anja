@@ -54,8 +54,11 @@ void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)
 	r_waveform.dataSet(rec);
 	r_waveform_data.dataSet(rec);
 
-	r_key.labelSet(r_waveform_data.keyLabelGet().begin());
-	r_key.colorBackgroundSet(r_waveform_data.keyColorGet());
+	if(r_key!=nullptr)
+		{
+		r_key->labelSet(r_waveform_data.keyLabelGet().begin());
+		r_key->colorBackgroundSet(r_waveform_data.keyColorGet());
+		}
 
 	if(r_waveform_data.filenameGet().length()!=0)
 		{

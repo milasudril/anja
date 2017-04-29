@@ -93,7 +93,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			--slot_num;
 
 			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num]
-				,*m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]))
+				,m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]))
 				.load(record,m_directory);
 			}
 		else
@@ -267,24 +267,10 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
 
-			if(m_waveforms[k].flagsGet()&Waveform::RECORDED)
-				{
-				auto filename=::filenameGet(filenameGenerate(k),dir);
-				waveform->filenameSet(makeRelativeTo(filename.begin(),dir.begin()));
-				m_waveforms[k].fileSave(filename.begin());
-				}	
-
-			auto filename_out=waveform->filenameGet();
-			if(*filename_out.begin()!='\0')
-				{filename_out=makeRelativeTo(filename_out.begin(),dir.begin());}
-			record_out.propertySet(String("Filename"),filename_out);
-
-			waveform->dataGet(record_out);
-			m_waveforms[k].dataGet(record_out);
+			WaveformView wv(m_waveforms[k],*waveform,nullptr);
+			wv.store(record_out,dir);
 			writer.recordWrite(record_out);
-		
-			waveform->dirtyClear();
-			m_waveforms[k].dirtyClear();
+			wv.dirtyClear();
 			++waveform;
 			++k;
 			}

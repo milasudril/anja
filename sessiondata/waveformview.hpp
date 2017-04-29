@@ -18,7 +18,7 @@ namespace Anja
 		{
 		public:
 			explicit WaveformView(Waveform& wf,WaveformData& wd
-				,KeyboardLayout::KeyDescriptor& key) noexcept:
+				,KeyboardLayout::KeyDescriptor* key) noexcept:
 				r_waveform(wf),r_waveform_data(wd),r_key(key)
 				{}
 
@@ -37,7 +37,8 @@ namespace Anja
 			void descriptionSet(const String& description)
 				{
 				r_waveform_data.descriptionSet(description);
-				r_key.labelSet(r_waveform_data.keyLabelGet().begin());
+				if(r_key!=nullptr)
+					{r_key->labelSet(r_waveform_data.keyLabelGet().begin());}
 				}
 
 			const String& keyLabelGet() const noexcept
@@ -49,7 +50,8 @@ namespace Anja
 			void keyColorSet(const ColorRGBA& color_new)
 				{
 				r_waveform_data.keyColorSet(color_new);
-				r_key.colorBackgroundSet(r_waveform_data.keyColorGet());
+				if(r_key!=nullptr)
+					{r_key->colorBackgroundSet(r_waveform_data.keyColorGet());}
 				}
 
 			bool dirtyIs() const noexcept
@@ -65,7 +67,7 @@ namespace Anja
 		private:
 			Waveform& r_waveform;
 			WaveformData& r_waveform_data;
-			KeyboardLayout::KeyDescriptor& r_key;
+			KeyboardLayout::KeyDescriptor* r_key;
 		};
 	}
 

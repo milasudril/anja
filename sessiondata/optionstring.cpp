@@ -25,7 +25,7 @@ String Anja::stringFromOptions(unsigned int option_bits
 			{
 			if(ret.length() > 0)
 				{ret.append('|');}
-			ret.append(String(*option_names)).truncate();
+			ret.append(String(*option_names));
 			}
 
 		++option_names;
