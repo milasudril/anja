@@ -5,7 +5,7 @@
 
 using namespace Anja;
 
-enum{FILENAME,DESCRIPTION,COLOR};
+enum{FILENAME,DESCRIPTION,COLOR,CHANNEL};
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform):
 	 m_waveform(waveform)
@@ -17,12 +17,16 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform):
 			,m_description_label(m_description.insertMode({2,0}),"Description")
 			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}),DESCRIPTION)
 		,m_details(m_box,false)
-			,m_details_left(m_details.insertMode(Paned::InsertMode{Paned::SHRINK_ALLOWED|Paned::RESIZE|Paned::SCROLL_ALLOWED}),true)
+			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE|Paned::SCROLL_ALLOWED}),true)
 				,m_color(m_details_left.insertMode({2,0}),false)
 					,m_color_label(m_color.insertMode({2,0}),"Color")
-					,m_color_input(m_color,COLOR)
+					,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}),COLOR)
+				,m_channel(m_details_left,false)
+					,m_channel_label(m_channel.insertMode({2,0}),"Channel")
+					,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}),CHANNEL)
 	{
 	m_filename_input.content(waveform.filenameGet().begin());
 	m_description_input.content(waveform.descriptionGet().begin());
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
+	m_channel_input.append("Foo").append("Bar");
 	}

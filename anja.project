@@ -79,6 +79,8 @@
       <File Name="ui/scrolledwindow.cpp"/>
       <File Name="ui/waveformeditor.hpp"/>
       <File Name="ui/waveformeditor.cpp"/>
+      <File Name="ui/listbox.cpp"/>
+      <File Name="ui/listbox.hpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

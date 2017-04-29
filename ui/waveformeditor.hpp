@@ -10,6 +10,7 @@
 #include "label.hpp"
 #include "textentry.hpp"
 #include "paned.hpp"
+#include "listbox.hpp"
 #include "../sessiondata/waveformview.hpp"
 
 namespace Anja
@@ -34,6 +35,9 @@ namespace Anja
 						Box m_color;
 							Label m_color_label;
 							TextEntry m_color_input;
+						Box m_channel;
+							Label m_channel_label;
+							Listbox m_channel_input;
 		};
 
 	}
