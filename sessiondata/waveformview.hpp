@@ -134,6 +134,12 @@ namespace Anja
 			void flagsUnset(uint32_t flags) noexcept
 				{r_waveform.flagsUnset(flags);}
 
+			void append(const float* x,uint32_t n)
+				{r_waveform.append(x,n);}
+
+			void capacitySet(uint32_t capacity_new)
+				{r_waveform.capacitySet(capacity_new);}
+
 
 
 			bool dirtyIs() const noexcept

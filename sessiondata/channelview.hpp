@@ -15,9 +15,8 @@ namespace Anja
 	class ChannelView
 		{
 		public:
-			explicit ChannelView(Channel& ch,ChannelData& ch_data
-				,KeyboardLayout::KeyDescriptor* key) noexcept:r_channel(ch)
-				,r_channel_data(ch_data),r_key(key)
+			explicit ChannelView(Channel& ch,ChannelData& ch_data) noexcept:r_channel(ch)
+				,r_channel_data(ch_data)
 				{}
 
 			void load(const SessionFileRecord& rec);
@@ -27,21 +26,29 @@ namespace Anja
 				{return r_channel_data.labelGet();}
 
 			void labelSet(const String& label)
-				{
-				r_channel_data.labelSet(label);
-				if(r_key!=nullptr)
-					{r_key->labelSet(r_channel_data.labelGet().begin());}
-				}
+				{r_channel_data.labelSet(label);}
 
 			const ColorRGBA& colorGet() const noexcept
 				{return r_channel_data.colorGet();}
 
 			void colorSet(const ColorRGBA& color) noexcept
-				{
-				r_channel_data.colorSet(color);
-				if(r_key!=nullptr)
-					{r_key->colorBackgroundSet(r_channel_data.colorGet());}
-				}
+				{r_channel_data.colorSet(color);}
+
+
+
+			float gainGet() const noexcept
+				{return r_channel.gainGet();}
+
+			void gainSet(float gain) noexcept
+				{r_channel.gainSet(gain);}
+
+			float fadeTimeGet() const noexcept
+				{return r_channel.fadeTimeGet();}
+
+			void fadeTimeSet(float time) noexcept
+				{return r_channel.fadeTimeSet(time);}
+
+
 
 			bool dirtyIs() const noexcept
 				{return r_channel.dirtyIs() || r_channel_data.dirtyIs();}
@@ -52,16 +59,9 @@ namespace Anja
 				r_channel_data.dirtyClear();
 				}
 
-			Channel& channel() noexcept
-				{return r_channel;}
-
-			const Channel& channel() const noexcept
-				{return r_channel;}
-
 		private:
 			Channel& r_channel;
 			ChannelData& r_channel_data;
-			KeyboardLayout::KeyDescriptor* r_key;
 		};
 	}
 

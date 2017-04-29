@@ -41,9 +41,7 @@ namespace Anja
 				}
 
 			float fadeTimeGet() const noexcept
-				{
-				return m_fade_time;
-				}
+				{return m_fade_time;}
 
 			void fadeTimeSet(float time) noexcept
 				{
@@ -53,9 +51,7 @@ namespace Anja
 				}
 
 			bool dirtyIs() const noexcept
-				{
-				return m_state_flags&DIRTY;
-				}
+				{return m_state_flags&DIRTY;}
 
 			void dirtyClear() noexcept
 				{m_state_flags&=~DIRTY;}
