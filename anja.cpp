@@ -2,9 +2,8 @@
 
 #include "ui/uicontext.hpp"
 #include "ui/window.hpp"
-#include "ui/tabview.hpp"
-#include "ui/textentry.hpp"
-#include "ui/paned.hpp"
+#include "ui/sessioneditor.hpp"
+#include "sessiondata/session.hpp"
 #include <cstdio>
 
 namespace Anja
@@ -27,16 +26,18 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::UiContext ctx;
+		Anja::Session session;
+		session.load("testbank/testbank.txt");
 		Anja::SessionControl ctrl(ctx);
 		Anja::Window mainwin("New session",0);
-		Anja::Paned paned(mainwin,true);
-		Anja::TextEntry e0(paned
+		Anja::SessionEditorBase editor(mainwin,session);
+	/*	Anja::TextEntry e0(paned
 			.insertMode(Anja::Paned::InsertMode
 				{Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE|Anja::Paned::SCROLL_ALLOWED}),0);
 		e0.small(1);
 		Anja::TabView tabs(paned);
 		tabs.tabTitle("Waveform data");
-		Anja::TextEntry test(tabs,1);
+		Anja::TextEntry test(tabs,1);*/
 
 		mainwin.callback(ctrl);
 		mainwin.show();

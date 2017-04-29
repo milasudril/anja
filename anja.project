@@ -70,6 +70,15 @@
       <File Name="ui/tabview.hpp"/>
       <File Name="ui/textentry.hpp"/>
       <File Name="ui/textentry.cpp"/>
+      <File Name="ui/sessioneditor.cpp"/>
+      <File Name="ui/box.hpp"/>
+      <File Name="ui/box.cpp"/>
+      <File Name="ui/label.hpp"/>
+      <File Name="ui/label.cpp"/>
+      <File Name="ui/scrolledwindow.hpp"/>
+      <File Name="ui/scrolledwindow.cpp"/>
+      <File Name="ui/waveformeditor.hpp"/>
+      <File Name="ui/waveformeditor.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
