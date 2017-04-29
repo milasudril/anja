@@ -30,10 +30,6 @@ namespace Anja
 
 			void filenameSet(const ArrayDynamicShort<char>& filename);
 
-			void sampleRateSet(float fs);
-
-
-
 			const ArrayDynamicShort<char>& descriptionGet() const noexcept
 				{return m_description;}
 
