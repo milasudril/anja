@@ -47,6 +47,15 @@ namespace Anja
 			ChannelView channelViewGet(int ch) noexcept
 				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
 
+			unsigned int channelsCountGet() noexcept
+				{return m_channel_data.length();}
+
+			const Channel& channelGet(unsigned int index) const noexcept
+				{return m_channels[index];}
+
+			Channel& channelGet(unsigned int index) noexcept
+				{return m_channels[index];}
+
 
 
 			void titleSet(const String& title_new) noexcept
@@ -75,24 +84,6 @@ namespace Anja
 				{m_slot_active=slot;}
 
 			void channelsClear();
-
-			ChannelData* channelDataBegin() noexcept
-				{return m_channel_data.begin();}
-
-			unsigned int channelsCountGet() noexcept
-				{return m_channel_data.length();}
-
-			const ChannelData& channelDataGet(unsigned int index) const noexcept
-				{return m_channel_data[index];}
-
-			ChannelData& channelDataGet(unsigned int index)
-				{return m_channel_data[index];}
-
-			const Channel& channelGet(unsigned int index) const noexcept
-				{return m_channels[index];}
-
-			Channel& channelGet(unsigned int index) noexcept
-				{return m_channels[index];}
 
 			void clear();
 
