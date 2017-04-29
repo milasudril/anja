@@ -25,7 +25,11 @@ namespace Anja
 			const String& labelGet() const noexcept
 				{return m_label;}
 
-			void labelSet(const char* label) noexcept;
+			void labelSet(const String& label)
+				{
+				m_label=label;
+				m_state_flags|=DIRTY;
+				}
 
 			const ColorRGBA& colorGet() const noexcept
 				{return m_color;}

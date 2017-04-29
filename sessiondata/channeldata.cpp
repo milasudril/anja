@@ -49,8 +49,4 @@ void ChannelData::dataGet(SessionFileRecord& record) const
 //	TODO Save other data not interpreted by Anja
 	}
 
-void ChannelData::labelSet(const char* label) noexcept
-	{
-	m_label=String(label);
-	m_state_flags|=DIRTY;
-	}
+

@@ -4,7 +4,6 @@
 #include "sessionfilereader.hpp"
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecordimpl.hpp"
-#include "waveformview.hpp"
 #include "../common/units.hpp"
 #include "optionstring.hpp"
 #include "../common/localeguard.hpp"
@@ -82,8 +81,7 @@ Session::Session(const char* filename):m_slot_active(0)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
 			--slot_num;
 
-			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num]
-				,m_keyboard.keyFromScancode(m_slot_to_scancode[slot_num]))
+			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num])
 				.load(record,m_directory);
 			}
 		else
@@ -107,28 +105,6 @@ Session::Session(const char* filename):m_slot_active(0)
 
 void Session::waveformsClear()
 	{
-	//	Reset slot scancodes
-		{
-		memset(m_scancode_to_slot.begin(),-1,sizeof(m_scancode_to_slot));
-		memset(m_slot_to_scancode.begin(),0,sizeof(m_slot_to_scancode));
-		auto ptr=m_keyboard.typingAreaScancodesBegin();
-		auto ptr_end=m_keyboard.typingAreaScancodesEnd();
-		uint8_t scancode_prev=0;
-		uint8_t k=0;
-		while(ptr!=ptr_end)
-			{
-			auto val=*ptr;
-			if(val!=scancode_prev && val!=0)
-				{
-				m_scancode_to_slot[val]=k;
-				m_slot_to_scancode[k]=val;
-				++k;
-				}
-			scancode_prev=val;
-			++ptr;
-			}
-		}
-
 	//	Reset waveform data
 		{
 		auto ptr=m_waveform_data.begin();
@@ -145,28 +121,6 @@ void Session::waveformsClear()
 
 void Session::channelsClear()
 	{
-	//	Reset channel scancodes
-		{
-		memset(m_channel_to_scancode.begin(),0,sizeof(m_channel_to_scancode));
-		memset(m_scancode_to_channel.begin(),-1,sizeof(m_scancode_to_channel));
-		auto ptr=m_keyboard.functionKeysScancodesBegin();
-		auto ptr_end=m_keyboard.functionKeysScancodesEnd();
-		uint8_t scancode_prev=0;
-		uint8_t k=0;
-		while(ptr!=ptr_end)
-			{
-			auto val=*ptr;
-			if(val!=scancode_prev && val!=0)
-				{
-				m_scancode_to_channel[val]=k;
-				m_channel_to_scancode[k]=val;
-				++k;
-				}
-			scancode_prev=val;
-			++ptr;
-			}
-		}
-
 	//	Reset channel data
 		{
 		auto ptr=m_channel_data.begin();
@@ -177,7 +131,7 @@ void Session::channelsClear()
 			ptr->clear();
 			char buffer[16];
 			sprintf(buffer,"Ch %d",k);
-			ptr->labelSet(buffer);
+			ptr->labelSet(String(buffer));
 			++k;
 			++ptr;
 			}
@@ -198,20 +152,6 @@ void Session::clear()
 		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
 	m_state_flags=0;
 	m_flags=0;
-	}
-
-void Session::keyHighlight(uint8_t scancode)
-	{
-	auto key_active=m_keyboard.keyFromScancode(scancode);
-	if(key_active!=nullptr)
-		{key_active->colorBorderSet(COLORS[ColorID::GREEN]);}
-	}
-
-void Session::keyReset(uint8_t scancode)
-	{
-	auto key_active=m_keyboard.keyFromScancode(scancode);
-	if(key_active!=nullptr)
-		{key_active->colorBorderSet(COLORS[ColorID::GRAY]);}
 	}
 
 void Session::save(const char* filename)
@@ -250,7 +190,7 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
 
-			WaveformView wv(m_waveforms[k],*waveform,nullptr);
+			WaveformView wv(m_waveforms[k],*waveform);
 			wv.store(record_out,dir);
 			writer.recordWrite(record_out);
 			wv.dirtyClear();

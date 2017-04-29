@@ -7,8 +7,8 @@
 #define ANJA_SESSION_HPP
 
 #include "../common/arraydynamicshort.hpp"
-#include "../common/keyboardlayout.hpp"
 #include "waveformdata.hpp"
+#include "waveformview.hpp"
 #include "channeldata.hpp"
 #include "channel.hpp"
 #include "wavetable.hpp"
@@ -35,18 +35,18 @@ namespace Anja
 			const String& directoryGet() const noexcept
 				{return m_directory;}
 
-
-
 			void waveformsClear();
 
-			const WaveformData& waveformDataGet(uint8_t slot) const noexcept
-				{return m_waveform_data[slot];}
-
-			WaveformData& waveformDataGet(uint8_t slot) noexcept
-				{return m_waveform_data[slot];}
-
-			const Waveform& waveformGet(uint8_t slot) noexcept
+			Waveform& waveformGet(uint8_t slot) noexcept
 				{return m_waveforms[slot];}
+
+			const Waveform& waveformGet(uint8_t slot) const noexcept
+				{return m_waveforms[slot];}
+
+			WaveformView waveformViewGet(uint8_t slot)
+				{
+				return WaveformView(m_waveforms[slot],m_waveform_data[slot]);
+				}
 
 
 
@@ -69,25 +69,11 @@ namespace Anja
 				{return m_description;}
 
 
-
-			KeyboardLayout& keyboardLayoutGet() noexcept
-				{return m_keyboard;}
-
-			const KeyboardLayout& keyboardLayoutGet() const noexcept
-				{return m_keyboard;}
-
-			uint8_t scancodeToSlot(uint8_t scancode) const noexcept
-				{return m_scancode_to_slot[scancode];}
-
 			uint8_t slotActiveGet() const noexcept
 				{return m_slot_active;}
 
 			void slotActiveSet(uint8_t slot)
-				{
-				keyReset(m_slot_to_scancode[m_slot_active]);
-				m_slot_active=slot;
-				keyHighlight(m_slot_to_scancode[slot]);
-				}
+				{m_slot_active=slot;}
 
 			void channelsClear();
 
@@ -108,9 +94,6 @@ namespace Anja
 
 			Channel& channelGet(unsigned int index) noexcept
 				{return m_channels[index];}
-
-			uint8_t scancodeToChannel(uint8_t scancode) const noexcept
-				{return m_scancode_to_channel[scancode];}
 
 			void clear();
 
@@ -176,20 +159,9 @@ namespace Anja
 			ChannelMixer m_channels;
 			float m_gain;
 
-			typedef int8_t WaveformIndex;
-			ArrayFixed<WaveformIndex,Wavetable::length()>  m_slot_to_scancode;
-
-			typedef int8_t Scancode;
-			ArrayFixed<Scancode,Wavetable::length()> m_scancode_to_slot;
-
-			typedef int8_t ChannelIndex;
-			ArrayFixed<ChannelIndex,ChannelMixer::length()> m_channel_to_scancode; //Needed?
-			ArrayFixed<Scancode,128> m_scancode_to_channel;
-
 			ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 			ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
 
-			KeyboardLayout m_keyboard;
 			String m_filename;
 			String m_directory;
 			String m_title;

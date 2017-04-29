@@ -34,6 +34,8 @@
       <File Name="sessiondata/channel.cpp"/>
       <File Name="sessiondata/waveformview.hpp"/>
       <File Name="sessiondata/waveformview.cpp"/>
+      <File Name="sessiondata/channelview.hpp"/>
+      <File Name="sessiondata/channelview.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
