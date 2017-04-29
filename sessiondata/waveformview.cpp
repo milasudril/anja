@@ -5,9 +5,29 @@
 #include "waveformview.hpp"
 #include "sessionfilerecord.hpp"
 #include "../common/pathutils.hpp"
+#include <time.h>
 
 using namespace Anja;
 
+namespace
+	{
+	class IdGenerator
+		{
+		public:
+			IdGenerator() noexcept:m_value(time(NULL)){}
+
+			uint32_t next() noexcept
+				{
+				++m_value;
+				return m_value;
+				}
+
+		private:
+			uint32_t m_value;
+		};
+	}
+
+static IdGenerator s_id_gen;
 
 static String filenameGet(const String& filename,const String& load_path)
 	{
@@ -21,11 +41,12 @@ static String filenameGet(const String& filename,const String& load_path)
 static String filenameGenerate(const String& label)
 	{
 	String ret(label);
-	if(ret.length()==0)
-		{
-		
-		}
-	ret.append(".wav");
+	if(ret.length()!=0)
+		{ret.append('-');}
+	char buff[9];
+	sprintf(buff,"%x",s_id_gen.next());
+	ret.append(buff).append(".wav");
+	return ret;
 	}
 
 void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)

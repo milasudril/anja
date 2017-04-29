@@ -269,10 +269,11 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 	if(state_current==State::VALUE || state_prev==State::VALUE)
 		{
 		tok.type=TokenType::VALUE;
-
 		return 1;
 		}
+
 	if(state_current!=State::INIT)
 		{throw "Incomplete record";}
+
 	return 0;
 	}
