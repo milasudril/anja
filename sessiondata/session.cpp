@@ -4,7 +4,6 @@
 #include "sessionfilereader.hpp"
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecordimpl.hpp"
-#include "../common/units.hpp"
 #include "optionstring.hpp"
 #include "../common/localeguard.hpp"
 #include "../common/pathutils.hpp"
