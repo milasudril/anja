@@ -15,11 +15,15 @@
 
 namespace Anja
 	{
-	class WaveformView;
+	class Session;
+	template<class T>
+	class ArraySimple;
+
 	class WaveformEditor
 		{
 		public:
-			WaveformEditor(Container& cnt,const WaveformView& waveform);
+			WaveformEditor(Container& cnt,const WaveformView& waveform
+				,const ArraySimple<String>& channel_names);
 
 		private:
 			WaveformView m_waveform;

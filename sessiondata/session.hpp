@@ -7,6 +7,7 @@
 #define ANJA_SESSION_HPP
 
 #include "../common/arraydynamicshort.hpp"
+#include "../common/arraysimple.hpp"
 #include "waveformview.hpp"
 #include "channelview.hpp"
 #include "wavetable.hpp"
@@ -47,7 +48,9 @@ namespace Anja
 			ChannelView channelViewGet(int ch) noexcept
 				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
 
-			unsigned int channelsCountGet() noexcept
+			ArraySimple<String> channelLabelsGet() const;
+
+			int channelsCountGet() noexcept
 				{return m_channel_data.length();}
 
 			const Channel& channelGet(unsigned int index) const noexcept

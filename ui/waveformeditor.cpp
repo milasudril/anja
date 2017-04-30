@@ -1,13 +1,16 @@
 //@	{"targets":[{"name":"waveformeditor.o","type":"object"}]}
 
 #include "waveformeditor.hpp"
+#include "../sessiondata/session.hpp"
 #include "../common/colorstring.hpp"
+#include "../common/arraysimple.hpp"
 
 using namespace Anja;
 
 enum{FILENAME,DESCRIPTION,COLOR,CHANNEL};
 
-WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform):
+WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
+	,const ArraySimple<String>& channel_names):
 	 m_waveform(waveform)
 	,m_box(cnt,true)
 		,m_filename(m_box.insertMode({1,0}),false)
@@ -28,5 +31,11 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform):
 	m_filename_input.content(waveform.filenameGet().begin());
 	m_description_input.content(waveform.descriptionGet().begin());
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
-	m_channel_input.append("Foo").append("Bar");
+
+	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
+		{
+		m_channel_input.append(str.begin());
+		});
+
+	m_channel_input.selected(m_waveform.channelGet());	
 	}

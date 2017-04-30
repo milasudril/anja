@@ -117,23 +117,30 @@ void Session::waveformsClear()
 		slotActiveSet(0);
 	}
 
+ArraySimple<String> Session::channelLabelsGet() const
+	{
+	ArraySimple<String> ret(m_channel_data.length());
+	auto k=0;
+	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&ret,&k](const auto& x)
+		{
+		ret[k]=x.labelGet();
+		++k;
+		});
+	return std::move(ret);
+	}
+
+
 void Session::channelsClear()
 	{
-	//	Reset channel data
+	auto k=0;
+	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&k](auto& x)
 		{
-		auto ptr=m_channel_data.begin();
-		auto ptr_end=m_channel_data.end();
-		auto k=0;
-		while(ptr!=ptr_end)
-			{
-			ptr->clear();
-			char buffer[16];
-			sprintf(buffer,"Ch %d",k);
-			ptr->labelSet(String(buffer));
-			++k;
-			++ptr;
-			}
-		}
+		x.clear();
+		char buffer[16];
+		sprintf(buffer,"Ch %d",k);
+		x.labelSet(String(buffer));
+		++k;
+		});
 	}
 
 void Session::clear()
