@@ -81,6 +81,8 @@
       <File Name="ui/waveformeditor.cpp"/>
       <File Name="ui/listbox.cpp"/>
       <File Name="ui/listbox.hpp"/>
+      <File Name="ui/button.cpp"/>
+      <File Name="ui/button.hpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
