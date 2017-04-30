@@ -6,6 +6,8 @@
 #include "sessiondata/session.hpp"
 #include <cstdio>
 
+#include <unistd.h>
+
 namespace Anja
 	{
 	class SessionControl
@@ -16,6 +18,12 @@ namespace Anja
 
 			void closing(Window& win)
 				{r_ctx.exit();}
+
+			UiContext::RunStatus idle(UiContext& ctx)
+				{
+				return UiContext::RunStatus::WAIT;
+				}
+
 		private:
 			UiContext& r_ctx;
 		};
@@ -28,20 +36,12 @@ int main(int argc, char **argv)
 		Anja::UiContext ctx;
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
-		Anja::SessionControl ctrl(ctx);
 		Anja::Window mainwin("New session",0);
 		Anja::SessionEditorBase editor(mainwin,session);
-	/*	Anja::TextEntry e0(paned
-			.insertMode(Anja::Paned::InsertMode
-				{Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE|Anja::Paned::SCROLL_ALLOWED}),0);
-		e0.small(1);
-		Anja::TabView tabs(paned);
-		tabs.tabTitle("Waveform data");
-		Anja::TextEntry test(tabs,1);*/
-
+		Anja::SessionControl ctrl(ctx);
 		mainwin.callback(ctrl);
 		mainwin.show();
-		ctx.run();
+		ctx.run(ctrl);
 		}
 	catch(const char* err)
 		{

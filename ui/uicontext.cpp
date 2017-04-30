@@ -18,16 +18,9 @@ class UiContext::Impl:public UiContext
 		void exit()
 			{m_stop=1;}
 
-		void run();
-
-		void ui_update(UiUpdate update,void* cb)
-			{
-			gdk_threads_add_idle(update,cb);
-			}
+		void run(IdleCallbackImpl cb,void* cb_obj);
 
 	private:
-	//	static gboolean update_callback(gpointer data)
-
 		volatile bool m_stop;
 	};
 
@@ -40,21 +33,21 @@ UiContext::~UiContext()
 void UiContext::exit()
 	{m_impl->exit();}
 
-void UiContext::run()
-	{m_impl->run();}
+void UiContext::run(IdleCallbackImpl cb,void* cb_obj)
+	{m_impl->run(cb,cb_obj);}
 
-void UiContext::ui_update(UiUpdate update,void* cb)
-	{m_impl->ui_update(update,cb);}
 
 
 UiContext::Impl::~Impl()
 	{m_impl=nullptr;}
 
-void UiContext::Impl::run()
+void UiContext::Impl::run(IdleCallbackImpl cb,void* cb_obj)
 	{
 	m_stop=0;
+	bool wait=0;
 	while(!m_stop)
 		{
-		gtk_main_iteration();
+		g_main_context_iteration(NULL,wait);
+		wait=cb(cb_obj,*this)==RunStatus::WAIT;
 		}
 	}

@@ -15,27 +15,28 @@ namespace Anja
 			UiContext& operator=(const UiContext&)=delete;
 			UiContext();
 			~UiContext();
+
 			void exit();
-			void run();
-			
-			template<class Callback>
-			void uiUpdate(Callback& cb)
+
+			enum class RunStatus:int{CONTINUE,WAIT};
+
+			template<class IdleCallback>
+			void run(IdleCallback& t)
 				{
-				auto cb_wrapper=[](void* cb_obj)
+				auto cb_wrapper=[](void* cb_obj,UiContext& self)
 					{
-					auto obj=reinterpret_cast<Callback*>(cb_obj);
-					obj->uiUpdate();
-					return 0;
+					auto cb=reinterpret_cast<IdleCallback*>(cb_obj);
+					return cb->idle(self);
 					};
-				ui_update(cb_wrapper,&cb);
+				run(cb_wrapper,&t);
 				}
 
 		private:
 			class Impl;
 			Impl* m_impl;
 			UiContext(Impl& impl):m_impl(&impl){}
-			typedef int (*UiUpdate)(void* cb);
-			void ui_update(UiUpdate update,void* cb);
+			typedef RunStatus (*IdleCallbackImpl)(void* cb_obj,UiContext& self);
+			void run(IdleCallbackImpl cb,void* cb_obj);
 		};
 	}
 
