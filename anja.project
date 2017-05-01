@@ -89,6 +89,8 @@
       <File Name="ui/buttonlist.cpp"/>
       <File Name="ui/optionlist.hpp"/>
       <File Name="ui/optionlist.cpp"/>
+      <File Name="ui/slider.hpp"/>
+      <File Name="ui/slider.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

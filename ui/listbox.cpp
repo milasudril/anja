@@ -45,6 +45,11 @@ class Listbox::Impl:private Listbox
 			m_cb=tmp;
 			}
 
+		void callback(Callback cb,void* cb_obj)
+			{
+			m_cb=cb;
+			m_cb_obj=cb_obj;
+			}
 
 	private:
 		int m_id;
@@ -96,6 +101,11 @@ Listbox& Listbox::clear() noexcept
 	return *this;
 	}
 
+Listbox& Listbox::callback(Callback cb,void* cb_obj)
+	{
+	m_impl->callback(cb,cb_obj);
+	return *this;
+	}
 
 
 Listbox::Impl::Impl(Container& cnt,int id):Listbox(*this),m_id(id),m_cb(nullptr)

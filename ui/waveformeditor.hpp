@@ -13,6 +13,7 @@
 #include "listbox.hpp"
 #include "button.hpp"
 #include "optionlist.hpp"
+#include "slider.hpp"
 #include "../sessiondata/waveformview.hpp"
 
 namespace Anja
@@ -30,6 +31,12 @@ namespace Anja
 			void clicked(Button& src);
 
 			void clicked(OptionList<WaveformEditor>& src,Checkbox& opt);
+
+			void changed(Slider& slider);
+
+			void changed(TextEntry& entry);
+
+			void changed(Listbox& lb);
 
 		private:
 			WaveformView m_waveform;
@@ -50,6 +57,16 @@ namespace Anja
 						Box m_channel;
 							Label m_channel_label;
 							Listbox m_channel_input;
+						Box m_gain;
+							Label m_gain_label;
+							Box m_gain_input;
+								TextEntry m_gain_input_text;
+								Slider m_gain_input_slider;
+						Box m_gain_random;
+							Label m_gain_random_label;
+							Box m_gain_random_input;
+								TextEntry m_gain_random_input_text;
+								Slider m_gain_random_input_slider;
 						Box m_options;
 							Label m_options_label;
 						OptionList<WaveformEditor> m_options_input;
