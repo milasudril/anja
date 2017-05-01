@@ -92,6 +92,8 @@
       <File Name="ui/slider.hpp"/>
       <File Name="ui/slider.cpp"/>
       <File Name="ui/xyplot.hpp"/>
+      <File Name="ui/keymask.hpp"/>
+      <File Name="ui/keymask.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

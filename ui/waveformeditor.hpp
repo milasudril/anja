@@ -46,6 +46,7 @@ namespace Anja
 					Label m_filename_label;
 					TextEntry m_filename_input;
 					Button m_filename_browse;
+					Button m_filename_reload;
 				Box m_description;
 					Label m_description_label;
 					TextEntry m_description_input;
@@ -71,6 +72,10 @@ namespace Anja
 						Box m_options;
 							Label m_options_label;
 						OptionList<WaveformEditor> m_options_input;
+					Box m_details_right;
+					//	XYPlot m_waveform;
+						Box m_trim_panel;
+							Button m_swap;
 		};
 
 	}

@@ -14,6 +14,7 @@ enum
 	{
 	 FILENAME
 	,FILENAME_BROWSE
+	,FILENAME_RELOAD
 	,DESCRIPTION
 	,COLOR
 	,COLOR_PICK
@@ -23,6 +24,8 @@ enum
 	,GAIN_RANDOM_TEXT
 	,GAIN_RANDOM_SLIDER
 	,OPTIONS
+	,WAVEFORM
+	,CURSORS_SWAP
 	};
 
 static double gain_map(double x)
@@ -45,6 +48,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
 			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}),FILENAME)
 			,m_filename_browse(m_filename.insertMode({2,0}),FILENAME_BROWSE,"Browse")
+			,m_filename_reload(m_filename,FILENAME_RELOAD,"↺")
 		,m_description(m_box,false)
 			,m_description_label(m_description.insertMode({2,0}),"Description:")
 			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}),DESCRIPTION)
@@ -70,12 +74,16 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 				,m_options(m_details_left,false)
 					,m_options_label(m_options.insertMode({2,0}),"Options:")
 				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),OPTIONS,true)
+			,m_details_right(m_details,true)
+				,m_trim_panel(m_details_right.insertMode({0,0}),false)
+					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),CURSORS_SWAP,"⇌")
 	{
 	m_gain_input_text.width(7).small(true).alignment(1);
 	m_gain_random_input_text.width(6).small(true).alignment(1);
 
 	m_filename_input.callback(*this);
 	m_filename_browse.callback(*this);
+	m_filename_reload.callback(*this);
 	m_color_input.callback(*this);
 	m_color_pick.callback(*this);
 	m_channel_input.callback(*this);
@@ -84,6 +92,8 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_gain_random_input_slider.callback(*this);
 	m_gain_random_input_text.callback(*this);
 	m_options_input.callback(*this);
+//	TODO: Add m_waveform here...
+	m_swap.callback(*this);
 
 	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
 		{m_channel_input.append(str.begin());});

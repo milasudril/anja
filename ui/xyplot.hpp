@@ -3,6 +3,7 @@
 #ifndef ANJA_XYPLOT_HPP
 #define ANJA_XYPLOT_HPP
 
+#include "keymask.hpp"
 #include <utility>
 
 namespace Anja
@@ -11,8 +12,6 @@ namespace Anja
 	class XYPlot
 		{
 		public:
-			typedef unsigned int KeyMask;
-
 			explicit XYPlot(Container& cnt,int id);
 			~XYPlot();
 
@@ -63,11 +62,11 @@ namespace Anja
 				template<class Callback>
 				explicit Vtable(Callback& cb) noexcept
 					{
-					mouse_move=[](void* cb_obj,XYPlot& source,Point x,KeyMask keymask)
+					mouse_move=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->mouseMove(source,x,keymask);};
-					mouse_down=[](void* cb_obj,XYPlot& source,Point x,KeyMask keymask)
+					mouse_down=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->mouseDown(source,x,keymask);};
-					mouse_up=[](void* cb_obj,XYPlot& source,Point x,KeyMask keymask)
+					mouse_up=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->mouseUp(source,x,keymask);};
 					key_down=[](void* cb_obj,XYPlot& source,uint8_t scancode)
 						{reinterpret_cast<Callback*>(cb_obj)->keyDown(source,scancode);};
@@ -75,19 +74,19 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->keyUp(source,scancode);};
 					key_down=[](void* cb_obj,XYPlot& source,uint8_t scancode)
 						{reinterpret_cast<Callback*>(cb_obj)->keyDown(source,scancode);};
-					cursor_x=[](void* cb_obj,XYPlot& source,int index,KeyMask keymask)
+					cursor_x=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->cursorX(source,index,keymask);};
-					cursor_y=[](void* cb_obj,XYPlot& source,int index,KeyMask keymask)
+					cursor_y=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->cursorY(source,index,keymask);};
 					}
 
-				void (*mouse_move)(void* cb_obj,XYPlot& source,Point x,KeyMask keymask);
-				void (*mouse_down)(void* cb_obj,XYPlot& source,Point x,KeyMask keymask);
-				void (*mouse_up)(void* cb_obj,XYPlot& source,Point x,KeyMask keymask);
+				void (*mouse_move)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
+				void (*mouse_down)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
+				void (*mouse_up)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
 				void (*key_down)(void* cb_obj,XYPlot& source,uint8_t scancode);
 				void (*key_up)(void* cb_obj,XYPlot& source,uint8_t scancode);
-				void (*cursor_x)(void* cb_obj,XYPlot& source,int index,KeyMask keymask);
-				void (*cursor_y)(void* cb_obj,XYPlot& source,int index,KeyMask keymask);
+				void (*cursor_x)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
+				void (*cursor_y)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
 				};
 
 			XYPlot& callback(const Vtable& vt,void* cb_obj);
