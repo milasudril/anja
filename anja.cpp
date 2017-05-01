@@ -5,6 +5,7 @@
 #include "ui/sessioneditor.hpp"
 #include "sessiondata/session.hpp"
 #include <cstdio>
+#include <time.h>
 
 namespace Anja
 	{
@@ -19,7 +20,9 @@ namespace Anja
 
 			UiContext::RunStatus idle(UiContext& ctx)
 				{
-				return UiContext::RunStatus::WAIT;
+				timespec req{0,0};
+				nanosleep(&req,NULL);
+				return UiContext::RunStatus::CONTINUE;
 				}
 
 		private:
