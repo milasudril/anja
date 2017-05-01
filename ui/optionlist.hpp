@@ -59,6 +59,8 @@ namespace Anja
 			size_t size() const noexcept
 				{return m_options.size();}
 
+			OptionListImpl& selected(uint64_t mask);
+
 		private:
 			int m_id;
 			ScrolledWindow m_scroll;
@@ -121,6 +123,12 @@ namespace Anja
 
 			size_t size() const noexcept
 				{return m_impl.size();}
+
+			OptionList& selected(uint64_t mask)
+				{
+				m_impl.selected(mask);
+				return *this;
+				}
 
 		private:
 			Callback* r_callback;

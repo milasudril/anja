@@ -35,6 +35,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	{
 	m_filename_browse.callback(*this);
 	m_color_pick.callback(*this);
+	m_options_input.callback(*this);
 
 	m_filename_input.content(waveform.filenameGet().begin());
 	m_description_input.content(waveform.descriptionGet().begin());
@@ -45,8 +46,8 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 		{m_channel_input.append(str.begin());});
 
 	m_channel_input.selected(m_waveform.channelGet());
-	m_options_input.callback(*this);
 	m_options_input.append(waveform.flagNames());
+	m_options_input.selected(waveform.flagsGet());
 	}
 
 void WaveformEditor::clicked(Button& src)
