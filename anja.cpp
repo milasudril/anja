@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 		Anja::UiContext ctx;
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
-		Anja::Window mainwin("New session",0);
+		Anja::Window mainwin(session.filenameGet().begin(),0);
 		Anja::SessionEditorBase editor(mainwin,session);
 		Anja::SessionControl ctrl(ctx);
 		mainwin.callback(ctrl);
