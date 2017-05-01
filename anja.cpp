@@ -6,8 +6,6 @@
 #include "sessiondata/session.hpp"
 #include <cstdio>
 
-#include <unistd.h>
-
 namespace Anja
 	{
 	class SessionControl
