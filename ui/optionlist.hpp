@@ -22,6 +22,7 @@ namespace Anja
 					,m_box_main(m_scroll,vertical)
 						,m_box(m_box_main,vertical)
 				{
+				m_scroll.border(1);
 				m_box.homogenous(1).insertMode({0,Box::EXPAND|Box::FILL});
 				}
 

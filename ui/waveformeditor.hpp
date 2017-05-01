@@ -50,7 +50,9 @@ namespace Anja
 						Box m_channel;
 							Label m_channel_label;
 							Listbox m_channel_input;
-						OptionList<WaveformEditor> m_options;
+						Box m_options;
+							Label m_options_label;
+						OptionList<WaveformEditor> m_options_input;
 		};
 
 	}

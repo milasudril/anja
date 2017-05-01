@@ -30,6 +30,7 @@ namespace Anja
 			ScrolledWindow& show();
 			ScrolledWindow& sensitive(bool val);
 			void* toplevel() const;
+			ScrolledWindow& border(bool val);
 
 		protected:
 			class Impl;

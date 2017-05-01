@@ -25,6 +25,9 @@ class ScrolledWindow::Impl:private ScrolledWindow
 		void* _toplevel() const
 			{return gtk_widget_get_toplevel(GTK_WIDGET(m_handle));}
 
+		void border(bool val)
+			{gtk_scrolled_window_set_shadow_type(m_handle,val?GTK_SHADOW_IN:GTK_SHADOW_NONE);}
+
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkScrolledWindow* m_handle;
@@ -51,6 +54,12 @@ ScrolledWindow& ScrolledWindow::show()
 ScrolledWindow& ScrolledWindow::sensitive(bool val)
 	{
 	m_impl->_sensitive(val);
+	return *this;
+	}
+
+ScrolledWindow& ScrolledWindow::border(bool val)
+	{
+	m_impl->border(val);
 	return *this;
 	}
 
