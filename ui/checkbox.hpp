@@ -6,6 +6,8 @@
 #ifndef ANJA_CHECKBOX_HPP
 #define ANJA_CHECKBOX_HPP
 
+#include <utility>
+
 namespace Anja
 	{
 	class Container;
@@ -15,6 +17,16 @@ namespace Anja
 		public:
 			explicit Checkbox(Container& cnt,int id,const char* title);
 			~Checkbox();
+
+
+			Checkbox& operator=(Checkbox&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Checkbox(Checkbox&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
 
 			bool state() const noexcept;
 			Checkbox& state(bool state_new);
