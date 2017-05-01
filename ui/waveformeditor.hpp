@@ -14,6 +14,7 @@
 #include "button.hpp"
 #include "optionlist.hpp"
 #include "slider.hpp"
+#include "xyplot.hpp"
 #include "../sessiondata/waveformview.hpp"
 
 namespace Anja

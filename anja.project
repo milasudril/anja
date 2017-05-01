@@ -91,6 +91,7 @@
       <File Name="ui/optionlist.cpp"/>
       <File Name="ui/slider.hpp"/>
       <File Name="ui/slider.cpp"/>
+      <File Name="ui/xyplot.hpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
