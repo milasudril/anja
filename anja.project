@@ -85,6 +85,8 @@
       <File Name="ui/button.hpp"/>
       <File Name="ui/checkbox.hpp"/>
       <File Name="ui/checkbox.cpp"/>
+      <File Name="ui/buttonlist.hpp"/>
+      <File Name="ui/buttonlist.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

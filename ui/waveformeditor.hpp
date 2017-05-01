@@ -12,6 +12,7 @@
 #include "paned.hpp"
 #include "listbox.hpp"
 #include "button.hpp"
+#include "optionlist.hpp"
 #include "../sessiondata/waveformview.hpp"
 
 namespace Anja
@@ -27,6 +28,8 @@ namespace Anja
 				,const ArraySimple<String>& channel_names);
 
 			void clicked(Button& src);
+
+			void clicked(OptionList<WaveformEditor>& src,Checkbox& opt);
 
 		private:
 			WaveformView m_waveform;
@@ -47,6 +50,7 @@ namespace Anja
 						Box m_channel;
 							Label m_channel_label;
 							Listbox m_channel_input;
+						OptionList<WaveformEditor> m_options;
 		};
 
 	}

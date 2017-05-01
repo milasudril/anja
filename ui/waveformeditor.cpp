@@ -7,7 +7,7 @@
 
 using namespace Anja;
 
-enum{FILENAME,FILENAME_BROWSE,DESCRIPTION,COLOR,COLOR_PICK,CHANNEL};
+enum{FILENAME,FILENAME_BROWSE,DESCRIPTION,COLOR,COLOR_PICK,CHANNEL,OPTIONS};
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const ArraySimple<String>& channel_names):
@@ -29,22 +29,28 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 				,m_channel(m_details_left,false)
 					,m_channel_label(m_channel.insertMode({2,0}),"Channel")
 					,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}),CHANNEL)
+				,m_options(m_details_left,OPTIONS,true)
 	{
 	m_filename_browse.callback(*this);
 	m_color_pick.callback(*this);
 
 	m_filename_input.content(waveform.filenameGet().begin());
 	m_description_input.content(waveform.descriptionGet().begin());
+
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
 
 	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
 		{m_channel_input.append(str.begin());});
 
-	m_channel_input.selected(m_waveform.channelGet());	
+	m_channel_input.selected(m_waveform.channelGet());
+	m_options.append(waveform.flagNames()).callback(*this);
 	}
-
 
 void WaveformEditor::clicked(Button& src)
 	{
 	src.state(0);
+	}
+
+void WaveformEditor::clicked(OptionList<WaveformEditor>& src,Checkbox& opt)
+	{
 	}

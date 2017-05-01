@@ -149,6 +149,9 @@ namespace Anja
 				r_waveform_data.dirtyClear();
 				r_waveform.dirtyClear();
 				}
+
+			static const char* const* flagNames() noexcept
+				{return Waveform::flagNames();}
 			
 		private:
 			Waveform& r_waveform;
