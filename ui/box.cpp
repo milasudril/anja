@@ -98,7 +98,7 @@ Box& Box::alignment(float x) noexcept
 Box::Impl::Impl(Container& cnt,bool vertical):Box(*this),m_mode{0,0}
 	{
 	printf("Box::Impl %p ctor\n",this);
-	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,0);
+	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,2);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_BOX(widget);
