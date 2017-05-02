@@ -57,7 +57,11 @@ class XYPlot::Impl:public XYPlot
 		void* r_cb_obj;
 		Domain m_dom;
 
-		typedef std::vector<Point> Curve;
+		struct Curve
+			{
+			float hue;
+			std::vector<Point> points;
+			};
 
 		std::vector<Curve> m_curves;
 		std::vector<Cursor> m_cursors_x;
@@ -88,6 +92,7 @@ class XYPlot::Impl:public XYPlot
 			,const std::vector<TicMark>& axis_y);
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
 		void draw_axis_y(cairo_t* cr,const Domain& dom_window) const;
+		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window) const; 
 
 		Point to_window_coords(const Point& p,const Domain& dom_window) const
 			{return map_to_domain_inv_y(p,m_dom,dom_window);}
@@ -117,6 +122,12 @@ XYPlot::~XYPlot()
 	delete m_impl;
 	}
 
+XYPlot& XYPlot::curve(const Point* begin,const Point* end,float hue)
+	{
+	m_impl->curve(begin,end,hue);
+	return *this;
+	}
+
 
 
 XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
@@ -140,6 +151,9 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
 
+	gtk_widget_set_margin_end(widget,4);
+	gtk_widget_set_margin_start(widget,4);
+
 	g_object_ref_sink(widget);
 	cnt.add(widget);
 	domain({{-1,-1},{1,1}});
@@ -147,9 +161,6 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	m_dx=0.2;
 	m_N_tics_y=10;
 	m_dy=0.2;
-	gtk_widget_set_size_request(widget,512,128);
-	gtk_widget_set_margin_end(widget,4);
-	gtk_widget_set_margin_start(widget,4);
 	}
 
 XYPlot::Impl::~Impl()
@@ -157,6 +168,18 @@ XYPlot::Impl::~Impl()
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_canvas));
 	}
+
+void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
+	{
+	Curve c;
+	c.hue=hue;
+	std::for_each(begin,end,[&c](const Point& p)
+		{
+		c.points.push_back(p);
+		});
+	m_curves.push_back(std::move(c));
+	}
+
 
 
 void XYPlot::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj)
@@ -176,7 +199,6 @@ gboolean XYPlot::Impl::key_down(GtkWidget* widget,GdkEventKey* event,void* obj)
 
 gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
 	{return TRUE;}
-
 
 void XYPlot::Impl::prerender_x(cairo_t* cr,double x_0,size_t N,double dx)
 	{
@@ -286,6 +308,24 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 		}
 	}
 
+void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window) const
+	{
+	if(c.points.size()==0)
+		{return;}
+
+	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,0.4f));
+	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+
+	auto point_out=to_window_coords(c.points.front(),dom_window);
+	cairo_move_to(cr,point_out.x,point_out.y);
+	std::for_each(c.points.begin() + 1,c.points.end(),[cr,this,&dom_window](const Point& p)
+		{
+		auto point_out=to_window_coords(p,dom_window);
+		cairo_line_to(cr,point_out.x,point_out.y);
+		});
+	cairo_stroke(cr);
+	}
+
 gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
@@ -312,11 +352,17 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_fill(cr);
 		}
 
+	//	Draw curves
+		cairo_set_line_width(cr,1);
+		std::for_each(self->m_curves.begin(),self->m_curves.end()
+			,[&cr,&dom_window,self](const Curve& c)
+				{self->draw_curve(cr,c,dom_window);});
+
 	//	Draw border
 		{
 		auto w=dom_window.max.x - dom_window.min.x;
 		auto h=dom_window.max.y - dom_window.min.y;
-		cairo_rectangle(cr,dom_window.min.x,dom_window.min.y,w,h);
+		cairo_rectangle(cr,dom_window.min.x-1,dom_window.min.y-1,w+2,h+2);
 		cairo_set_source_rgba(cr,fg.red,fg.green,fg.blue,fg.alpha);
 		cairo_set_line_width(cr,1);
 		cairo_stroke(cr);

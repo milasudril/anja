@@ -56,7 +56,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 				,m_options(m_details_left,false)
 					,m_options_label(m_options.insertMode({2,0}),"Options:")
 				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),true)
-			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
+			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE}),true)
 				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
 				,m_trim_panel(m_details_right.insertMode({0,0}),false)
 					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
@@ -112,6 +112,17 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_cursor_begin_entry.content(buffer);
 	sprintf(buffer,"%d",waveform.offsetEndGet());
 	m_cursor_end_entry.content(buffer);
+
+
+//	Test stuff
+		{
+		ArrayDynamicShort<XYPlot::Point> points;
+		double dx=1.0/128;
+		for(int k=-128;k<=128;++k)
+			{points.append({dx*k,sin(2.0*acos(-1.0)*k*dx)});}
+
+		m_plot.curve(points.begin(),points.end(),0.0f);
+		}
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)

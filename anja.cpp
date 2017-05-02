@@ -3,6 +3,8 @@
 #include "ui/uicontext.hpp"
 #include "ui/window.hpp"
 #include "ui/sessioneditor.hpp"
+#include "ui/paned.hpp"
+#include "ui/label.hpp"
 #include "sessiondata/session.hpp"
 #include <cstdio>
 #include <time.h>
@@ -38,7 +40,9 @@ int main(int argc, char **argv)
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
 		Anja::Window mainwin(session.filenameGet().begin());
-		Anja::SessionEditorBase editor(mainwin,session);
+		Anja::Paned paned(mainwin,true);
+		Anja::Label lbl(paned,"Keyboard view placeholder");
+		Anja::SessionEditorBase editor(paned.insertMode({Anja::Paned::SCROLL_ALLOWED|Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}),session);
 		Anja::SessionControl ctrl(ctx);
 		mainwin.callback(ctrl,0);
 		mainwin.show();
