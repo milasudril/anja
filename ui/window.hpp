@@ -14,7 +14,7 @@ namespace Anja
 	class Window:public Container
 		{
 		public:
-			explicit Window(const char* title,int id);
+			explicit Window(const char* title);
 			~Window();
 
 			Window& operator=(Window&& obj) noexcept
@@ -34,22 +34,23 @@ namespace Anja
 			const char* title() const noexcept;
 			Window& title(const char* title_new);
 
-			template<class WindowCallback>
-			Window& callback(WindowCallback& cb) noexcept
+			template<class WindowCallback,class IdType>
+			Window& callback(WindowCallback& cb,IdType id) noexcept
 				{
 				auto cb_wrapper=[](void* wc,Window& self)
 					{
 					auto x=reinterpret_cast<WindowCallback*>(wc);
-					x->closing(self);
+					auto id=static_cast<IdType>(self.id());
+					x->closing(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
 				}
 
 			int id() const noexcept;
 
 		protected:
 			typedef void (*Callback)(void* cb_obj,Window& self);
-			Window& callback(Callback cb,void* cb_obj);
+			Window& callback(Callback cb,void* cb_obj,int id);
 
 			class Impl;
 			Impl* m_impl;

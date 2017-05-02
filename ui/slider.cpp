@@ -9,13 +9,14 @@ using namespace Anja;
 class Slider::Impl:private Slider
 	{
 	public:
-		Impl(Container& cnt,int id,bool vertical);
+		Impl(Container& cnt,bool vertical);
 		~Impl();
 
-		void callback(Callback cb,void* cb_obj)
+		void callback(Callback cb,void* cb_obj,int id)
 			{
-			m_cb=cb;
-			m_cb_obj=cb_obj;
+			r_cb=cb;
+			r_cb_obj=cb_obj;
+			m_id=id;
 			}
 
 		double value() const noexcept
@@ -29,21 +30,21 @@ class Slider::Impl:private Slider
 
 	private:
 		int m_id;
-		Callback m_cb;
-		void* m_cb_obj;
+		Callback r_cb;
+		void* r_cb_obj;
 		GtkScale* m_handle;
 		static gboolean changed_callback(GtkWidget* widget,gpointer data);
 	};
 
-Slider::Slider(Container& cnt,int id,bool vertical)
-	{m_impl=new Impl(cnt,id,vertical);}
+Slider::Slider(Container& cnt,bool vertical)
+	{m_impl=new Impl(cnt,vertical);}
 
 Slider::~Slider()
 	{delete m_impl;}
 
-Slider& Slider::callback(Callback cb,void* cb_obj)
+Slider& Slider::callback(Callback cb,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj);
+	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
@@ -60,8 +61,8 @@ int Slider::id() const noexcept
 
 
 
-Slider::Impl::Impl(Container& cnt,int id,bool vertical):Slider(*this),m_id(id)
-	,m_cb(nullptr)
+Slider::Impl::Impl(Container& cnt,bool vertical):Slider(*this),m_id(0)
+	,r_cb(nullptr)
 	{
 	auto widget=gtk_scale_new_with_range(vertical?
 		GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,0,1,1e-3);
@@ -76,14 +77,14 @@ Slider::Impl::Impl(Container& cnt,int id,bool vertical):Slider(*this),m_id(id)
 Slider::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	m_cb=nullptr;
+	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
 gboolean Slider::Impl::changed_callback(GtkWidget* widget,gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
-	if(state->m_cb!=nullptr)
-		{(state->m_cb)(state->m_cb_obj,*state);}
+	if(state->r_cb!=nullptr)
+		{state->r_cb(state->r_cb_obj,*state);}
 	return FALSE;
 	}

@@ -15,7 +15,7 @@ namespace Anja
 			SessionControl(UiContext& ctx):r_ctx(ctx)
 				{}
 
-			void closing(Window& win)
+			void closing(Window& win,int id)
 				{r_ctx.exit();}
 
 			UiContext::RunStatus idle(UiContext& ctx)
@@ -37,10 +37,10 @@ int main(int argc, char **argv)
 		Anja::UiContext ctx;
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
-		Anja::Window mainwin(session.filenameGet().begin(),0);
+		Anja::Window mainwin(session.filenameGet().begin());
 		Anja::SessionEditorBase editor(mainwin,session);
 		Anja::SessionControl ctrl(ctx);
-		mainwin.callback(ctrl);
+		mainwin.callback(ctrl,0);
 		mainwin.show();
 		ctx.run(ctrl);
 		}

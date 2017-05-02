@@ -26,18 +26,29 @@ namespace Anja
 	class WaveformEditor
 		{
 		public:
+			enum class ButtonId:int
+				{FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
+
+			enum class ListboxId:int
+				{CHANNEL};
+
+			enum class SliderId:int
+				{GAIN,GAIN_RANDOM};
+
+			enum class TextEntryId:int
+				{FILENAME,DESCRIPTION,COLOR,GAIN,GAIN_RANDOM};
+
+			enum class OptionListId:int
+				{OPTIONS};
+
 			WaveformEditor(Container& cnt,const WaveformView& waveform
 				,const ArraySimple<String>& channel_names);
 
-			void clicked(Button& src);
-
-			void clicked(OptionList<WaveformEditor>& src,Checkbox& opt);
-
-			void changed(Slider& slider);
-
-			void changed(TextEntry& entry);
-
-			void changed(Listbox& lb);
+			void clicked(Button& src,ButtonId id);
+			void clicked(OptionList<WaveformEditor,OptionListId>& src,Checkbox& opt,int bit);
+			void changed(Slider& slider,SliderId id);
+			void changed(TextEntry& entry,TextEntryId id);
+			void changed(Listbox& lb,ListboxId id);
 
 		private:
 			WaveformView m_waveform;
@@ -71,7 +82,7 @@ namespace Anja
 								Slider m_gain_random_input_slider;
 						Box m_options;
 							Label m_options_label;
-						OptionList<WaveformEditor> m_options_input;
+						OptionList<WaveformEditor,OptionListId> m_options_input;
 					Box m_details_right;
 					//	XYPlot m_waveform;
 						Box m_trim_panel;

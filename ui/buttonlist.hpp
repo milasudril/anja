@@ -45,8 +45,7 @@ namespace Anja
 
 			ButtonListImpl& append(const char* text)
 				{
-				m_buttons.push_back(Button(m_box,static_cast<int>(m_buttons.size())
-					,text));
+				m_buttons.push_back(Button(m_box,text));
 				return *this;
 				}
 
@@ -67,7 +66,7 @@ namespace Anja
 			std::vector<Button> m_buttons;
 		};
 
-	template<class Callback>
+	template<class Callback,class ButtonId>
 	class ButtonList
 		{
 		public:
@@ -90,15 +89,19 @@ namespace Anja
 			ButtonList& callback(Callback& cb) noexcept
 				{
 				r_callback=&cb;
+				int k=0;
 				std::for_each(m_impl.begin(),m_impl.end()
-					,[this](Button& btn)
-						{btn.callback(*this);});
+					,[this,&k](Button& btn)
+						{
+						btn.callback(*this,k);
+						++k;
+						});
 
 				return *this;
 				}
 
-			void clicked(Button& btn)
-				{r_callback->clicked(*this,btn);}
+			void clicked(Button& btn,int id)
+				{r_callback->clicked(*this,btn,static_cast<ButtonId>(id));}
 			
 			int id() const noexcept
 				{return m_impl.id();}

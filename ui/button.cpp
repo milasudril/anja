@@ -9,13 +9,14 @@ using namespace Anja;
 class Button::Impl:private Button
 	{
 	public:
-		Impl(Container& cnt,int id,const char* label);
+		Impl(Container& cnt,const char* label);
 		~Impl();	
 
-		void callback(Callback cb,void* cb_obj)
+		void callback(Callback cb,void* cb_obj,int id)
 			{
 			r_cb=cb;
 			r_cb_obj=cb_obj;
+			m_id=id;
 			}
 
 		const char* label() const noexcept
@@ -44,15 +45,15 @@ class Button::Impl:private Button
 		static void clicked_callback(GtkWidget* widget,gpointer data);
 	};
 
-Button::Button(Container& cnt,int id,const char* label)
-	{m_impl=new Impl(cnt,id,label);}
+Button::Button(Container& cnt,const char* label)
+	{m_impl=new Impl(cnt,label);}
 
 Button::~Button()
 	{delete m_impl;}
 
-Button& Button::callback(Callback cb,void* cb_obj)
+Button& Button::callback(Callback cb,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj);
+	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
@@ -75,7 +76,7 @@ Button& Button::state(bool s) noexcept
 	}
 
 
-Button::Impl::Impl(Container& cnt,int id,const char* lab):Button(*this),m_id(id)
+Button::Impl::Impl(Container& cnt,const char* lab):Button(*this),m_id(0)
 	,r_cb(nullptr)
 	{
 	printf("Button %p (%d) ctor\n",this,m_id);
@@ -100,5 +101,5 @@ void Button::Impl::clicked_callback(GtkWidget* widget,gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
 	if(state->r_cb!=nullptr)
-		{(state->r_cb)(state->r_cb_obj,*state);}
+		{state->r_cb(state->r_cb_obj,*state);}
 	}

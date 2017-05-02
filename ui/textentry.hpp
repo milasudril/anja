@@ -15,7 +15,7 @@ namespace Anja
 	class TextEntry
 		{
 		public:
-			explicit TextEntry(Container& container,int id);
+			explicit TextEntry(Container& container);
 			~TextEntry();
 
 			TextEntry& operator=(TextEntry&& obj) noexcept
@@ -27,15 +27,16 @@ namespace Anja
 			TextEntry(TextEntry&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 			
-			template<class EntryCallback>
-			TextEntry& callback(EntryCallback& cb)
+			template<class EntryCallback,class IdType>
+			TextEntry& callback(EntryCallback& cb,IdType id)
 				{
 				auto cb_wrapper=[](void* rvc,TextEntry& self)
 					{
 					auto x=reinterpret_cast<EntryCallback*>(rvc);
-					x->changed(self);
+					auto id=static_cast<IdType>(self.id());
+					x->changed(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
 				}
 
 			const char* content() const noexcept;
@@ -52,7 +53,7 @@ namespace Anja
 
 		protected:
 			typedef void (*Callback)(void* cb_obj,TextEntry& self);
-			TextEntry& callback(Callback cb,void* cb_obj);
+			TextEntry& callback(Callback cb,void* cb_obj,int id);
 
 			class Impl;
 			Impl* m_impl;

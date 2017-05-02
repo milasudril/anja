@@ -15,7 +15,7 @@ namespace Anja
 	class Button
 		{
 		public:
-			explicit Button(Container& container,int id,const char* label);
+			explicit Button(Container& container,const char* label);
 			~Button();
 
 			Button& operator=(Button&& obj) noexcept
@@ -27,15 +27,16 @@ namespace Anja
 			Button(Button&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 			
-			template<class Callback>
-			Button& callback(Callback& cb)
+			template<class Callback,class IdType>
+			Button& callback(Callback& cb,IdType id)
 				{
 				auto cb_wrapper=[](void* rvc,Button& self)
 					{
 					auto x=reinterpret_cast<Callback*>(rvc);
-					x->clicked(self);
+					auto id=static_cast<IdType>(self.id());
+					x->clicked(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
 				}
 
 			const char* label() const noexcept;
@@ -51,7 +52,7 @@ namespace Anja
 			explicit Button(Impl& impl):m_impl(&impl){}
 			Impl* m_impl;
 			typedef void (*Callback)(void* cb_obj,Button& self);
-			Button& callback(Callback cb,void* cb_obj);
+			Button& callback(Callback cb,void* cb_obj,int id);
 		};
 	}
 

@@ -10,7 +10,7 @@ using namespace Anja;
 class Checkbox::Impl:public Checkbox
 	{
 	public:
-		Impl(Container& cnt,int id,const char* title);
+		Impl(Container& cnt,const char* title);
 		~Impl();
 
 		bool state() const noexcept
@@ -22,10 +22,11 @@ class Checkbox::Impl:public Checkbox
 		int id() const noexcept
 			{return m_id;}
 
-		void callback(Callback cb,void* cb_obj)
+		void callback(Callback cb,void* cb_obj,int id)
 			{
 			r_cb=cb;
 			r_cb_obj=cb_obj;
+			m_id=id;
 			}
 
 	private:
@@ -38,9 +39,9 @@ class Checkbox::Impl:public Checkbox
 	};
 
 
-Checkbox::Checkbox(Container& cnt,int id,const char* title)
+Checkbox::Checkbox(Container& cnt,const char* title)
 	{
-	m_impl=new Impl(cnt,id,title);
+	m_impl=new Impl(cnt,title);
 	}
 
 Checkbox::~Checkbox()
@@ -61,9 +62,9 @@ Checkbox& Checkbox::state(bool state_new)
 int Checkbox::id() const noexcept
 	{return m_impl->id();}
 
-Checkbox& Checkbox::callback(Callback cb,void* cb_obj)
+Checkbox& Checkbox::callback(Callback cb,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj);
+	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
@@ -76,7 +77,7 @@ void Checkbox::Impl::clicked_callback(GtkWidget* widget,gpointer data)
 		{self->r_cb(self->r_cb_obj,*self);}
 	}
 
-Checkbox::Impl::Impl(Container& cnt,int id,const char* title):Checkbox(*this),m_id(id),r_cb(nullptr)
+Checkbox::Impl::Impl(Container& cnt,const char* title):Checkbox(*this),m_id(0),r_cb(nullptr)
 	{
 	GtkWidget* widget=gtk_check_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(clicked_callback),this);

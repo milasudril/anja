@@ -9,7 +9,7 @@ using namespace Anja;
 class Listbox::Impl:private Listbox
 	{
 	public:
-		Impl(Container& cnt,int id);
+		Impl(Container& cnt);
 		~Impl();
 
 		int id() const noexcept
@@ -40,33 +40,35 @@ class Listbox::Impl:private Listbox
 
 		void clear() noexcept
 			{
-			auto tmp=m_cb;
+			auto tmp=r_cb;
+			r_cb=nullptr;
 			gtk_combo_box_text_remove_all(m_handle);
-			m_cb=tmp;
+			r_cb=tmp;
 			}
 
-		void callback(Callback cb,void* cb_obj)
+		void callback(Callback cb,void* cb_obj,int id)
 			{
-			m_cb=cb;
-			m_cb_obj=cb_obj;
+			r_cb=cb;
+			r_cb_obj=cb_obj;
+			m_id=id;
 			}
 
 	private:
 		int m_id;
-		Callback m_cb;
-		void* m_cb_obj;
+		Callback r_cb;
+		void* r_cb_obj;
 		GtkComboBoxText* m_handle;
 
 		static void changed_callback(GtkComboBox* widget,void* listboxgtk)
 			{
 			auto self=reinterpret_cast<Impl*>(listboxgtk);
-			if(self->m_cb!=nullptr)
-				{(self->m_cb)(self->m_cb_obj,*self);}
+			if(self->r_cb!=nullptr)
+				{self->r_cb(self->r_cb_obj,*self);}
 			}
 	};
 
-Listbox::Listbox(Container& cnt,int id)
-	{m_impl=new Impl(cnt,id);}
+Listbox::Listbox(Container& cnt)
+	{m_impl=new Impl(cnt);}
 
 Listbox::~Listbox()
 	{delete m_impl;}
@@ -101,14 +103,14 @@ Listbox& Listbox::clear() noexcept
 	return *this;
 	}
 
-Listbox& Listbox::callback(Callback cb,void* cb_obj)
+Listbox& Listbox::callback(Callback cb,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj);
+	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
 
-Listbox::Impl::Impl(Container& cnt,int id):Listbox(*this),m_id(id),m_cb(nullptr)
+Listbox::Impl::Impl(Container& cnt):Listbox(*this),m_id(0),r_cb(nullptr)
 	{
 	auto widget=gtk_combo_box_text_new();
 	m_handle=GTK_COMBO_BOX_TEXT(widget);

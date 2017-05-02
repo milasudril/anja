@@ -15,7 +15,7 @@ namespace Anja
 	class Slider
 		{
 		public:
-			explicit Slider(Container& container,int id,bool vertical);
+			explicit Slider(Container& container,bool vertical);
 			~Slider();
 
 			Slider& operator=(Slider&& obj) noexcept
@@ -27,15 +27,16 @@ namespace Anja
 			Slider(Slider&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 			
-			template<class EntryCallback>
-			Slider& callback(EntryCallback& cb)
+			template<class EntryCallback,class IdType>
+			Slider& callback(EntryCallback& cb,IdType id)
 				{
 				auto cb_wrapper=[](void* rvc,Slider& self)
 					{
 					auto x=reinterpret_cast<EntryCallback*>(rvc);
-					x->changed(self);
+					auto id=static_cast<IdType>( self.id() );
+					x->changed(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
 				}
 
 			double value() const noexcept;
@@ -46,7 +47,7 @@ namespace Anja
 
 		protected:
 			typedef void (*Callback)(void* cb_obj,Slider& self);
-			Slider& callback(Callback cb,void* cb_obj);
+			Slider& callback(Callback cb,void* cb_obj,int id);
 
 			class Impl;
 			Impl* m_impl;

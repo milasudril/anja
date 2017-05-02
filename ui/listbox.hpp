@@ -14,7 +14,7 @@ namespace Anja
 	class Listbox
 		{
 		public:
-			explicit Listbox(Container& parent,int id);
+			explicit Listbox(Container& parent);
 			~Listbox();
 
 			Listbox& operator=(Listbox&& obj) noexcept
@@ -38,20 +38,21 @@ namespace Anja
 			
 			Listbox& clear() noexcept;
 
-			template<class EntryCallback>
-			Listbox& callback(EntryCallback& cb)
+			template<class EntryCallback,class IdType>
+			Listbox& callback(EntryCallback& cb,IdType id)
 				{
 				auto cb_wrapper=[](void* rvc,Listbox& self)
 					{
 					auto x=reinterpret_cast<EntryCallback*>(rvc);
-					x->changed(self);
+					auto id=static_cast<IdType>(self.id());
+					x->changed(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
 				}
 
 		private:
 			typedef void (*Callback)(void* cb_obj,Listbox& self);
-			Listbox& callback(Callback cb,void* cb_obj);
+			Listbox& callback(Callback cb,void* cb_obj,int id);
 			class Impl;
 			Impl* m_impl;
 			Listbox(Impl& impl):m_impl(&impl){}

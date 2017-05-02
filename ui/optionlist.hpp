@@ -17,8 +17,8 @@ namespace Anja
 	class OptionListImpl
 		{
 		public:
-			explicit OptionListImpl(Container& cnt,int id,bool vertical):m_id(id)
-				,m_scroll(cnt)
+			explicit OptionListImpl(Container& cnt,bool vertical):
+				m_scroll(cnt)
 					,m_box_main(m_scroll,vertical)
 						,m_box(m_box_main,vertical)
 				{
@@ -31,9 +31,6 @@ namespace Anja
 				m_options.clear();	
 				return *this;
 				}
-			
-			int id() const noexcept
-				{return m_id;}
 
 			auto begin() noexcept
 				{return m_options.begin();}
@@ -46,8 +43,7 @@ namespace Anja
 
 			OptionListImpl& append(const char* text)
 				{
-				m_options.push_back(Checkbox(m_box,static_cast<int>(m_options.size())
-					,text));
+				m_options.push_back(Checkbox(m_box,text));
 				return *this;
 				}
 
@@ -62,7 +58,6 @@ namespace Anja
 			OptionListImpl& selected(uint64_t mask);
 
 		private:
-			int m_id;
 			ScrolledWindow m_scroll;
 				Box m_box_main;
 					Box m_box;
@@ -70,12 +65,12 @@ namespace Anja
 			std::vector<Checkbox> m_options;
 		};
 
-	template<class Callback>
+	template<class Callback,class IdType>
 	class OptionList
 		{
 		public:
-			explicit OptionList(Container& cnt,int id,bool vertical):r_callback(nullptr)
-				,m_impl(cnt,id,vertical)
+			explicit OptionList(Container& cnt,bool vertical):r_callback(nullptr)
+				,m_impl(cnt,vertical)
 				{}
 
 			OptionList& clear() noexcept
@@ -90,21 +85,26 @@ namespace Anja
 				return *this;
 				}
 
-			OptionList& callback(Callback& cb) noexcept
+			OptionList& callback(Callback& cb,IdType id) noexcept
 				{
 				r_callback=&cb;
+				m_id=id;
+				int k=0;
 				std::for_each(m_impl.begin(),m_impl.end()
-					,[this](Checkbox& btn)
-						{btn.callback(*this);});
+					,[this,&k](Checkbox& btn)
+						{
+						btn.callback(*this,k);
+						++k;
+						});
 
 				return *this;
 				}
 
-			void clicked(Checkbox& btn)
-				{r_callback->clicked(*this,btn);}
+			void clicked(Checkbox& btn,int id)
+				{r_callback->clicked(*this,btn,id);}
 			
-			int id() const noexcept
-				{return m_impl.id();}
+			IdType id() const noexcept
+				{return m_id;}
 
 			auto begin() noexcept
 				{return m_impl.begin();}
@@ -131,6 +131,7 @@ namespace Anja
 				}
 
 		private:
+			IdType m_id;
 			Callback* r_callback;
 			OptionListImpl m_impl;
 		};

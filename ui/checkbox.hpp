@@ -15,7 +15,7 @@ namespace Anja
 	class Checkbox
 		{
 		public:
-			explicit Checkbox(Container& cnt,int id,const char* title);
+			explicit Checkbox(Container& cnt,const char* title);
 			~Checkbox();
 
 
@@ -32,15 +32,16 @@ namespace Anja
 			Checkbox& state(bool state_new);
 			int id() const noexcept;
 
-			template<class Callback>
-			Checkbox& callback(Callback& cb)
+			template<class Callback,class IdType>
+			Checkbox& callback(Callback& cb,IdType id)
 				{
 				auto cb_wrapper=[](void* rvc,Checkbox& self)
 					{
 					auto x=reinterpret_cast<Callback*>(rvc);
-					x->clicked(self);
+					auto id=static_cast<IdType>( self.id() );
+					x->clicked(self,id);
 					};
-				return callback(cb_wrapper,&cb); 
+				return callback(cb_wrapper,&cb,id); 
 				}
 
 		private:
@@ -48,7 +49,7 @@ namespace Anja
 			explicit Checkbox(Impl& impl):m_impl(&impl){}
 			Impl* m_impl;
 			typedef void (*Callback)(void* cb_obj,Checkbox& self);
-			Checkbox& callback(Callback cb,void* cb_obj);
+			Checkbox& callback(Callback cb,void* cb_obj,int id);
 		};
 	}
 

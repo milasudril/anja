@@ -9,13 +9,14 @@ using namespace Anja;
 class TextEntry::Impl:private TextEntry
 	{
 	public:
-		Impl(Container& cnt,int id);
+		Impl(Container& cnt);
 		~Impl();
 
-		void callback(Callback cb,void* cb_obj)
+		void callback(Callback cb,void* cb_obj,int id)
 			{
-			m_cb=cb;
-			m_cb_obj=cb_obj;
+			r_cb=cb;
+			r_cb_obj=cb_obj;
+			m_id=id;
 			}
 
 		const char* content() const noexcept
@@ -41,22 +42,22 @@ class TextEntry::Impl:private TextEntry
 
 	private:
 		int m_id;
-		Callback m_cb;
-		void* m_cb_obj;
+		Callback r_cb;
+		void* r_cb_obj;
 		GtkEntry* m_handle;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
 
-TextEntry::TextEntry(Container& cnt,int id)
-	{m_impl=new Impl(cnt,id);}
+TextEntry::TextEntry(Container& cnt)
+	{m_impl=new Impl(cnt);}
 
 TextEntry::~TextEntry()
 	{delete m_impl;}
 
-TextEntry& TextEntry::callback(Callback cb,void* cb_obj)
+TextEntry& TextEntry::callback(Callback cb,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj);
+	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
@@ -92,8 +93,8 @@ int TextEntry::id() const noexcept
 
 
 
-TextEntry::Impl::Impl(Container& cnt,int id):TextEntry(*this),m_id(id)
-	,m_cb(nullptr)
+TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
+	,r_cb(nullptr)
 	{
 	printf("Entry %p ctor\n",this);
 
@@ -107,7 +108,7 @@ TextEntry::Impl::Impl(Container& cnt,int id):TextEntry(*this),m_id(id)
 TextEntry::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	m_cb=nullptr;
+	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Entry %p dtor\n",this);
 	}
@@ -115,7 +116,7 @@ TextEntry::Impl::~Impl()
 gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
-	if(state->m_cb!=nullptr)
-		{(state->m_cb)(state->m_cb_obj,*state);}
+	if(state->r_cb!=nullptr)
+		{state->r_cb(state->r_cb_obj,*state);}
 	return FALSE;
 	}
