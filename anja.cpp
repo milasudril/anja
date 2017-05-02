@@ -22,7 +22,7 @@ namespace Anja
 
 			UiContext::RunStatus idle(UiContext& ctx)
 				{
-				timespec req{0,0};
+				timespec req{0,1000};
 				nanosleep(&req,NULL);
 				return UiContext::RunStatus::CONTINUE;
 				}
