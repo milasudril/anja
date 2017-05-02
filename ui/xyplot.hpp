@@ -1,4 +1,7 @@
-//@	{"targets":[{"name":"xyplot.hpp","type":"include"}]}
+//@	{
+//@	"targets":[{"name":"xyplot.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"xyplot.o","rel":"implementation"}]
+//@	}
 
 #ifndef ANJA_XYPLOT_HPP
 #define ANJA_XYPLOT_HPP
@@ -47,10 +50,19 @@ namespace Anja
 			XYPlot& domain(const Domain& dom) noexcept;		
 			Domain domain() const noexcept;
 
-			XYPlot& cursorX(double position,float hue) noexcept;
-			double cursorX(int index) const noexcept;
-			XYPlot& cursorY(double position,float hue) noexcept;
-			double cursorY(int index) const noexcept;
+			struct Cursor
+				{
+				double position;
+				float hue;
+				};
+
+			XYPlot& cursorX(const Cursor& c);
+			XYPlot& cursorX(const Cursor& c,int index);
+			Cursor cursorX(int index) const noexcept;
+
+			XYPlot& cursorY(const Cursor& c);
+			XYPlot& cursorY(const Cursor& c,int index);
+			Cursor cursorY(int index) const noexcept;
 
 		private:
 			class Impl;
@@ -59,6 +71,8 @@ namespace Anja
 
 			struct Vtable
 				{
+				Vtable() noexcept;
+
 				template<class Callback,class IdType>
 				explicit Vtable(Callback& cb,IdType) noexcept
 					{

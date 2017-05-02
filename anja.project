@@ -94,6 +94,7 @@
       <File Name="ui/xyplot.hpp"/>
       <File Name="ui/keymask.hpp"/>
       <File Name="ui/keymask.cpp"/>
+      <File Name="ui/xyplot.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

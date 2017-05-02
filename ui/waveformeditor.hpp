@@ -27,7 +27,10 @@ namespace Anja
 		{
 		public:
 			enum class ButtonId:int
-				{FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
+				{
+				 FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSOR_BEGIN_AUTO
+				,CURSORS_SWAP,CURSOR_END_AUTO
+				};
 
 			enum class ListboxId:int
 				{CHANNEL};
@@ -36,7 +39,7 @@ namespace Anja
 				{GAIN,GAIN_RANDOM};
 
 			enum class TextEntryId:int
-				{FILENAME,DESCRIPTION,COLOR,GAIN,GAIN_RANDOM};
+				{FILENAME,DESCRIPTION,COLOR,GAIN,GAIN_RANDOM,CURSOR_BEGIN,CURSOR_END};
 
 			enum class OptionListId:int
 				{OPTIONS};
@@ -84,9 +87,17 @@ namespace Anja
 							Label m_options_label;
 						OptionList<WaveformEditor,OptionListId> m_options_input;
 					Box m_details_right;
-					//	XYPlot m_waveform;
+						XYPlot m_plot;
 						Box m_trim_panel;
+							Box m_cursor_begin;
+								Label m_cursor_begin_label;
+								TextEntry m_cursor_begin_entry;
+								Button m_cursor_begin_auto;
 							Button m_swap;
+							Box m_cursor_end;
+								Label m_cursor_end_label;
+								TextEntry m_cursor_end_entry;
+								Button m_cursor_end_auto;
 		};
 
 	}

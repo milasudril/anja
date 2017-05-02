@@ -56,12 +56,23 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 				,m_options(m_details_left,false)
 					,m_options_label(m_options.insertMode({2,0}),"Options:")
 				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),true)
-			,m_details_right(m_details,true)
+			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
+				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
 				,m_trim_panel(m_details_right.insertMode({0,0}),false)
-					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),"⇌")
+					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_begin_label(m_cursor_begin,"Begin")
+						,m_cursor_begin_entry(m_cursor_begin.insertMode({4,Box::EXPAND|Box::FILL}))
+						,m_cursor_begin_auto(m_cursor_begin.insertMode({0,0}),"Auto")
+					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
+					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_end_label(m_cursor_end,"End")
+						,m_cursor_end_entry(m_cursor_end.insertMode({4,Box::EXPAND|Box::FILL}))
+						,m_cursor_end_auto(m_cursor_end.insertMode({0,0}),"Auto")
 	{
-	m_gain_input_text.width(7).small(true).alignment(1);
-	m_gain_random_input_text.width(6).small(true).alignment(1);
+	m_gain_input_text.width(7).small(true).alignment(1.0f);
+	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
+	m_cursor_begin_entry.width(7);
+	m_cursor_end_entry.width(7).alignment(1.0f);
 
 	m_filename_input.callback(*this,TextEntryId::FILENAME);
 	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
@@ -75,7 +86,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_gain_random_input_slider.callback(*this,SliderId::GAIN_RANDOM);
 	m_gain_random_input_text.callback(*this,TextEntryId::GAIN_RANDOM);
 	m_options_input.callback(*this,OptionListId::OPTIONS);
-//	TODO: Add m_waveform here...
+//	TODO: Add m_plot here...
+	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
+	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
 	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
@@ -93,10 +106,34 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_channel_input.selected(m_waveform.channelGet());
 	m_options_input.append(waveform.flagNames());
 	m_options_input.selected(waveform.flagsGet());
+
+	char buffer[16];
+	sprintf(buffer,"%d",waveform.offsetBeginGet());
+	m_cursor_begin_entry.content(buffer);
+	sprintf(buffer,"%d",waveform.offsetEndGet());
+	m_cursor_end_entry.content(buffer);
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
+	switch(id)
+		{
+		case ButtonId::CURSORS_SWAP:
+			{
+			auto end=m_waveform.offsetBeginGet();
+			auto begin=m_waveform.offsetEndGet();
+			m_waveform.offsetBeginSet(begin);
+			m_waveform.offsetEndSet(end);
+
+			char buffer[16];
+			sprintf(buffer,"%d",begin);
+			m_cursor_begin_entry.content(buffer);
+			sprintf(buffer,"%d",end);
+			m_cursor_end_entry.content(buffer);
+		//	TODO: Update plot
+			}
+			break;
+		}
 	src.state(0);
 	}
 
@@ -147,10 +184,12 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		//	show its canonical path.
 			entry.content(m_waveform.filenameGet().begin());
 			break;
+
 		case TextEntryId::DESCRIPTION:
 			m_waveform.descriptionSet(String(entry.content()));
 		//	TODO: Pass message so the keyboard can be updated
 			break;
+
 		case TextEntryId::COLOR:
 			try
 				{
@@ -161,6 +200,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			catch(...)
 				{entry.content(ColorString(m_waveform.keyColorGet()).begin());}
 			break;
+
 		case TextEntryId::GAIN:
 			{
 			double val_new;
@@ -177,6 +217,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				}
 			}
 			break;
+
 		case TextEntryId::GAIN_RANDOM:
 			{
 			double val_new;
@@ -191,6 +232,28 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				sprintf(buffer,"%.3f",m_waveform.gainRandomGet());
 				entry.content(buffer);
 				}
+			}
+			break;
+
+		case TextEntryId::CURSOR_BEGIN:
+			{
+			auto x=atoi(m_cursor_begin_entry.content());
+			m_waveform.offsetBeginSet(x);
+			x=m_waveform.offsetBeginGet();
+			char buffer[16];
+			sprintf(buffer,"%d",x);
+			m_cursor_begin_entry.content(buffer);
+			}
+			break;
+
+		case TextEntryId::CURSOR_END:
+			{
+			auto x=atoi(m_cursor_begin_entry.content());
+			m_waveform.offsetEndSet(x);
+			x=m_waveform.offsetBeginGet();
+			char buffer[16];
+			sprintf(buffer,"%d",x);
+			m_cursor_end_entry.content(buffer);
 			}
 			break;
 		}

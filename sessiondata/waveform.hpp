@@ -64,7 +64,7 @@ namespace Anja
 
 			void offsetBeginSet(int32_t value_new) noexcept
 				{
-				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
+				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
 				m_flags|=(temp!=m_offset_begin? DIRTY : 0);
 				m_offset_begin=temp;
 				}
@@ -74,7 +74,7 @@ namespace Anja
 
 			void offsetEndSet(int32_t value_new) noexcept
 				{
-				auto temp=std::min(value_new,static_cast<int32_t>(m_data.length()));
+				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
 				m_flags|=(temp!=m_offset_end? DIRTY : 0);
 				m_offset_end=temp;
 				}
