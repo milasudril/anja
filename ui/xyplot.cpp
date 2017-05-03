@@ -35,13 +35,19 @@ class XYPlot::Impl:public XYPlot
 		Domain domain() const noexcept
 			{return m_dom;}
 
-		XYPlot& cursorX(const Cursor& c);
-		XYPlot& cursorX(const Cursor& c,int index);
+		void cursorX(const Cursor& c);
+		void cursorX(const Cursor& c,int index);
 		Cursor cursorX(int index) const noexcept;
 
-		XYPlot& cursorY(const Cursor& c);
-		XYPlot& cursorY(const Cursor& c,int index);
+		void cursorY(const Cursor& c);
+		void cursorY(const Cursor& c,int index);
 		Cursor cursorY(int index) const noexcept;
+
+		void showAll() noexcept
+			{
+			m_dom=m_curves.size()==0?Domain{{-1,-1},{1,1}}:m_dom_full;
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
+			}
 
 	private:
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
@@ -64,6 +70,7 @@ class XYPlot::Impl:public XYPlot
 			};
 
 		std::vector<Curve> m_curves;
+		Domain m_dom_full;
 		std::vector<Cursor> m_cursors_x;
 		std::vector<Cursor> m_cursors_y;
 
@@ -128,6 +135,12 @@ XYPlot& XYPlot::curve(const Point* begin,const Point* end,float hue)
 	return *this;
 	}
 
+XYPlot& XYPlot::showAll() noexcept
+	{
+	m_impl->showAll();
+	return *this;
+	}
+
 
 
 XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
@@ -161,6 +174,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	m_dx=0.2;
 	m_N_tics_y=10;
 	m_dy=0.2;
+	m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
 	}
 
 XYPlot::Impl::~Impl()
@@ -173,11 +187,16 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 	{
 	Curve c;
 	c.hue=hue;
-	std::for_each(begin,end,[&c](const Point& p)
+	Domain dom=m_dom_full;
+	std::for_each(begin,end,[&c,&dom](const Point& p)
 		{
+		auto M=Point{std::max(dom.max.x,p.x),std::max(dom.max.y,p.y)};
+		auto m=Point{std::min(dom.min.x,p.x),std::min(dom.min.y,p.y)};
+		dom=Domain{m,M};
 		c.points.push_back(p);
 		});
 	m_curves.push_back(std::move(c));
+	m_dom_full=dom;
 	}
 
 

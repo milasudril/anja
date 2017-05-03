@@ -118,10 +118,10 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 		{
 		ArrayDynamicShort<XYPlot::Point> points;
 		double dx=1.0/128;
-		for(int k=-128;k<=128;++k)
-			{points.append({dx*k,sin(2.0*acos(-1.0)*k*dx)});}
+		for(int k=0;k<=128;++k)
+			{points.append({dx*k,1 + sin(2.0*acos(-1.0)*k*dx)});}
 
-		m_plot.curve(points.begin(),points.end(),0.0f);
+		m_plot.curve(points.begin(),points.end(),0.0f).showAll();
 		}
 	}
 

@@ -64,6 +64,8 @@ namespace Anja
 			XYPlot& cursorY(const Cursor& c,int index);
 			Cursor cursorY(int index) const noexcept;
 
+			XYPlot& showAll() noexcept;
+
 		private:
 			class Impl;
 			Impl* m_impl;
