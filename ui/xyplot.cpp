@@ -338,10 +338,17 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 
 	auto point_out=to_window_coords(c.points.front(),dom_window);
 	cairo_move_to(cr,point_out.x,point_out.y);
-	std::for_each(c.points.begin() + 1,c.points.end(),[cr,this,&dom_window](const Point& p)
+	std::for_each(c.points.begin() + 1,c.points.end()
+		,[cr,this,&dom_window,&point_out](const Point& p)
 		{
-		auto point_out=to_window_coords(p,dom_window);
-		cairo_line_to(cr,point_out.x,point_out.y);
+		auto point_out_next=to_window_coords(p,dom_window);
+		auto dx=point_out_next.x - point_out.x;
+		auto dy=point_out_next.y - point_out.y;
+		if(dx*dx + dy*dy > 4)
+			{
+			cairo_line_to(cr,point_out.x,point_out.y);
+			point_out=point_out_next;
+			}
 		});
 	cairo_stroke(cr);
 	}
