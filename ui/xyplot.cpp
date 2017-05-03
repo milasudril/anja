@@ -162,7 +162,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(mouse_up),this);
 	g_signal_connect(m_canvas,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(key_up),this);
-	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
+//	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
 
 	gtk_widget_set_margin_end(widget,4);
 	gtk_widget_set_margin_start(widget,4);
@@ -197,6 +197,7 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 		});
 	m_curves.push_back(std::move(c));
 	m_dom_full=dom;
+	gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 	}
 
 

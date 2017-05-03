@@ -5,6 +5,8 @@
 #include "../common/colorstring.hpp"
 #include "../common/arraysimple.hpp"
 #include "../common/floatconv.hpp"
+#include "../common/meansquare.hpp"
+#include "../common/units.hpp"
 
 #include <cstdio>
 
@@ -91,10 +93,11 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
+//	Session changed...
 	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
 		{m_channel_input.append(str.begin());});
 
-
+//	Slot changed
 	m_filename_input.content(waveform.filenameGet().begin());
 	m_description_input.content(waveform.descriptionGet().begin());
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
@@ -107,22 +110,29 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_options_input.append(waveform.flagNames());
 	m_options_input.selected(waveform.flagsGet());
 
+		{
+		ArraySimple<float> vals_ms(waveform.lengthFull());
+		MeanSquare ms(48);
+		ms.compute(waveform.beginFull(),vals_ms.begin(),waveform.lengthFull());
+		ArraySimple<XYPlot::Point> points(waveform.lengthFull());
+		size_t k=0;
+	//TODO: Filter points to save CPU and memory
+		std::transform(vals_ms.begin(),vals_ms.end(),points.begin(),[&k](float val)
+			{
+			++k;
+			return XYPlot::Point{static_cast<double>(k-1)
+				,std::max(powerToDb(static_cast<double>(val)),-145.0)};
+			});
+		m_plot.curve(points.begin(),points.end(),0);
+	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
+		m_plot.showAll();
+		}
+
 	char buffer[16];
 	sprintf(buffer,"%d",waveform.offsetBeginGet());
 	m_cursor_begin_entry.content(buffer);
 	sprintf(buffer,"%d",waveform.offsetEndGet());
 	m_cursor_end_entry.content(buffer);
-
-
-//	Test stuff
-		{
-		ArrayDynamicShort<XYPlot::Point> points;
-		double dx=1.0/128;
-		for(int k=0;k<=128;++k)
-			{points.append({dx*k,1 + sin(2.0*acos(-1.0)*k*dx)});}
-
-		m_plot.curve(points.begin(),points.end(),0.0f).showAll();
-		}
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)

@@ -56,6 +56,8 @@
       <File Name="common/keyboardlayout.cpp"/>
       <File Name="common/string.hpp"/>
       <File Name="common/string.cpp"/>
+      <File Name="common/delayline.hpp"/>
+      <File Name="common/meansquare.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
