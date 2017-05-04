@@ -273,11 +273,9 @@ void XYPlot::Impl::ticks_count()
 
 	auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
 
-	auto w_dom=dom_window.max.x - dom_window.min.x;
-	auto h_dom=dom_window.max.y - dom_window.min.y;
-
 //	Compute Y ticks
 		{
+		auto h_dom=dom_window.max.y - dom_window.min.y;
 		auto N_y_temp=h_dom/(4*m_axis_y.front().extent_y); //Make each tick 4 units high
 		if(N_y_temp==0.0)
 			{
@@ -429,6 +427,8 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 	while(ptr!=ptr_end)
 		{
 		auto pos=ptr->value;
+		if(pos>m_dom.max.x)
+			{return;}
 		auto point_out=to_window_coords({pos,domain.min.y},dom_window);
 		cairo_move_to(cr,point_out.x-0.5*ptr->extent_x
 			,point_out.y+1.25*max_extent);
