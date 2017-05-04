@@ -58,6 +58,7 @@
       <File Name="common/string.cpp"/>
       <File Name="common/delayline.hpp"/>
       <File Name="common/meansquare.hpp"/>
+      <File Name="common/meansquare.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

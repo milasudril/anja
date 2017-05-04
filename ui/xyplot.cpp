@@ -29,11 +29,16 @@ class XYPlot::Impl:public XYPlot
 			}
 
 		void curve(const Point* begin,const Point* end,float hue);
-		void domain(const Domain& dom) noexcept
-			{m_dom=dom;}
 
 		Domain domain() const noexcept
 			{return m_dom;}
+
+		void domain(const Domain& dom)
+			{
+			m_dom=dom;
+			tics_count();
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
+			}
 
 		void cursorX(const Cursor& c);
 		void cursorX(const Cursor& c,int index);
@@ -44,10 +49,10 @@ class XYPlot::Impl:public XYPlot
 		Cursor cursorY(int index) const noexcept;
 
 		void showAll() noexcept
-			{
-			m_dom=m_curves.size()==0?Domain{{-1,-1},{1,1}}:m_dom_full;
-			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
-			}
+			{domain(m_curves.size()==0?Domain{{-1,-1},{1,1}}:m_dom_full);}
+
+
+
 
 	private:
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
@@ -92,6 +97,7 @@ class XYPlot::Impl:public XYPlot
 		
 		GtkDrawingArea* m_canvas;
 
+		void tics_count();
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
 		void prerender_y(cairo_t* cr,double y_0,size_t N,double dy);
 		static Domain window_domain_adjust(cairo_t* cr,int width,int height
@@ -162,7 +168,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(mouse_up),this);
 	g_signal_connect(m_canvas,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(key_up),this);
-//	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
+	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
 
 	gtk_widget_set_margin_end(widget,4);
 	gtk_widget_set_margin_start(widget,4);
@@ -203,7 +209,10 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 
 
 void XYPlot::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj)
-	{}
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	self->tics_count();
+	}
 
 gboolean XYPlot::Impl::mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj)
 	{return TRUE;}
@@ -219,6 +228,56 @@ gboolean XYPlot::Impl::key_down(GtkWidget* widget,GdkEventKey* event,void* obj)
 
 gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
 	{return TRUE;}
+
+
+void XYPlot::Impl::tics_count()
+	{
+	auto domain=m_dom;
+	auto cr=gdk_cairo_create(gtk_widget_get_window(GTK_WIDGET(m_canvas)));
+	if(cr==NULL)
+		{return;}
+
+	auto w_window=gtk_widget_get_allocated_width(GTK_WIDGET(m_canvas));
+	auto h_window=gtk_widget_get_allocated_height(GTK_WIDGET(m_canvas));
+
+	auto w=domain.max.x - domain.min.x;
+	auto h=domain.max.y - domain.min.y;
+
+//	Render axes with with two tics. This is required in order to compute the margin
+//	needed for axes
+	auto N_y=2;
+	auto dy=h/N_y;
+	prerender_y(cr,domain.min.y,N_y,dy);
+
+	auto N_x=2;
+	auto dx=w/N_x;
+	prerender_x(cr,domain.min.x,N_x,dx);
+
+	auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
+
+	auto w_dom=dom_window.max.x - dom_window.min.x;
+	auto h_dom=dom_window.max.y - dom_window.min.y;
+
+//	Compute Y tics
+	auto N_y_temp=h_dom/(6*m_axis_y.front().extent_y); //Make each tic 4 units high
+	if(N_y==0.0)
+		{
+	//Skip it (height was zero)
+		cairo_destroy(cr);
+		return;
+		}
+	printf("%.15g\n",N_y_temp);
+	dy=h/N_y_temp; //Update dy using the number of tics
+	dy=std::pow(10,std::round(std::log10(dy))); //Round to neareset power of 10
+	m_N_tics_y=h/dy; //Save values
+	m_dy=dy;
+
+//	Compute X tics
+//	TODO...
+
+
+	cairo_destroy(cr);
+	}
 
 void XYPlot::Impl::prerender_x(cairo_t* cr,double x_0,size_t N,double dx)
 	{
@@ -263,7 +322,7 @@ void XYPlot::Impl::prerender_y(cairo_t* cr,double y_0,size_t N,double dy)
 		max_extent=tm.extent_x>max_extent?
 			tm.extent_x : max_extent;
 		}
-	m_axis_y.push_back({0,max_extent,0});
+	m_axis_y.push_back({0,float(max_extent),0});
 	}
 
 XYPlot::Domain XYPlot::Impl::window_domain_adjust(cairo_t* cr,int width,int height
@@ -299,6 +358,8 @@ void XYPlot::Impl::draw_axis_y(cairo_t* cr,const Domain& dom_window) const
 	while(ptr!=ptr_end)
 		{
 		auto pos=ptr->value;
+		if(pos>m_dom.max.y)
+			{return;}
 		auto point_out=to_window_coords({0,pos},dom_window);
 		cairo_move_to(cr,max_extent - ptr->extent_x
 			,point_out.y + 0.5*ptr->extent_y);
@@ -357,10 +418,11 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 
-	auto w=gtk_widget_get_allocated_width(widget);
-	auto h=gtk_widget_get_allocated_height(widget);
 	self->prerender_x(cr,self->m_dom.min.x,self->m_N_tics_x,self->m_dx);
-	self->prerender_y(cr,self->m_dom.min.y,self->m_N_tics_y,self->m_dy);
+	self->prerender_y(cr,self->m_dy*std::ceil(self->m_dom.min.y/self->m_dy)
+		,self->m_N_tics_y,self->m_dy);
+	auto w=gtk_widget_get_allocated_width(GTK_WIDGET(self->m_canvas));
+	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
 	auto dom_window=window_domain_adjust(cr,w,h,self->m_axis_x,self->m_axis_y);
 
 
