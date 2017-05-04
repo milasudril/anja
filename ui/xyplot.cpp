@@ -6,6 +6,7 @@
 #include <gtk/gtk.h>
 #include <vector>
 #include <cstring>
+#include <cassert>
 
 using namespace Anja;
 
@@ -61,6 +62,7 @@ class XYPlot::Impl:public XYPlot
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean key_down(GtkWidget* widget,GdkEventKey* event,void* obj);
 		static gboolean key_up(GtkWidget *widget, GdkEventKey *event,void* obj);
+		static gboolean mousewheel(GtkWidget* widget,GdkEvent* event,void* obj);
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 
 		int m_id;
@@ -79,15 +81,15 @@ class XYPlot::Impl:public XYPlot
 		std::vector<Cursor> m_cursors_x;
 		std::vector<Cursor> m_cursors_y;
 
-		struct TicMark
+		struct TickMark
 			{
 			double value;
 			float extent_x;
 			float extent_y;
 			char text[16];
 			};
-		std::vector<TicMark> m_axis_x;
-		std::vector<TicMark> m_axis_y;
+		std::vector<TickMark> m_axis_x;
+		std::vector<TickMark> m_axis_y;
 		
 		size_t m_N_ticks_x;
 		double m_dx;
@@ -102,8 +104,8 @@ class XYPlot::Impl:public XYPlot
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
 		void prerender_y(cairo_t* cr,double y_0,size_t N,double dy);
 		static Domain window_domain_adjust(cairo_t* cr,int width,int height
-			,const std::vector<TicMark>& axis_x
-			,const std::vector<TicMark>& axis_y);
+			,const std::vector<TickMark>& axis_x
+			,const std::vector<TickMark>& axis_y);
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
 		void draw_axis_y(cairo_t* cr,const Domain& dom_window) const;
 		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window,int dark) const; 
@@ -160,16 +162,18 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 		|GDK_BUTTON_PRESS_MASK
 		|GDK_BUTTON_RELEASE_MASK
 		|GDK_KEY_PRESS_MASK
-		|GDK_KEY_RELEASE_MASK);
+		|GDK_KEY_RELEASE_MASK
+		|GDK_SCROLL_MASK);
 
 
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(mouse_move),this);
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(mouse_down),this);
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(mouse_up),this);
+	g_signal_connect(m_canvas,"scroll-event", G_CALLBACK(mousewheel),this);
 	g_signal_connect(m_canvas,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(key_up),this);
-	g_signal_connect(m_canvas, "size-allocate", G_CALLBACK(size_changed),this);
+	g_signal_connect(m_canvas,"size-allocate", G_CALLBACK(size_changed),this);
 
 	gtk_widget_set_margin_end(widget,4);
 	gtk_widget_set_margin_start(widget,4);
@@ -230,6 +234,42 @@ gboolean XYPlot::Impl::key_down(GtkWidget* widget,GdkEventKey* event,void* obj)
 
 gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
 	{return TRUE;}
+
+gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	auto& e=event->scroll;
+	auto factor_x=1.0;
+	auto factor_y=1.0;
+	if(e.state&GDK_CONTROL_MASK)
+		{factor_x=e.direction==GDK_SCROLL_UP?0.8:1.25;}
+	if(e.state&GDK_SHIFT_MASK)
+		{factor_y=e.direction==GDK_SCROLL_UP?0.8:1.25;}
+
+	auto dom=self->m_dom;
+
+	if(e.state&GDK_CONTROL_MASK)
+		{
+		auto w=factor_x*(dom.max.x - dom.min.x);
+		auto mid_x=40000.0;
+		dom.max.x=mid_x+0.5*w;
+		dom.min.x=mid_x-0.5*w;
+		}
+	
+	if(e.state&GDK_SHIFT_MASK)
+		{
+		auto h=factor_y*(dom.max.y - dom.min.y);
+		auto mid_y=-80.0;
+		dom.max.y=mid_y+0.5*h;
+		dom.min.y=mid_y-0.5*h;
+		}
+
+	self->domain(dom);
+
+	printf("%.15g %.15g\n",e.delta_x,e.delta_y);
+	return TRUE;
+	}
+
 
 
 static double nicenum(double x)
@@ -296,15 +336,16 @@ void XYPlot::Impl::ticks_count()
 			{
 			auto dx=nicenum(w/N_x);
 			prerender_x(cr,dx*std::ceil(domain.min.x/dx),N_x,dx);
-			auto dx_min=m_axis_x.back().extent_x + 2.5; //The largest possible extent for any label
+			auto dx_min=m_axis_x.back().extent_x+16; //The largest possible extent for any label
 		//	Compute the number of pixels for dx. This value must be larger than dx_min
 			auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
 			auto dom_win_width=dom_window.max.x - dom_window.min.x;
 			auto dx_win=dx * dom_win_width/w;
+			printf("%.15g %.15g\n",dx_win,dx_min);
 			return dx_win > dx_min;
 			};
 
-	//	Find an upper bouund
+	//	Find an upper bound
 		auto N_x_upper=N_x;
 		while( fits(N_x_upper) )
 			{N_x_upper<<=1;}
@@ -319,7 +360,9 @@ void XYPlot::Impl::ticks_count()
 			else
 				{N_x_upper=mid - 1;}
 			}
-		dx=nicenum(w/mid);
+		printf("%d %d %d\n",N_x_lower,mid,N_x_upper);
+		assert(fits(mid-2));
+		dx=nicenum(w/(mid-2));
 		m_N_ticks_x=w/dx;
 		m_dx=dx;
 		};
@@ -335,8 +378,8 @@ void XYPlot::Impl::prerender_x(cairo_t* cr,double x_0,size_t N,double dx)
 	for(size_t k=0;k<=N;++k)
 		{
 		auto pos=x_0+dx*k;
-		TicMark tm;
-		tm.value=pos;
+		TickMark tm;
+		tm.value=fabs(pos)<1e-16?0:pos;
 		sprintf(tm.text,"%.7g",pos);
 		cairo_text_extents_t extents_in;
 		cairo_text_extents(cr,tm.text,&extents_in);
@@ -359,7 +402,7 @@ void XYPlot::Impl::prerender_y(cairo_t* cr,double y_0,size_t N,double dy)
 	for(size_t k=0;k<=N;++k)
 		{
 		auto pos=y_0 + dy*k;
-		TicMark tm;
+		TickMark tm;
 		tm.value=fabs(pos)<1e-16?0:pos;
 		sprintf(tm.text,"%.7g",tm.value);
 		cairo_text_extents_t extents_in;
@@ -375,8 +418,8 @@ void XYPlot::Impl::prerender_y(cairo_t* cr,double y_0,size_t N,double dy)
 	}
 
 XYPlot::Domain XYPlot::Impl::window_domain_adjust(cairo_t* cr,int width,int height
-	,const std::vector<TicMark>& axis_x
-	,const std::vector<TicMark>& axis_y)
+	,const std::vector<TickMark>& axis_x
+	,const std::vector<TickMark>& axis_y)
 	{
 	auto margin_top=axis_y.front().extent_y;
 	auto margin_bottom=(axis_y.end()-2)->extent_y+1.25*axis_x.back().extent_y;
@@ -431,9 +474,9 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 		auto pos=ptr->value;
 		if(pos>m_dom.max.x)
 			{return;}
-		auto point_out=to_window_coords({pos,domain.min.y-4},dom_window);
+		auto point_out=to_window_coords({pos,domain.min.y},dom_window);
 		cairo_move_to(cr,point_out.x-0.5*ptr->extent_x
-			,point_out.y+1.25*max_extent);
+			,point_out.y+1.25*max_extent+4);
 		cairo_show_text(cr,ptr->text);
 		++ptr;
 		++k;
@@ -480,7 +523,8 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 
-	self->prerender_x(cr,self->m_dom.min.x,self->m_N_ticks_x,self->m_dx);
+	self->prerender_x(cr,self->m_dx*std::ceil(self->m_dom.min.x/self->m_dx)
+		,self->m_N_ticks_x,self->m_dx);
 	self->prerender_y(cr,self->m_dy*std::ceil(self->m_dom.min.y/self->m_dy)
 		,self->m_N_ticks_y,self->m_dy);
 	auto w=gtk_widget_get_allocated_width(GTK_WIDGET(self->m_canvas));
