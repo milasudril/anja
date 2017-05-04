@@ -451,6 +451,8 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 	std::for_each(c.points.begin() + 1,c.points.end()
 		,[cr,this,&dom_window,&point_out](const Point& p)
 		{
+	//TODO: If curve is goes outside current domain, draw line segment to intersection
+	//	point only and break the loop. Use find_if instead of for_each
 		auto point_out_next=to_window_coords(p,dom_window);
 		auto dx=point_out_next.x - point_out.x;
 		auto dy=point_out_next.y - point_out.y;
