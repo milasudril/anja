@@ -96,6 +96,7 @@ class XYPlot::Impl:public XYPlot
 		double m_dy;
 		
 		GtkDrawingArea* m_canvas;
+		bool m_dark;
 
 		void ticks_count();
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
@@ -105,7 +106,7 @@ class XYPlot::Impl:public XYPlot
 			,const std::vector<TicMark>& axis_y);
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
 		void draw_axis_y(cairo_t* cr,const Domain& dom_window) const;
-		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window) const; 
+		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window,int dark) const; 
 
 		Point to_window_coords(const Point& p,const Domain& dom_window) const
 			{return map_to_domain_inv_y(p,m_dom,dom_window);}
@@ -181,6 +182,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	m_N_ticks_y=10;
 	m_dy=0.2;
 	m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
+	m_dark=0;
 	}
 
 XYPlot::Impl::~Impl()
@@ -429,7 +431,7 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 		auto pos=ptr->value;
 		if(pos>m_dom.max.x)
 			{return;}
-		auto point_out=to_window_coords({pos,domain.min.y},dom_window);
+		auto point_out=to_window_coords({pos,domain.min.y-4},dom_window);
 		cairo_move_to(cr,point_out.x-0.5*ptr->extent_x
 			,point_out.y+1.25*max_extent);
 		cairo_show_text(cr,ptr->text);
@@ -438,12 +440,13 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 		}
 	}
 
-void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window) const
+void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window
+	,int dark) const
 	{
 	if(c.points.size()==0)
 		{return;}
 
-	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,0.4f));
+	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
 
 	auto point_out=to_window_coords(c.points.front(),dom_window);
@@ -465,6 +468,14 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 	cairo_stroke(cr);
 	}
 
+static int dark_check(GtkWidget* widget)
+	{
+	auto context=gtk_widget_get_style_context(widget);
+	GdkRGBA color;
+	gtk_style_context_get_color(context,GTK_STATE_FLAG_NORMAL,&color);
+	return luma709(ColorRGBA(color.red,color.green,color.blue,color.alpha)) > 0.5f;
+	}
+
 gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
@@ -476,12 +487,24 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
 	auto dom_window=window_domain_adjust(cr,w,h,self->m_axis_x,self->m_axis_y);
 
+//	dark_check is only reliable for sensitive widget in active window
+	auto state=gtk_widget_get_state_flags(widget);
+	self->m_dark=state&(GTK_STATE_FLAG_BACKDROP|GTK_STATE_FLAG_INSENSITIVE)?
+		self->m_dark:dark_check(widget);
 
-	int dark;
-	g_object_get(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
-		,&dark,NULL);
-	auto bg=dark?ColorRGBA{0,0,0,1}:ColorRGBA{1,1,1,1};
-	auto fg=dark?ColorRGBA{1,1,1,1}:ColorRGBA{0,0,0,1};
+	auto bg=self->m_dark?ColorRGBA{0,0,0,1}:ColorRGBA{1,1,1,1};
+	auto fg=self->m_dark?ColorRGBA{1,1,1,1}:ColorRGBA{0,0,0,1};
+	if(state & (GTK_STATE_FLAG_BACKDROP|GTK_STATE_FLAG_INSENSITIVE))
+		{
+		auto bg_temp=bg;
+		bg.red=0.9*bg.red + 0.1*fg.red;
+		bg.green=0.9*bg.green + 0.1*fg.green;
+		bg.blue=0.9*bg.blue + 0.1*fg.blue;
+
+		fg.red=0.6*fg.red + 0.4*bg_temp.red;
+		fg.green=0.6*fg.green + 0.4*bg_temp.green;
+		fg.blue=0.6*fg.blue + 0.4*bg_temp.blue;
+		}
 
 	//	Draw plot area background rectangle
 		{
@@ -496,7 +519,7 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_set_line_width(cr,1);
 		std::for_each(self->m_curves.begin(),self->m_curves.end()
 			,[&cr,&dom_window,self](const Curve& c)
-				{self->draw_curve(cr,c,dom_window);});
+				{self->draw_curve(cr,c,dom_window,self->m_dark);});
 
 	//	Draw border
 		{

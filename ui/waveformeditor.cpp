@@ -116,14 +116,13 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 		ms.compute(waveform.beginFull(),vals_ms.begin(),waveform.lengthFull());
 		ArraySimple<XYPlot::Point> points(waveform.lengthFull());
 		size_t k=0;
-	//TODO: Filter points to save CPU and memory
 		std::transform(vals_ms.begin(),vals_ms.end(),points.begin(),[&k](float val)
 			{
 			++k;
 			return XYPlot::Point{static_cast<double>(k-1)
 				,std::max(powerToDb(static_cast<double>(val)),-145.0)};
 			});
-		m_plot.curve(points.begin(),points.end(),0);
+		m_plot.curve(points.begin(),points.end(),0.66f);
 	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
 		m_plot.showAll();
 		}
