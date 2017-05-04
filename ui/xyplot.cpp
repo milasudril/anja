@@ -36,7 +36,7 @@ class XYPlot::Impl:public XYPlot
 		void domain(const Domain& dom)
 			{
 			m_dom=dom;
-			tics_count();
+			ticks_count();
 			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 
@@ -89,15 +89,15 @@ class XYPlot::Impl:public XYPlot
 		std::vector<TicMark> m_axis_x;
 		std::vector<TicMark> m_axis_y;
 		
-		size_t m_N_tics_x;
+		size_t m_N_ticks_x;
 		double m_dx;
 
-		size_t m_N_tics_y;
+		size_t m_N_ticks_y;
 		double m_dy;
 		
 		GtkDrawingArea* m_canvas;
 
-		void tics_count();
+		void ticks_count();
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
 		void prerender_y(cairo_t* cr,double y_0,size_t N,double dy);
 		static Domain window_domain_adjust(cairo_t* cr,int width,int height
@@ -176,9 +176,9 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	g_object_ref_sink(widget);
 	cnt.add(widget);
 	domain({{-1,-1},{1,1}});
-	m_N_tics_x=10;
+	m_N_ticks_x=10;
 	m_dx=0.2;
-	m_N_tics_y=10;
+	m_N_ticks_y=10;
 	m_dy=0.2;
 	m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
 	}
@@ -211,7 +211,7 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 void XYPlot::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	self->tics_count();
+	self->ticks_count();
 	}
 
 gboolean XYPlot::Impl::mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj)
@@ -230,7 +230,25 @@ gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
 	{return TRUE;}
 
 
-void XYPlot::Impl::tics_count()
+static double nicenum(double x)
+	{
+    auto exponent = std::floor(log10(x));
+    auto fraction = x/std::pow(10.0,exponent);
+	double nicefrac=[](double fraction)
+		{
+		if(fraction<1.5)
+			{return 1.0;}
+		if(fraction<3.0)
+			{return 2.0;}
+		if(fraction<7.0)
+			{return 5.0;}
+		return 10.0;
+		}(fraction);
+    return nicefrac*std::pow(10.0,exponent);
+	}
+
+
+void XYPlot::Impl::ticks_count()
 	{
 	auto domain=m_dom;
 	auto cr=gdk_cairo_create(gtk_widget_get_window(GTK_WIDGET(m_canvas)));
@@ -243,7 +261,7 @@ void XYPlot::Impl::tics_count()
 	auto w=domain.max.x - domain.min.x;
 	auto h=domain.max.y - domain.min.y;
 
-//	Render axes with with two tics. This is required in order to compute the margin
+//	Render axes with with two ticks. This is required in order to compute the margin
 //	needed for axes
 	auto N_y=2;
 	auto dy=h/N_y;
@@ -258,22 +276,53 @@ void XYPlot::Impl::tics_count()
 	auto w_dom=dom_window.max.x - dom_window.min.x;
 	auto h_dom=dom_window.max.y - dom_window.min.y;
 
-//	Compute Y tics
-	auto N_y_temp=h_dom/(6*m_axis_y.front().extent_y); //Make each tic 4 units high
-	if(N_y==0.0)
+//	Compute Y ticks
 		{
-	//Skip it (height was zero)
-		cairo_destroy(cr);
-		return;
+		auto N_y_temp=h_dom/(4*m_axis_y.front().extent_y); //Make each tick 4 units high
+		if(N_y_temp==0.0)
+			{
+		//Skip it (height was zero)
+			cairo_destroy(cr);
+			return;
+			}
+		dy=nicenum( h/N_y_temp ); //Update dy using the number of ticks
+		m_N_ticks_y=h/dy; //Save values
+		m_dy=dy;
 		}
-	printf("%.15g\n",N_y_temp);
-	dy=h/N_y_temp; //Update dy using the number of tics
-	dy=std::pow(10,std::round(std::log10(dy))); //Round to neareset power of 10
-	m_N_tics_y=h/dy; //Save values
-	m_dy=dy;
 
-//	Compute X tics
-//	TODO...
+	// Compute X ticks
+		{
+		auto fits=[cr,w,&domain,this,w_window,h_window](int N_x)
+			{
+			auto dx=nicenum(w/N_x);
+			prerender_x(cr,dx*std::ceil(domain.min.x/dx),N_x,dx);
+			auto dx_min=m_axis_x.back().extent_x + 2.5; //The largest possible extent for any label
+		//	Compute the number of pixels for dx. This value must be larger than dx_min
+			auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
+			auto dom_win_width=dom_window.max.x - dom_window.min.x;
+			auto dx_win=dx * dom_win_width/w;
+			return dx_win > dx_min;
+			};
+
+	//	Find an upper bouund
+		auto N_x_upper=N_x;
+		while( fits(N_x_upper) )
+			{N_x_upper<<=1;}
+	//	Do binary search
+		auto N_x_lower=2;
+		auto mid=0;
+		while(N_x_lower < N_x_upper)
+			{	
+			mid=(N_x_upper + N_x_lower)/2; //There shoule be no risk for overflow
+			if(fits(mid))
+				{N_x_lower=mid + 1;}
+			else
+				{N_x_upper=mid - 1;}
+			}
+		dx=nicenum(w/mid);
+		m_N_ticks_x=w/dx;
+		m_dx=dx;
+		};
 
 
 	cairo_destroy(cr);
@@ -418,9 +467,9 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 
-	self->prerender_x(cr,self->m_dom.min.x,self->m_N_tics_x,self->m_dx);
+	self->prerender_x(cr,self->m_dom.min.x,self->m_N_ticks_x,self->m_dx);
 	self->prerender_y(cr,self->m_dy*std::ceil(self->m_dom.min.y/self->m_dy)
-		,self->m_N_tics_y,self->m_dy);
+		,self->m_N_ticks_y,self->m_dy);
 	auto w=gtk_widget_get_allocated_width(GTK_WIDGET(self->m_canvas));
 	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
 	auto dom_window=window_domain_adjust(cr,w,h,self->m_axis_x,self->m_axis_y);
