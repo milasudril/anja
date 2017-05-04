@@ -37,7 +37,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 			,m_description_label(m_description.insertMode({2,0}),"Description:")
 			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}))
 		,m_details(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
-			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE|Paned::SCROLL_ALLOWED}),true)
+			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
 				,m_color(m_details_left.insertMode({2,0}),false)
 					,m_color_label(m_color.insertMode({2,0}),"Color:")
 					,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}))

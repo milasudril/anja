@@ -15,16 +15,28 @@ class Paned::Impl:private Paned
 
 		void _add(GtkWidget* handle) noexcept
 			{
-			auto child=child_create(handle);
+			auto child=handle;
 			switch(m_position)
 				{
 				case Index::FIRST:
-					gtk_paned_pack1(m_handle,child,m_mode.flags&RESIZE,m_mode.flags&SHRINK_ALLOWED);
+					gtk_paned_pack1(m_handle,child
+						,(m_mode.flags&RESIZE)==RESIZE
+						,(m_mode.flags&SHRINK_ALLOWED)==SHRINK_ALLOWED);
 					m_position=Index::SECOND;
+					if(m_vertical)
+						{gtk_widget_set_margin_bottom(handle,3);}
+					else
+						{gtk_widget_set_margin_end(handle,3);}
 					break;
 
 				case Index::SECOND:
-					gtk_paned_pack2(m_handle,child,m_mode.flags&RESIZE,m_mode.flags&SHRINK_ALLOWED);
+					gtk_paned_pack2(m_handle,child
+						,(m_mode.flags&RESIZE)==RESIZE
+						,(m_mode.flags&SHRINK_ALLOWED)==SHRINK_ALLOWED);
+					if(m_vertical)
+						{gtk_widget_set_margin_top(handle,3);}
+					else
+						{gtk_widget_set_margin_start(handle,3);}
 					break;
 				}
 			}
@@ -42,26 +54,12 @@ class Paned::Impl:private Paned
 			{m_mode=mode;}
 
 	private:
-		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkPaned* m_handle;
 		InsertMode m_mode;
 		bool m_vertical;
 
 		enum class Index:unsigned short{FIRST,SECOND};
 		Index m_position;
-		GtkWidget* child_create(GtkWidget* handle)
-			{
-			if(m_mode.flags&SCROLL_ALLOWED)
-				{
-				auto scroll=gtk_scrolled_window_new(NULL,NULL);
-				gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll)
-					,!m_vertical?GTK_POLICY_AUTOMATIC:GTK_POLICY_NEVER
-					,m_vertical?GTK_POLICY_AUTOMATIC:GTK_POLICY_NEVER);
-				gtk_container_add(GTK_CONTAINER(scroll),handle);
-				return scroll;
-				}
-			return handle;
-			}
 	};
 
 Paned::Paned(Container& cnt,bool vertical)

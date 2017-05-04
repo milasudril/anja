@@ -16,7 +16,6 @@ namespace Anja
 		public:
 			static constexpr unsigned short RESIZE=1;
 			static constexpr unsigned short SHRINK_ALLOWED=2;
-			static constexpr unsigned short SCROLL_ALLOWED=4;
 
 			struct InsertMode
 				{unsigned short flags;};
