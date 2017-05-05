@@ -341,7 +341,6 @@ void XYPlot::Impl::ticks_count()
 			auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
 			auto dom_win_width=dom_window.max.x - dom_window.min.x;
 			auto dx_win=dx * dom_win_width/w;
-			printf("%.15g %.15g\n",dx_win,dx_min);
 			return dx_win > dx_min;
 			};
 
@@ -358,11 +357,10 @@ void XYPlot::Impl::ticks_count()
 			if(fits(mid))
 				{N_x_lower=mid + 1;}
 			else
-				{N_x_upper=mid - 1;}
+				{N_x_upper=mid;}
 			}
-		printf("%d %d %d\n",N_x_lower,mid,N_x_upper);
-		assert(fits(mid-2));
-		dx=nicenum(w/(mid-2));
+		assert(fits(mid-1));
+		dx=nicenum(w/(mid-1));
 		m_N_ticks_x=w/dx;
 		m_dx=dx;
 		};
