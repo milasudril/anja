@@ -512,23 +512,41 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
 
-	auto point_out=to_window_coords(c.points.front(),dom_window);
-	cairo_move_to(cr,point_out.x,point_out.y);
-	std::for_each(c.points.begin() + 1,c.points.end()
-		,[cr,this,&dom_window,&point_out](const Point& p)
+	auto i=c.points.begin();
+
+	while(i!=c.points.end())
 		{
-	//TODO: If curve is goes outside current domain, draw line segment to intersection
-	//	point only and break the loop. Use find_if instead of for_each
-		auto point_out_next=to_window_coords(p,dom_window);
-		auto dx=point_out_next.x - point_out.x;
-		auto dy=point_out_next.y - point_out.y;
-		if(dx*dx + dy*dy > 4)
+		i=std::find_if(i,c.points.end(),[&dom_window,this](const Point& p)
 			{
-			cairo_line_to(cr,point_out.x,point_out.y);
-			point_out=point_out_next;
-			}
-		});
-	cairo_stroke(cr);
+			auto point_out=to_window_coords(p,dom_window);
+			return inside(point_out,dom_window);
+			});
+		if(i==c.points.end())
+			{return;}
+
+	//	TODO: draw line segment to the edge of the box
+		auto point_out=to_window_coords(*i,dom_window);
+		cairo_move_to(cr,point_out.x,point_out.y);
+		i=std::find_if(i,c.points.end()
+			,[cr,this,&dom_window,&point_out](const Point& p)
+			{
+			auto point_out_next=to_window_coords(p,dom_window);
+			if(!inside(point_out_next,dom_window))
+				{
+			//	TODO: draw line segment to the edge of the box
+				return 1;
+				}
+			auto dx=point_out_next.x - point_out.x;
+			auto dy=point_out_next.y - point_out.y;
+			if(dx*dx + dy*dy > 4)
+				{
+				cairo_line_to(cr,point_out.x,point_out.y);
+				point_out=point_out_next;
+				}
+			return 0;
+			});
+		cairo_stroke(cr);
+		}
 	}
 
 static int dark_check(GtkWidget* widget)
