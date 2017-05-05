@@ -113,6 +113,9 @@ class XYPlot::Impl:public XYPlot
 		Point to_window_coords(const Point& p,const Domain& dom_window) const
 			{return map_to_domain_inv_y(p,m_dom,dom_window);}
 
+		Point to_plot_coords(const Point& p,const Domain& dom_window) const
+			{return map_to_domain_inv_y(p,dom_window,m_dom);}
+
 		static Point map_to_domain_inv_y(const Point& point
 			,const Domain& source,const Domain& target)
 			{
@@ -265,26 +268,27 @@ gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 		{factor_y=e.direction==GDK_SCROLL_UP?0.8:1.25;}
 
 	auto dom=self->m_dom;
+	auto pos=self->to_plot_coords(Point{e.x,e.y},dom_window);
 
 	if(e.state&GDK_CONTROL_MASK)
 		{
-		auto w=factor_x*(dom.max.x - dom.min.x);
-		auto mid_x=40000.0;
-		dom.max.x=mid_x+0.5*w;
-		dom.min.x=mid_x-0.5*w;
+		auto w_in=dom.max.x - dom.min.x;
+		auto w=factor_x*w_in;
+		auto x=w*(pos.x - dom.min.x)/w_in;
+		dom.min.x=pos.x - x;
+		dom.max.x=dom.min.x + w;		
 		}
 	
 	if(e.state&GDK_SHIFT_MASK)
 		{
-		auto h=factor_y*(dom.max.y - dom.min.y);
-		auto mid_y=-80.0;
-		dom.max.y=mid_y+0.5*h;
-		dom.min.y=mid_y-0.5*h;
+		auto h_in=dom.max.y - dom.min.y;
+		auto h=factor_y*h_in;
+		auto y=h*(pos.y - dom.min.y)/h_in;
+		dom.min.y=pos.y - y;
+		dom.max.y=dom.min.y + h;	
 		}
 
 	self->domain(dom);
-
-	printf("%.15g %.15g\n",e.delta_x,e.delta_y);
 	return TRUE;
 	}
 
