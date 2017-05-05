@@ -227,7 +227,12 @@ gboolean XYPlot::Impl::mouse_down(GtkWidget* object,GdkEventButton* event,void* 
 	{return TRUE;}
 
 gboolean XYPlot::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* obj)
-	{return TRUE;}
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(event->button==3)
+		{self->showAll();}
+	return TRUE;
+	}
 
 gboolean XYPlot::Impl::key_down(GtkWidget* widget,GdkEventKey* event,void* obj)
 	{return TRUE;}
