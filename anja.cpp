@@ -37,6 +37,7 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::UiContext ctx;
+		ctx.dark(1);
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
 		Anja::Window mainwin(session.filenameGet().begin());

@@ -31,6 +31,8 @@ namespace Anja
 				run(cb_wrapper,&t);
 				}
 
+			UiContext& dark(bool status);
+
 		private:
 			class Impl;
 			Impl* m_impl;

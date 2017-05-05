@@ -20,6 +20,8 @@ class UiContext::Impl:public UiContext
 
 		void run(IdleCallbackImpl cb,void* cb_obj);
 
+		void dark(bool status);
+
 	private:
 		volatile bool m_stop;
 	};
@@ -36,7 +38,11 @@ void UiContext::exit()
 void UiContext::run(IdleCallbackImpl cb,void* cb_obj)
 	{m_impl->run(cb,cb_obj);}
 
-
+UiContext& UiContext::dark(bool status)
+	{
+	m_impl->dark(status);
+	return *this;
+	}
 
 UiContext::Impl::~Impl()
 	{m_impl=nullptr;}
@@ -50,4 +56,10 @@ void UiContext::Impl::run(IdleCallbackImpl cb,void* cb_obj)
 		g_main_context_iteration(NULL,wait);
 		wait=cb(cb_obj,*this)==RunStatus::WAIT;
 		}
+	}
+
+void UiContext::Impl::dark(bool status)
+	{
+	g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
+		,status,NULL);
 	}
