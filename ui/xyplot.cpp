@@ -41,13 +41,31 @@ class XYPlot::Impl:public XYPlot
 			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 
-		void cursorX(const Cursor& c);
-		void cursorX(const Cursor& c,int index);
-		Cursor cursorX(int index) const noexcept;
+		void cursorX(const Cursor& c)
+			{m_cursors_x.push_back(c);}
 
-		void cursorY(const Cursor& c);
-		void cursorY(const Cursor& c,int index);
-		Cursor cursorY(int index) const noexcept;
+		void cursorX(const Cursor& c,int index)
+			{
+			if(static_cast<size_t>(index)>=m_cursors_x.size())
+				{m_cursors_x.resize(index+1);}
+			m_cursors_x[index]=c;
+			}
+
+		Cursor cursorX(int index) const noexcept
+			{return m_cursors_x[index];}
+
+		void cursorY(const Cursor& c)
+			{m_cursors_y.push_back(c);}
+
+		void cursorY(const Cursor& c,int index)
+			{
+			if(static_cast<size_t>(index)>=m_cursors_y.size())
+				{m_cursors_y.resize(index+1);}
+			m_cursors_y[index]=c;
+			}
+
+		Cursor cursorY(int index) const noexcept
+			{return m_cursors_y[index];}
 
 		void showAll() noexcept
 			{domain(m_curves.size()==0?Domain{{-1,-1},{1,1}}:m_dom_full);}
@@ -109,6 +127,8 @@ class XYPlot::Impl:public XYPlot
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
 		void draw_axis_y(cairo_t* cr,const Domain& dom_window) const;
 		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window,int dark) const; 
+		void draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const; 
+		void draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const; 
 
 		Point to_window_coords(const Point& p,const Domain& dom_window) const
 			{return map_to_domain_inv_y(p,m_dom,dom_window);}
@@ -158,6 +178,36 @@ XYPlot& XYPlot::showAll() noexcept
 	m_impl->showAll();
 	return *this;
 	}
+
+XYPlot& XYPlot::cursorX(const Cursor& c)
+	{
+	m_impl->cursorX(c);
+	return *this;
+	}
+
+XYPlot& XYPlot::cursorX(const Cursor& c,int index)
+	{
+	m_impl->cursorX(c,index);
+	return *this;
+	}
+
+XYPlot::Cursor XYPlot::cursorX(int index) const noexcept
+	{return m_impl->cursorX(index);}
+
+XYPlot& XYPlot::cursorY(const Cursor& c)
+	{
+	m_impl->cursorY(c);
+	return *this;
+	}
+
+XYPlot& XYPlot::cursorY(const Cursor& c,int index)
+	{
+	m_impl->cursorY(c,index);
+	return *this;
+	}
+
+XYPlot::Cursor XYPlot::cursorY(int index) const noexcept
+	{return m_impl->cursorY(index);}
 
 
 
@@ -549,6 +599,28 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 		}
 	}
 
+void XYPlot::Impl::draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
+	{
+	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
+	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	auto point_out=to_window_coords(Point{c.position,m_dom.min.y},dom_window);
+	cairo_move_to(cr,point_out.x,point_out.y);
+	point_out=to_window_coords(Point{c.position,m_dom.max.y},dom_window);
+	cairo_line_to(cr,point_out.x,point_out.y);
+	cairo_stroke(cr);
+	}
+
+void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
+	{
+	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
+	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	auto point_out=to_window_coords(Point{m_dom.min.x,c.position},dom_window);
+	cairo_move_to(cr,point_out.x,point_out.y);
+	point_out=to_window_coords(Point{m_dom.max.x,c.position},dom_window);
+	cairo_line_to(cr,point_out.x,point_out.y);
+	cairo_stroke(cr);
+	}
+
 static int dark_check(GtkWidget* widget)
 	{
 	auto context=gtk_widget_get_style_context(widget);
@@ -602,6 +674,17 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		std::for_each(self->m_curves.begin(),self->m_curves.end()
 			,[&cr,&dom_window,self](const Curve& c)
 				{self->draw_curve(cr,c,dom_window,self->m_dark);});
+
+	//	Draw cursors
+		std::for_each(self->m_cursors_x.begin(),self->m_cursors_x.end()
+			,[&cr,&dom_window,self](const Cursor& c)
+				{self->draw_cursor_x(cr,c,dom_window,self->m_dark);});
+
+		std::for_each(self->m_cursors_y.begin(),self->m_cursors_y.end()
+			,[&cr,&dom_window,self](const Cursor& c)
+				{self->draw_cursor_y(cr,c,dom_window,self->m_dark);});
+
+
 
 	//	Draw border
 		{

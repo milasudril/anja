@@ -75,6 +75,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
 	m_cursor_begin_entry.width(7);
 	m_cursor_end_entry.width(7).alignment(1.0f);
+	m_plot.cursorY(XYPlot::Cursor{-70.0,0.16f});
 
 	m_filename_input.callback(*this,TextEntryId::FILENAME);
 	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
@@ -130,8 +131,10 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	char buffer[16];
 	sprintf(buffer,"%d",waveform.offsetBeginGet());
 	m_cursor_begin_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{20000,0.33f},0); //TODO: Use real values later
 	sprintf(buffer,"%d",waveform.offsetEndGet());
 	m_cursor_end_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{60000,0.0f},1);
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
