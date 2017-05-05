@@ -103,7 +103,7 @@ class XYPlot::Impl:public XYPlot
 		void ticks_count();
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
 		void prerender_y(cairo_t* cr,double y_0,size_t N,double dy);
-		static Domain window_domain_adjust(cairo_t* cr,int width,int height
+		static Domain window_domain_adjust(int width,int height
 			,const std::vector<TickMark>& axis_x
 			,const std::vector<TickMark>& axis_y);
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
@@ -125,6 +125,12 @@ class XYPlot::Impl:public XYPlot
 				 xi*w.max.x+(1-xi)*w.min.x
 				,eta*w.min.y+(1-eta)*w.max.y
 				};
+			}
+
+		static bool inside(const Point& p,const Domain& dom)
+			{
+			return (p.x>=dom.min.x && p.x<=dom.max.x)
+				&& (p.y>=dom.min.y && p.y<=dom.max.y);
 			}
 	};
 
@@ -243,7 +249,14 @@ gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
 gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
+	auto w=gtk_widget_get_allocated_width(widget);
+	auto h=gtk_widget_get_allocated_height(widget);
+	auto dom_window=window_domain_adjust(w,h,self->m_axis_x,self->m_axis_y);
 	auto& e=event->scroll;
+
+	if(!inside(Point{e.x,e.y},dom_window))
+		{return FALSE;}
+
 	auto factor_x=1.0;
 	auto factor_y=1.0;
 	if(e.state&GDK_CONTROL_MASK)
@@ -318,7 +331,7 @@ void XYPlot::Impl::ticks_count()
 	auto dx=w/N_x;
 	prerender_x(cr,domain.min.x,N_x,dx);
 
-	auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
+	auto dom_window=window_domain_adjust(w_window,h_window,m_axis_x,m_axis_y);
 
 //	Compute Y ticks
 		{
@@ -343,7 +356,7 @@ void XYPlot::Impl::ticks_count()
 			prerender_x(cr,dx*std::ceil(domain.min.x/dx),N_x,dx);
 			auto dx_min=m_axis_x.back().extent_x+16; //The largest possible extent for any label
 		//	Compute the number of pixels for dx. This value must be larger than dx_min
-			auto dom_window=window_domain_adjust(cr,w_window,h_window,m_axis_x,m_axis_y);
+			auto dom_window=window_domain_adjust(w_window,h_window,m_axis_x,m_axis_y);
 			auto dom_win_width=dom_window.max.x - dom_window.min.x;
 			auto dx_win=dx * dom_win_width/w;
 			return dx_win > dx_min;
@@ -420,7 +433,7 @@ void XYPlot::Impl::prerender_y(cairo_t* cr,double y_0,size_t N,double dy)
 	m_axis_y.push_back({0,float(max_extent),0});
 	}
 
-XYPlot::Domain XYPlot::Impl::window_domain_adjust(cairo_t* cr,int width,int height
+XYPlot::Domain XYPlot::Impl::window_domain_adjust(int width,int height
 	,const std::vector<TickMark>& axis_x
 	,const std::vector<TickMark>& axis_y)
 	{
@@ -532,7 +545,7 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		,self->m_N_ticks_y,self->m_dy);
 	auto w=gtk_widget_get_allocated_width(GTK_WIDGET(self->m_canvas));
 	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
-	auto dom_window=window_domain_adjust(cr,w,h,self->m_axis_x,self->m_axis_y);
+	auto dom_window=window_domain_adjust(w,h,self->m_axis_x,self->m_axis_y);
 
 //	dark_check is only reliable for sensitive widget in active window
 	auto state=gtk_widget_get_state_flags(widget);
