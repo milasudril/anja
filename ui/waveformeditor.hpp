@@ -16,6 +16,7 @@
 #include "slider.hpp"
 #include "xyplot.hpp"
 #include "../sessiondata/waveformview.hpp"
+#include "../common/arraysimple.hpp"
 
 namespace Anja
 	{
@@ -60,6 +61,7 @@ namespace Anja
 
 		private:
 			WaveformView m_waveform;
+			ArraySimple<float> m_waveform_db;
 			Box m_box;
 				Box m_filename;
 					Label m_filename_label;

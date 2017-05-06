@@ -44,6 +44,28 @@ static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& 
 	plot.cursorX(XYPlot::Cursor{val,0.0f},1);
 	}
 
+static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
+	,WaveformView& waveform,TextEntry& entry)
+	{
+	auto threshold=plot.cursorY(0).position;
+	auto i=std::find_if(wfdb.begin(),wfdb.end(),[threshold](float val)
+		{return val>threshold;});
+	waveform.offsetBeginSet(static_cast<int32_t>(i - wfdb.begin()));
+	offset_begin_update(waveform,entry,plot);
+	}
+
+static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
+	,WaveformView& waveform,TextEntry& entry)
+	{
+	auto threshold=plot.cursorY(0).position;
+	auto i_begin=std::reverse_iterator<const float*>(wfdb.end());
+	auto i_end=std::reverse_iterator<const float*>(wfdb.begin());
+	auto i=std::find_if(i_begin,i_end,[threshold](float val)
+		{return val>threshold;});
+	waveform.offsetEndSet(static_cast<int32_t>(i.base() - wfdb.begin()));
+	offset_end_update(waveform,entry,plot);
+	}
+
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
 	switch(id)
@@ -57,6 +79,14 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			offset_begin_update(m_waveform,m_cursor_begin_entry,m_plot);
 			offset_end_update(m_waveform,m_cursor_end_entry,m_plot);
 			}
+			break;
+
+		case ButtonId::CURSOR_BEGIN_AUTO:
+			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+			break;
+
+		case ButtonId::CURSOR_END_AUTO:
+			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 			break;
 		}
 	src.state(0);
@@ -117,7 +147,7 @@ static ArraySimple<float> mean_square(const float* begin,const float* end,int le
 	return std::move(vals_ms);
 	}
 
-void plot_db(const float* begin,const float* end,int fs,XYPlot& plot)
+void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
 	{
 	ArraySimple<XYPlot::Point> points(end - begin);
 	size_t k=0;
@@ -125,17 +155,21 @@ void plot_db(const float* begin,const float* end,int fs,XYPlot& plot)
 		{
 		auto t=static_cast<double>(k)/static_cast<double>(fs);
 		++k;
-		return XYPlot::Point{t,std::max(powerToDb(static_cast<double>(val)),-145.0)};
+		return XYPlot::Point{t,static_cast<double>(val)};
 		});
 	plot.curve(points.begin(),points.end(),0.66f);
 	}
 
-static void filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
+static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
 	e.content(waveform.filenameGet().begin());
 	auto ms=mean_square(waveform.beginFull(),waveform.endFull()
 		,waveform.sampleRateGet()/1000);
-	plot_db(ms.begin(),ms.end(),waveform.sampleRateGet(),plot.curvesRemove());
+	std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
+		{return std::max(powerToDb(x),-145.0f);});
+
+	plot_append(ms.begin(),ms.end(),waveform.sampleRateGet(),plot.curvesRemove());
+	return std::move(ms);
 	}
 
 static void description_update(const WaveformView& waveform,TextEntry& e)
@@ -244,12 +278,15 @@ void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
 	if(keymask&KEYMASK_KEY_SHIFT)
 		{
+		cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+		cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 		}
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const ArraySimple<String>& channel_names):
 	 m_waveform(waveform)
+	,m_waveform_db(2)
 	,m_box(cnt,true)
 		,m_filename(m_box.insertMode({1,0}),false)
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
@@ -315,7 +352,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_options_input.callback(*this,OptionListId::OPTIONS);
 	m_plot.callback(*this,PlotId::WAVEFORM);
 	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
+	m_cursor_begin_auto.callback(*this,ButtonId::CURSOR_BEGIN_AUTO);
 	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
+	m_cursor_end_auto.callback(*this,ButtonId::CURSOR_END_AUTO);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
 //	Session changed...
@@ -332,7 +371,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_options_input.selected(waveform.flagsGet());
 
 		{
-		filename_update(waveform,m_filename_input,m_plot);
+		m_waveform_db=filename_update(waveform,m_filename_input,m_plot);
 	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
 		m_plot.showAll();
 		}
