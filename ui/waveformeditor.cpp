@@ -24,9 +24,9 @@ static double gain_random_map(double x)
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
 
-static void offsetBeginSet(int32_t val,WaveformView& waveform,TextEntry& e,XYPlot& plot)
+static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	waveform.offsetBeginSet(val);
+	auto val=waveform.offsetBeginGet();
 //	TODO: We should use seconds instead of frames
 	char buffer[16];
 	sprintf(buffer,"%d",val);
@@ -34,9 +34,9 @@ static void offsetBeginSet(int32_t val,WaveformView& waveform,TextEntry& e,XYPlo
 	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
 	}
 
-static void offsetEndSet(int32_t val,WaveformView& waveform,TextEntry& e,XYPlot& plot)
+static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	waveform.offsetEndSet(val);
+	auto val=waveform.offsetEndGet();
 //	TODO: We should use seconds instead of frames
 	char buffer[16];
 	sprintf(buffer,"%d",val);
@@ -52,8 +52,10 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			{
 			auto end=m_waveform.offsetBeginGet();
 			auto begin=m_waveform.offsetEndGet();
-			offsetBeginSet(begin,m_waveform,m_cursor_begin_entry,m_plot);
-			offsetEndSet(end,m_waveform,m_cursor_end_entry,m_plot);
+			m_waveform.offsetBeginSet(begin);
+			m_waveform.offsetEndSet(end);
+			offset_begin_update(m_waveform,m_cursor_begin_entry,m_plot);
+			offset_end_update(m_waveform,m_cursor_end_entry,m_plot);
 			}
 			break;
 		}
@@ -295,12 +297,6 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
 		m_plot.showAll();
 		}
-
-	char buffer[16];
-	sprintf(buffer,"%d",waveform.offsetBeginGet());
-	m_cursor_begin_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetBeginGet()),0.33f},0);
-	sprintf(buffer,"%d",waveform.offsetEndGet());
-	m_cursor_end_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetEndGet()),0.0f},1);
+	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
+	offset_end_update(waveform,m_cursor_end_entry,m_plot);
 	}
