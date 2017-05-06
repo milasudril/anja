@@ -41,7 +41,7 @@ namespace Anja
 
 
 	typedef void (*FilenameSelectCallback)(void* cb_obj,const char* context
-		,std::unique_ptr<char*>&& result);
+		,const char* result);
 
 	void filenameSelectRemote(Container& cnt,const char* filename_in
 		,FilenameSelectMode mode,const char* context_name,FilenameSelectCallback cb,void* cb_obj);
@@ -50,7 +50,7 @@ namespace Anja
 	void filenameSelectRemote(Container& cnt,const char* filename_in
 		,FilenameSelectMode mode,const char* context_name,Callback& cb_obj)
 		{
-		auto cb=[](void* cb_obj,const char* context,std::unique_ptr<char*>&& result)
+		auto cb=[](void* cb_obj,const char* context,const char* result)
 			{
 			auto callback=reinterpret_cast<Callback*>(cb_obj);
 			callback->filenameReceived(context,std::move(result));

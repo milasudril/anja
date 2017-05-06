@@ -105,6 +105,7 @@
       <File Name="ui/keymask.cpp"/>
       <File Name="ui/xyplot.cpp"/>
       <File Name="ui/filenameselect.hpp"/>
+      <File Name="ui/filenameselect.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

@@ -25,6 +25,16 @@ namespace Anja
 			};
 		pipe(command,cb,&cb_obj);
 		}
+
+	template<class PipeCallback>
+	void pipe(const char* const* command,PipeCallback& cb_obj)
+		{
+		auto cb=[](void* cb_obj,const int8_t* buffer,size_t n)
+			{
+			reinterpret_cast<PipeCallback*>(cb_obj)->write(buffer,n);
+			};
+		pipe(command,cb,&cb_obj);
+		}
 	}
 
 #endif
