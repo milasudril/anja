@@ -301,7 +301,10 @@ void XYPlot::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void
 	}
 
 gboolean XYPlot::Impl::mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj)
-	{return TRUE;}
+	{
+	printf("Mousemove (%.15g, %.15g)\n",event->x,event->y);
+	return TRUE;
+	}
 
 gboolean XYPlot::Impl::mouse_down(GtkWidget* object,GdkEventButton* event,void* obj)
 	{return TRUE;}
@@ -622,9 +625,11 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 
 void XYPlot::Impl::draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
 	{
+	auto point_out=to_window_coords(Point{c.position,m_dom.min.y},dom_window);
+	if(point_out.x<dom_window.min.x || point_out.x>dom_window.max.x)
+		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
-	auto point_out=to_window_coords(Point{c.position,m_dom.min.y},dom_window);
 	cairo_move_to(cr,point_out.x,point_out.y);
 	point_out=to_window_coords(Point{c.position,m_dom.max.y},dom_window);
 	cairo_line_to(cr,point_out.x,point_out.y);
@@ -633,9 +638,11 @@ void XYPlot::Impl::draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_w
 
 void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
 	{
+	auto point_out=to_window_coords(Point{m_dom.min.x,c.position},dom_window);
+	if(point_out.y<dom_window.min.y || point_out.y>dom_window.max.y)
+		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
-	auto point_out=to_window_coords(Point{m_dom.min.x,c.position},dom_window);
 	cairo_move_to(cr,point_out.x,point_out.y);
 	point_out=to_window_coords(Point{m_dom.max.x,c.position},dom_window);
 	cairo_line_to(cr,point_out.x,point_out.y);
