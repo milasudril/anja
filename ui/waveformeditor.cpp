@@ -136,6 +136,12 @@ static void filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& pl
 	plot_db(ms.begin(),ms.end(),waveform.sampleRateGet(),plot.curvesRemove());
 	}
 
+static void description_update(const WaveformView& waveform,TextEntry& e)
+	{
+	e.content(waveform.descriptionGet().begin());
+//	TODO: Pass message so the keyboard can be updated
+	}
+
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	{
 	switch(id)
@@ -149,7 +155,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 
 		case TextEntryId::DESCRIPTION:
 			m_waveform.descriptionSet(String(entry.content()));
-		//	TODO: Pass message so the keyboard can be updated
+			description_update(m_waveform,entry);
 			break;
 
 		case TextEntryId::COLOR:
@@ -306,8 +312,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 		{m_channel_input.append(str.begin());});
 
 //	Slot changed
-	m_filename_input.content(waveform.filenameGet().begin());
-	m_description_input.content(waveform.descriptionGet().begin());
+	description_update(waveform,m_description_input);
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
 	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
 	gain_update(waveform,m_gain_input_text);
