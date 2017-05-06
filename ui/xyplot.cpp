@@ -29,6 +29,9 @@ class XYPlot::Impl:public XYPlot
 			m_id=id;
 			}
 
+		int id() const noexcept
+			{return m_id;}
+
 		void curve(const Point* begin,const Point* end,float hue);
 
 		void curvesRemove()
@@ -235,10 +238,20 @@ XYPlot& XYPlot::curvesRemove()
 	return *this;
 	}
 
+int XYPlot::id() const noexcept
+	{return m_impl->id();}
+
+XYPlot& XYPlot::callback(const Vtable& vt,void* cb_obj,int id) noexcept
+	{
+	m_impl->callback(vt,cb_obj,id);
+	return *this;
+	}
 
 
 
-XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
+
+
+XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
@@ -330,12 +343,20 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 			case CURSOR_X_MOVE:
 				self->m_cursors_x[self->m_cursor_grabbed].position=pos_cursor_plot.x;
 				gtk_widget_queue_draw(widget);
-			//	TODO: Emmit event
+				if(self->r_cb_obj!=nullptr)
+					{
+					self->m_vt.cursor_x(self->r_cb_obj,*self,self->m_cursor_grabbed
+						,keymaskFromSystem(event->state));
+					}
 				break;
 			case CURSOR_Y_MOVE:
 				self->m_cursors_y[self->m_cursor_grabbed].position=pos_cursor_plot.y;
 				gtk_widget_queue_draw(widget);
-			//	TODO: Emmit event
+				if(self->r_cb_obj!=nullptr)
+					{
+					self->m_vt.cursor_y(self->r_cb_obj,*self,self->m_cursor_grabbed
+						,keymaskFromSystem(event->state));
+					}
 				break;
 			case PAN:
 			//	TODO: Requires that cursor offset is saved in mouse_down

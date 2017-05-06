@@ -1,6 +1,6 @@
 //@	{
 //@	 "targets":[{"name":"keymask.hpp","type":"include"}]
-//@	,"dpendencies_extra":[{"ref":"keymask.o","rel":"implementation"}]
+//@	,"dependencies_extra":[{"ref":"keymask.o","rel":"implementation"}]
 //@	}
 
 #ifndef ANJA_KEYMASK_HPP

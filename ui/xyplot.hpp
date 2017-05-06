@@ -27,7 +27,7 @@ namespace Anja
 			XYPlot(XYPlot&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-			int id();
+			int id() const noexcept;
 
 			template<class Callback,class IdType>
 			XYPlot& callback(Callback& cb,IdType id) noexcept
@@ -79,34 +79,17 @@ namespace Anja
 				template<class Callback,class IdType>
 				explicit Vtable(Callback& cb,IdType) noexcept
 					{
-					mouse_move=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
-						{reinterpret_cast<Callback*>(cb_obj)->mouseMove(source,static_cast<IdType>(source.id()),x,keymask);};
-					mouse_down=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
-						{reinterpret_cast<Callback*>(cb_obj)->mouseDown(source,static_cast<IdType>(source.id()),x,keymask);};
-					mouse_up=[](void* cb_obj,XYPlot& source,Point x,keymask_t keymask)
-						{reinterpret_cast<Callback*>(cb_obj)->mouseUp(source,static_cast<IdType>(source.id()),x,keymask);};
-					key_down=[](void* cb_obj,XYPlot& source,uint8_t scancode)
-						{reinterpret_cast<Callback*>(cb_obj)->keyDown(source,static_cast<IdType>(source.id()),scancode);};
-					key_up=[](void* cb_obj,XYPlot& source,uint8_t scancode)
-						{reinterpret_cast<Callback*>(cb_obj)->keyUp(source,static_cast<IdType>(source.id()),scancode);};
-					key_down=[](void* cb_obj,XYPlot& source,uint8_t scancode)
-						{reinterpret_cast<Callback*>(cb_obj)->keyDown(source,static_cast<IdType>(source.id()),scancode);};
 					cursor_x=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->cursorX(source,static_cast<IdType>(source.id()),index,keymask);};
 					cursor_y=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
 						{reinterpret_cast<Callback*>(cb_obj)->cursorY(source,static_cast<IdType>(source.id()),index,keymask);};
 					}
 
-				void (*mouse_move)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
-				void (*mouse_down)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
-				void (*mouse_up)(void* cb_obj,XYPlot& source,Point x,keymask_t keymask);
-				void (*key_down)(void* cb_obj,XYPlot& source,uint8_t scancode);
-				void (*key_up)(void* cb_obj,XYPlot& source,uint8_t scancode);
 				void (*cursor_x)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
 				void (*cursor_y)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
 				};
 
-			XYPlot& callback(const Vtable& vt,void* cb_obj,int id);
+			XYPlot& callback(const Vtable& vt,void* cb_obj,int id) noexcept;
 		};
 	}
 

@@ -44,6 +44,9 @@ namespace Anja
 			enum class OptionListId:int
 				{OPTIONS};
 
+			enum class PlotId:int
+				{WAVEFORM};
+
 			WaveformEditor(Container& cnt,const WaveformView& waveform
 				,const ArraySimple<String>& channel_names);
 
@@ -52,6 +55,8 @@ namespace Anja
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
 			void changed(Listbox& lb,ListboxId id);
+			void cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask);
+			void cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 
 		private:
 			WaveformView m_waveform;

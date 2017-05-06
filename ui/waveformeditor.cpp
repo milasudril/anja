@@ -225,6 +225,28 @@ void WaveformEditor::changed(Listbox& lb,ListboxId id)
 		}
 	}
 
+void WaveformEditor::cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+	{
+	switch(index)
+		{
+		case 0:
+			m_waveform.offsetBeginSet(plot.cursorX(0).position);
+			offset_begin_update(m_waveform,m_cursor_begin_entry,plot);
+			break;
+		case 1:
+			m_waveform.offsetEndSet(plot.cursorX(1).position);
+			offset_end_update(m_waveform,m_cursor_end_entry,plot);
+			break;
+		}
+	}
+
+void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+	{
+	if(keymask&KEYMASK_KEY_SHIFT)
+		{
+		}
+	}
+
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const ArraySimple<String>& channel_names):
 	 m_waveform(waveform)
@@ -291,7 +313,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_gain_random_input_slider.callback(*this,SliderId::GAIN_RANDOM);
 	m_gain_random_input_text.callback(*this,TextEntryId::GAIN_RANDOM);
 	m_options_input.callback(*this,OptionListId::OPTIONS);
-//	TODO: Add m_plot here...
+	m_plot.callback(*this,PlotId::WAVEFORM);
 	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
 	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
