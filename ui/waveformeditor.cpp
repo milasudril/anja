@@ -24,118 +24,6 @@ static double gain_random_map(double x)
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
 
-WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
-	,const ArraySimple<String>& channel_names):
-	 m_waveform(waveform)
-	,m_box(cnt,true)
-		,m_filename(m_box.insertMode({1,0}),false)
-			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
-			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
-			,m_filename_browse(m_filename.insertMode({2,0}),"Browse")
-			,m_filename_reload(m_filename,"↺")
-		,m_description(m_box,false)
-			,m_description_label(m_description.insertMode({2,0}),"Description:")
-			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}))
-		,m_details(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
-			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
-				,m_color(m_details_left.insertMode({2,0}),false)
-					,m_color_label(m_color.insertMode({2,0}),"Color:")
-					,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}))
-					,m_color_pick(m_color.insertMode({2,0}),"…")
-				,m_channel(m_details_left,false)
-					,m_channel_label(m_channel.insertMode({2,0}),"Channel:")
-					,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}))
-				,m_gain(m_details_left,false)
-					,m_gain_label(m_gain.insertMode({2,0}),"Gain/dBFS:")
-					,m_gain_input(m_gain.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_gain_input_text(m_gain_input.insertMode({0,0}))
-						,m_gain_input_slider(m_gain_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
-				,m_gain_random(m_details_left,false)
-					,m_gain_random_label(m_gain_random.insertMode({2,0}),"Gain random/dBFS:")
-					,m_gain_random_input(m_gain_random.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_gain_random_input_text(m_gain_random_input.insertMode({0,0}))
-						,m_gain_random_input_slider(m_gain_random_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
-				,m_options(m_details_left,false)
-					,m_options_label(m_options.insertMode({2,0}),"Options:")
-				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),true)
-			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE}),true)
-				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
-				,m_trim_panel(m_details_right.insertMode({0,0}),false)
-					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_cursor_begin_label(m_cursor_begin,"Begin")
-						,m_cursor_begin_entry(m_cursor_begin.insertMode({4,Box::EXPAND|Box::FILL}))
-						,m_cursor_begin_auto(m_cursor_begin.insertMode({0,0}),"Auto")
-					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
-					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_cursor_end_label(m_cursor_end,"End")
-						,m_cursor_end_entry(m_cursor_end.insertMode({4,Box::EXPAND|Box::FILL}))
-						,m_cursor_end_auto(m_cursor_end.insertMode({0,0}),"Auto")
-	{
-	m_gain_input_text.width(7).small(true).alignment(1.0f);
-	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
-	m_cursor_begin_entry.width(7);
-	m_cursor_end_entry.width(7).alignment(1.0f);
-	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
-
-	m_filename_input.callback(*this,TextEntryId::FILENAME);
-	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
-	m_filename_reload.callback(*this,ButtonId::FILENAME_RELOAD);
-	m_description_input.callback(*this,TextEntryId::DESCRIPTION);
-	m_color_input.callback(*this,TextEntryId::COLOR);
-	m_color_pick.callback(*this,ButtonId::COLOR_PICK);
-	m_channel_input.callback(*this,ListboxId::CHANNEL);
-	m_gain_input_slider.callback(*this,SliderId::GAIN);
-	m_gain_input_text.callback(*this,TextEntryId::GAIN);
-	m_gain_random_input_slider.callback(*this,SliderId::GAIN_RANDOM);
-	m_gain_random_input_text.callback(*this,TextEntryId::GAIN_RANDOM);
-	m_options_input.callback(*this,OptionListId::OPTIONS);
-//	TODO: Add m_plot here...
-	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
-	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
-	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
-
-//	Session changed...
-	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
-		{m_channel_input.append(str.begin());});
-
-//	Slot changed
-	m_filename_input.content(waveform.filenameGet().begin());
-	m_description_input.content(waveform.descriptionGet().begin());
-	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
-	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
-	changed(m_gain_input_slider,SliderId::GAIN);
-	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
-	changed(m_gain_random_input_slider,SliderId::GAIN_RANDOM);
-
-	m_channel_input.selected(m_waveform.channelGet());
-	m_options_input.append(waveform.flagNames());
-	m_options_input.selected(waveform.flagsGet());
-
-		{
-		ArraySimple<float> vals_ms(waveform.lengthFull());
-		MeanSquare ms(48);
-		ms.compute(waveform.beginFull(),vals_ms.begin(),waveform.lengthFull());
-		ArraySimple<XYPlot::Point> points(waveform.lengthFull());
-		size_t k=0;
-		std::transform(vals_ms.begin(),vals_ms.end(),points.begin(),[&k](float val)
-			{
-			++k;
-			return XYPlot::Point{static_cast<double>(k-1)
-				,std::max(powerToDb(static_cast<double>(val)),-145.0)};
-			});
-		m_plot.curve(points.begin(),points.end(),0.66f);
-	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
-		m_plot.showAll();
-		}
-
-	char buffer[16];
-	sprintf(buffer,"%d",waveform.offsetBeginGet());
-	m_cursor_begin_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetBeginGet()),0.33f},0);
-	sprintf(buffer,"%d",waveform.offsetEndGet());
-	m_cursor_end_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetEndGet()),0.0f},1);
-	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
@@ -290,4 +178,117 @@ void WaveformEditor::changed(Listbox& lb,ListboxId id)
 			m_waveform.channelSet(lb.selected());
 			break;
 		}
+	}
+
+WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
+	,const ArraySimple<String>& channel_names):
+	 m_waveform(waveform)
+	,m_box(cnt,true)
+		,m_filename(m_box.insertMode({1,0}),false)
+			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
+			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
+			,m_filename_browse(m_filename.insertMode({2,0}),"Browse")
+			,m_filename_reload(m_filename,"↺")
+		,m_description(m_box,false)
+			,m_description_label(m_description.insertMode({2,0}),"Description:")
+			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}))
+		,m_details(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
+			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
+				,m_color(m_details_left.insertMode({2,0}),false)
+					,m_color_label(m_color.insertMode({2,0}),"Color:")
+					,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}))
+					,m_color_pick(m_color.insertMode({2,0}),"…")
+				,m_channel(m_details_left,false)
+					,m_channel_label(m_channel.insertMode({2,0}),"Channel:")
+					,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}))
+				,m_gain(m_details_left,false)
+					,m_gain_label(m_gain.insertMode({2,0}),"Gain/dBFS:")
+					,m_gain_input(m_gain.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_gain_input_text(m_gain_input.insertMode({0,0}))
+						,m_gain_input_slider(m_gain_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
+				,m_gain_random(m_details_left,false)
+					,m_gain_random_label(m_gain_random.insertMode({2,0}),"Gain random/dBFS:")
+					,m_gain_random_input(m_gain_random.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_gain_random_input_text(m_gain_random_input.insertMode({0,0}))
+						,m_gain_random_input_slider(m_gain_random_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
+				,m_options(m_details_left,false)
+					,m_options_label(m_options.insertMode({2,0}),"Options:")
+				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),true)
+			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE}),true)
+				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
+				,m_trim_panel(m_details_right.insertMode({0,0}),false)
+					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_begin_label(m_cursor_begin,"Begin")
+						,m_cursor_begin_entry(m_cursor_begin.insertMode({4,Box::EXPAND|Box::FILL}))
+						,m_cursor_begin_auto(m_cursor_begin.insertMode({0,0}),"Auto")
+					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
+					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_end_label(m_cursor_end,"End")
+						,m_cursor_end_entry(m_cursor_end.insertMode({4,Box::EXPAND|Box::FILL}))
+						,m_cursor_end_auto(m_cursor_end.insertMode({0,0}),"Auto")
+	{
+	m_gain_input_text.width(7).small(true).alignment(1.0f);
+	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
+	m_cursor_begin_entry.width(7);
+	m_cursor_end_entry.width(7).alignment(1.0f);
+	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
+
+	m_filename_input.callback(*this,TextEntryId::FILENAME);
+	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
+	m_filename_reload.callback(*this,ButtonId::FILENAME_RELOAD);
+	m_description_input.callback(*this,TextEntryId::DESCRIPTION);
+	m_color_input.callback(*this,TextEntryId::COLOR);
+	m_color_pick.callback(*this,ButtonId::COLOR_PICK);
+	m_channel_input.callback(*this,ListboxId::CHANNEL);
+	m_gain_input_slider.callback(*this,SliderId::GAIN);
+	m_gain_input_text.callback(*this,TextEntryId::GAIN);
+	m_gain_random_input_slider.callback(*this,SliderId::GAIN_RANDOM);
+	m_gain_random_input_text.callback(*this,TextEntryId::GAIN_RANDOM);
+	m_options_input.callback(*this,OptionListId::OPTIONS);
+//	TODO: Add m_plot here...
+	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
+	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
+	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
+
+//	Session changed...
+	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
+		{m_channel_input.append(str.begin());});
+
+//	Slot changed
+	m_filename_input.content(waveform.filenameGet().begin());
+	m_description_input.content(waveform.descriptionGet().begin());
+	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
+	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
+	changed(m_gain_input_slider,SliderId::GAIN);
+	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
+	changed(m_gain_random_input_slider,SliderId::GAIN_RANDOM);
+
+	m_channel_input.selected(m_waveform.channelGet());
+	m_options_input.append(waveform.flagNames());
+	m_options_input.selected(waveform.flagsGet());
+
+		{
+		ArraySimple<float> vals_ms(waveform.lengthFull());
+		MeanSquare ms(48);
+		ms.compute(waveform.beginFull(),vals_ms.begin(),waveform.lengthFull());
+		ArraySimple<XYPlot::Point> points(waveform.lengthFull());
+		size_t k=0;
+		std::transform(vals_ms.begin(),vals_ms.end(),points.begin(),[&k](float val)
+			{
+			++k;
+			return XYPlot::Point{static_cast<double>(k-1)
+				,std::max(powerToDb(static_cast<double>(val)),-145.0)};
+			});
+		m_plot.curve(points.begin(),points.end(),0.66f);
+	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
+		m_plot.showAll();
+		}
+
+	char buffer[16];
+	sprintf(buffer,"%d",waveform.offsetBeginGet());
+	m_cursor_begin_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetBeginGet()),0.33f},0);
+	sprintf(buffer,"%d",waveform.offsetEndGet());
+	m_cursor_end_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetEndGet()),0.0f},1);
 	}
