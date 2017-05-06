@@ -54,11 +54,13 @@ void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)
 	r_waveform_data.dataSet(rec);
 //	BUG: fileLoad needs an overload that takes rec also, so it is possible to
 //	get a consistent state in r_waveform.
-	r_waveform.dataSet(rec);
-	if(r_waveform_data.filenameGet().length()!=0)
+	
+	if(r_waveform_data.filenameGet().length()==0)
+		{r_waveform.dataSet(rec);}
+	else
 		{
 		auto f=::filenameGet(r_waveform_data.filenameGet(),dir_current);
-		r_waveform.fileLoad(f.begin());
+		r_waveform.dataSet(rec,f.begin());
 		}
 	}
 

@@ -20,10 +20,10 @@ static constexpr const char* FLAG_NAMES[]=
 const char* const* Waveform::flagNames() noexcept
 	{return FLAG_NAMES;}
 
-Waveform::Waveform(const SessionFileRecord& record)
+Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	{
 	valuesInit();
-
+	fileLoad(filename);
 	auto value=record.propertyGet(String("Playback gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}
@@ -50,7 +50,9 @@ Waveform::Waveform(const SessionFileRecord& record)
 		}
 
 	value=record.propertyGet(String("Playback starting position/frames"));
-	if(value!=nullptr)
+	if(value==nullptr)
+		{offsetBeginSet(0);}
+	else
 		{
 		LocaleGuard locale("C");
 		auto pos=atol(value->begin());
@@ -58,12 +60,16 @@ Waveform::Waveform(const SessionFileRecord& record)
 		}
 
 	value=record.propertyGet(String("Playback end position/frames"));
-	if(value!=nullptr)
+	if(value==nullptr)
+		{offsetEndSet(m_data.length());}
+	else
 		{
 		LocaleGuard locale("C");
 		auto pos=atol(value->begin());
 		offsetEndSet(pos);
 		}
+
+	dirtyClear();
 	}
 
 void Waveform::dataGet(SessionFileRecord& record) const
@@ -91,7 +97,8 @@ void Waveform::dataGet(SessionFileRecord& record) const
 void Waveform::fileLoad(const char* filename)
 	{
 //	Stop loading new data into this slot if it is already in use by an audio
-//	thread.
+//	thread. TODO: This requires a mutex, since we will recieve input from the
+//	audio loop as well (MIDI).
 	if(flagsGet() & (PLAYBACK_RUNNING|RECORD_RUNNING) )
 		{
 		throw "The waveform loaded in the current slot is currently in use. "
@@ -99,8 +106,8 @@ void Waveform::fileLoad(const char* filename)
 			"slot.";
 		}
 
-//	If filename is empty, clear the slot
-	if(*filename=='\0')
+//	If filename is empty or nullptr, clear the slot
+	if(filename==nullptr || *filename=='\0')
 		{
 		clear();
 		float vals[2]={1e-7f,1e-7f};
@@ -125,12 +132,10 @@ void Waveform::fileLoad(const char* filename)
 		append(buffer_tmp.begin(),n_read);
 		}
 	while(n_read==BUFFER_SIZE);
-	offsetsReset();
+	offsetsAdjust();
 
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
-	flagsSet(Waveform::READONLY);
-
-	dirtyClear();
+	flagsSet(Waveform::READONLY|Waveform::DIRTY);
 	}
 
 void Waveform::fileSave(const char* filename)

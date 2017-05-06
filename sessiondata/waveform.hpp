@@ -27,7 +27,7 @@ namespace Anja
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
 				{}
 
-			explicit Waveform(const SessionFileRecord& record);
+			explicit Waveform(const SessionFileRecord& record,const char* filename=nullptr);
 
 			void fileLoad(const char* filename);
 
@@ -37,6 +37,9 @@ namespace Anja
 
 			void dataSet(const SessionFileRecord& rec)
 				{*this=Waveform(rec);}
+
+			void dataSet(const SessionFileRecord& rec,const char* filename)
+				{*this=Waveform(rec,filename);}
 
 			const float* begin() const noexcept
 				{return m_data.begin() + m_offset_begin;}
@@ -220,10 +223,7 @@ namespace Anja
 				}
 
 			void dirtyClear()
-				{
-				m_flags&=~DIRTY;
-				}
-
+				{m_flags&=~DIRTY;}
 
 		private:
 			static constexpr uint32_t DIRTY=0x80000000;
@@ -237,6 +237,12 @@ namespace Anja
 			float m_gain_random;
 			float m_fs;
 			uint32_t m_flags;
+
+			void offsetsAdjust() noexcept
+				{
+				m_offset_begin=std::max(0,std::min(m_offset_begin,static_cast<int32_t>(m_data.length())));
+				m_offset_end=std::max(0,std::min(m_offset_end,static_cast<int32_t>(m_data.length())));
+				}
 		};
 	}
 #endif
