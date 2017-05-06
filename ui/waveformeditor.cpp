@@ -139,7 +139,11 @@ static void filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& pl
 static void description_update(const WaveformView& waveform,TextEntry& e)
 	{
 	e.content(waveform.descriptionGet().begin());
-//	TODO: Pass message so the keyboard can be updated
+	}
+
+static void color_update(const WaveformView& waveform,TextEntry& e)
+	{
+	e.content(ColorString(waveform.keyColorGet()).begin());
 	}
 
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
@@ -155,6 +159,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 
 		case TextEntryId::DESCRIPTION:
 			m_waveform.descriptionSet(String(entry.content()));
+		//	TODO: Pass message so the keyboard can be updated
 			description_update(m_waveform,entry);
 			break;
 
@@ -163,10 +168,11 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				{
 				auto c=colorFromString(entry.content());
 				m_waveform.keyColorSet(c);
-			//	TODO: Pass message so the keyboard can be updated
 				}
 			catch(...)
-				{entry.content(ColorString(m_waveform.keyColorGet()).begin());}
+				{}
+			color_update(m_waveform,entry);
+		//	TODO: Pass message so the keyboard can be updated
 			break;
 
 		case TextEntryId::GAIN:
@@ -313,7 +319,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 
 //	Slot changed
 	description_update(waveform,m_description_input);
-	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
+	color_update(waveform,m_color_input);
 	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
 	gain_update(waveform,m_gain_input_text);
 	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
