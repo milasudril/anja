@@ -50,11 +50,9 @@ UiContext::Impl::~Impl()
 void UiContext::Impl::run(IdleCallbackImpl cb,void* cb_obj)
 	{
 	m_stop=0;
-	bool wait=0;
 	while(!m_stop)
 		{
-		g_main_context_iteration(NULL,wait);
-		wait=cb(cb_obj,*this)==RunStatus::WAIT;
+		g_main_context_iteration(NULL,cb(cb_obj,*this)==RunStatus::WAIT);
 		}
 	}
 
