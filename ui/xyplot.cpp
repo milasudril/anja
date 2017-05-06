@@ -132,6 +132,12 @@ class XYPlot::Impl:public XYPlot
 		GtkDrawingArea* m_canvas;
 		bool m_dark;
 
+		enum{NORMAL,PAN,CURSOR_X_MOVE,CURSOR_Y_MOVE,CURSOR_INDEX_MAX};
+		GdkCursor* m_cursors[CURSOR_INDEX_MAX];
+		int m_cursor_current;
+		int m_cursor_grabbed;
+		bool m_grabbed;
+
 		void ticks_count();
 		void prerender_x(cairo_t* cr,double x_0,size_t N,double dx);
 		void prerender_y(cairo_t* cr,double y_0,size_t N,double dy);
@@ -245,6 +251,11 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 		|GDK_KEY_RELEASE_MASK
 		|GDK_SCROLL_MASK);
 
+	auto display=gdk_display_get_default();
+	m_cursors[NORMAL]=gdk_cursor_new_from_name(display,"default");
+	m_cursors[PAN]=gdk_cursor_new_from_name(display,"default"); //Move when implemented
+	m_cursors[CURSOR_X_MOVE]=gdk_cursor_new_from_name(display,"col-resize");
+	m_cursors[CURSOR_Y_MOVE]=gdk_cursor_new_from_name(display,"row-resize");
 
 	g_signal_connect(m_canvas,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(m_canvas,"motion-notify-event",G_CALLBACK(mouse_move),this);
@@ -267,11 +278,15 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0)
 	m_dy=0.2;
 	m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
 	m_dark=0;
+	m_grabbed=0;
+	m_cursor_grabbed=-1;
 	}
 
 XYPlot::Impl::~Impl()
 	{
 	m_impl=nullptr;
+	for(int k=0;k<CURSOR_INDEX_MAX;++k)
+		{g_object_unref(m_cursors[k]);}
 	gtk_widget_destroy(GTK_WIDGET(m_canvas));
 	}
 
@@ -300,20 +315,101 @@ void XYPlot::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void
 	self->ticks_count();
 	}
 
-gboolean XYPlot::Impl::mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj)
+gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* obj)
 	{
-	printf("Mousemove (%.15g, %.15g)\n",event->x,event->y);
+	auto w=gtk_widget_get_allocated_width(widget);
+	auto h=gtk_widget_get_allocated_height(widget);
+	auto self=reinterpret_cast<Impl*>(obj);
+	auto dom_window=window_domain_adjust(w,h,self->m_axis_x,self->m_axis_y);
+	auto pos_cursor=Point{event->x,event->y};
+	if(self->m_grabbed)
+		{
+		auto pos_cursor_plot=self->to_plot_coords(pos_cursor,dom_window);
+		switch(self->m_cursor_current)
+			{
+			case CURSOR_X_MOVE:
+				self->m_cursors_x[self->m_cursor_grabbed].position=pos_cursor_plot.x;
+				gtk_widget_queue_draw(widget);
+			//	TODO: Emmit event
+				break;
+			case CURSOR_Y_MOVE:
+				self->m_cursors_y[self->m_cursor_grabbed].position=pos_cursor_plot.y;
+				gtk_widget_queue_draw(widget);
+			//	TODO: Emmit event
+				break;
+			case PAN:
+			//	TODO: Requires that cursor offset is saved in mouse_down
+				break;
+			}
+		}
+
+	auto parent=gtk_widget_get_parent_window(widget);
+
+	if(!inside(pos_cursor,dom_window))
+		{
+		if(self->m_cursor_current!=NORMAL && !self->m_grabbed)
+			{
+			gdk_window_set_cursor(parent,self->m_cursors[NORMAL]);
+			self->m_cursor_current=NORMAL;
+			}
+		return FALSE;
+		}
+	
+	//	Test X cursors
+		{
+		auto cursor=std::find_if(self->m_cursors_x.begin(),self->m_cursors_x.end()
+			,[&dom_window,self,pos_cursor](Cursor& c)
+				{
+				auto position=self->to_window_coords(Point{c.position,0},dom_window);
+				return std::abs(pos_cursor.x - position.x)<2;
+				});
+		if(cursor!=self->m_cursors_x.end())
+			{
+			self->m_cursor_grabbed=cursor - self->m_cursors_x.begin();
+			gdk_window_set_cursor(parent,self->m_cursors[CURSOR_X_MOVE]);
+			self->m_cursor_current=CURSOR_X_MOVE;
+			return TRUE;
+			}
+		}
+
+	//	Test Y cursors
+		{
+		auto cursor=std::find_if(self->m_cursors_y.begin(),self->m_cursors_y.end()
+			,[&dom_window,self,pos_cursor](Cursor& c)
+				{
+				auto position=self->to_window_coords(Point{0,c.position},dom_window);
+				return std::abs(pos_cursor.y - position.y)<2;
+				});
+		if(cursor!=self->m_cursors_y.end())
+			{
+			self->m_cursor_grabbed=cursor - self->m_cursors_y.begin();
+			gdk_window_set_cursor(parent,self->m_cursors[CURSOR_Y_MOVE]);
+			self->m_cursor_current=CURSOR_Y_MOVE;
+			return TRUE;
+			}
+		}
+
+	gdk_window_set_cursor(parent,self->m_cursors[PAN]);
+	self->m_cursor_current=PAN;
 	return TRUE;
 	}
 
-gboolean XYPlot::Impl::mouse_down(GtkWidget* object,GdkEventButton* event,void* obj)
-	{return TRUE;}
+gboolean XYPlot::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(event->button==1 && self->m_cursor_current!=NORMAL)
+		{self->m_grabbed=1;}
+
+	return TRUE;
+	}
 
 gboolean XYPlot::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(event->button==3)
 		{self->showAll();}
+	if(event->button==1)
+		{self->m_grabbed=0;}
 	return TRUE;
 	}
 
