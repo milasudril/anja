@@ -95,8 +95,6 @@ class XYPlot::Impl:public XYPlot
 		static gboolean mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj);
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
-		static gboolean key_down(GtkWidget* widget,GdkEventKey* event,void* obj);
-		static gboolean key_up(GtkWidget *widget, GdkEventKey *event,void* obj);
 		static gboolean mousewheel(GtkWidget* widget,GdkEvent* event,void* obj);
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 
@@ -275,8 +273,6 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	g_signal_connect(m_canvas,"button-press-event",G_CALLBACK(mouse_down),this);
 	g_signal_connect(m_canvas,"button-release-event",G_CALLBACK(mouse_up),this);
 	g_signal_connect(m_canvas,"scroll-event", G_CALLBACK(mousewheel),this);
-	g_signal_connect(m_canvas,"key-press-event",G_CALLBACK(key_down),this);
-	g_signal_connect(m_canvas,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(m_canvas,"size-allocate", G_CALLBACK(size_changed),this);
 
 	gtk_widget_set_margin_end(widget,4);
@@ -434,12 +430,6 @@ gboolean XYPlot::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* ob
 		{self->m_grabbed=0;}
 	return TRUE;
 	}
-
-gboolean XYPlot::Impl::key_down(GtkWidget* widget,GdkEventKey* event,void* obj)
-	{return TRUE;}
-
-gboolean XYPlot::Impl::key_up(GtkWidget *widget, GdkEventKey *event,void* obj)
-	{return TRUE;}
 
 gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 	{
