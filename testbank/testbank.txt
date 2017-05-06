@@ -19,6 +19,10 @@ Playback begin position/frames: 10000
 
 Playback end position/frames: 70000
 
+Playback gain/dB: -6
+
+Playback gain random level/dB: 5
+
 
 --------------------------------------Slot 2------------------------------------
 

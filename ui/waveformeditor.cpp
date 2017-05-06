@@ -277,6 +277,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_cursor_begin_entry.width(7);
 	m_cursor_end_entry.width(7).alignment(1.0f);
 	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
+	m_options_input.append(waveform.flagNames());
 
 	m_filename_input.callback(*this,TextEntryId::FILENAME);
 	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
@@ -303,11 +304,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	description_update(waveform,m_description_input);
 	color_update(waveform,m_color_input);
 	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
-	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
 	gain_random_update(waveform,m_gain_random_input_text,m_gain_random_input_slider);
 
 	m_channel_input.selected(m_waveform.channelGet());
-	m_options_input.append(waveform.flagNames());
 	m_options_input.selected(waveform.flagsGet());
 
 		{
