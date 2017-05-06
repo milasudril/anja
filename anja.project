@@ -63,6 +63,8 @@
       <File Name="common/pipe.cpp"/>
       <File Name="common/mutex.hpp"/>
       <File Name="common/mutex.cpp"/>
+      <File Name="common/thread.hpp"/>
+      <File Name="common/thread.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
