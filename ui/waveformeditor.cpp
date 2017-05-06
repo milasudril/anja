@@ -29,7 +29,7 @@ static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot
 	auto val=static_cast<double>( waveform.offsetBeginGet() ) 
 		/static_cast<double>( waveform.sampleRateGet() );
 	char buffer[32];
-	sprintf(buffer,"%.15g",val);
+	sprintf(buffer,"%.5f",val);
 	e.content(buffer);
 	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
 	}
@@ -39,7 +39,7 @@ static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& 
 	auto val=static_cast<double>( waveform.offsetEndGet() ) 
 		/static_cast<double>( waveform.sampleRateGet() );
 	char buffer[32];
-	sprintf(buffer,"%.15g",val);
+	sprintf(buffer,"%.5f",val);
 	e.content(buffer);
 	plot.cursorX(XYPlot::Cursor{val,0.0f},1);
 	}
@@ -76,20 +76,22 @@ void WaveformEditor::clicked(OptionList<WaveformEditor,OptionListId>& src
 		}
 	}
 
-static void gain_update(const WaveformView& wf,TextEntry& e)
+static void gain_update(const WaveformView& wf,TextEntry& e,Slider& s)
 	{
 	auto g=wf.gainGet();
 	char buffer[16];
 	sprintf(buffer,"%.3f",g);
 	e.content(buffer);
+	s.value(gain_map_inv(g));
 	}
 
-static void gain_random_update(const WaveformView& wf,TextEntry& e)
+static void gain_random_update(const WaveformView& wf,TextEntry& e,Slider& s)
 	{
 	auto g=wf.gainRandomGet();
 	char buffer[16];
 	sprintf(buffer,"%.3f",g);
 	e.content(buffer);
+	s.value(gain_random_map_inv(g));
 	}
 
 void WaveformEditor::changed(Slider& slider,SliderId id)
@@ -98,12 +100,12 @@ void WaveformEditor::changed(Slider& slider,SliderId id)
 		{
 		case SliderId::GAIN:
 			m_waveform.gainSet( gain_map(slider.value()) );
-			gain_update(m_waveform,m_gain_input_text);
+			gain_update(m_waveform,m_gain_input_text,slider);
 			break;
 
 		case SliderId::GAIN_RANDOM:
 			m_waveform.gainRandomSet( gain_random_map(slider.value()) );
-			gain_random_update(m_waveform,m_gain_random_input_text);
+			gain_random_update(m_waveform,m_gain_random_input_text,slider);
 		}
 	}
 
@@ -179,16 +181,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{
-				m_waveform.gainSet(val_new);
-				m_gain_input_slider.value(gain_map_inv(val_new));
-				}
-			else
-				{
-				char buffer[16];
-				sprintf(buffer,"%.3f",m_waveform.gainGet());
-				entry.content(buffer);
-				}
+				{m_waveform.gainSet(val_new);}
+			gain_update(m_waveform,entry,m_gain_input_slider);
 			}
 			break;
 
@@ -196,16 +190,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{
-				m_waveform.gainRandomSet(val_new);
-				m_gain_random_input_slider.value(gain_random_map_inv(val_new));
-				}
-			else
-				{
-				char buffer[16];
-				sprintf(buffer,"%.3f",m_waveform.gainRandomGet());
-				entry.content(buffer);
-				}
+				{m_waveform.gainRandomSet(val_new);}
+			gain_random_update(m_waveform,entry,m_gain_random_input_slider);
 			}
 			break;
 
@@ -320,10 +306,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 //	Slot changed
 	description_update(waveform,m_description_input);
 	color_update(waveform,m_color_input);
-	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
-	gain_update(waveform,m_gain_input_text);
+	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
 	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
-	gain_random_update(waveform,m_gain_random_input_text);
+	gain_random_update(waveform,m_gain_random_input_text,m_gain_random_input_slider);
 
 	m_channel_input.selected(m_waveform.channelGet());
 	m_options_input.append(waveform.flagNames());
