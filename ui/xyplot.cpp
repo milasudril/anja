@@ -42,26 +42,34 @@ class XYPlot::Impl:public XYPlot
 			}
 
 		void cursorX(const Cursor& c)
-			{m_cursors_x.push_back(c);}
+			{
+			m_cursors_x.push_back(c);
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
+			}
 
 		void cursorX(const Cursor& c,int index)
 			{
 			if(static_cast<size_t>(index)>=m_cursors_x.size())
 				{m_cursors_x.resize(index+1);}
 			m_cursors_x[index]=c;
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 
 		Cursor cursorX(int index) const noexcept
 			{return m_cursors_x[index];}
 
 		void cursorY(const Cursor& c)
-			{m_cursors_y.push_back(c);}
+			{
+			m_cursors_y.push_back(c);
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
+			}
 
 		void cursorY(const Cursor& c,int index)
 			{
 			if(static_cast<size_t>(index)>=m_cursors_y.size())
 				{m_cursors_y.resize(index+1);}
 			m_cursors_y[index]=c;
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 
 		Cursor cursorY(int index) const noexcept
