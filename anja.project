@@ -61,6 +61,8 @@
       <File Name="common/meansquare.cpp"/>
       <File Name="common/pipe.hpp"/>
       <File Name="common/pipe.cpp"/>
+      <File Name="common/mutex.hpp"/>
+      <File Name="common/mutex.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
