@@ -293,6 +293,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	m_dark=0;
 	m_grabbed=0;
 	m_cursor_grabbed=-1;
+	m_cursor_current=NORMAL;
 	}
 
 XYPlot::Impl::~Impl()
