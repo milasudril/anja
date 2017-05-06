@@ -31,6 +31,12 @@ class XYPlot::Impl:public XYPlot
 
 		void curve(const Point* begin,const Point* end,float hue);
 
+		void curvesRemove()
+			{
+			m_curves.clear();
+			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
+			}
+
 		Domain domain() const noexcept
 			{return m_dom;}
 
@@ -216,6 +222,13 @@ XYPlot& XYPlot::cursorY(const Cursor& c,int index)
 
 XYPlot::Cursor XYPlot::cursorY(int index) const noexcept
 	{return m_impl->cursorY(index);}
+
+XYPlot& XYPlot::curvesRemove()
+	{
+	m_impl->curvesRemove();
+	return *this;
+	}
+
 
 
 

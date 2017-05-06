@@ -26,22 +26,22 @@ static double gain_random_map_inv(double x)
 
 static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	auto val=waveform.offsetBeginGet();
-//	TODO: We should use seconds instead of frames
-	char buffer[16];
-	sprintf(buffer,"%d",val);
+	auto val=static_cast<double>( waveform.offsetBeginGet() ) 
+		/static_cast<double>( waveform.sampleRateGet() );
+	char buffer[32];
+	sprintf(buffer,"%.15g",val);
 	e.content(buffer);
 	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
 	}
 
 static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	auto val=waveform.offsetEndGet();
-//	TODO: We should use seconds instead of frames
-	char buffer[16];
-	sprintf(buffer,"%d",val);
+	auto val=static_cast<double>( waveform.offsetEndGet() ) 
+		/static_cast<double>( waveform.sampleRateGet() );
+	char buffer[32];
+	sprintf(buffer,"%.15g",val);
 	e.content(buffer);
-	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f},1);
+	plot.cursorX(XYPlot::Cursor{val,0.0f},1);
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
@@ -107,6 +107,35 @@ void WaveformEditor::changed(Slider& slider,SliderId id)
 		}
 	}
 
+static ArraySimple<float> mean_square(const float* begin,const float* end,int length)
+	{
+	ArraySimple<float> vals_ms(end - begin);
+	MeanSquare ms(length);
+	ms.compute(begin,vals_ms.begin(),end - begin);
+	return std::move(vals_ms);
+	}
+
+void plot_db(const float* begin,const float* end,int fs,XYPlot& plot)
+	{
+	ArraySimple<XYPlot::Point> points(end - begin);
+	size_t k=0;
+	std::transform(begin,end,points.begin(),[&k,fs](float val)
+		{
+		auto t=static_cast<double>(k)/static_cast<double>(fs);
+		++k;
+		return XYPlot::Point{t,std::max(powerToDb(static_cast<double>(val)),-145.0)};
+		});
+	plot.curve(points.begin(),points.end(),0.66f);
+	}
+
+static void filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
+	{
+	e.content(waveform.filenameGet().begin());
+	auto ms=mean_square(waveform.beginFull(),waveform.endFull()
+		,waveform.sampleRateGet()/1000);
+	plot_db(ms.begin(),ms.end(),waveform.sampleRateGet(),plot.curvesRemove());
+	}
+
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	{
 	switch(id)
@@ -115,7 +144,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		//	TODO: Pass message. We need to know session directory before trying
 		//	to load a new file. After the filename has been successfully loaded,
 		//	show its canonical path.
-			entry.content(m_waveform.filenameGet().begin());
+			filename_update(m_waveform,entry,m_plot);
 			break;
 
 		case TextEntryId::DESCRIPTION:
@@ -290,18 +319,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_options_input.selected(waveform.flagsGet());
 
 		{
-		ArraySimple<float> vals_ms(waveform.lengthFull());
-		MeanSquare ms(48);
-		ms.compute(waveform.beginFull(),vals_ms.begin(),waveform.lengthFull());
-		ArraySimple<XYPlot::Point> points(waveform.lengthFull());
-		size_t k=0;
-		std::transform(vals_ms.begin(),vals_ms.end(),points.begin(),[&k](float val)
-			{
-			++k;
-			return XYPlot::Point{static_cast<double>(k-1)
-				,std::max(powerToDb(static_cast<double>(val)),-145.0)};
-			});
-		m_plot.curve(points.begin(),points.end(),0.66f);
+		filename_update(waveform,m_filename_input,m_plot);
 	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
 		m_plot.showAll();
 		}

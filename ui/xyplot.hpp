@@ -40,6 +40,7 @@ namespace Anja
 				};
 
 			XYPlot& curve(const Point* begin,const Point* end,float hue);
+			XYPlot& curvesRemove();
 
 			struct Domain
 				{
