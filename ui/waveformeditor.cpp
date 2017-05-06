@@ -197,23 +197,19 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 
 		case TextEntryId::CURSOR_BEGIN:
 			{
-			auto x=atoi(m_cursor_begin_entry.content());
-			m_waveform.offsetBeginSet(x);
-			x=m_waveform.offsetBeginGet();
-			char buffer[16];
-			sprintf(buffer,"%d",x);
-			m_cursor_begin_entry.content(buffer);
+			double val_new;
+			if(convert(entry.content(),val_new))
+				{m_waveform.offsetBeginSet(val_new);}
+			offset_begin_update(m_waveform,entry,m_plot);
 			}
 			break;
 
 		case TextEntryId::CURSOR_END:
 			{
-			auto x=atoi(m_cursor_begin_entry.content());
-			m_waveform.offsetEndSet(x);
-			x=m_waveform.offsetBeginGet();
-			char buffer[16];
-			sprintf(buffer,"%d",x);
-			m_cursor_end_entry.content(buffer);
+			double val_new;
+			if(convert(entry.content(),val_new))
+				{m_waveform.offsetEndSet(val_new);}
+			offset_begin_update(m_waveform,entry,m_plot);
 			}
 			break;
 		}

@@ -68,17 +68,27 @@ namespace Anja
 			void sampleRateSet(float fs) noexcept
 				{r_waveform.sampleRateSet(fs);}
 
-			uint32_t offsetBeginGet() const noexcept
+			int32_t offsetBeginGet() const noexcept
 				{return r_waveform.offsetBeginGet();}
 
 			void offsetBeginSet(int32_t value_new) noexcept
 				{r_waveform.offsetBeginSet(value_new);}
 
-			uint32_t offsetEndGet() const noexcept
+			void offsetBeginSet(double value_new) noexcept
+				{
+				r_waveform.offsetBeginSet(static_cast<int32_t>(value_new*r_waveform.sampleRateGet()));
+				}
+
+			int32_t offsetEndGet() const noexcept
 				{return r_waveform.offsetEndGet();}
 
 			void offsetEndSet(int32_t value_new) noexcept
 				{r_waveform.offsetEndSet(value_new);}
+
+			void offsetEndSet(double value_new) noexcept
+				{
+				r_waveform.offsetEndSet(static_cast<int32_t>(value_new*r_waveform.sampleRateGet()));
+				}
 
 			void offsetsReset() noexcept
 				{r_waveform.offsetsReset();}
