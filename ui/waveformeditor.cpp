@@ -76,26 +76,34 @@ void WaveformEditor::clicked(OptionList<WaveformEditor,OptionListId>& src
 		}
 	}
 
+static void gain_update(const WaveformView& wf,TextEntry& e)
+	{
+	auto g=wf.gainGet();
+	char buffer[16];
+	sprintf(buffer,"%.3f",g);
+	e.content(buffer);
+	}
+
+static void gain_random_update(const WaveformView& wf,TextEntry& e)
+	{
+	auto g=wf.gainRandomGet();
+	char buffer[16];
+	sprintf(buffer,"%.3f",g);
+	e.content(buffer);
+	}
+
 void WaveformEditor::changed(Slider& slider,SliderId id)
 	{
 	switch(id)
 		{
 		case SliderId::GAIN:
-			{
 			m_waveform.gainSet( gain_map(slider.value()) );
-			char buffer[16];
-			sprintf(buffer,"%.3f",m_waveform.gainGet());
-			m_gain_input_text.content(buffer);
-			}
+			gain_update(m_waveform,m_gain_input_text);
 			break;
+
 		case SliderId::GAIN_RANDOM:
-			{
 			m_waveform.gainRandomSet( gain_random_map(slider.value()) );
-			char buffer[16];
-			sprintf(buffer,"%.3f",m_waveform.gainRandomGet());
-			m_gain_random_input_text.content(buffer);
-			}
-			break;
+			gain_random_update(m_waveform,m_gain_random_input_text);
 		}
 	}
 
@@ -273,9 +281,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_description_input.content(waveform.descriptionGet().begin());
 	m_color_input.content(ColorString(waveform.keyColorGet()).begin());
 	m_gain_input_slider.value(gain_map_inv(waveform.gainGet()));
-	changed(m_gain_input_slider,SliderId::GAIN);
+	gain_update(waveform,m_gain_input_text);
 	m_gain_random_input_slider.value(gain_random_map_inv(waveform.gainRandomGet()));
-	changed(m_gain_random_input_slider,SliderId::GAIN_RANDOM);
+	gain_random_update(waveform,m_gain_random_input_text);
 
 	m_channel_input.selected(m_waveform.channelGet());
 	m_options_input.append(waveform.flagNames());
