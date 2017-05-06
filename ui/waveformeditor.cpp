@@ -131,10 +131,10 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	char buffer[16];
 	sprintf(buffer,"%d",waveform.offsetBeginGet());
 	m_cursor_begin_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{20000,0.33f},0); //TODO: Use real values later
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetBeginGet()),0.33f},0);
 	sprintf(buffer,"%d",waveform.offsetEndGet());
 	m_cursor_end_entry.content(buffer);
-	m_plot.cursorX(XYPlot::Cursor{60000,0.0f},1);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(waveform.offsetEndGet()),0.0f},1);
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
