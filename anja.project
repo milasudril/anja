@@ -59,6 +59,8 @@
       <File Name="common/delayline.hpp"/>
       <File Name="common/meansquare.hpp"/>
       <File Name="common/meansquare.cpp"/>
+      <File Name="common/pipe.hpp"/>
+      <File Name="common/pipe.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
@@ -98,6 +100,7 @@
       <File Name="ui/keymask.hpp"/>
       <File Name="ui/keymask.cpp"/>
       <File Name="ui/xyplot.cpp"/>
+      <File Name="ui/filenameselect.hpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

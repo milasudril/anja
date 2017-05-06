@@ -1,13 +1,23 @@
 //@	{"targets":[{"name":"anja-test","type":"application"}]}
 
-#include "sessiondata/session.hpp"
+#include "common/pipe.hpp"
+#include <cstdio>
+#include <unistd.h>
+
+class Test
+	{
+	public:
+		void write(const int8_t* buffer,size_t N)
+			{
+			::write(STDOUT_FILENO,buffer,N);
+			}
+	};
 
 int main(int argc, char **argv)
 	{
 	try
 		{
-		Anja::Session s("testbank/testbank.txt");
-		s.save("__targets_dbg/output.txt");
+		Anja::pipe(argv+1,Test{});
 
 		}
 	catch(const char* err)
