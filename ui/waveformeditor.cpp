@@ -24,6 +24,25 @@ static double gain_random_map(double x)
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
 
+static void offsetBeginSet(int32_t val,WaveformView& waveform,TextEntry& e,XYPlot& plot)
+	{
+	waveform.offsetBeginSet(val);
+//	TODO: We should use seconds instead of frames
+	char buffer[16];
+	sprintf(buffer,"%d",val);
+	e.content(buffer);
+	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
+	}
+
+static void offsetEndSet(int32_t val,WaveformView& waveform,TextEntry& e,XYPlot& plot)
+	{
+	waveform.offsetEndSet(val);
+//	TODO: We should use seconds instead of frames
+	char buffer[16];
+	sprintf(buffer,"%d",val);
+	e.content(buffer);
+	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f},1);
+	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
@@ -33,15 +52,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			{
 			auto end=m_waveform.offsetBeginGet();
 			auto begin=m_waveform.offsetEndGet();
-			m_waveform.offsetBeginSet(begin);
-			m_waveform.offsetEndSet(end);
-
-			char buffer[16];
-			sprintf(buffer,"%d",begin);
-			m_cursor_begin_entry.content(buffer);
-			sprintf(buffer,"%d",end);
-			m_cursor_end_entry.content(buffer);
-		//	TODO: Update plot
+			offsetBeginSet(begin,m_waveform,m_cursor_begin_entry,m_plot);
+			offsetEndSet(end,m_waveform,m_cursor_end_entry,m_plot);
 			}
 			break;
 		}

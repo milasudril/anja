@@ -15,7 +15,9 @@ Color:       1; 0,534 678; 0.75
 
 Playback channel: 1
 
-Playback starting position/frames: 40000
+Playback begin position/frames: 10000
+
+Playback end position/frames: 70000
 
 
 --------------------------------------Slot 2------------------------------------

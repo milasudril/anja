@@ -49,7 +49,7 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 		channelSet(ch-1);
 		}
 
-	value=record.propertyGet(String("Playback starting position/frames"));
+	value=record.propertyGet(String("Playback begin position/frames"));
 	if(value==nullptr)
 		{offsetBeginSet(0);}
 	else
