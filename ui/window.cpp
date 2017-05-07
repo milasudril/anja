@@ -11,7 +11,7 @@ using namespace Anja;
 class Window::Impl:private Window
 	{
 	public:
-		Impl(const char* ti);
+		Impl(const char* ti,Container* owner);
 		~Impl();
 
 		const char* title() const noexcept
@@ -45,6 +45,9 @@ class Window::Impl:private Window
 		int id() const noexcept
 			{return m_id;}
 
+		void modal(bool state)
+			{gtk_window_set_modal(m_handle,state);}
+
 	private:
 		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 		int m_id;
@@ -54,8 +57,8 @@ class Window::Impl:private Window
 		std::string m_title;
 	};
 
-Window::Window(const char* title)
-	{m_impl=new Impl(title);}
+Window::Window(const char* title,Container* owner)
+	{m_impl=new Impl(title,owner);}
 
 Window::~Window()
 	{delete m_impl;}
@@ -99,15 +102,22 @@ Window& Window::callback(Callback cb,void* cb_obj,int id)
 	return *this;
 	}
 
+Window& Window::modal(bool state)
+	{
+	m_impl->modal(state);
+	return *this;
+	}
 
 
-Window::Impl::Impl(const char* ti):Window(*this),m_id(0),r_cb(nullptr)
+Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0),r_cb(nullptr)
 	{
 	printf("Window %p ctor\n",this);
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(widget,"delete-event",G_CALLBACK(delete_callback),this);
 	m_handle=GTK_WINDOW(widget);
 	title(ti);
+	if(owner!=nullptr)
+		{gtk_window_set_transient_for(m_handle,GTK_WINDOW(owner->toplevel()));}
 	}
 
 Window::Impl::~Impl()

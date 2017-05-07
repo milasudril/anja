@@ -104,6 +104,8 @@
       <File Name="ui/xyplot.cpp"/>
       <File Name="ui/filenameselect.hpp"/>
       <File Name="ui/filenameselect.cpp"/>
+      <File Name="ui/colorpicker.hpp"/>
+      <File Name="ui/colorpicker.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

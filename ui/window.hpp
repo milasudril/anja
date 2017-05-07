@@ -14,7 +14,7 @@ namespace Anja
 	class Window:public Container
 		{
 		public:
-			explicit Window(const char* title);
+			explicit Window(const char* title,Container* owner=nullptr);
 			~Window();
 
 			Window& operator=(Window&& obj) noexcept
@@ -47,6 +47,8 @@ namespace Anja
 				}
 
 			int id() const noexcept;
+
+			Window& modal(bool state);
 
 		protected:
 			typedef void (*Callback)(void* cb_obj,Window& self);

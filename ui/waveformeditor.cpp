@@ -262,6 +262,11 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				}
 			}
 			break;
+
+		case ButtonId::COLOR_PICK:
+			m_color_dlg.reset(new Window("Choose color",&m_box));
+			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).modal(true).show();
+			break;
 		}
 	src.state(0);
 	}
@@ -278,26 +283,41 @@ void WaveformEditor::changed(Listbox& lb,ListboxId id)
 
 void WaveformEditor::cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
-	switch(index)
+	switch(id)
 		{
-		case 0:
-			m_waveform.offsetBeginSet(plot.cursorX(0).position);
-			offset_begin_update(m_waveform,m_cursor_begin_entry,plot);
-			break;
-		case 1:
-			m_waveform.offsetEndSet(plot.cursorX(1).position);
-			offset_end_update(m_waveform,m_cursor_end_entry,plot);
+		case PlotId::WAVEFORM:
+			switch(index)
+				{
+				case 0:
+					m_waveform.offsetBeginSet(plot.cursorX(0).position);
+					offset_begin_update(m_waveform,m_cursor_begin_entry,plot);
+					break;
+				case 1:
+					m_waveform.offsetEndSet(plot.cursorX(1).position);
+					offset_end_update(m_waveform,m_cursor_end_entry,plot);
+					break;
+				}
 			break;
 		}
 	}
 
 void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
-	if(keymask&KEYMASK_KEY_SHIFT)
+	switch(id)
 		{
-		cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-		cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+		case PlotId::WAVEFORM:
+			if(keymask&KEYMASK_KEY_SHIFT && index==0)
+				{
+				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				}
+			break;
 		}
+	}
+
+void WaveformEditor::closing(Window& win,PopupId id)
+	{
+	m_color_dlg.reset();
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
