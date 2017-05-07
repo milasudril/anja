@@ -20,6 +20,8 @@ namespace Anja
 
 			unsigned int dataRead(float* buffer,unsigned int n_frames);
 
+			static bool check(const char* path,WavefileInfo& info);
+
 		private:
 			class Impl;
 			std::unique_ptr<Impl> m_impl;

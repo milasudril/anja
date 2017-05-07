@@ -17,6 +17,8 @@ class WavefileReader::Impl
 		~Impl();
 		unsigned int dataRead(float* buffer, unsigned int n_frames);
 
+		static bool check(const char* path,WavefileInfo& info);
+
 	private:
 		SF_INFO m_info;
 		SNDFILE* m_handle;
@@ -65,4 +67,22 @@ unsigned int WavefileReader::Impl::dataRead(float* buffer, unsigned int n_frames
 		--N;
 		}
 	return N_ret;
+	}
+
+bool WavefileReader::check(const char* path,WavefileInfo& info)
+	{
+	return WavefileReader::Impl::check(path,info);
+	}
+
+bool WavefileReader::Impl::check(const char* path,WavefileInfo& info)
+	{
+	SF_INFO sfinfo;
+	auto handle=sf_open(path,SFM_READ,&sfinfo);
+	if(handle==NULL)
+		{return 0;}
+	sf_close(handle);
+	info.fs=sfinfo.samplerate;
+	info.n_frames=sfinfo.frames;
+	info.n_channels=sfinfo.channels;
+	return 1;
 	}
