@@ -359,6 +359,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 			//	TODO: Requires that cursor offset is saved in mouse_down
 				break;
 			}
+		return TRUE;
 		}
 
 	auto parent=gtk_widget_get_parent_window(widget);
