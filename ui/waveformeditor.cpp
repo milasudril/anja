@@ -1,7 +1,10 @@
 //@	{"targets":[{"name":"waveformeditor.o","type":"object"}]}
 
 #include "waveformeditor.hpp"
+#include "filenameselect.hpp"
 #include "../sessiondata/session.hpp"
+#include "../sessiondata/wavefilereader.hpp"
+#include "../sessiondata/wavefileinfo.hpp"
 #include "../common/colorstring.hpp"
 #include "../common/arraysimple.hpp"
 #include "../common/floatconv.hpp"
@@ -64,32 +67,6 @@ static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 		{return val>threshold;});
 	waveform.offsetEndSet(static_cast<int32_t>(i.base() - wfdb.begin()));
 	offset_end_update(waveform,entry,plot);
-	}
-
-void WaveformEditor::clicked(Button& src,ButtonId id)
-	{
-	switch(id)
-		{
-		case ButtonId::CURSORS_SWAP:
-			{
-			auto end=m_waveform.offsetBeginGet();
-			auto begin=m_waveform.offsetEndGet();
-			m_waveform.offsetBeginSet(begin);
-			m_waveform.offsetEndSet(end);
-			offset_begin_update(m_waveform,m_cursor_begin_entry,m_plot);
-			offset_end_update(m_waveform,m_cursor_end_entry,m_plot);
-			}
-			break;
-
-		case ButtonId::CURSOR_BEGIN_AUTO:
-			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-			break;
-
-		case ButtonId::CURSOR_END_AUTO:
-			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-			break;
-		}
-	src.state(0);
 	}
 
 void WaveformEditor::clicked(OptionList<WaveformEditor,OptionListId>& src
@@ -247,6 +224,51 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			}
 			break;
 		}
+	}
+
+
+void WaveformEditor::clicked(Button& src,ButtonId id)
+	{
+	switch(id)
+		{
+		case ButtonId::CURSORS_SWAP:
+			{
+			auto end=m_waveform.offsetBeginGet();
+			auto begin=m_waveform.offsetEndGet();
+			m_waveform.offsetBeginSet(begin);
+			m_waveform.offsetEndSet(end);
+			offset_begin_update(m_waveform,m_cursor_begin_entry,m_plot);
+			offset_end_update(m_waveform,m_cursor_end_entry,m_plot);
+			}
+			break;
+
+		case ButtonId::CURSOR_BEGIN_AUTO:
+			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+			break;
+
+		case ButtonId::CURSOR_END_AUTO:
+			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+			break;
+
+		case ButtonId::FILENAME_BROWSE:
+			{
+			std::string temp(m_waveform.filenameGet().begin());
+			if(filenameSelect(m_filename,temp,FilenameSelectMode::OPEN
+				,[](const char* path)
+					{
+					WavefileInfo info;
+					return WavefileReader::check(path,info);
+					},"Wave Audio files"))
+				{
+			//	TODO: Pass message. We need to know session directory before trying
+			//	to load a new file. After the filename has been successfully loaded,
+			//	show its canonical path.
+				filename_update(m_waveform,m_filename_input,m_plot);
+				}
+			}
+			break;
+		}
+	src.state(0);
 	}
 
 void WaveformEditor::changed(Listbox& lb,ListboxId id)
