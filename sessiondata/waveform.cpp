@@ -72,6 +72,12 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	dirtyClear();
 	}
 
+bool Waveform::loadPossible(const char* filename)
+	{
+	WavefileInfo wi;
+	return WavefileReader::check(filename,wi);
+	}
+
 void Waveform::dataGet(SessionFileRecord& record) const
 	{
 	char buffer[32];

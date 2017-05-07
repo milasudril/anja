@@ -50,6 +50,9 @@ namespace Anja
 			void fileSave(const char* filename) const
 				{r_waveform.fileSave(filename);}*/
 
+			bool loadPossible(const char* filename) const
+				{return r_waveform.loadPossible(filename);}
+
 			const float* begin() const noexcept
 				{return r_waveform.begin();}
 

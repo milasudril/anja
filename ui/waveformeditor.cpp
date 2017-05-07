@@ -3,8 +3,6 @@
 #include "waveformeditor.hpp"
 #include "filenameselect.hpp"
 #include "../sessiondata/session.hpp"
-#include "../sessiondata/wavefilereader.hpp"
-#include "../sessiondata/wavefileinfo.hpp"
 #include "../common/colorstring.hpp"
 #include "../common/arraysimple.hpp"
 #include "../common/floatconv.hpp"
@@ -254,11 +252,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			{
 			std::string temp(m_waveform.filenameGet().begin());
 			if(filenameSelect(m_filename,temp,FilenameSelectMode::OPEN
-				,[](const char* path)
-					{
-					WavefileInfo info;
-					return WavefileReader::check(path,info);
-					},"Wave Audio files"))
+				,[this](const char* path)
+					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
 			//	TODO: Pass message. We need to know session directory before trying
 			//	to load a new file. After the filename has been successfully loaded,

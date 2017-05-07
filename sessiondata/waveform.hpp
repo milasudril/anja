@@ -33,6 +33,8 @@ namespace Anja
 
 			void fileSave(const char* filename);
 
+			static bool loadPossible(const char* filename);
+
 			void dataGet(SessionFileRecord& record) const;
 
 			void dataSet(const SessionFileRecord& rec)
