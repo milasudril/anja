@@ -4,6 +4,7 @@
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
 #include "ui/box.hpp"
+#include "ui/slider.hpp"
 #include <cstdio>
 
 namespace
@@ -35,20 +36,29 @@ namespace Anja
 			ColorPicker(Container& cnt):
 				m_box(cnt,true)
 					,m_pal_view(m_box)
+					,m_hue(m_box,false)
+						,m_hue_slider(m_hue.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+					,m_sat(m_box,false)
+						,m_sat_slider(m_sat.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+					,m_lightness(m_box,false)
+						,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 				{
 				m_pal_view.callback(*this,0);
 				}
 
 			void indexSelected(PaletteView& palview,int id)
 				{
-				printf("Selected %d\n",palview.selection());
-				palview.selection(13);
 				}
 
 		private:
 			Box m_box;
 				PaletteView m_pal_view;
-			
+				Box m_hue;
+					Slider m_hue_slider;
+				Box m_sat;
+					Slider m_sat_slider;
+				Box m_lightness;
+					Slider m_lightness_slider;			
 		};
 	};
 
