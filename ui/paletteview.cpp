@@ -21,7 +21,8 @@ class PaletteView::Impl:public PaletteView
 
 	private:
 		std::vector<ColorRGBA> m_colors;
-		int cols;
+		int m_n_cols;
+		int m_index_sel;
 		GtkDrawingArea* m_handle;
 
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
@@ -36,7 +37,7 @@ PaletteView::~PaletteView()
 	{delete m_impl;}
 
 
-PaletteView::Impl::Impl(Container& cnt):PaletteView(*this)
+PaletteView::Impl::Impl(Container& cnt):PaletteView(*this),m_index_sel(0)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
@@ -70,7 +71,20 @@ void PaletteView::Impl::palette(const ColorRGBA* colors,size_t n)
 	}
 
 gboolean PaletteView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
-	{return TRUE;}
+	{
+	auto pos_x=static_cast<int>( event->x/24 );
+	auto pos_y=static_cast<int>( event->y/24 );
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(pos_x>=0 && pos_y>=0)
+		{
+		auto index=std::min(size_t(pos_y*self->m_n_cols + pos_x)
+			,self->m_colors.size()-1);
+		self->m_index_sel=index;
+		gtk_widget_queue_draw(GTK_WIDGET(widget));
+		}
+	
+	return TRUE;
+	}
 
 void PaletteView::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj)
 	{
@@ -82,6 +96,7 @@ void PaletteView::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation
 		auto self=reinterpret_cast<Impl*>(obj);
 		w=24*(w/24 + 1);
 		auto n_cols=w/24;
+		self->m_n_cols=n_cols;
 		auto rem=self->m_colors.size()%n_cols==0?0:1;
 		auto n_rows=std::max(self->m_colors.size()/n_cols + rem,size_t(1));
 		h=24*n_rows;
@@ -91,6 +106,7 @@ void PaletteView::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation
 		{
 		auto self=reinterpret_cast<Impl*>(obj);
 		auto n_cols=w/24;
+		self->m_n_cols=n_cols;
 		auto rem=self->m_colors.size()%n_cols==0?0:1;
 		auto n_rows=std::max(self->m_colors.size()/n_cols + rem,size_t(1));
 		h=24*n_rows;
@@ -122,11 +138,16 @@ gboolean PaletteView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
 		cairo_rectangle(cr,1+col*24,1+row*24,22,22);
 		cairo_fill(cr);
-
 		++pos;
 		});
-	
 
-
+	auto row_sel=self->m_index_sel/n_cols;
+	auto col_sel=self->m_index_sel%n_cols;
+	auto color_sel=self->m_colors[self->m_index_sel];
+	cairo_set_source_rgba(cr,1.0 - color_sel.red
+		,1.0 - color_sel.green,1.0 - color_sel.blue,1.0);
+	cairo_rectangle(cr,col_sel*24,row_sel*24,24,24);
+	cairo_set_line_width(cr,2);
+	cairo_stroke(cr);
 	return TRUE;
 	}
