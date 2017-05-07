@@ -38,25 +38,6 @@ namespace Anja
 			};
 		return filenameSelect(cnt,filename_in,mode,cb,&filter,filter_name);
 		}
-
-
-	typedef void (*FilenameSelectCallback)(void* cb_obj,const char* context
-		,const char* result);
-
-	void filenameSelectRemote(Container& cnt,const char* filename_in
-		,FilenameSelectMode mode,const char* context_name,FilenameSelectCallback cb,void* cb_obj);
-
-	template<class Callback>
-	void filenameSelectRemote(Container& cnt,const char* filename_in
-		,FilenameSelectMode mode,const char* context_name,Callback& cb_obj)
-		{
-		auto cb=[](void* cb_obj,const char* context,const char* result)
-			{
-			auto callback=reinterpret_cast<Callback*>(cb_obj);
-			callback->filenameReceived(context,std::move(result));
-			};
-		filenameSelectRemote(cnt,filename_in,mode,context_name,cb,&cb_obj);
-		}
 	}
 
 #endif
