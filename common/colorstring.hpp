@@ -18,6 +18,8 @@ namespace Anja
 		};
 
 	ColorRGBA colorFromString(const char* colorstring);
+
+	bool colorFromString(const char* colorstring,ColorRGBA& color);
 	}
 
 #endif

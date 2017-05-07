@@ -200,15 +200,15 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			break;
 
 		case TextEntryId::COLOR:
-			try
+			{
+			ColorRGBA c;
+			if(colorFromString(entry.content(),c))
 				{
-				auto c=colorFromString(entry.content());
 				m_waveform.keyColorSet(c);
+			//	TODO: Pass message so the keyboard can be updated
 				}
-			catch(...)
-				{}
 			color_update(m_waveform,entry);
-		//	TODO: Pass message so the keyboard can be updated
+			}
 			break;
 
 		case TextEntryId::GAIN:

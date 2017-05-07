@@ -10,6 +10,14 @@ namespace Anja
 	{
 	bool convert(const char* string,double& result);
 
+	inline bool convert(const char* string,float& result)
+		{
+		double temp;
+		auto ret=convert(string,temp); //This is cheating...
+		result=temp;
+		return ret;
+		}
+
 	inline double convert(const char* string)
 		{
 		double ret;
