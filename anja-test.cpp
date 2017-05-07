@@ -1,9 +1,10 @@
 //@	{"targets":[{"name":"anja-test","type":"application"}]}
 
-#include "ui/paletteview.hpp"
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
 #include "ui/box.hpp"
+#include "ui/paletteview.hpp"
+#include "ui/colorview.hpp"
 #include "ui/slider.hpp"
 #include <cstdio>
 
@@ -37,6 +38,7 @@ namespace Anja
 				m_box(cnt,true)
 					,m_pal_view(m_box)
 					,m_hue(m_box,false)
+						,m_hue_min(m_hue)
 						,m_hue_slider(m_hue.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 					,m_sat(m_box,false)
 						,m_sat_slider(m_sat.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
@@ -54,6 +56,7 @@ namespace Anja
 			Box m_box;
 				PaletteView m_pal_view;
 				Box m_hue;
+					ColorView m_hue_min;
 					Slider m_hue_slider;
 				Box m_sat;
 					Slider m_sat_slider;

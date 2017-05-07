@@ -108,6 +108,8 @@
       <File Name="ui/colorpicker.cpp"/>
       <File Name="ui/paletteview.hpp"/>
       <File Name="ui/paletteview.cpp"/>
+      <File Name="ui/colorview.hpp"/>
+      <File Name="ui/colorview.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
