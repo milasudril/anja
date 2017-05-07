@@ -12,7 +12,7 @@ class Slider::Impl:private Slider
 		Impl(Container& cnt,bool vertical);
 		~Impl();
 
-		void callback(Callback cb,void* cb_obj,int id)
+		void callback(Callback cb,void* cb_obj,int id) noexcept
 			{
 			r_cb=cb;
 			r_cb_obj=cb_obj;

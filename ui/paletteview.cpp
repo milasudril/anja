@@ -18,8 +18,27 @@ class PaletteView::Impl:public PaletteView
 
 		void palette(const ColorRGBA* colors,size_t n);
 
+		int id() const noexcept
+			{return m_id;}
+
+		void callback(CallbackImpl cb,void* cb_obj,int id) noexcept
+			{
+			m_cb=cb;
+			r_cb_obj=cb_obj;
+			m_id=id;
+			}
+
+		int selection() const noexcept
+			{return m_index_sel;}
+
+		void selection(int index)
+			{m_index_sel=std::max(0,std::min(index,static_cast<int>(m_colors.size())));}
 
 	private:
+		int m_id;
+		CallbackImpl m_cb;
+		void* r_cb_obj;
+
 		std::vector<ColorRGBA> m_colors;
 		int m_n_cols;
 		int m_index_sel;
@@ -36,8 +55,35 @@ PaletteView::PaletteView(Container& cnt)
 PaletteView::~PaletteView()
 	{delete m_impl;}
 
+int PaletteView::id() const noexcept
+	{return m_impl->id();}
 
-PaletteView::Impl::Impl(Container& cnt):PaletteView(*this),m_index_sel(0)
+int PaletteView::selection() const noexcept
+	{return m_impl->selection();}
+
+PaletteView& PaletteView::selection(int index)
+	{
+	m_impl->selection(index);
+	return *this;
+	}
+
+PaletteView& PaletteView::palette(const ColorRGBA* colors,size_t n)
+	{
+	m_impl->palette(colors,n);
+	return *this;
+	}
+
+PaletteView& PaletteView::callback(CallbackImpl cb,void* cb_obj,int id)
+	{
+	m_impl->callback(cb,cb_obj,id);
+	return *this;
+	}
+
+
+
+
+PaletteView::Impl::Impl(Container& cnt):PaletteView(*this),m_id(0),m_cb(nullptr)
+	,r_cb_obj(nullptr),m_index_sel(0)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
@@ -56,17 +102,12 @@ PaletteView::Impl::~Impl()
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-PaletteView& PaletteView::palette(const ColorRGBA* colors,size_t n)
-	{
-	m_impl->palette(colors,n);
-	return *this;
-	}
-
 void PaletteView::Impl::palette(const ColorRGBA* colors,size_t n)
 	{
 	m_colors.clear();
 	std::for_each(colors,colors + n,[this](const ColorRGBA& c)
 		{m_colors.push_back(c);});
+	m_index_sel=std::min(m_index_sel,static_cast<int>(n-1));
 	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 	}
 
@@ -81,6 +122,8 @@ gboolean PaletteView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,voi
 			,self->m_colors.size()-1);
 		self->m_index_sel=index;
 		gtk_widget_queue_draw(GTK_WIDGET(widget));
+		if(self->r_cb_obj!=nullptr)
+			{self->m_cb(self->r_cb_obj,*self);}
 		}
 	
 	return TRUE;

@@ -3,6 +3,7 @@
 #include "ui/paletteview.hpp"
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
+#include "ui/box.hpp"
 #include <cstdio>
 
 namespace
@@ -26,6 +27,31 @@ namespace
 		};
 	}
 
+namespace Anja
+	{
+	class ColorPicker
+		{
+		public:
+			ColorPicker(Container& cnt):
+				m_box(cnt,true)
+					,m_pal_view(m_box)
+				{
+				m_pal_view.callback(*this,0);
+				}
+
+			void indexSelected(PaletteView& palview,int id)
+				{
+				printf("Selected %d\n",palview.selection());
+				palview.selection(13);
+				}
+
+		private:
+			Box m_box;
+				PaletteView m_pal_view;
+			
+		};
+	};
+
 int main(int argc, char **argv)
 	{
 	try
@@ -35,7 +61,7 @@ int main(int argc, char **argv)
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
 		mainwin.callback(ctrl,0);
-		Anja::PaletteView palview(mainwin);
+		Anja::ColorPicker picker(mainwin);
 		mainwin.show();
 		ctx.run(ctrl);
 		}
