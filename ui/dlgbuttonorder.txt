@@ -1,0 +1,3 @@
+GNU/Linux: No, Cancel, Yes
+MacOS: No, Cancel, Yes
+Windows: Yes, No, Cancel

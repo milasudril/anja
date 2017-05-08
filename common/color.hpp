@@ -34,8 +34,8 @@ namespace Anja
 			,alpha(clamp(a,0.0f,1.0f))
 			{}
 
-		ColorRGBA(const ColorHSLA& hsla);
-		ColorRGBA(const ColorHSVA& hsva);
+		explicit ColorRGBA(const ColorHSLA& hsla);
+		explicit ColorRGBA(const ColorHSVA& hsva);
 
 		float red;
 		float green;
@@ -94,7 +94,7 @@ namespace Anja
 			hue(h),saturation(s),lightness(l),alpha(a)
 			{}
 
-		ColorHSLA(const ColorRGBA& rgba);
+		explicit ColorHSLA(const ColorRGBA& rgba);
 		static ColorHSLA fromHueSaturationLuma(float hue,float saturation,float luma_709);
 
 		static ColorHSLA fromHueAndLuma(float hue,float luma_709)
@@ -112,7 +112,7 @@ namespace Anja
 			hue(h),saturation(s),value(v),alpha(a)
 			{}
 
-		ColorHSVA(const ColorRGBA& rgba);
+		explicit ColorHSVA(const ColorRGBA& rgba);
 
 		float hue;
 		float saturation;

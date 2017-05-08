@@ -146,7 +146,7 @@ ColorHSLA ColorHSLA::fromHueSaturationLuma(float hue,float saturation,float luma
 	while(lightness_max - lightness_min > std::numeric_limits<float>::epsilon())
 		{
 		color_test.lightness=lightness_current;
-		auto result=luma709(color_test);
+		auto result=luma709(ColorRGBA(color_test));
 		if(result < luma_709)
 			{
 			lightness_min=lightness_current;
