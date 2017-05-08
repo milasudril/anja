@@ -30,6 +30,8 @@ namespace Anja
 
 			ColorView& color(const ColorRGBA& color);
 
+			const ColorRGBA& color() const noexcept;
+
 
 		private:
 			class Impl;

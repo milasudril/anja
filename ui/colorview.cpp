@@ -22,6 +22,9 @@ class ColorView::Impl:public ColorView
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
 
+		const ColorRGBA& color() const noexcept
+			{return m_color;}
+
 	private:
 		ColorRGBA m_color;
 		GtkDrawingArea* m_handle;
@@ -39,6 +42,9 @@ ColorView& ColorView::color(const ColorRGBA& c)
 	m_impl->color(c);
 	return *this;
 	}
+
+const ColorRGBA& ColorView::color() const noexcept
+	{return m_impl->color();}
 
 
 

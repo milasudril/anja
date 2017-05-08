@@ -63,9 +63,7 @@ namespace Anja
 				}
 
 			void indexSelected(PaletteView& palview,int id)
-				{
-				color(palview.color(palview.selection()));
-				}
+				{color(palview.color(palview.selection()));}
 
 			void changed(Slider& slider,SliderId id)
 				{
@@ -85,8 +83,8 @@ namespace Anja
 					}
 				}
 
-		/*	const ColorRGBA& color() noexcept
-				{return m_result.color();}*/
+			const ColorRGBA& color() noexcept
+				{return m_result.color();}
 
 			ColorPicker& color(const ColorRGBA& color)
 				{
