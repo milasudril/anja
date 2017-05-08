@@ -1,49 +1,65 @@
-#ifdef __WAND__
-target[name[colorpicker.h] type[include]]
-dependency[colorpicker.o]
-#endif
+//@	{
+//@	 "targets":[{"name":"colorpicker.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"colorpicker.o","rel":"implementation"}]
+//@	}
 
-#ifndef COLORPICKER_H
-#define COLORPICKER_H
+#ifndef ANJA_COLORPICKER_HPP
+#define ANJA_COLORPICKER_HPP
 
-#include "widget.h"
-#include <cstddef>
+#include "box.hpp"
+#include "paletteview.hpp"
+#include "colorview.hpp"
+#include "slider.hpp"
+#include "../common/color.hpp"
 
-class ColorRGBA;
-class GuiContainer;
-
-class ColorPicker:public Widget
+namespace Anja
 	{
-	public:
-		class Tag
-			{};
+	class ColorPicker
+		{
+		public:
+			enum class SliderId:int{HUE,SATURATION,LIGHTNESS};
 
-		class EventHandler
-			{
-			public:
-				virtual void onConfirmed(Tag dummy)
-					{}
+			explicit ColorPicker(Container& cnt);
 
-				virtual void onCanceled(Tag dummy)
-					{}
-			};
+			void indexSelected(PaletteView& palview,int id);
 
-		static ColorPicker* create(GuiContainer& parent,ColorRGBA& color_current
-			,ColorRGBA* presets,size_t N_presets)
-			{
-			return create(parent,color_current,presets,N_presets,s_default_handler);
-			}
+			void changed(Slider& slider,SliderId id);
 
-		static ColorPicker* create(GuiContainer& parent,ColorRGBA& color_current
-			,ColorRGBA* presets,size_t N_presets,EventHandler& event_handler);
+			const ColorRGBA& color() noexcept
+				{return m_result.color();}
 
-		virtual void update()=0;
+			ColorPicker& color(const ColorRGBA& color)
+				{
+				slidersUpdate(color);
+				return *this;
+				}
 
-	protected:
-		virtual ~ColorPicker()=default;
+			const ColorRGBA* paletteBegin() const noexcept
+				{return m_pal_view.paletteBegin();}
 
-	private:
-		static EventHandler s_default_handler;
-	};
+			const ColorRGBA* paletteEnd() const noexcept
+				{return m_pal_view.paletteEnd();}
+			
+
+		private:
+			Box m_box;
+				PaletteView m_pal_view;
+				Box m_hue;
+					Slider m_hue_slider;
+				Box m_sat;
+					ColorView m_sat_min;
+					Slider m_sat_slider;
+					ColorView m_sat_max;
+				Box m_lightness;
+					ColorView m_lightness_min;
+					Slider m_lightness_slider;	
+					ColorView m_lightness_max;
+				ColorView m_result;
+
+			void viewUpdate(const ColorRGBA& color);
+
+			void slidersUpdate(const ColorRGBA& color);
+		};
+	}
 
 #endif
