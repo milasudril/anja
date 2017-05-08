@@ -34,6 +34,9 @@ class PaletteView::Impl:public PaletteView
 		void selection(int index)
 			{m_index_sel=std::max(0,std::min(index,static_cast<int>(m_colors.size())));}
 
+		const ColorRGBA& color(int index) const noexcept
+			{return m_colors[index];}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
@@ -72,6 +75,9 @@ PaletteView& PaletteView::palette(const ColorRGBA* colors,size_t n)
 	m_impl->palette(colors,n);
 	return *this;
 	}
+
+const ColorRGBA& PaletteView::color(int index) const noexcept
+	{return m_impl->color(index);}
 
 PaletteView& PaletteView::callback(CallbackImpl cb,void* cb_obj,int id)
 	{

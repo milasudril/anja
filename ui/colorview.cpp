@@ -46,6 +46,7 @@ ColorView::Impl::Impl(Container& cnt):ColorView(*this),m_color(ColorRGBA(0.5,0.5
 	{
 	auto widget=gtk_drawing_area_new();
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
+	gtk_widget_set_size_request(widget,32,32);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
@@ -66,5 +67,10 @@ gboolean ColorView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	cairo_fill(cr);
 
 	auto self=reinterpret_cast<Impl*>(obj);
+	auto c=self->m_color;
+	cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
+	cairo_rectangle(cr,4,4,w-8,h-8);
+	cairo_fill(cr);
+
 	return TRUE;
 	}

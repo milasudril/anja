@@ -36,7 +36,7 @@ namespace Anja
 		public:
 			ColorPicker(Container& cnt):
 				m_box(cnt,true)
-					,m_pal_view(m_box)
+					,m_pal_view(m_box.insertMode(Box::InsertMode{4,0}))
 					,m_hue(m_box,false)
 						,m_hue_min(m_hue)
 						,m_hue_slider(m_hue.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
@@ -44,12 +44,14 @@ namespace Anja
 						,m_sat_slider(m_sat.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 					,m_lightness(m_box,false)
 						,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+					,m_result(m_box.insertMode(Box::InsertMode{4,Box::EXPAND|Box::FILL}))
 				{
 				m_pal_view.callback(*this,0);
 				}
 
 			void indexSelected(PaletteView& palview,int id)
 				{
+				m_result.color(palview.color(palview.selection()));
 				}
 
 		private:
@@ -61,7 +63,8 @@ namespace Anja
 				Box m_sat;
 					Slider m_sat_slider;
 				Box m_lightness;
-					Slider m_lightness_slider;			
+					Slider m_lightness_slider;	
+				ColorView m_result;
 		};
 	};
 
