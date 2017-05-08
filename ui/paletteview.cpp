@@ -32,10 +32,19 @@ class PaletteView::Impl:public PaletteView
 			{return m_index_sel;}
 
 		void selection(int index)
-			{m_index_sel=std::max(0,std::min(index,static_cast<int>(m_colors.size())));}
+			{
+			m_index_sel=std::max(0,std::min(index,static_cast<int>(m_colors.size())));
+			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+			}
 
 		const ColorRGBA& color(int index) const noexcept
 			{return m_colors[index];}
+
+		void color(const ColorRGBA& color,int index) noexcept
+			{
+			m_colors[index]=color;
+			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+			}
 
 	private:
 		int m_id;
@@ -50,7 +59,7 @@ class PaletteView::Impl:public PaletteView
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
-	};
+	};	
 
 PaletteView::PaletteView(Container& cnt)
 	{m_impl=new Impl(cnt);}
@@ -82,6 +91,12 @@ const ColorRGBA& PaletteView::color(int index) const noexcept
 PaletteView& PaletteView::callback(CallbackImpl cb,void* cb_obj,int id)
 	{
 	m_impl->callback(cb,cb_obj,id);
+	return *this;
+	}
+
+PaletteView& PaletteView::color(const ColorRGBA& color,int index)
+	{
+	m_impl->color(color,index);
 	return *this;
 	}
 

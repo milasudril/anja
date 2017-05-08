@@ -114,6 +114,7 @@ namespace Anja
 			void viewUpdate(const ColorRGBA& color)
 				{
 				m_result.color(color);
+				m_pal_view.color(color,m_pal_view.selection());
 				ColorHSLA hsla(color);
 				hsla.saturation=0.0f;
 				m_sat_min.color(ColorRGBA(hsla));

@@ -51,6 +51,8 @@ namespace Anja
 
 			const ColorRGBA& color(int index) const noexcept;
 
+			PaletteView& color(const ColorRGBA& color,int index);
+
 		private:
 			class Impl;
 			Impl* m_impl;

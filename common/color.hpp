@@ -45,7 +45,8 @@ namespace Anja
 
 	constexpr ColorRGBA COLORS[]=
 		{
-		 ColorRGBA{1.0f,1.0f,1.0f,1.0f}    //WHITE
+		 ColorRGBA{0.25f,0.75f,0.75f,1.0f} //CYAN_GRAY_DARK
+		,ColorRGBA{1.0f,1.0f,1.0f,1.0f}    //WHITE
 		,ColorRGBA{0.75f,0.75f,0.75f,1.0f} //GRAY
 		,ColorRGBA{0.25f,0.25f,0.25f,1.0f} //GRAY_DARK
 		,ColorRGBA{0.0f,0.0f,0.0f,1.0f}    //BLACK
@@ -67,7 +68,7 @@ namespace Anja
 		{
 		enum
 			{
-			 WHITE,GRAY,GRAY_DARK,BLACK
+			 CYAN_GRAY_DARK,WHITE,GRAY,GRAY_DARK,BLACK
 			,RED,ORANGE,YELLOW,LIME
 			,GREEN,TURQOISE,CYAN,SKY
 			,BLUE,VIOLETT,MAGNTA,PINK

@@ -6,7 +6,7 @@
       <Environment/>
       <Project Name="anja" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="anja" ConfigName="Release"/>
     </WorkspaceConfiguration>
