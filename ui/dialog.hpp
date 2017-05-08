@@ -54,6 +54,8 @@ namespace Anja
 	class Dialog
 		{
 		public:
+			enum class ButtonId:int{DISMISS,CONFIRM_NEGATIVE,CONFIRM_POSITIVE};
+
 			Dialog(Container& owner,const char* title):m_window(title,&owner)
 				,m_content(m_window,true)
 					,m_widget(m_content.insertMode(Box::InsertMode{0,Box::FILL|Box::EXPAND}))
@@ -67,6 +69,34 @@ namespace Anja
 					{m_buttons[confirm_neg_index()].label(DialogTrait::confirmNegative());}
 				if(DialogTrait::confirmPositive()!=nullptr)
 					{m_buttons[confirm_pos_index()].label(DialogTrait::confirmPositive());}
+				}
+
+			template<class Callback,class IdType>
+			Dialog& callback(Callback& cb_obj,IdType id)
+				{
+				m_vtable=Vtable(cb_obj);
+				m_id=id;
+				if(DialogTrait::dismiss()!=nullptr)
+					{m_buttons[dismiss_index()].callback(*this,ButtonId::DISMISS);}
+				if(DialogTrait::confirmNegative()!=nullptr)
+					{m_buttons[confirm_neg_index()].callback(*this,ButtonId::CONFIRM_NEGATIVE);}
+				if(DialogTrait::confirmPositive()!=nullptr)
+					{m_buttons[confirm_pos_index()].callback(*this,ButtonId::CONFIRM_POSITIVE);}
+				return *this;
+				}
+
+			void clicked(Button& button,ButtonId id)
+				{
+				switch(id)
+					{
+					case ButtonId::DISMISS:
+						break;
+					case ButtonId::CONFIRM_NEGATIVE:
+						break;
+					case ButtonId::CONFIRM_POSITIVE:
+						break;
+					}
+				button.state(0);
 				}
 
 		private:
@@ -110,11 +140,29 @@ Windows: Yes, No, Cancel
 			#endif
 				}
 
+			struct Vtable
+				{
+				Vtable():dismiss(nullptr),confirm_negative(nullptr)
+					,confirm_positive(nullptr)
+					{}
+			
+				template<class Callback>
+				Vtable(Callback& cb)
+					{}
+
+				void (*dismiss)();
+				void (*confirm_negative)();
+				void (*confirm_positive)();
+				};
+
+			Vtable m_vtable;
+			int m_id;
+
 			Window m_window;
 				Box m_content;
 					Widget m_widget;
 					Box m_buttons_box;
-						std::array<Button,button_count()> m_buttons;				
+						std::array<Button,button_count()> m_buttons;
 		};
 	}
 
