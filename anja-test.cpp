@@ -3,6 +3,7 @@
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
 #include "ui/colorpicker.hpp"
+#include "ui/dialog.hpp"
 
 #include <cstdio>
 
@@ -36,7 +37,7 @@ int main(int argc, char **argv)
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
 		mainwin.callback(ctrl,0);
-		Anja::ColorPicker picker(mainwin);
+		Anja::Dialog<Anja::ColorPicker> picker(mainwin,"Choose color");
 		mainwin.show();
 		ctx.run(ctrl);
 		}
