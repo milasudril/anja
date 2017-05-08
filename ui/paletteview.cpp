@@ -46,6 +46,12 @@ class PaletteView::Impl:public PaletteView
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
 
+		const ColorRGBA* paletteBegin() const noexcept
+			{return m_colors.data();}
+
+		const ColorRGBA* paletteEnd() const noexcept
+			{return m_colors.data() + m_colors.size();}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
@@ -100,7 +106,11 @@ PaletteView& PaletteView::color(const ColorRGBA& color,int index)
 	return *this;
 	}
 
+const ColorRGBA* PaletteView::paletteBegin() const noexcept
+	{return m_impl->paletteBegin();}
 
+const ColorRGBA* PaletteView::paletteEnd() const noexcept
+	{return m_impl->paletteEnd();}
 
 
 PaletteView::Impl::Impl(Container& cnt):PaletteView(*this),m_id(0),m_cb(nullptr)

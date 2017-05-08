@@ -92,6 +92,11 @@ namespace Anja
 				return *this;
 				}
 
+			const ColorRGBA* paletteBegin() const noexcept
+				{return m_pal_view.paletteBegin();}
+
+			const ColorRGBA* paletteEnd() const noexcept
+				{return m_pal_view.paletteEnd();}
 			
 
 		private:
