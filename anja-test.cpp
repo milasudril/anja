@@ -40,13 +40,19 @@ namespace Anja
 					,m_hue(m_box,false)
 						,m_hue_min(m_hue)
 						,m_hue_slider(m_hue.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+						,m_hue_max(m_hue.insertMode(Box::InsertMode{0,0}))
 					,m_sat(m_box,false)
+						,m_sat_min(m_sat)
 						,m_sat_slider(m_sat.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+						,m_sat_max(m_sat.insertMode(Box::InsertMode{0,0}))
 					,m_lightness(m_box,false)
+						,m_lightness_min(m_lightness)
 						,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
+						,m_lightness_max(m_lightness.insertMode(Box::InsertMode{0,0}))
 					,m_result(m_box.insertMode(Box::InsertMode{4,Box::EXPAND|Box::FILL}))
 				{
 				m_pal_view.callback(*this,0);
+				indexSelected(m_pal_view,0);
 				}
 
 			void indexSelected(PaletteView& palview,int id)
@@ -60,10 +66,15 @@ namespace Anja
 				Box m_hue;
 					ColorView m_hue_min;
 					Slider m_hue_slider;
+					ColorView m_hue_max;
 				Box m_sat;
+					ColorView m_sat_min;
 					Slider m_sat_slider;
+					ColorView m_sat_max;
 				Box m_lightness;
+					ColorView m_lightness_min;
 					Slider m_lightness_slider;	
+					ColorView m_lightness_max;
 				ColorView m_result;
 		};
 	};
