@@ -10,6 +10,7 @@
 #include "paletteview.hpp"
 #include "colorview.hpp"
 #include "slider.hpp"
+#include "textentry.hpp"
 #include "../common/color.hpp"
 
 namespace Anja
@@ -39,6 +40,8 @@ namespace Anja
 
 			const ColorRGBA* paletteEnd() const noexcept
 				{return m_pal_view.paletteEnd();}
+
+			void changed(TextEntry& entry,int id) noexcept;
 			
 
 		private:
@@ -55,6 +58,7 @@ namespace Anja
 					Slider m_lightness_slider;	
 					ColorView m_lightness_max;
 				ColorView m_result;
+				TextEntry m_rgb;
 
 			void viewUpdate(const ColorRGBA& color);
 

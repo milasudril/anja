@@ -3,6 +3,7 @@
 //@	}
 
 #include "colorpicker.hpp"
+#include "../common/colorstring.hpp"
 
 using namespace Anja;
 
@@ -20,11 +21,13 @@ ColorPicker::ColorPicker(Container& cnt):
 			,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 			,m_lightness_max(m_lightness.insertMode(Box::InsertMode{0,0}))
 		,m_result(m_box.insertMode(Box::InsertMode{4,Box::EXPAND|Box::FILL}))
+		,m_rgb(m_box)
 	{
 	m_pal_view.callback(*this,0);
 	m_hue_slider.callback(*this,SliderId::HUE);
 	m_sat_slider.callback(*this,SliderId::SATURATION);
 	m_lightness_slider.callback(*this,SliderId::LIGHTNESS);
+	m_rgb.callback(*this,0);
 	indexSelected(m_pal_view,0);
 	m_lightness_min.color(ColorRGBA(0.0f,0.0f,0.0f,1.0f));
 	m_lightness_max.color(ColorRGBA(1.0f,1.0f,1.0f,1.0f));
@@ -56,6 +59,7 @@ void ColorPicker::viewUpdate(const ColorRGBA& color)
 	{
 	m_result.color(color);
 	m_pal_view.color(color,m_pal_view.selection());
+	m_rgb.content(ColorString(color).begin());
 	ColorHSLA hsla(color);
 	hsla.saturation=0.0f;
 	m_sat_min.color(ColorRGBA(hsla));
@@ -69,4 +73,13 @@ void ColorPicker::slidersUpdate(const ColorRGBA& color)
 	m_hue_slider.value(hsla.hue);
 	m_sat_slider.value(std::max(hsla.saturation,1e-7f));
 	m_lightness_slider.value(std::max(hsla.lightness,1e-7f));
+	}
+
+void ColorPicker::changed(TextEntry& entry,int id) noexcept
+	{
+	ColorRGBA c;
+	if(colorFromString(entry.content(),c))
+		{color(c);}
+	else
+		{viewUpdate(m_result.color());}
 	}

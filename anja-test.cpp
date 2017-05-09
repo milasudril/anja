@@ -23,6 +23,12 @@ namespace
 				return Anja::UiContext::RunStatus::WAIT;
 				}
 
+			void dismiss(Anja::Dialog<Anja::ColorPicker>& dlg,int id)
+				{r_ctx.exit();}
+
+			void confirmPositive(Anja::Dialog<Anja::ColorPicker>& dlg,int id)
+				{r_ctx.exit();}
+
 		private:
 			Anja::UiContext& r_ctx;
 		};
@@ -37,8 +43,9 @@ int main(int argc, char **argv)
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
 		mainwin.callback(ctrl,0);
-		Anja::Dialog<Anja::ColorPicker> picker(mainwin,"Choose color");
 		mainwin.show();
+		Anja::Dialog<Anja::ColorPicker> picker(mainwin,"Choose color");
+		picker.callback(ctrl,0);
 		ctx.run(ctrl);
 		}
 	catch(const char* err)
