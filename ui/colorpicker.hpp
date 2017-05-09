@@ -11,6 +11,7 @@
 #include "colorview.hpp"
 #include "slider.hpp"
 #include "textentry.hpp"
+#include "label.hpp"
 #include "../common/color.hpp"
 
 namespace Anja
@@ -48,12 +49,15 @@ namespace Anja
 			Box m_box;
 				PaletteView m_pal_view;
 				Box m_hue;
+					Label m_hue_label;
 					Slider m_hue_slider;
 				Box m_sat;
+					Label m_sat_label;
 					ColorView m_sat_min;
 					Slider m_sat_slider;
 					ColorView m_sat_max;
 				Box m_lightness;
+					Label m_lightness_label;
 					ColorView m_lightness_min;
 					Slider m_lightness_slider;	
 					ColorView m_lightness_max;

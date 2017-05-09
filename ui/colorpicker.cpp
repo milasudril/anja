@@ -9,14 +9,17 @@ using namespace Anja;
 
 ColorPicker::ColorPicker(Container& cnt):
 	m_box(cnt,true)
-		,m_pal_view(m_box.insertMode(Box::InsertMode{4,0}))
+		,m_pal_view(m_box.insertMode(Box::InsertMode{0,0}))
 		,m_hue(m_box,false)
+			,m_hue_label(m_hue.insertMode(Box::InsertMode{2,0}),"Hue:")
 			,m_hue_slider(m_hue.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 		,m_sat(m_box,false)
+			,m_sat_label(m_sat.insertMode(Box::InsertMode{2,0}),"Saturation:")
 			,m_sat_min(m_sat)
 			,m_sat_slider(m_sat.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 			,m_sat_max(m_sat.insertMode(Box::InsertMode{0,0}))
 		,m_lightness(m_box,false)
+			,m_lightness_label(m_lightness.insertMode(Box::InsertMode{2,0}),"Lightness:")
 			,m_lightness_min(m_lightness)
 			,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 			,m_lightness_max(m_lightness.insertMode(Box::InsertMode{0,0}))
