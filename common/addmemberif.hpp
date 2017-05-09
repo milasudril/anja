@@ -1,3 +1,5 @@
+//@	{"targets":[{"name":"addmemberbrief.hpp","type":"include"}]}
+
 #ifndef ANJA_ADDMEMBERIF_HPP
 #define ANJA_ADDMEMBERIF_HPP
 

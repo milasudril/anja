@@ -15,7 +15,8 @@
 #include "optionlist.hpp"
 #include "slider.hpp"
 #include "xyplot.hpp"
-#include "window.hpp"
+#include "dialog.hpp"
+#include "colorpicker.hpp"
 #include "../sessiondata/waveformview.hpp"
 #include "../common/arraysimple.hpp"
 
@@ -62,12 +63,13 @@ namespace Anja
 			void changed(Listbox& lb,ListboxId id);
 			void cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 			void cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask);
-			void closing(Window& win,PopupId id);
+			void dismiss(Dialog<ColorPicker>& dlg,PopupId id);
+			void confirmPositive(Dialog<ColorPicker>& dlg,PopupId id);
 
 		private:
 			WaveformView m_waveform;
 			ArraySimple<float> m_waveform_db;
-			std::unique_ptr<Window> m_color_dlg;
+			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
 			Box m_box;
 				Box m_filename;
 					Label m_filename_label;

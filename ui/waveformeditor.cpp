@@ -264,8 +264,9 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			break;
 
 		case ButtonId::COLOR_PICK:
-			m_color_dlg.reset(new Window("Choose color",&m_box));
-			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).modal(true).show();
+			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
+			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
+				.color(m_waveform.keyColorGet());
 			break;
 		}
 	src.state(0);
@@ -315,9 +316,26 @@ void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 		}
 	}
 
-void WaveformEditor::closing(Window& win,PopupId id)
+void WaveformEditor::dismiss(Dialog<ColorPicker>& win,PopupId id)
 	{
-	m_color_dlg.reset();
+	switch(id)
+		{
+		case PopupId::COLOR_SELECT:
+			m_color_dlg.reset();
+			break;
+		}
+	}
+
+void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
+	{
+	switch(id)
+		{
+		case PopupId::COLOR_SELECT:
+			m_color_input.content(ColorString(m_color_dlg->widget().color()).begin());
+			m_waveform.keyColorSet(m_color_dlg->widget().color());
+			m_color_dlg.reset();
+			break;
+		}
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform

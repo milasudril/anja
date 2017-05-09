@@ -42,8 +42,7 @@ namespace Anja
 			const ColorRGBA* paletteEnd() const noexcept
 				{return m_pal_view.paletteEnd();}
 
-			void changed(TextEntry& entry,int id) noexcept;
-			
+			void changed(TextEntry& entry,int id) noexcept;			
 
 		private:
 			Box m_box;

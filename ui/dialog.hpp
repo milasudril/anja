@@ -39,15 +39,15 @@ namespace Anja
 	std::array<Button,N> buttons_create(Container& cnt);
 
 	template<>
-	std::array<Button,1> buttons_create<1>(Container& cnt)
+	inline std::array<Button,1> buttons_create<1>(Container& cnt)
 		{return std::array<Button,1>{Button(cnt,"")};}
 
 	template<>
-	std::array<Button,2> buttons_create<2>(Container& cnt)
+	inline std::array<Button,2> buttons_create<2>(Container& cnt)
 		{return std::array<Button,2>{Button(cnt,""),Button(cnt,"")};}
 
 	template<>
-	std::array<Button,3> buttons_create<3>(Container& cnt)
+	inline std::array<Button,3> buttons_create<3>(Container& cnt)
 		{return std::array<Button,3>{Button(cnt,""),Button(cnt,""),Button(cnt,"")};}
 
 	template<class Widget,class DialogTraits=DialogOkCancel>
@@ -76,15 +76,22 @@ namespace Anja
 				{
 				m_vtable=Vtable(cb_obj,id);
 				r_cb_obj=&cb_obj;
-				m_id=id;
+				m_id=static_cast<int>(id);
 				button_callback_assign<dismiss_index()>(ButtonId::DISMISS);
 				button_callback_assign<confirm_neg_index()>(ButtonId::CONFIRM_NEGATIVE);
 				button_callback_assign<confirm_pos_index()>(ButtonId::CONFIRM_POSITIVE);
 				return *this;
 				}
 
+			Widget& widget() noexcept
+				{return m_widget;}
+
+			const Widget& widget() const noexcept
+				{return m_widget;}
+
 			void clicked(Button& button,ButtonId id)
 				{
+				button.state(0);
 				switch(id)
 					{
 					case ButtonId::DISMISS:
@@ -97,7 +104,7 @@ namespace Anja
 						m_vtable.confirm_positive(r_cb_obj,*this,m_id);
 						break;
 					}
-				button.state(0);
+				//	We are dead now
 				}
 
 		private:
@@ -185,7 +192,7 @@ Windows: Yes, No, Cancel
 						{
 						m_dismiss.value(dismiss_call<Callback,IdType,has_dismiss()>::callback);
 						m_confirm_negative.value(confirm_negative_call<Callback,IdType,has_confirm_neg()>::callback);
-						m_confirm_positive.value(confirm_positive_call<Callback,IdType,has_confirm_neg()>::callback);
+						m_confirm_positive.value(confirm_positive_call<Callback,IdType,has_confirm_pos()>::callback);
 						}
 
 					void dismiss(void* cb_obj,Dialog& dlg,int id)
