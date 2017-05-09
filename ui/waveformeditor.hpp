@@ -57,7 +57,7 @@ namespace Anja
 				,const ArraySimple<String>& channel_names);
 
 			void clicked(Button& src,ButtonId id);
-			void clicked(OptionList<WaveformEditor,OptionListId>& src,Checkbox& opt,int bit);
+			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
 			void changed(Listbox& lb,ListboxId id);
@@ -100,7 +100,7 @@ namespace Anja
 								Slider m_gain_random_input_slider;
 						Box m_options;
 							Label m_options_label;
-						OptionList<WaveformEditor,OptionListId> m_options_input;
+						OptionList m_options_input;
 					Box m_details_right;
 						XYPlot m_plot;
 						Box m_trim_panel;

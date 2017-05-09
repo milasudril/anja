@@ -4,7 +4,7 @@
 
 using namespace Anja;
 
-OptionListImpl& OptionListImpl::selected(uint64_t mask)
+OptionList& OptionList::selected(uint64_t mask)
 	{
 	auto k=std::min(size(),8*sizeof(mask));
 	while(k)
@@ -17,7 +17,7 @@ OptionListImpl& OptionListImpl::selected(uint64_t mask)
 	}
 
 
-OptionListImpl& OptionListImpl::append(const char* const* labels)
+OptionList& OptionList::append(const char* const* labels)
 	{
 	while(*labels!=nullptr)
 		{
@@ -25,4 +25,14 @@ OptionListImpl& OptionListImpl::append(const char* const* labels)
 		++labels;
 		}
 	return *this;
+	}
+
+void OptionList::callbacks_assign()
+	{
+	int k=0;
+	std::for_each(m_options.begin(),m_options.end(),[this,&k](Checkbox& btn)
+		{
+		btn.callback(*this,k);
+		++k;
+		});
 	}

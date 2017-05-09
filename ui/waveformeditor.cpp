@@ -67,16 +67,15 @@ static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	offset_end_update(waveform,entry,plot);
 	}
 
-void WaveformEditor::clicked(OptionList<WaveformEditor,OptionListId>& src
-	,Checkbox& opt,int bit)
+void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 	{
-	switch(src.id())
+	switch(id)
 		{
 		case OptionListId::OPTIONS:
 			if(opt.state())
-				{m_waveform.flagSet(bit);}
+				{m_waveform.flagSet(opt.id());}
 			else
-				{m_waveform.flagsUnset(bit);}
+				{m_waveform.flagsUnset(opt.id());}
 			break;
 		}
 	}

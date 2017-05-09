@@ -14,10 +14,10 @@
 
 namespace Anja
 	{
-	class OptionListImpl
+	class OptionList
 		{
 		public:
-			explicit OptionListImpl(Container& cnt,bool vertical):
+			explicit OptionList(Container& cnt,bool vertical):
 				m_scroll(cnt)
 					,m_box_main(m_scroll,vertical)
 						,m_box(m_box_main,vertical)
@@ -26,7 +26,7 @@ namespace Anja
 				m_box.homogenous(1).insertMode({0,Box::EXPAND|Box::FILL});
 				}
 
-			OptionListImpl& clear() noexcept
+			OptionList& clear() noexcept
 				{
 				m_options.clear();	
 				return *this;
@@ -41,13 +41,13 @@ namespace Anja
 			Checkbox& operator[](int k) noexcept
 				{return m_options[k];}
 
-			OptionListImpl& append(const char* text)
+			OptionList& append(const char* text)
 				{
 				m_options.push_back(Checkbox(m_box,text));
 				return *this;
 				}
 
-			OptionListImpl& append(const char* const* labels);
+			OptionList& append(const char* const* labels);
 
 			Checkbox& back() noexcept
 				{return m_options.back();}
@@ -55,85 +55,33 @@ namespace Anja
 			size_t size() const noexcept
 				{return m_options.size();}
 
-			OptionListImpl& selected(uint64_t mask);
+			OptionList& selected(uint64_t mask);
+
+			template<class Callback,class IdType>
+			OptionList& callback(Callback& cb,IdType id) noexcept
+				{
+				m_id=static_cast<int>( id );
+				m_cb=[](void* cb_obj,OptionList& self,int id,Checkbox& option)
+					{reinterpret_cast<Callback*>(cb_obj)->clicked(self,static_cast<IdType>(id),option);};
+				r_cb_obj=&cb;
+				callbacks_assign();
+				return *this;
+				}
+
+			void clicked(Checkbox& btn,int id)
+				{m_cb(r_cb_obj,*this,m_id,btn);}
 
 		private:
+			int m_id;
+			void (*m_cb)(void* cb_obj,OptionList& self,int id,Checkbox& option);
+			void* r_cb_obj;
+
 			ScrolledWindow m_scroll;
 				Box m_box_main;
 					Box m_box;
 					
 			std::vector<Checkbox> m_options;
-		};
-
-	template<class Callback,class IdType>
-	class OptionList
-		{
-		public:
-			explicit OptionList(Container& cnt,bool vertical):r_callback(nullptr)
-				,m_impl(cnt,vertical)
-				{}
-
-			OptionList& clear() noexcept
-				{
-				m_impl.clear();	
-				return *this;
-				}
-
-			OptionList& append(const char* text)
-				{
-				m_impl.append(text);
-				return *this;
-				}
-
-			OptionList& callback(Callback& cb,IdType id) noexcept
-				{
-				r_callback=&cb;
-				m_id=id;
-				int k=0;
-				std::for_each(m_impl.begin(),m_impl.end()
-					,[this,&k](Checkbox& btn)
-						{
-						btn.callback(*this,k);
-						++k;
-						});
-
-				return *this;
-				}
-
-			void clicked(Checkbox& btn,int id)
-				{r_callback->clicked(*this,btn,id);}
-			
-			IdType id() const noexcept
-				{return m_id;}
-
-			auto begin() noexcept
-				{return m_impl.begin();}
-
-			auto end() noexcept
-				{return m_impl.end();}
-
-			Checkbox& operator[](int k) noexcept
-				{return m_impl[k];}
-
-			OptionList& append(const char* const* labels)
-				{
-				m_impl.append(labels);
-				return *this;
-				}
-
-			size_t size() const noexcept
-				{return m_impl.size();}
-
-			OptionList& selected(uint64_t mask)
-				{
-				m_impl.selected(mask);
-				return *this;
-				}
-
-		private:
-			IdType m_id;
-			Callback* r_callback;
-			OptionListImpl m_impl;
+			void callbacks_assign();
 		};
 	}
 
