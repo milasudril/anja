@@ -457,6 +457,9 @@ gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 		{
 		auto w_in=dom.max.x - dom.min.x;
 		auto w=factor_x*w_in;
+		if(w>2*(self->m_dom_full.max.x - self->m_dom_full.min.x) 
+			|| w<1e-7*(self->m_dom_full.max.x - self->m_dom_full.min.x))
+			{return TRUE;}
 		auto x=w*(pos.x - dom.min.x)/w_in;
 		dom.min.x=pos.x - x;
 		dom.max.x=dom.min.x + w;		
@@ -466,6 +469,9 @@ gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 		{
 		auto h_in=dom.max.y - dom.min.y;
 		auto h=factor_y*h_in;
+		if(h>2*(self->m_dom_full.max.y - self->m_dom_full.min.y) 
+			|| h<1e-7*(self->m_dom_full.max.y - self->m_dom_full.min.y))
+			{return TRUE;}
 		auto y=h*(pos.y - dom.min.y)/h_in;
 		dom.min.y=pos.y - y;
 		dom.max.y=dom.min.y + h;	
@@ -564,7 +570,6 @@ void XYPlot::Impl::ticks_count()
 			else
 				{N_x_upper=mid;}
 			}
-		assert(fits(mid-1));
 		dx=nicenum(w/(mid-1));
 		m_N_ticks_x=w/dx;
 		m_dx=dx;
