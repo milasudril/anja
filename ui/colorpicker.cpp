@@ -24,7 +24,7 @@ ColorPicker::ColorPicker(Container& cnt):
 			,m_lightness_slider(m_lightness.insertMode(Box::InsertMode{2,Box::EXPAND|Box::FILL}),false)
 			,m_lightness_max(m_lightness.insertMode(Box::InsertMode{0,0}))
 		,m_result(m_box.insertMode(Box::InsertMode{4,Box::EXPAND|Box::FILL}))
-		,m_rgb(m_box)
+		,m_rgb(m_box.insertMode(Box::InsertMode{4,0}))
 	{
 	m_pal_view.callback(*this,0);
 	m_hue_slider.callback(*this,SliderId::HUE);
