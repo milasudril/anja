@@ -113,6 +113,8 @@
       <File Name="ui/colorview.cpp"/>
       <File Name="ui/dlgbuttonorder.txt"/>
       <File Name="ui/dialog.hpp"/>
+      <File Name="ui/imageview.hpp"/>
+      <File Name="ui/imageview.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
