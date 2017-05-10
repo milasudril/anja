@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <utility>
+#include <algorithm>
 
 namespace Anja
 	{
@@ -19,6 +20,13 @@ namespace Anja
 				{
 				obj.m_data=nullptr;
 				obj.m_N=0;
+				}
+
+			ArraySimple(const T* begin,const T* end)
+				{
+				ArraySimple temp(end-begin);
+				std::copy(begin,end,temp.begin());
+				*this=std::move(temp);
 				}
 
 			ArraySimple& operator=(ArraySimple&& obj)

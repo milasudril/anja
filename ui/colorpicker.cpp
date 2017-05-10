@@ -86,3 +86,9 @@ void ColorPicker::changed(TextEntry& entry,int id) noexcept
 	else
 		{viewUpdate(m_result.color());}
 	}
+
+ColorPicker& ColorPicker::palette(const ColorRGBA* pal_begin,const ColorRGBA* pal_end)
+	{
+	m_pal_view.palette(pal_begin, pal_end  - pal_begin);
+	return *this;
+	}

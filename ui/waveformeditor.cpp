@@ -138,7 +138,8 @@ static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry
 	{
 	e.content(waveform.filenameGet().begin());
 	auto ms=mean_square(waveform.beginFull(),waveform.endFull()
-		,waveform.sampleRateGet()/1000);
+		,waveform.sampleRateGet()/1000); //TODO: Decimate ms
+
 	std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
 		{return std::max(powerToDb(x),-145.0f);});
 
@@ -163,6 +164,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::FILENAME:
 			if(!m_waveform.fileLoaded(entry.content()))
 				{
+			//	TODO: catch exceptions from fileLoad
 				m_waveform.fileLoad(entry.content());
 				m_waveform_db=filename_update(m_waveform,entry,m_plot);
 				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
@@ -258,6 +260,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				,[this](const char* path)
 					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
+			//	TODO: catch exceptions from fileLoad
 				m_waveform.fileLoad(temp.c_str());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
 				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
@@ -268,6 +271,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
+		//	TODO: catch exceptions from fileLoad
 			m_waveform.fileLoad(m_waveform.filenameGet().begin());
 			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
 			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
@@ -275,12 +279,11 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			m_plot.showAll();
 			break;
 
-
-
 		case ButtonId::COLOR_PICK:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
-				.color(m_waveform.keyColorGet());
+				.color(m_waveform.keyColorGet())
+				.palette(m_color_presets.begin(),m_color_presets.end());
 			break;
 		}
 	src.state(0);
@@ -345,8 +348,9 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 	switch(id)
 		{
 		case PopupId::COLOR_SELECT:
-			m_color_input.content(ColorString(m_color_dlg->widget().color()).begin());
-			m_waveform.keyColorSet(m_color_dlg->widget().color());
+			m_color_input.content(ColorString(dlg.widget().color()).begin());
+			m_waveform.keyColorSet(dlg.widget().color());
+			m_color_presets=ArraySimple<ColorRGBA>(dlg.widget().paletteBegin(),dlg.widget().paletteEnd());
 			m_color_dlg.reset();
 			break;
 		}
@@ -356,6 +360,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const ArraySimple<String>& channel_names):
 	 m_waveform(waveform)
 	,m_waveform_db(2)
+	,m_color_presets(64)
 	,m_box(cnt,true)
 		,m_filename(m_box.insertMode({1,0}),false)
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")

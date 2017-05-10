@@ -70,6 +70,7 @@ namespace Anja
 			WaveformView m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
+			ArraySimple<ColorRGBA> m_color_presets;
 			Box m_box;
 				Box m_filename;
 					Label m_filename_label;

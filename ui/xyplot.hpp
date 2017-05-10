@@ -33,6 +33,7 @@ namespace Anja
 			XYPlot& callback(Callback& cb,IdType id) noexcept
 				{return callback(Vtable(cb,id),&cb,static_cast<int>(id));}
 
+		//	TODO: Convert this into a SSE type (vec2_t<double>)
 			struct Point
 				{
 				double x;
