@@ -80,6 +80,7 @@ namespace Anja
 				button_callback_assign<dismiss_index()>(ButtonId::DISMISS);
 				button_callback_assign<confirm_neg_index()>(ButtonId::CONFIRM_NEGATIVE);
 				button_callback_assign<confirm_pos_index()>(ButtonId::CONFIRM_POSITIVE);
+				m_window.callback(*this,0);
 				return *this;
 				}
 
@@ -106,6 +107,9 @@ namespace Anja
 					}
 				//	We are dead now
 				}
+
+			void closing(Window& win,int id)
+				{m_vtable.dismiss(r_cb_obj,*this,m_id);}
 
 		private:
 			static constexpr bool has_dismiss()
