@@ -49,33 +49,30 @@ static String filenameGenerate(const String& label)
 	return ret;
 	}
 
-void WaveformView::load(const SessionFileRecord& rec,const String& dir_current)
+void WaveformView::load(const SessionFileRecord& rec)
 	{
 	r_waveform_data.dataSet(rec);
-//	BUG: fileLoad needs an overload that takes rec also, so it is possible to
-//	get a consistent state in r_waveform.
-	
 	if(r_waveform_data.filenameGet().length()==0)
 		{r_waveform.dataSet(rec);}
 	else
 		{
-		auto f=::filenameGet(r_waveform_data.filenameGet(),dir_current);
+		auto f=::filenameGet(r_waveform_data.filenameGet(),r_dir_current);
 		r_waveform.dataSet(rec,f.begin());
 		}
 	}
 
-void WaveformView::store(SessionFileRecord& rec,const String& dir_current)
+void WaveformView::store(SessionFileRecord& rec)
 	{
 	if(r_waveform.flagsGet()&Waveform::RECORDED)
 		{
-		auto filename=::filenameGet(filenameGenerate(r_waveform_data.keyLabelGet()),dir_current);
-		r_waveform_data.filenameSet(makeRelativeTo(filename.begin(),dir_current.begin()));
+		auto filename=::filenameGet(filenameGenerate(r_waveform_data.keyLabelGet()),r_dir_current);
+		r_waveform_data.filenameSet(makeRelativeTo(filename.begin(),r_dir_current.begin()));
 		r_waveform.fileSave(filename.begin());
 		}
 	
 	auto filename_out=r_waveform_data.filenameGet();
 	if(*filename_out.begin()!='\0')
-		{filename_out=makeRelativeTo(filename_out.begin(),dir_current.begin());}
+		{filename_out=makeRelativeTo(filename_out.begin(),r_dir_current.begin());}
 	rec.propertySet(String("Filename"),filename_out);
 	r_waveform.dataGet(rec);
 	r_waveform_data.dataGet(rec);	

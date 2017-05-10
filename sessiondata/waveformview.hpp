@@ -16,13 +16,14 @@ namespace Anja
 	class WaveformView
 		{
 		public:
-			explicit WaveformView(Waveform& wf,WaveformData& wd) noexcept:
-				r_waveform(wf),r_waveform_data(wd)
+			explicit WaveformView(Waveform& wf,WaveformData& wd
+				,const String& dir_current) noexcept:
+				r_waveform(wf),r_waveform_data(wd),r_dir_current(dir_current)
 				{}
 
-			void load(const SessionFileRecord& rec,const String& dir_current);
+			void load(const SessionFileRecord& rec);
 
-			void store(SessionFileRecord& rec,const String& dir_current);
+			void store(SessionFileRecord& rec);
 
 			const String& filenameGet() const
 				{return r_waveform_data.filenameGet();}
@@ -169,6 +170,7 @@ namespace Anja
 		private:
 			Waveform& r_waveform;
 			WaveformData& r_waveform_data;
+			const String& r_dir_current;
 		};
 	}
 

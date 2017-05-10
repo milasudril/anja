@@ -80,8 +80,8 @@ Session::Session(const char* filename):m_slot_active(0)
 				{throw "The slot number has to be between 1 and 128 inclusive";}
 			--slot_num;
 
-			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num])
-				.load(record,m_directory);
+			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory)
+				.load(record);
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -195,8 +195,8 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
 
-			WaveformView wv(m_waveforms[k],*waveform);
-			wv.store(record_out,dir);
+			WaveformView wv(m_waveforms[k],*waveform,dir);
+			wv.store(record_out);
 			writer.recordWrite(record_out);
 			wv.dirtyClear();
 			++waveform;
