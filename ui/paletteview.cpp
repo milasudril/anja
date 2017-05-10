@@ -223,13 +223,16 @@ gboolean PaletteView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		++pos;
 		});
 
-	auto row_sel=self->m_index_sel/n_cols;
-	auto col_sel=self->m_index_sel%n_cols;
-	auto color_sel=self->m_colors[self->m_index_sel];
-	cairo_set_source_rgba(cr,1.0 - color_sel.red
-		,1.0 - color_sel.green,1.0 - color_sel.blue,1.0);
-	cairo_rectangle(cr,col_sel*24,row_sel*24,24,24);
-	cairo_set_line_width(cr,2);
-	cairo_stroke(cr);
+	if(self->m_index_sel!=-1)
+		{
+		auto row_sel=self->m_index_sel/n_cols;
+		auto col_sel=self->m_index_sel%n_cols;
+		auto color_sel=self->m_colors[self->m_index_sel];
+		cairo_set_source_rgba(cr,1.0 - color_sel.red
+			,1.0 - color_sel.green,1.0 - color_sel.blue,1.0);
+		cairo_rectangle(cr,col_sel*24,row_sel*24,24,24);
+		cairo_set_line_width(cr,2);
+		cairo_stroke(cr);
+		}
 	return TRUE;
 	}

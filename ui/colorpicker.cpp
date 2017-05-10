@@ -31,6 +31,7 @@ ColorPicker::ColorPicker(Container& cnt):
 	m_sat_slider.callback(*this,SliderId::SATURATION);
 	m_lightness_slider.callback(*this,SliderId::LIGHTNESS);
 	m_rgb.callback(*this,0);
+	m_pal_view.selection(0);
 	indexSelected(m_pal_view,0);
 	m_lightness_min.color(ColorRGBA(0.0f,0.0f,0.0f,1.0f));
 	m_lightness_max.color(ColorRGBA(1.0f,1.0f,1.0f,1.0f));
