@@ -25,10 +25,24 @@ class ColorView::Impl:public ColorView
 		const ColorRGBA& color() const noexcept
 			{return m_color;}
 
+		int id() const noexcept
+			{return m_id;}
+
+		void callback(CallbackImpl cb,void* cb_obj,int id) noexcept
+			{
+			m_cb=cb;
+			r_cb_obj=cb_obj;
+			m_id=id;
+			}
+
 	private:
+		int m_id;
+		CallbackImpl m_cb;
+		void* r_cb_obj;
 		ColorRGBA m_color;
 		GtkDrawingArea* m_handle;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
+		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 	};
 
 ColorView::ColorView(Container& cnt)
@@ -46,12 +60,22 @@ ColorView& ColorView::color(const ColorRGBA& c)
 const ColorRGBA& ColorView::color() const noexcept
 	{return m_impl->color();}
 
+ColorView& ColorView::callback(CallbackImpl cb,void* cb_obj,int id)
+	{
+	m_impl->callback(cb,cb_obj,id);
+	return *this;
+	}
 
 
-ColorView::Impl::Impl(Container& cnt):ColorView(*this),m_color(ColorRGBA(0.5,0.5,0.5,1))
+
+
+ColorView::Impl::Impl(Container& cnt):ColorView(*this),r_cb_obj(nullptr)
+	,m_color(ColorRGBA(0.5,0.5,0.5,1))
 	{
 	auto widget=gtk_drawing_area_new();
+	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
+	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
 	gtk_widget_set_size_request(widget,32,32);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
@@ -75,8 +99,16 @@ gboolean ColorView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	auto self=reinterpret_cast<Impl*>(obj);
 	auto c=self->m_color;
 	cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
-	cairo_rectangle(cr,4,4,w-8,h-8);
+	cairo_rectangle(cr,2,2,w-4,h-4);
 	cairo_fill(cr);
 
+	return TRUE;
+	}
+
+gboolean ColorView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(self->r_cb_obj!=nullptr)
+		{self->m_cb(self->r_cb_obj,*self);}
 	return TRUE;
 	}
