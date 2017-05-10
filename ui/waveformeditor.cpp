@@ -161,9 +161,9 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	switch(id)
 		{
 		case TextEntryId::FILENAME:
-		//	TODO: Pass message. We need to know session directory before trying
-		//	to load a new file. After the filename has been successfully loaded,
-		//	show its canonical path.
+			m_waveform.fileLoad(entry.content());
+			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+			m_plot.showAll();
 			filename_update(m_waveform,entry,m_plot);
 			break;
 
@@ -254,13 +254,20 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				,[this](const char* path)
 					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
-			//	TODO: Pass message. We need to know session directory before trying
-			//	to load a new file. After the filename has been successfully loaded,
-			//	show its canonical path.
-				filename_update(m_waveform,m_filename_input,m_plot);
+				m_waveform.fileLoad(temp.c_str());
+				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+				m_plot.showAll();
 				}
 			}
 			break;
+
+		case ButtonId::FILENAME_RELOAD:
+			m_waveform.fileLoad(m_waveform.filenameGet().begin());
+			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+			m_plot.showAll();
+			break;
+
+
 
 		case ButtonId::COLOR_PICK:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));

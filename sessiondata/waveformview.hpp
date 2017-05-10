@@ -45,14 +45,11 @@ namespace Anja
 			void keyColorSet(const ColorRGBA& color_new)
 				{r_waveform_data.keyColorSet(color_new);}
 
-		/*	void fileLoad(const char* filename)
-				{r_waveform.fileLoad(filename);}
+			void fileLoad(const char* filename);
 
-			void fileSave(const char* filename) const
-				{r_waveform.fileSave(filename);}*/
+			void fileSave(const char* filename) const;
 
-			bool loadPossible(const char* filename) const
-				{return r_waveform.loadPossible(filename);}
+			bool loadPossible(const char* filename) const;
 
 			const float* begin() const noexcept
 				{return r_waveform.begin();}

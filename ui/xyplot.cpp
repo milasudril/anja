@@ -37,6 +37,7 @@ class XYPlot::Impl:public XYPlot
 		void curvesRemove()
 			{
 			m_curves.clear();
+			m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
 			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 

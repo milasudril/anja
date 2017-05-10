@@ -31,7 +31,6 @@
       <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
       <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
       <File Name="sessiondata/channel.cpp"/>
-      <File Name="sessiondata/waveformview.hpp"/>
       <File Name="sessiondata/waveformview.cpp"/>
       <File Name="sessiondata/channelview.hpp"/>
       <File Name="sessiondata/channelview.cpp"/>
@@ -64,6 +63,7 @@
       <File Name="common/thread.hpp"/>
       <File Name="common/thread.cpp"/>
       <File Name="common/addmemberif.hpp"/>
+      <File Name="sessiondata/waveformview.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

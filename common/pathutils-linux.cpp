@@ -6,7 +6,6 @@
 //@	]
 
 #include "pathutils.hpp"
-#include "string.hpp"
 #include <cstdlib>
 #include <memory>
 #include <cstring>
@@ -36,10 +35,8 @@ String Anja::parentDirectory(const String& path)
 	return ret;
 	}
 
-bool Anja::absoluteIs(const String& path)
-	{
-	return *(path.begin())=='/';
-	}
+bool Anja::absoluteIs(const char* path)
+	{return *path=='/';}
 
 static const char* pathTokenGet(const char* path,String& token)
 	{

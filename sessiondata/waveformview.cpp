@@ -77,3 +77,44 @@ void WaveformView::store(SessionFileRecord& rec)
 	r_waveform.dataGet(rec);
 	r_waveform_data.dataGet(rec);	
 	}
+
+
+void WaveformView::fileLoad(const char* filename)
+	{
+	if(absoluteIs(filename))
+		{
+		r_waveform.fileLoad(filename);
+		r_waveform_data.filenameSet(makeRelativeTo(filename,r_dir_current.begin()));
+		}
+	else
+		{
+		auto fullpath=String(r_dir_current);
+		fullpath.append('/').append(filename);
+		r_waveform.fileLoad(fullpath.begin());
+		r_waveform_data.filenameSet(String(filename));
+		}
+	}
+
+void WaveformView::fileSave(const char* filename) const
+	{
+	if(absoluteIs(filename))
+		{
+		r_waveform.fileSave(filename);
+		r_waveform_data.filenameSet(makeRelativeTo(filename,r_dir_current.begin()));
+		}
+	else
+		{
+		auto fullpath=String(r_dir_current);
+		fullpath.append('/').append(filename);
+		r_waveform.fileSave(fullpath.begin());
+		r_waveform_data.filenameSet(String(filename));
+		}
+	}
+
+bool WaveformView::loadPossible(const char* filename) const
+	{
+	if(absoluteIs(filename))
+		{return r_waveform.loadPossible(filename);}
+
+	return r_waveform.loadPossible(filename);
+	}
