@@ -161,10 +161,14 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	switch(id)
 		{
 		case TextEntryId::FILENAME:
-			m_waveform.fileLoad(entry.content());
-			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
-			m_plot.showAll();
-			filename_update(m_waveform,entry,m_plot);
+			if(!m_waveform.fileLoaded(entry.content()))
+				{
+				m_waveform.fileLoad(entry.content());
+				m_waveform_db=filename_update(m_waveform,entry,m_plot);
+				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				m_plot.showAll();
+				}
 			break;
 
 		case TextEntryId::DESCRIPTION:
@@ -256,6 +260,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				{
 				m_waveform.fileLoad(temp.c_str());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 				m_plot.showAll();
 				}
 			}
@@ -264,6 +270,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 		case ButtonId::FILENAME_RELOAD:
 			m_waveform.fileLoad(m_waveform.filenameGet().begin());
 			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 			m_plot.showAll();
 			break;
 

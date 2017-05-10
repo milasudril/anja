@@ -51,6 +51,8 @@ namespace Anja
 
 			bool loadPossible(const char* filename) const;
 
+			bool fileLoaded(const char* filename) const;
+
 			const float* begin() const noexcept
 				{return r_waveform.begin();}
 
