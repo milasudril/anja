@@ -632,12 +632,13 @@ XYPlot::Domain XYPlot::Impl::window_domain_adjust(int width,int height
 	auto margin_top=axis_y.front().extent_y;
 	auto margin_bottom=(axis_y.end()-2)->extent_y+1.25*axis_x.back().extent_y;
 	auto margin_right=0.5*(axis_x.end()-2)->extent_x;
-	auto margin_left=axis_y.back().extent_x+2.5;
+	auto margin_left=axis_y.back().extent_x+5;
 
 	return Domain
 		{
 			{
-			 std::max(margin_left,margin_left+0.5*axis_x.front().extent_x)
+			 margin_left
+			// std::max(margin_left,margin_left+0.5*axis_x.front().extent_x)
 			,margin_top
 			}
 			,{
