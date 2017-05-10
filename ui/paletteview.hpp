@@ -29,7 +29,13 @@ namespace Anja
 			PaletteView(PaletteView&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-			PaletteView& palette(const ColorRGBA* colors,size_t n);
+
+			template<class ColorRange>
+			PaletteView& palette(const ColorRange& r)
+				{return palette(r.begin(),r.end());}
+
+			PaletteView& palette(const ColorRGBA* colors_begin
+				,const ColorRGBA* colors_end);
 
 			template<class Callback,class IdType>
 			PaletteView& callback(Callback& cb_obj,IdType id) noexcept

@@ -89,6 +89,6 @@ void ColorPicker::changed(TextEntry& entry,int id) noexcept
 
 ColorPicker& ColorPicker::palette(const ColorRGBA* pal_begin,const ColorRGBA* pal_end)
 	{
-	m_pal_view.palette(pal_begin, pal_end  - pal_begin);
+	m_pal_view.palette(pal_begin, pal_end);
 	return *this;
 	}

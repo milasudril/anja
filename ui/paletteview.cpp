@@ -16,7 +16,7 @@ class PaletteView::Impl:public PaletteView
 		Impl(Container& cnt);
 		~Impl();
 
-		void palette(const ColorRGBA* colors,size_t n);
+		void palette(const ColorRGBA* colors_begin,const ColorRGBA* colors_end);
 
 		int id() const noexcept
 			{return m_id;}
@@ -85,9 +85,10 @@ PaletteView& PaletteView::selection(int index)
 	return *this;
 	}
 
-PaletteView& PaletteView::palette(const ColorRGBA* colors,size_t n)
+PaletteView& PaletteView::palette(const ColorRGBA* colors_begin
+	,const ColorRGBA* colors_end)
 	{
-	m_impl->palette(colors,n);
+	m_impl->palette(colors_begin,colors_end);
 	return *this;
 	}
 
@@ -124,7 +125,7 @@ PaletteView::Impl::Impl(Container& cnt):PaletteView(*this),m_id(0),m_cb(nullptr)
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
-	palette(COLORS,ColorID::COLOR_END);
+	palette(COLORS,COLORS + ColorID::COLOR_END);
 	}
 
 PaletteView::Impl::~Impl()
@@ -133,12 +134,13 @@ PaletteView::Impl::~Impl()
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-void PaletteView::Impl::palette(const ColorRGBA* colors,size_t n)
+void PaletteView::Impl::palette(const ColorRGBA* colors_begin,const ColorRGBA* colors_end)
 	{
 	m_colors.clear();
-	std::for_each(colors,colors + n,[this](const ColorRGBA& c)
+	std::for_each(colors_begin,colors_end,[this](const ColorRGBA& c)
 		{m_colors.push_back(c);});
-	m_index_sel=std::min(m_index_sel,static_cast<int>(n-1));
+	auto n=static_cast<int>(colors_end - colors_end);
+	m_index_sel=std::min(m_index_sel,n-1);
 	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 	}
 
