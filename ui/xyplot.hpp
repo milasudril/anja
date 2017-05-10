@@ -40,6 +40,10 @@ namespace Anja
 				double y;
 				};
 
+			template<class PointRange>
+			XYPlot& curve(const PointRange& points,float hue)
+				{return curve(points.begin(),points.end(),hue);}
+
 			XYPlot& curve(const Point* begin,const Point* end,float hue);
 			XYPlot& curvesRemove();
 

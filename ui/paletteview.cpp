@@ -137,8 +137,14 @@ PaletteView::Impl::~Impl()
 void PaletteView::Impl::palette(const ColorRGBA* colors_begin,const ColorRGBA* colors_end)
 	{
 	m_colors.clear();
-	std::for_each(colors_begin,colors_end,[this](const ColorRGBA& c)
-		{m_colors.push_back(c);});
+	int k=0;
+	printf("%zu\n",colors_end-colors_begin);
+	std::for_each(colors_begin,colors_end,[this,&k](const ColorRGBA& c)
+		{
+		printf("%d\n",k);
+		m_colors.push_back(c);
+		++k;
+		});
 	auto n=static_cast<int>(colors_end - colors_end);
 	m_index_sel=std::min(m_index_sel,n-1);
 	gtk_widget_queue_draw(GTK_WIDGET(m_handle));

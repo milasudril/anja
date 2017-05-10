@@ -143,7 +143,7 @@ void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
 		++k;
 		return XYPlot::Point{t,static_cast<double>(val)};
 		});
-	plot.curve(points.begin(),points.end(),0.66f);
+	plot.curve(points,0.66f);
 	}
 
 static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
