@@ -11,4 +11,7 @@ SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
 		,m_waveform(m_tabs.tabTitle("Waveform")
 		,session.waveformViewGet(session.slotActiveGet())
 		,session.channelLabelsGet())
-	{}
+	{
+	m_waveform.palette(session.colorPresetsBegin()
+		,session.colorPresetsBegin() + session.colorPresetsCountGet());
+	}

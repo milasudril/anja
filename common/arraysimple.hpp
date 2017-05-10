@@ -22,7 +22,7 @@ namespace Anja
 				obj.m_N=0;
 				}
 
-			ArraySimple(const T* begin,const T* end)
+			ArraySimple(const T* begin,const T* end):m_data(nullptr)
 				{
 				ArraySimple temp(end-begin);
 				std::copy(begin,end,temp.begin());

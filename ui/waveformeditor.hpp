@@ -56,6 +56,18 @@ namespace Anja
 			WaveformEditor(Container& cnt,const WaveformView& waveform
 				,const ArraySimple<String>& channel_names);
 
+			WaveformEditor& palette(const ColorRGBA* begin,const ColorRGBA* end)
+				{
+				m_color_presets=ArraySimple<ColorRGBA>(begin,end);
+				if(m_color_dlg)
+					{
+					if(m_color_dlg)
+						{m_color_dlg->widget().palette(begin,end);}
+					}
+				return *this;
+				}
+
+
 			void clicked(Button& src,ButtonId id);
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
