@@ -122,11 +122,9 @@ namespace Anja
 
 
 
-			ColorRGBA* colorPresetsBegin() noexcept
-				{return m_color_presets.begin();}
+			const auto& colorPresetsGet() const noexcept
+				{return m_color_presets;}
 
-			size_t colorPresetsCountGet() const noexcept
-				{return m_color_presets.length();}
 
 
 			float gainGet() const noexcept

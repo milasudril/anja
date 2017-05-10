@@ -12,6 +12,5 @@ SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
 		,session.waveformViewGet(session.slotActiveGet())
 		,session.channelLabelsGet())
 	{
-	m_waveform.palette(session.colorPresetsBegin()
-		,session.colorPresetsBegin() + session.colorPresetsCountGet());
+	m_waveform.palette(session.colorPresetsGet());
 	}

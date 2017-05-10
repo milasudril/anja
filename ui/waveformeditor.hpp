@@ -53,20 +53,21 @@ namespace Anja
 			enum class PopupId:int
 				{COLOR_SELECT};
 
+			template<class StringRange>
 			WaveformEditor(Container& cnt,const WaveformView& waveform
-				,const ArraySimple<String>& channel_names);
+				,const StringRange& channel_names):
+				WaveformEditor(cnt,waveform,channel_names.begin(),channel_names.end())
+				{}
 
-			WaveformEditor& palette(const ColorRGBA* begin,const ColorRGBA* end)
-				{
-				m_color_presets=ArraySimple<ColorRGBA>(begin,end);
-				if(m_color_dlg)
-					{
-					if(m_color_dlg)
-						{m_color_dlg->widget().palette(begin,end);}
-					}
-				return *this;
-				}
+			WaveformEditor(Container& cnt,const WaveformView& waveform
+				,const String* channel_names_begin
+				,const String* channel_names_end);
 
+			template<class ColorRange>
+			WaveformEditor& palette(const ColorRange& colors)
+				{return palette(colors.begin(),colors.end());}
+
+			WaveformEditor& palette(const ColorRGBA* begin,const ColorRGBA* end);
 
 			void clicked(Button& src,ButtonId id);
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);

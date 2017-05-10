@@ -13,6 +13,18 @@
 
 using namespace Anja;
 
+WaveformEditor& WaveformEditor::palette(const ColorRGBA* begin,const ColorRGBA* end)
+	{
+	m_color_presets=ArraySimple<ColorRGBA>(begin,end);
+	if(m_color_dlg)
+		{
+		if(m_color_dlg)
+			{m_color_dlg->widget().palette(begin,end);}
+		}
+	return *this;
+	}
+
+
 static double gain_map(double x)
 	{return 6.0*x + (1-x)*(-72.0);}
 
@@ -284,6 +296,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
 				.color(m_waveform.keyColorGet())
 				.palette(m_color_presets.begin(),m_color_presets.end());
+		//	TODO: Send palette changed event
+		//	TODO: Send key color changed event
 			break;
 		}
 	src.state(0);
@@ -357,7 +371,7 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
-	,const ArraySimple<String>& channel_names):
+	,const String* channel_names_begin,const String* channel_names_end):
 	 m_waveform(waveform)
 	,m_waveform_db(2)
 	,m_color_presets(64)
@@ -432,7 +446,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
 //	Session changed...
-	std::for_each(channel_names.begin(),channel_names.end(),[this](const String& str)
+	std::for_each(channel_names_begin,channel_names_end,[this](const String& str)
 		{m_channel_input.append(str.begin());});
 
 //	Slot changed
