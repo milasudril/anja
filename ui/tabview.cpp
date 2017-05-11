@@ -17,12 +17,16 @@ class TabView::Impl:private TabView
 		void _add(GtkWidget* handle) noexcept
 			{
 			auto label=gtk_label_new(m_tab_title.c_str());
+			gtk_widget_set_margin_start(handle,4);
+			gtk_widget_set_margin_end(handle,4);
+			gtk_widget_set_margin_top(handle,4);
+			gtk_widget_set_margin_bottom(handle,4);
 			gtk_widget_show(handle);
 			gtk_widget_show(label);
 			gtk_notebook_append_page(m_handle,handle,label);
 			}
 
-		void _show() noexcept 
+		void _show() noexcept
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
 		void _sensitive(bool val)
