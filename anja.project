@@ -124,6 +124,8 @@
       <File Name="ui/channelstrip.cpp"/>
       <File Name="ui/separator.hpp"/>
       <File Name="ui/separator.cpp"/>
+      <File Name="ui/mixerconsole.hpp"/>
+      <File Name="ui/mixerconsole.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
