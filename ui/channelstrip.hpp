@@ -13,6 +13,7 @@
 #include "slider.hpp"
 #include "colorpicker.hpp"
 #include "dialog.hpp"
+#include "separator.hpp"
 #include "../sessiondata/channelview.hpp"
 
 #include <memory>
@@ -45,9 +46,11 @@ namespace Anja
 			Box m_box;
 				TextEntry m_name;
 				ColorView m_color;
+				Separator m_sep_a;
 				Label m_ft_label;
 			//	Knob m_ft_knob;
 				TextEntry m_ft_input;
+				Separator m_sep_b;
 				Slider m_gain_slider;
 				TextEntry m_gain_input;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;

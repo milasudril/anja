@@ -122,6 +122,8 @@
       <File Name="ui/imageview.cpp"/>
       <File Name="ui/channelstrip.hpp"/>
       <File Name="ui/channelstrip.cpp"/>
+      <File Name="ui/separator.hpp"/>
+      <File Name="ui/separator.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
