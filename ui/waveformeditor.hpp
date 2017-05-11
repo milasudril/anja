@@ -67,10 +67,10 @@ namespace Anja
 				,const String* channel_names_end);
 
 			template<class ColorRange>
-			WaveformEditor& palette(const ColorRange& colors)
-				{return palette(colors.begin(),colors.end());}
+			WaveformEditor& colorPresets(const ColorRange& colors)
+				{return colorPresets(colors.begin(),colors.end());}
 
-			WaveformEditor& palette(const ColorRGBA* begin,const ColorRGBA* end);
+			WaveformEditor& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
 
 			void clicked(Button& src,ButtonId id);
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
@@ -86,7 +86,8 @@ namespace Anja
 			WaveformView m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
-			ArraySimple<ColorRGBA> m_color_presets;
+			const ColorRGBA* r_color_presets_begin;
+			const ColorRGBA* r_color_presets_end;
 			Box m_box;
 				Box m_filename;
 					Label m_filename_label;

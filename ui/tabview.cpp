@@ -48,15 +48,13 @@ class TabView::Impl:private TabView
 	};
 
 TabView::TabView(Container& cnt)
-	{
-	printf("TabView %p ctor\n",this);
+	{;
 	m_impl=new TabView::Impl(cnt);
 	}
 
 TabView::~TabView()
 	{
 	delete m_impl;
-	printf("TabView %p dtor\n",this);
 	}
 
 TabView& TabView::add(void* handle)
@@ -96,7 +94,6 @@ TabView& TabView::activate(int index) noexcept
 
 TabView::Impl::Impl(Container& cnt):TabView(*this)
 	{
-	printf("TabView::Impl %p ctor\n",this);
 	auto widget=gtk_notebook_new();
 	cnt.add(widget);
 	g_object_ref_sink(widget);
@@ -107,6 +104,5 @@ TabView::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("TabView::Impl %p dtor\n",this);
 	}
 

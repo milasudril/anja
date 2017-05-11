@@ -13,9 +13,10 @@
 
 using namespace Anja;
 
-WaveformEditor& WaveformEditor::palette(const ColorRGBA* begin,const ColorRGBA* end)
+WaveformEditor& WaveformEditor::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
 	{
-	m_color_presets=ArraySimple<ColorRGBA>(begin,end);
+	r_color_presets_begin=begin;
+	r_color_presets_end=end;
 	if(m_color_dlg)
 		{
 		if(m_color_dlg)
@@ -39,7 +40,7 @@ static double gain_random_map_inv(double x)
 
 static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	auto val=static_cast<double>( waveform.offsetBeginGet() ) 
+	auto val=static_cast<double>( waveform.offsetBeginGet() )
 		/static_cast<double>( waveform.sampleRateGet() );
 	char buffer[32];
 	sprintf(buffer,"%.5f",val);
@@ -49,7 +50,7 @@ static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot
 
 static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
-	auto val=static_cast<double>( waveform.offsetEndGet() ) 
+	auto val=static_cast<double>( waveform.offsetEndGet() )
 		/static_cast<double>( waveform.sampleRateGet() );
 	char buffer[32];
 	sprintf(buffer,"%.5f",val);
@@ -295,9 +296,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
 				.color(m_waveform.keyColorGet())
-				.palette(m_color_presets.begin(),m_color_presets.end());
-		//	TODO: Send palette changed event
-		//	TODO: Send key color changed event
+				.palette(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
 	src.state(0);
@@ -364,7 +363,8 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 		case PopupId::COLOR_SELECT:
 			m_color_input.content(ColorString(dlg.widget().color()).begin());
 			m_waveform.keyColorSet(dlg.widget().color());
-			m_color_presets=ArraySimple<ColorRGBA>(dlg.widget().paletteBegin(),dlg.widget().paletteEnd());
+		//	TODO: Send key color change event
+		//	TODO: Send palette change event
 			m_color_dlg.reset();
 			break;
 		}
@@ -374,7 +374,6 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const String* channel_names_begin,const String* channel_names_end):
 	 m_waveform(waveform)
 	,m_waveform_db(2)
-	,m_color_presets(64)
 	,m_box(cnt,true)
 		,m_filename(m_box.insertMode({1,0}),false)
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")

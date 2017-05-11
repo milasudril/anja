@@ -8,6 +8,19 @@
 using namespace Anja;
 
 
+ChannelStrip& ChannelStrip::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
+	{
+	r_color_presets_begin=begin;
+	r_color_presets_end=end;
+	if(m_color_dlg)
+		{
+		if(m_color_dlg)
+			{m_color_dlg->widget().palette(begin,end);}
+		}
+	return *this;
+	}
+
+
 static double gain_map(double x)
 	{return 6.0*x + (1-x)*(-72.0);}
 
@@ -80,8 +93,8 @@ void ChannelStrip::clicked(ColorView& entry,ColorViewId id)
 		case ColorViewId::COLOR:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
-				.color(m_channel.colorGet());
-			//	.palette(m_color_presets.begin(),m_color_presets.end());
+				.color(m_channel.colorGet())
+				.palette(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
 	}

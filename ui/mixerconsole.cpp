@@ -21,3 +21,10 @@ MixerConsole::MixerConsole(Container& cnt,Session& session):
 	{
 	m_master_entry.small(1).width(7);
 	}
+
+MixerConsole& MixerConsole::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
+	{
+	std::for_each(m_strips.begin(),m_strips.end(),[begin,end](ChannelStrip& strip)
+		{strip.colorPresets(begin,end);});
+	return *this;
+	}

@@ -23,6 +23,12 @@ namespace Anja
 
 			explicit MixerConsole(Container& cnt,Session& session);
 
+			template<class ColorRange>
+			MixerConsole& colorPresets(const ColorRange& colors)
+				{return colorPresets(colors.begin(),colors.end());}
+
+			MixerConsole& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
+
 
 		private:
 			Box m_strip_box;

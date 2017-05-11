@@ -41,7 +41,7 @@ class Paned::Impl:private Paned
 				}
 			}
 
-		void _show() noexcept 
+		void _show() noexcept
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
 		void _sensitive(bool val)
@@ -64,14 +64,12 @@ class Paned::Impl:private Paned
 
 Paned::Paned(Container& cnt,bool vertical)
 	{
-	printf("Paned %p ctor\n",this);
 	m_impl=new Paned::Impl(cnt,vertical);
 	}
 
 Paned::~Paned()
 	{
 	delete m_impl;
-	printf("Paned %p dtor\n",this);
 	}
 
 Paned& Paned::add(void* handle)
@@ -106,7 +104,6 @@ Paned& Paned::insertMode(const InsertMode& mode) noexcept
 Paned::Impl::Impl(Container& cnt,bool vertical):Paned(*this)
 	,m_mode{0},m_vertical(vertical),m_position{Index::FIRST}
 	{
-	printf("Paned::Impl %p ctor\n",this);
 	auto widget=gtk_paned_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
@@ -117,5 +114,4 @@ Paned::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Paned::Impl %p dtor\n",this);
 	}

@@ -13,5 +13,6 @@ SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
 			,session.channelLabelsGet())
 		,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
 	{
-	m_waveform.palette(session.colorPresetsGet());
+	m_waveform.colorPresets(session.colorPresetsGet());
+	m_mixer.colorPresets(session.colorPresetsGet());
 	}

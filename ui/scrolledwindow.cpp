@@ -16,7 +16,7 @@ class ScrolledWindow::Impl:private ScrolledWindow
 		void _add(GtkWidget* handle) noexcept
 			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
 
-		void _show() noexcept 
+		void _show() noexcept
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
 		void _sensitive(bool val)
@@ -68,7 +68,6 @@ void* ScrolledWindow::toplevel() const
 
 ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{
-	printf("ScrolledWindow %p ctor\n",this);
 	auto widget=gtk_scrolled_window_new(NULL,NULL);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
@@ -81,5 +80,4 @@ ScrolledWindow::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("ScrolledWindow %p dtor\n",this);
 	}

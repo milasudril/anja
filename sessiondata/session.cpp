@@ -29,7 +29,8 @@ static ArrayDynamicShort<ColorRGBA> color_presets_load(const char* ptr)
 		switch(ch_in)
 			{
 			case '\0':
-				break;
+				ret.append(colorFromString(buffer.begin()));
+				return std::move(ret);
 			case '|':
 				ret.append(colorFromString(buffer.begin()));
 				buffer.clear();
@@ -40,10 +41,22 @@ static ArrayDynamicShort<ColorRGBA> color_presets_load(const char* ptr)
 
 		++ptr;
 		}
-	ret.append(colorFromString(buffer.begin()));
+	return std::move(ret);
+	}
+
+template<class Range>
+static String string_from_color_presets(const Range& r)
+	{
+	String ret;
+	std::for_each(r.begin(),r.end()-1,[&ret](const ColorRGBA& c)
+		{
+		ret.append(ColorString(c).begin()).append('|');
+		});
+	ret.append(ColorString(*(r.end()-1)).begin());
 
 	return std::move(ret);
 	}
+
 
 Session::Session(const char* filename):m_slot_active(0)
 	{
@@ -212,6 +225,11 @@ void Session::save(const char* filename)
 		,String(buffer));
 	record_out.propertySet(String("Options")
 		,stringFromOptions(flagsGet(),FLAG_NAMES));
+	if(m_color_presets.length()!=0)
+		{
+		record_out.propertySet(String("Color presets")
+			,string_from_color_presets(m_color_presets));
+		}
 
 //	TODO Save other data not interpreted by Anja
 	writer.recordWrite(record_out);

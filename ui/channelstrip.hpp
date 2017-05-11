@@ -33,6 +33,9 @@ namespace Anja
 			ChannelStrip& operator=(ChannelStrip&&)=delete;
 			ChannelStrip(ChannelStrip&&)=delete;
 
+			ChannelStrip& colorPresets(const ColorRGBA* colors_begin,const ColorRGBA* colors_end);
+
+
 			void changed(TextEntry& entry,TextEntryId id);
 			void clicked(ColorView& entry,ColorViewId id);
 			void changed(Slider& slider,SliderId id);
@@ -42,7 +45,8 @@ namespace Anja
 
 		private:
 			ChannelView m_channel;
-		//	const ArraySimple<ColorRGBA>& r_color_pal;
+			const ColorRGBA* r_color_presets_begin;
+			const ColorRGBA* r_color_presets_end;
 			Box m_box;
 				TextEntry m_name;
 				ColorView m_color;
