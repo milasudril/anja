@@ -2,10 +2,11 @@
 
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
-#include "ui/colorpicker.hpp"
-#include "ui/dialog.hpp"
+#include "ui/imageview.hpp"
+#include "common/blob.hpp"
 
 #include <cstdio>
+#include <cstdint>
 
 namespace
 	{
@@ -23,16 +24,12 @@ namespace
 				return Anja::UiContext::RunStatus::WAIT;
 				}
 
-			void dismiss(Anja::Dialog<Anja::ColorPicker>& dlg,int id)
-				{r_ctx.exit();}
-
-			void confirmPositive(Anja::Dialog<Anja::ColorPicker>& dlg,int id)
-				{r_ctx.exit();}
-
 		private:
 			Anja::UiContext& r_ctx;
 		};
 	}
+
+ANJA_BLOB(uint8_t,testimg,"/usr/share/xfce4/backdrops/Yellow_Jacket_by_Manuel_Frei.png");
 
 int main(int argc, char **argv)
 	{
@@ -42,10 +39,10 @@ int main(int argc, char **argv)
 		ctx.dark(1);
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
+		Anja::ImageView imgview(mainwin);
+		imgview.showPng(testimg_begin,testimg_end);
 		mainwin.callback(ctrl,0);
 		mainwin.show();
-		Anja::Dialog<Anja::ColorPicker> picker(mainwin,"Choose color");
-		picker.callback(ctrl,0);
 		ctx.run(ctrl);
 		}
 	catch(const char* err)

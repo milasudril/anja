@@ -64,6 +64,7 @@
       <File Name="common/thread.cpp"/>
       <File Name="common/addmemberif.hpp"/>
       <File Name="sessiondata/waveformview.hpp"/>
+      <File Name="common/blob.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

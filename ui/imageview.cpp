@@ -1,29 +1,23 @@
 //@	{
-//@	 "targets":[{"name":"colorview.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
+//@	 "targets":[{"name":"imageview.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
 //@	}
 
-#include "colorview.hpp"
+#include "imageview.hpp"
 #include "container.hpp"
 #include "../common/color.hpp"
-#include <vector>
 #include <gtk/gtk.h>
+#include <vector>
+#include <cstring>
 
 using namespace Anja;
 
-class ColorView::Impl:public ColorView
+class ImageView::Impl:public ImageView
 	{
 	public:
 		Impl(Container& cnt);
 		~Impl();
 
-		void color(const ColorRGBA& color)
-			{
-			m_color=color;
-			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
-			}
-
-		const ColorRGBA& color() const noexcept
-			{return m_color;}
+		void showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end);
 
 		int id() const noexcept
 			{return m_id;}
@@ -39,41 +33,38 @@ class ColorView::Impl:public ColorView
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
-		ColorRGBA m_color;
+		cairo_surface_t* m_img;
 		GtkDrawingArea* m_handle;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 	};
 
-ColorView::ColorView(Container& cnt)
+ImageView::ImageView(Container& cnt)
 	{m_impl=new Impl(cnt);}
 
-ColorView::~ColorView()
+ImageView::~ImageView()
 	{delete m_impl;}
 
-ColorView& ColorView::color(const ColorRGBA& c)
+ImageView& ImageView::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end)
 	{
-	m_impl->color(c);
+	m_impl->showPng(bytes_begin,bytes_end);
 	return *this;
 	}
 
-const ColorRGBA& ColorView::color() const noexcept
-	{return m_impl->color();}
-
-ColorView& ColorView::callback(CallbackImpl cb,void* cb_obj,int id)
+ImageView& ImageView::callback(CallbackImpl cb,void* cb_obj,int id)
 	{
 	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
-int ColorView::id() const noexcept
+int ImageView::id() const noexcept
 	{return m_impl->id();}
 
 
 
 
-ColorView::Impl::Impl(Container& cnt):ColorView(*this),r_cb_obj(nullptr)
-	,m_color(ColorRGBA(0.5,0.5,0.5,1))
+ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
+	,m_img(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
@@ -85,30 +76,74 @@ ColorView::Impl::Impl(Container& cnt):ColorView(*this),r_cb_obj(nullptr)
 	cnt.add(widget);
 	}
 
-ColorView::Impl::~Impl()
+ImageView::Impl::~Impl()
 	{
 	m_impl=nullptr;
+	if(m_img!=nullptr)
+		{cairo_surface_destroy(m_img);}
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-gboolean ColorView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
+gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
-	auto w=gtk_widget_get_allocated_width(widget);
-	auto h=gtk_widget_get_allocated_height(widget);
-	cairo_set_source_rgba(cr,0.5,0.5,0.5,1); //Set neutral background
-	cairo_rectangle(cr,0,0,w,h);
-	cairo_fill(cr);
-
 	auto self=reinterpret_cast<Impl*>(obj);
-	auto c=self->m_color;
-	cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
-	cairo_rectangle(cr,2,2,w-4,h-4);
-	cairo_fill(cr);
+	auto img=self->m_img;
+	if(img!=nullptr)
+		{
+		auto w_out=static_cast<double>( gtk_widget_get_allocated_width(widget) );
+		auto h_out=static_cast<double>( gtk_widget_get_allocated_height(widget) );
+		auto w_win=w_out;
+		auto h_win=h_out;
 
+		auto w_in=static_cast<double>( cairo_image_surface_get_width(img) );
+		auto h_in=static_cast<double>( cairo_image_surface_get_height(img) );
+	
+		auto scale=[w_in,&w_out,h_in,&h_out]()
+			{
+			auto r_out=w_out/h_out;
+			auto r_in=w_in/h_in;
+			if(r_out>r_in) 
+				{
+				w_out=h_out*r_in;
+				return w_out/w_in;
+				}
+			h_out=w_out/r_in;
+			return h_out/h_in;
+			}();
+
+		cairo_translate(cr,0.5*(w_win - w_out),0.5*(h_win - h_out));
+		cairo_scale(cr,scale,scale);
+		cairo_set_source_surface(cr,img,0,0);
+		cairo_paint(cr);
+		}
 	return TRUE;
 	}
 
-gboolean ColorView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
+void ImageView::Impl::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end)
+	{
+	typedef std::pair<const uint8_t*,const uint8_t*> ReadPair;
+	ReadPair read_pair{bytes_begin,bytes_end};
+	auto temp=cairo_image_surface_create_from_png_stream([]
+		(void* cb_obj,unsigned char *data,unsigned int length)
+		{
+		auto rp=reinterpret_cast<ReadPair*>(cb_obj);
+		auto n=std::min(static_cast<unsigned int>(rp->second - rp->first),length);
+		memcpy(data,rp->first,n);
+		rp->first+=n;
+		return CAIRO_STATUS_SUCCESS;
+		},&read_pair);
+	if(cairo_surface_status(temp)!=CAIRO_STATUS_SUCCESS)
+		{
+		cairo_surface_destroy(temp);
+		return;
+		}
+	if(m_img!=nullptr)
+		{cairo_surface_destroy(m_img);}
+	m_img=temp;
+	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+	}
+
+gboolean ImageView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(self->r_cb_obj!=nullptr)

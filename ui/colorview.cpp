@@ -1,8 +1,8 @@
 //@	{
-//@	 "targets":[{"name":"imageview.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
+//@	 "targets":[{"name":"colorview.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
 //@	}
 
-#include "imageview.hpp"
+#include "colorview.hpp"
 #include "container.hpp"
 #include "../common/color.hpp"
 #include <vector>
@@ -10,7 +10,7 @@
 
 using namespace Anja;
 
-class ImageView::Impl:public ImageView
+class ColorView::Impl:public ColorView
 	{
 	public:
 		Impl(Container& cnt);
@@ -21,6 +21,9 @@ class ImageView::Impl:public ImageView
 			m_color=color;
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
+
+		const ColorRGBA& color() const noexcept
+			{return m_color;}
 
 		int id() const noexcept
 			{return m_id;}
@@ -42,31 +45,34 @@ class ImageView::Impl:public ImageView
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 	};
 
-ImageView::ImageView(Container& cnt)
+ColorView::ColorView(Container& cnt)
 	{m_impl=new Impl(cnt);}
 
-ImageView::~ImageView()
+ColorView::~ColorView()
 	{delete m_impl;}
 
-ImageView& ImageView::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end)
+ColorView& ColorView::color(const ColorRGBA& c)
 	{
-	m_impl->showPng(bytes_begin,bytes_end);
+	m_impl->color(c);
 	return *this;
 	}
 
-ImageView& ImageView::callback(CallbackImpl cb,void* cb_obj,int id)
+const ColorRGBA& ColorView::color() const noexcept
+	{return m_impl->color();}
+
+ColorView& ColorView::callback(CallbackImpl cb,void* cb_obj,int id)
 	{
 	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
-int ImageView::id() const noexcept
+int ColorView::id() const noexcept
 	{return m_impl->id();}
 
 
 
 
-ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
+ColorView::Impl::Impl(Container& cnt):ColorView(*this),r_cb_obj(nullptr)
 	,m_color(ColorRGBA(0.5,0.5,0.5,1))
 	{
 	auto widget=gtk_drawing_area_new();
@@ -79,13 +85,13 @@ ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
 	cnt.add(widget);
 	}
 
-ImageView::Impl::~Impl()
+ColorView::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
+gboolean ColorView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto w=gtk_widget_get_allocated_width(widget);
 	auto h=gtk_widget_get_allocated_height(widget);
@@ -102,7 +108,7 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	return TRUE;
 	}
 
-gboolean ImageView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
+gboolean ColorView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(self->r_cb_obj!=nullptr)
