@@ -15,6 +15,9 @@ namespace Anja
 	class SessionEditorBase
 		{
 		public:
+			SessionEditorBase& operator=(SessionEditorBase&&)=delete;
+			SessionEditorBase(SessionEditorBase&&)=delete;
+
 			SessionEditorBase(Container& cnt,Session& session);
 		private:
 			Session& r_session;

@@ -17,6 +17,9 @@ namespace Anja
 	class OptionList
 		{
 		public:
+			OptionList& operator=(OptionList&&)=delete;
+			OptionList(OptionList&&)=delete;
+
 			explicit OptionList(Container& cnt,bool vertical):
 				m_scroll(cnt)
 					,m_box_main(m_scroll,vertical)
@@ -28,7 +31,7 @@ namespace Anja
 
 			OptionList& clear() noexcept
 				{
-				m_options.clear();	
+				m_options.clear();
 				return *this;
 				}
 
@@ -79,7 +82,7 @@ namespace Anja
 			ScrolledWindow m_scroll;
 				Box m_box_main;
 					Box m_box;
-					
+
 			std::vector<Checkbox> m_options;
 			void callbacks_assign();
 		};

@@ -9,7 +9,7 @@
 #include "../common/addmemberif.hpp"
 #include <array>
 
-namespace Anja	
+namespace Anja
 	{
 	struct DialogOkCancel
 		{
@@ -55,6 +55,9 @@ namespace Anja
 		{
 		public:
 			enum class ButtonId:int{DISMISS,CONFIRM_NEGATIVE,CONFIRM_POSITIVE};
+
+			Dialog& operator=(Dialog&&)=delete;
+			Dialog(Dialog&&)=delete;
 
 			Dialog(Container& owner,const char* title):m_window(title,&owner)
 				,m_content(m_window,true)
@@ -133,7 +136,7 @@ GNU/Linux: No, Cancel, Yes
 MacOS: No, Cancel, Yes
 Windows: Yes, No, Cancel
 */
-			
+
 			static constexpr int dismiss_index() noexcept
 				{
 				if(!has_dismiss())

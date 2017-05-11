@@ -27,10 +27,13 @@ namespace Anja
 
 			ButtonListImpl& clear() noexcept
 				{
-				m_buttons.clear();	
+				m_buttons.clear();
 				return *this;
 				}
-			
+
+			ButtonListImpl& operator=(ButtonListImpl&&)=delete;
+			ButtonListImpl(ButtonListImpl&&)=delete;
+
 			int id() const noexcept
 				{return m_id;}
 
@@ -62,7 +65,7 @@ namespace Anja
 			ScrolledWindow m_scroll;
 				Box m_box_main;
 					Box m_box;
-					
+
 			std::vector<Button> m_buttons;
 		};
 
@@ -76,7 +79,7 @@ namespace Anja
 
 			ButtonList& clear() noexcept
 				{
-				m_impl.clear();	
+				m_impl.clear();
 				return *this;
 				}
 
@@ -102,7 +105,7 @@ namespace Anja
 
 			void clicked(Button& btn,int id)
 				{r_callback->clicked(*this,btn,static_cast<ButtonId>(id));}
-			
+
 			int id() const noexcept
 				{return m_impl.id();}
 

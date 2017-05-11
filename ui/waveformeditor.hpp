@@ -53,6 +53,9 @@ namespace Anja
 			enum class PopupId:int
 				{COLOR_SELECT};
 
+			WaveformEditor& operator=(WaveformEditor&&)=delete;
+			WaveformEditor(WaveformEditor&&)=delete;
+
 			template<class StringRange>
 			WaveformEditor(Container& cnt,const WaveformView& waveform
 				,const StringRange& channel_names):

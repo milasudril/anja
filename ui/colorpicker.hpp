@@ -23,6 +23,9 @@ namespace Anja
 
 			explicit ColorPicker(Container& cnt);
 
+			ColorPicker& operator=(ColorPicker&&)=delete;
+			ColorPicker(ColorPicker&&)=delete;
+
 			void indexSelected(PaletteView& palview,int id);
 
 			void changed(Slider& slider,SliderId id);
@@ -60,7 +63,7 @@ namespace Anja
 				Box m_lightness;
 					Label m_lightness_label;
 					ColorView m_lightness_min;
-					Slider m_lightness_slider;	
+					Slider m_lightness_slider;
 					ColorView m_lightness_max;
 				ColorView m_result;
 				TextEntry m_rgb;
