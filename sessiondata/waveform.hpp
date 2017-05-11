@@ -23,9 +23,9 @@ namespace Anja
 				{}
 
 			explicit Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
-				m_data(buffer,buffer_size),m_offset_begin(0),m_offset_end(buffer_size)
+				 m_offset_begin(0),m_offset_end(buffer_size)
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
-				{}
+				{m_data.append(buffer,buffer_size);}
 
 			explicit Waveform(const SessionFileRecord& record,const char* filename=nullptr);
 
@@ -191,7 +191,7 @@ namespace Anja
 				}
 
 			void capacitySet(uint32_t capacity_new)
-				{m_data.capacitySet(capacity_new);}
+				{m_data.capacity(capacity_new);}
 
 			void clear()
 				{

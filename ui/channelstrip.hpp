@@ -29,6 +29,9 @@ namespace Anja
 			enum class SliderId:int{GAIN};
 			enum class PopupId:int{COLOR_SELECT};
 
+			ChannelStrip& operator=(ChannelStrip&&)=delete;
+			ChannelStrip(ChannelStrip&&)=delete;
+
 			void changed(TextEntry& entry,TextEntryId id);
 			void clicked(ColorView& entry,ColorViewId id);
 			void changed(Slider& slider,SliderId id);

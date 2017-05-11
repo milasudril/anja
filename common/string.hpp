@@ -47,7 +47,7 @@ namespace Anja
 
 			String& append(const String& str)
 				{
-				ArrayDynamicShort<char>::truncate().append(str);
+				ArrayDynamicShort<char>::truncate().append(str.begin(),str.length());
 				return *this;
 				}
 

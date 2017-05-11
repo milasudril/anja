@@ -65,6 +65,10 @@
       <File Name="common/addmemberif.hpp"/>
       <File Name="sessiondata/waveformview.hpp"/>
       <File Name="common/blob.hpp"/>
+      <File Name="common/memoryalloc.hpp"/>
+      <File Name="common/memoryalloc.cpp"/>
+      <File Name="common/vectortype.hpp"/>
+      <File Name="common/arrayinit.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

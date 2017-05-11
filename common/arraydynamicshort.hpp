@@ -1,256 +1,280 @@
-//@	 {"targets":[{"name":"arraydynamicshort.hpp","type":"include"}]}
+//@	{"targets":[{"name":"arraydynamicshort.hpp","type":"include"}]}
 
 #ifndef ANJA_ARRAYDYNAMICSHORT_HPP
 #define ANJA_ARRAYDYNAMICSHORT_HPP
 
-#include <iterator>
+#include "vectortype.hpp"
+#include "arrayinit.hpp"
+#include "memoryalloc.hpp"
+
+#include <limits>
 #include <cstdint>
-#include <algorithm>
+#include <cstddef>
+#include <utility>
 #include <cassert>
+#include <new>
 
 namespace Anja
 	{
+	/**\brief Class representing arrays that can grow.
+	 *
+	 * This class describes an array type that can grow. Like ArraySimple, the
+	 * memory allocation is done through the functions declared in memoryalloc.h
+	 * , which makes it possible to use SSE instructions on its elements.
+	 *
+	 */
 	template<class T>
-	class alignas(16) ArrayDynamicShort
+	class ArrayDynamicShort
 		{
 		public:
-			typedef T* iterator;
-			typedef const T* const_iterator;
-
-			typedef std::reverse_iterator<iterator> reverse_iterator;
-			typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-
-			explicit ArrayDynamicShort(const T* source);
-
-			ArrayDynamicShort(const T* source,uint32_t N):
-				m_data(new T[N]),m_length(0),m_capacity(N)
-				{
-				if(source!=nullptr && N!=0)
-					{append(source,N);}
-				}
-
-			ArrayDynamicShort():m_data(new T[1]),m_length(0),m_capacity(1)
+			/**\brief Default constructor.
+			 *
+			 * This is the default constructor. When the array is initialized
+			 * , it is empty.
+			*/
+			ArrayDynamicShort() noexcept:m_content{0,0,0,0}
 				{}
 
-			ArrayDynamicShort(const ArrayDynamicShort& obj):
-				m_data(new T[obj.length()]),m_length(0),m_capacity(obj.length())
+			/**\brief Move constructor.
+			*/
+			ArrayDynamicShort(ArrayDynamicShort&& obj) noexcept
 				{
-				assert(&obj!=this);
-				append(obj.begin(),obj.length());
+				m_content.x=obj.m_content.x;
+				obj.m_content.x=vec4_t<int32_t>{0,0,0,0};
 				}
 
-			ArrayDynamicShort(ArrayDynamicShort&& obj) noexcept:
-				m_data(obj.m_data),m_length(obj.m_length),m_capacity(obj.m_capacity)
-				{
-				obj.m_data=nullptr;
-				obj.m_length=0;
-				obj.m_capacity=0;
-				}
-
-			ArrayDynamicShort& operator=(const ArrayDynamicShort& obj)
-				{
-				assert(&obj!=this);
-				clear();
-				append(obj.begin(),obj.length());
-				return *this;
-				}
-
+			/**\brief Move assignment operator.
+			*/
 			ArrayDynamicShort& operator=(ArrayDynamicShort&& obj) noexcept
 				{
-				std::swap(obj.m_data,m_data);
-				std::swap(obj.m_length,m_length);
-				std::swap(obj.m_capacity,m_capacity);
+				assert(this!=&obj);
+				std::swap(m_content.x,obj.m_content.x);
 				return *this;
+				}
+
+			/**\brief Copy assignment operator.
+			 *
+			 * This is the copy assignment operator.
+			 *
+			 * \note Copy assignment requires that T objects can be copy constructed.
+			 *
+			 */
+			ArrayDynamicShort& operator=(const ArrayDynamicShort& obj)
+				{
+				assert(this!=&obj);
+				ArrayDynamicShort<T> temp(obj);
+				*this=std::move(temp);
+				return *this;
+				}
+
+			/**\brief Copy constructor.
+			 *
+			 * This is the copy constructor.
+			 *
+			 * \note Copy constuction requires that T objects can be copy constructed.
+			 *
+			 */
+			ArrayDynamicShort(const ArrayDynamicShort& obj):m_content{0,0,0,0}
+				{
+				append(obj.begin(),obj.length());
 				}
 
 			~ArrayDynamicShort()
 				{
-				if(m_data!=nullptr)
-					{delete[] m_data;}
+				clear();
+				memoryFree(m_content.data.pointer);
 				}
 
-			uint32_t length() const
-				{return m_length;}
+
+			/**\brief Returns the length of the array.
+			*/
+			uint32_t length() const noexcept
+				{return m_content.data.length;}
+
+			/**\brief Returns a pointer to the first elemenet in the array.
+			*/
+			T* begin() noexcept
+				{return m_content.data.pointer;}
+
+			/**\brief Returns a pointer to the first elemenet in the array.
+			*/
+			const T* begin() const noexcept
+				{return m_content.data.pointer;}
+
+			/**\brief Returns a pointer to the end of the array.
+			*/
+			T* end() noexcept
+				{return m_content.data.pointer+length();}
+
+			/**\brief Returns a pointer to the end of the array.
+			*/
+			const T* end() const noexcept
+				{return m_content.data.pointer+length();}
+
+			/**\brief Returns a reference to the object at <var>position</var>.
+			 */
+			T& operator[](uint32_t position) noexcept
+				{
+				assert(position<length());
+				return m_content.data.pointer[position];
+				}
+
+			/**\brief Returns a reference to the object at <var>position</var>.
+			 */
+			const T& operator[](uint32_t position) const noexcept
+				{
+				assert(position<length());
+				return m_content.data.pointer[position];
+				}
 
 
+			/**\brief Appends another array object to the array.
+			 *
+			 * This function appends another array object to the array.
+			 *
+			 * \note Copy constuction requires that T objects can be copy constructed.
+			 *
+			 * \warning This function may move the array to a new base address,
+			 * and therefore, pointers to elements in the array may become invalid.
+			 */
+			ArrayDynamicShort& append(const T* begin_in,uint32_t length_in)
+				{
+				assert(begin_in!=begin());
+				auto length_new=static_cast<size_t>( length() )+length_in;
+				if(capacity() < length_new + 1)
+					{resize(length_new + 1);}
+				ArrayInit::copy(end(),end()+length_in,begin_in);
+				m_content.data.length=static_cast<uint32_t>(length_new);
+				return *this;
+				}
 
-			const T& operator[](uint32_t position) const
-				{return m_data[position];}
-
-			T& operator[](uint32_t position)
-				{return m_data[position];}
-
-			T& front()
-				{return *m_data;}
-
-			const T& front() const
-				{return *m_data;}
-
-			T& back()
-				{return *(m_data+m_length-1);}
-
-			const T& back() const
-				{return *(m_data+m_length-1);}
-
-
-
-
-			const T* begin() const
-				{return m_data;}
-
-			T* begin()
-				{return m_data;}
-
-			const T* data() const
-				{return begin();}
-
-			T* data()
-				{return begin();}
-
-			const T* end() const
-				{return m_data+m_length;}
-
-			T* end()
-				{return m_data+m_length;}
-
-
-
-			const_reverse_iterator rbegin() const
-				{return const_reverse_iterator{end()};}
-
-			reverse_iterator rbegin()
-				{return reverse_iterator{end()};}
-
-			const_reverse_iterator rend() const
-				{return const_reverse_iterator{begin()};}
-
-			reverse_iterator rend()
-				{return reverse_iterator{begin()};}
-
-
-
+			/**\brief Appends an object to the array.
+			 *
+			 * This function appends an object to the array.
+			 *
+			 * \note Copy constuction requires that T objects can be copy constructed.
+			 *
+			 * \warning This function may move the array to a new base address,
+			 * and therefore, pointers to elements in the array may become invalid.
+			 */
 			ArrayDynamicShort& append(const T& obj)
 				{
-				if(m_length==m_capacity)
-					{capacityIncrease();}
-				m_data[m_length]=obj;
-				++m_length;
+				auto length_new=static_cast<size_t>( length() ) + 1;
+				if(capacity() < length_new)
+					{resize(length_new);}
+				new(end())T(obj);
+				m_content.data.length=static_cast<uint32_t>(length_new);
 				return *this;
 				}
 
+			/**\brief  Appends an object to the array by move.
+			 *
+			 * This function appends an object to the array by moving it.
+			 *
+			 * \warning This function may move the array to a new base address,
+			 * and therefore, pointers to elements in the array may become invalid.
+			 */
 			ArrayDynamicShort& append(T&& obj)
 				{
-				if(m_length==m_capacity)
-					{capacityIncrease();}
-				m_data[m_length]=std::move(obj);
-				++m_length;
+				auto length_new=length() + 1;
+				if(capacity() < length_new)
+					{resize(length_new);}
+				new(end())T(std::move(obj));
+				m_content.data.length=length_new;
 				return *this;
 				}
 
-			ArrayDynamicShort& append(const T* buffer,uint32_t N);
-
-			ArrayDynamicShort& append(T* buffer,uint32_t N);
-
-			ArrayDynamicShort& append(const ArrayDynamicShort& source)
-				{return append(source.begin(),source.length());}
-
-			ArrayDynamicShort& append(ArrayDynamicShort&& source)
-				{return append(source.begin(),source.length());}
-
-			ArrayDynamicShort& erase(T* location);
-
-			void capacitySet(uint32_t capacity_new);
-
-			void clear()
-				{m_length=0;}
-
+			/**\brief  Removes the last element from the array.
+			 *
+			 * This function removes the last element from the array. It has the
+			 * same effect as
+			 *
+			 * \code{.cpp}
+			 * truncate(1);
+			 * \endcode
+			 *
+			 */
 			ArrayDynamicShort& truncate()
 				{
-				--m_length;
+				assert(length()!=0);
+				ArrayInit::destroy(end()-1,end());
+				--m_content.data.length;
 				return *this;
 				}
 
+			/**\brief  Removes the <var>N</var> last element from the array.
+			 */
 			ArrayDynamicShort& truncate(uint32_t N)
 				{
 				assert(length() >= N);
-				m_length-=N;
+				ArrayInit::destroy(end()-N,end());
+				m_content.data.length-=N;
+				return *this;
+				}
+
+			/**\brief Removes all elements from the array.
+			 *
+			 * This function removes all elements from the array. It has the
+			 * same effect as
+			 *
+			 * \code{.cpp}
+			 * truncate(length());
+			 * \endcode
+			 *
+			 */
+			ArrayDynamicShort& clear()
+				{return truncate(length());}
+
+			ArrayDynamicShort& capacity(uint32_t n)
+				{
+				if(n > m_content.data.capacity)
+					{resize(n);}
 				return *this;
 				}
 
 		private:
-			T* m_data;
-			uint32_t m_length;
-			uint32_t m_capacity;
-
-			void capacityIncrease()
+			union
 				{
-				capacitySet(1+m_capacity);
+				vec4_t<int32_t> x;
+				struct
+					{
+					T* pointer;
+					uint32_t length;
+					uint32_t capacity;
+					} data;
+				} m_content;
+
+
+#if ( _WIN32 && (__amd64 || __x86_64 || __x86_64__ || __amd64__) )
+			constexpr size_t nextpow2(size_t N)
+				{
+				return 1<<(8*sizeof(N) - 1 - __builtin_clzll(N) + 1);
 				}
+#else
+			constexpr size_t nextpow2(size_t N)
+				{
+				return 1<<(8*sizeof(N) - 1 - __builtin_clzl(N) + 1);
+				}
+#endif
+
+			void resize(size_t N);
+			uint32_t capacity() const noexcept
+				{return m_content.data.capacity;}
 		};
 
+
 	template<class T>
-	ArrayDynamicShort<T>::ArrayDynamicShort(const T* source)
-		:m_data(new T[1]),m_length(0),m_capacity(1)
+	void ArrayDynamicShort<T>::resize(size_t N)
 		{
-		T nullobj(0);
-		while(*source!=nullobj)
+		auto N_2=nextpow2(N);
+		if(N_2 > std::numeric_limits<uint32_t>::max())
 			{
-			append(*source);
-			++source;
+			throw "Data does not fit in the array";
 			}
-		append(std::move(nullobj));
-		}
 
-
-	template<class T>
-	ArrayDynamicShort<T>& ArrayDynamicShort<T>::erase(T* location)
-		{
-		auto ptr_end=end()-1;
-		while(location!=ptr_end)
-			{
-			*location=std::move(*(location+1));
-			++location;
-			}
-		--m_length;
-		return *this;
-		}
-
-	template<class T>
-	void ArrayDynamicShort<T>::capacitySet(uint32_t capacity)
-		{
-		if(capacity>m_capacity) // Do not reallocate buffer if it already is large enougth
-			{
-			uint64_t capacity_new=std::max(uint64_t(capacity),uint64_t(m_capacity) << 1);
-
-			if(capacity_new>0xffffffffllu)
-				{throw "Internal array capacity exceeded";}
-
-			m_capacity=capacity_new;
-			auto data_new=new T[capacity_new];
-			std::move(begin(),end(),data_new);
-			delete[] m_data;
-			m_data=data_new;
-			}
-		}
-
-	template<class T>
-	ArrayDynamicShort<T>& ArrayDynamicShort<T>::append(const T* buffer,uint32_t N)
-		{
-		if(m_length+N>m_capacity)
-			{capacitySet(m_length+N);}
-		std::copy(buffer,buffer+N,end());
-		m_length+=N;
-		return *this;
-		}
-
-	template<class T>
-	ArrayDynamicShort<T>& ArrayDynamicShort<T>::append(T* buffer,uint32_t N)
-		{
-		if(m_length+N>m_capacity)
-			{capacitySet(m_length+N);}
-		std::move(buffer,buffer+N,end());
-		m_length+=N;
-		return *this;
+		T* block_new=reinterpret_cast<T*>(memoryRealloc(begin(),N_2*sizeof(T)));
+		m_content.data.pointer=block_new;
+		m_content.data.capacity=static_cast<uint32_t>(N_2);
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include "floatconv.hpp"
 #include "string.hpp"
 #include "localeguard.hpp"
+#include <cstdlib>
 
 using namespace Anja;
 

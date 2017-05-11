@@ -29,6 +29,25 @@ namespace
 		};
 	}
 
+namespace Anja
+	{
+	class MixerConsole
+		{
+		public:
+			explicit MixerConsole(Container& cnt,Session& session):
+				m_strip_box(cnt,false),m_strips(session.channelsCountGet()
+					,[this,&session](ChannelStrip* mem,int k)
+						{new(mem)ChannelStrip(m_strip_box,session.channelViewGet(k));})
+				{
+				}
+
+		private:
+			Box m_strip_box;
+
+			ArraySimple<ChannelStrip> m_strips;
+		};
+	}
+
 int main(int argc, char **argv)
 	{
 	try
@@ -39,7 +58,8 @@ int main(int argc, char **argv)
 		Anja::Window mainwin("Test");
 		Anja::Session session;
 		session.load("testbank/testbank.txt");
-		Anja::ChannelStrip strip(mainwin,session.channelViewGet(0));
+		Anja::MixerConsole mixer(mainwin,session);
+	//	Anja::ChannelStrip strip(mainwin,session.channelViewGet(0));
 		mainwin.callback(ctrl,0);
 		mainwin.show();
 		ctx.run(ctrl);
