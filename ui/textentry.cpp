@@ -96,8 +96,6 @@ int TextEntry::id() const noexcept
 TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	,r_cb(nullptr)
 	{
-	printf("Entry %p ctor\n",this);
-
 	auto widget=gtk_entry_new();
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
@@ -110,7 +108,6 @@ TextEntry::Impl::~Impl()
 	m_impl=nullptr;
 	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Entry %p dtor\n",this);
 	}
 
 gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)

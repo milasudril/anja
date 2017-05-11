@@ -10,7 +10,7 @@ class Button::Impl:private Button
 	{
 	public:
 		Impl(Container& cnt,const char* label);
-		~Impl();	
+		~Impl();
 
 		void callback(Callback cb,void* cb_obj,int id)
 			{
@@ -65,7 +65,7 @@ Button& Button::label(const char* text)
 	m_impl->label(text);
 	return *this;
 	}
-	
+
 int Button::id() const noexcept
 	{return m_impl->id();}
 
@@ -79,8 +79,6 @@ Button& Button::state(bool s) noexcept
 Button::Impl::Impl(Container& cnt,const char* lab):Button(*this),m_id(0)
 	,r_cb(nullptr)
 	{
-	printf("Button %p (%d) ctor\n",this,m_id);
-
 	auto widget=gtk_toggle_button_new();
 	g_signal_connect(widget,"clicked",G_CALLBACK(clicked_callback),this);
 	m_handle=GTK_TOGGLE_BUTTON(widget);
@@ -94,7 +92,6 @@ Button::Impl::~Impl()
 	m_impl=nullptr;
 	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Button %p dtor\n",this);
 	}
 
 void Button::Impl::clicked_callback(GtkWidget* widget,gpointer data)

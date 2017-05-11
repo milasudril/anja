@@ -65,7 +65,7 @@ class PaletteView::Impl:public PaletteView
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
-	};	
+	};
 
 PaletteView::PaletteView(Container& cnt)
 	{m_impl=new Impl(cnt);}
@@ -138,10 +138,8 @@ void PaletteView::Impl::palette(const ColorRGBA* colors_begin,const ColorRGBA* c
 	{
 	m_colors.clear();
 	int k=0;
-	printf("%zu\n",colors_end-colors_begin);
 	std::for_each(colors_begin,colors_end,[this,&k](const ColorRGBA& c)
 		{
-		printf("%d\n",k);
 		m_colors.push_back(c);
 		++k;
 		});
@@ -164,7 +162,7 @@ gboolean PaletteView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,voi
 		if(self->r_cb_obj!=nullptr)
 			{self->m_cb(self->r_cb_obj,*self);}
 		}
-	
+
 	return TRUE;
 	}
 

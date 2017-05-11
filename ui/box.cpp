@@ -19,7 +19,7 @@ class Box::Impl:private Box
 				,m_mode.padding);
 			}
 
-		void _show() noexcept 
+		void _show() noexcept
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
 		void _sensitive(bool val)
@@ -44,16 +44,10 @@ class Box::Impl:private Box
 	};
 
 Box::Box(Container& cnt,bool vertical)
-	{
-	printf("Box %p ctor\n",this);
-	m_impl=new Box::Impl(cnt,vertical);
-	}
+	{m_impl=new Box::Impl(cnt,vertical);}
 
 Box::~Box()
-	{
-	delete m_impl;
-	printf("Box %p dtor\n",this);
-	}
+	{delete m_impl;}
 
 Box& Box::add(void* handle)
 	{
@@ -97,7 +91,6 @@ Box& Box::alignment(float x) noexcept
 
 Box::Impl::Impl(Container& cnt,bool vertical):Box(*this),m_mode{0,0}
 	{
-	printf("Box::Impl %p ctor\n",this);
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,2);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
@@ -108,7 +101,6 @@ Box::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Box::Impl %p dtor\n",this);
 	}
 
 void Box::Impl::alignment(float x) noexcept

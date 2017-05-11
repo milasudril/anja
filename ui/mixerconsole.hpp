@@ -26,8 +26,8 @@ namespace Anja
 
 		private:
 			Box m_strip_box;
-				ArraySimple<ChannelStrip> m_strips;
 				ArrayDynamicShort<Separator> m_separators;
+				ArraySimple<ChannelStrip> m_strips;
 				Box m_master;
 					Label m_master_label;
 					Slider m_master_slider;

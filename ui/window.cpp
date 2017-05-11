@@ -41,7 +41,7 @@ class Window::Impl:private Window
 			r_cb_obj=cb_obj;
 			m_id=id;
 			}
-			
+
 		int id() const noexcept
 			{return m_id;}
 
@@ -111,7 +111,6 @@ Window& Window::modal(bool state)
 
 Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0),r_cb(nullptr)
 	{
-	printf("Window %p ctor\n",this);
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(widget,"delete-event",G_CALLBACK(delete_callback),this);
 	m_handle=GTK_WINDOW(widget);
@@ -123,7 +122,6 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0),r_cb(n
 Window::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	printf("Window %p dtor\n",this);
 	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}

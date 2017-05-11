@@ -39,10 +39,8 @@ Label& Label::content(const char* x)
 
 Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 	{
-	printf("Label %p ctor\n",this);
-
 	auto widget=gtk_label_new(text);
-	
+
 	m_handle=GTK_LABEL(widget);
 	g_object_ref_sink(m_handle);
 	cnt.add(widget);
@@ -52,5 +50,4 @@ Label::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Label %p dtor\n",this);
 	}
