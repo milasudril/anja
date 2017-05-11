@@ -8,6 +8,7 @@
 
 #include "tabview.hpp"
 #include "waveformeditor.hpp"
+#include "mixerconsole.hpp"
 
 namespace Anja
 	{
@@ -23,7 +24,7 @@ namespace Anja
 			Session& r_session;
 			TabView m_tabs;
 				WaveformEditor m_waveform;
-		//		Mixer m_mixer;
+				MixerConsole m_mixer;
 		//		SettingsPanel m_settings;
 		};
 	}

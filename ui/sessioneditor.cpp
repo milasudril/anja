@@ -9,8 +9,9 @@ SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
 	:r_session(session)
 	,m_tabs(cnt)
 		,m_waveform(m_tabs.tabTitle("Waveform")
-		,session.waveformViewGet(session.slotActiveGet())
-		,session.channelLabelsGet())
+			,session.waveformViewGet(session.slotActiveGet())
+			,session.channelLabelsGet())
+		,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
 	{
 	m_waveform.palette(session.colorPresetsGet());
 	}
