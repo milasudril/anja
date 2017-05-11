@@ -2,8 +2,8 @@
 
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
-#include "ui/imageview.hpp"
-#include "common/blob.hpp"
+#include "ui/channelstrip.hpp"
+#include "sessiondata/session.hpp"
 
 #include <cstdio>
 #include <cstdint>
@@ -29,8 +29,6 @@ namespace
 		};
 	}
 
-ANJA_BLOB(uint8_t,testimg,"/usr/share/xfce4/backdrops/Yellow_Jacket_by_Manuel_Frei.png");
-
 int main(int argc, char **argv)
 	{
 	try
@@ -39,8 +37,9 @@ int main(int argc, char **argv)
 		ctx.dark(1);
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
-		Anja::ImageView imgview(mainwin);
-		imgview.showPng(testimg_begin,testimg_end);
+		Anja::Session session;
+		session.load("testbank/testbank.txt");
+		Anja::ChannelStrip strip(mainwin,session.channelViewGet(0));
 		mainwin.callback(ctrl,0);
 		mainwin.show();
 		ctx.run(ctrl);

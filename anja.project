@@ -116,6 +116,8 @@
       <File Name="ui/dialog.hpp"/>
       <File Name="ui/imageview.hpp"/>
       <File Name="ui/imageview.cpp"/>
+      <File Name="ui/channelstrip.hpp"/>
+      <File Name="ui/channelstrip.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
