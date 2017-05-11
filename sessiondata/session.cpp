@@ -8,6 +8,7 @@
 #include "../common/localeguard.hpp"
 #include "../common/pathutils.hpp"
 #include "../common/floatconv.hpp"
+#include "../common/colorstring.hpp"
 
 #include <cstring>
 
@@ -17,6 +18,32 @@ static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channe
 
 const char* const* Session::flagNames() noexcept
 	{return FLAG_NAMES;}
+
+static ArrayDynamicShort<ColorRGBA> color_presets_load(const char* ptr)
+	{
+	ArrayDynamicShort<ColorRGBA> ret;
+	String buffer;
+	while(1)
+		{
+		auto ch_in=*ptr;
+		switch(ch_in)
+			{
+			case '\0':
+				break;
+			case '|':
+				ret.append(colorFromString(buffer.begin()));
+				buffer.clear();
+				break;
+			default:
+				buffer.append(ch_in);
+			}
+
+		++ptr;
+		}
+	ret.append(colorFromString(buffer.begin()));
+
+	return std::move(ret);
+	}
 
 Session::Session(const char* filename):m_slot_active(0)
 	{
@@ -57,6 +84,12 @@ Session::Session(const char* filename):m_slot_active(0)
 		if(value!=nullptr)
 			{
 			flagsSet(optionsFromString(value->begin(),FLAG_NAMES));
+			}
+
+		value=record.propertyGet(String("Color presets"));
+		if(value!=nullptr)
+			{
+			m_color_presets=color_presets_load(value->begin());
 			}
 	//	TODO Store other data not interpreted by Anja
 		}
@@ -153,8 +186,9 @@ void Session::clear()
 	m_description.clear();
 	m_description.append('\0');
 	gainSet(-6);
-	memcpy(m_color_presets.begin(),COLORS
-		,std::min(int(ColorID::COLOR_END),64)*sizeof(ColorRGBA));
+	m_color_presets.clear();
+	std::for_each(COLORS,COLORS + ColorID::COLOR_END,[this](const ColorRGBA& x)
+		{m_color_presets.append(x);});
 	m_state_flags=0;
 	m_flags=0;
 	}

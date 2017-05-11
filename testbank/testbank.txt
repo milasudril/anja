@@ -5,6 +5,8 @@ Description: This is a test file that demonstrates how Anja works. Pdsounds.org
 
 Master gain/dB: -7
 
+Color presetsdvg fdd gd: 1; 1; 0|0; 1; 0
+
 --------------------------------------Slot 1------------------------------------
 
 Description: [Sci-fi] effect. From pdsounds.org.

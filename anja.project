@@ -129,6 +129,7 @@
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
+    <File Name="testbank/testbank.txt"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

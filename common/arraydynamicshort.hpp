@@ -32,8 +32,8 @@ namespace Anja
 			 * This is the default constructor. When the array is initialized
 			 * , it is empty.
 			*/
-			ArrayDynamicShort() noexcept:m_content{0,0,0,0}
-				{}
+			ArrayDynamicShort() noexcept
+				{m_content.x=vec4_t<int32_t>{0,0,0,0};}
 
 			/**\brief Move constructor.
 			*/

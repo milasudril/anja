@@ -152,13 +152,13 @@ namespace Anja
 
 			ArrayFixed<WaveformData,Wavetable::length()> m_waveform_data;
 			ArrayFixed<ChannelData,ChannelMixer::length()> m_channel_data;
+			int8_t m_slot_active;
 
 			String m_filename;
 			String m_directory;
 			String m_title;
 			String m_description;
-			ArrayFixed<ColorRGBA,64> m_color_presets;
-			int8_t m_slot_active;
+			ArrayDynamicShort<ColorRGBA> m_color_presets;
 
 			static constexpr unsigned int MULTIOUTPUT=0x1;
 			unsigned int m_flags;
