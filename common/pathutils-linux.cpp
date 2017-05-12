@@ -88,7 +88,7 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 	auto path_val_last=*path;
 
 //	We have read through reference. This means that all but possibly the last
-//	components of referenec are equalto the corresponding part in path.
+//	components of reference are equal to the corresponding part in path.
 	if(ref_val_last=='\0')
 		{
 	//	If we have reached end of path
