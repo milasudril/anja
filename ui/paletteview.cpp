@@ -33,7 +33,12 @@ class PaletteView::Impl:public PaletteView
 
 		void selection(int index)
 			{
-			m_index_sel=std::max(0,std::min(index,static_cast<int>(m_colors.size())));
+			if(static_cast<size_t>(index)>=m_colors.size())
+				{
+				m_colors.resize(index+1);
+				m_colors.back()=COLORS[ ColorID::CYAN_GRAY_DARK ];
+				}
+			m_index_sel=index;
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
 
@@ -155,10 +160,7 @@ gboolean PaletteView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,voi
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(pos_x>=0 && pos_y>=0)
 		{
-		auto index=std::min(size_t(pos_y*self->m_n_cols + pos_x)
-			,self->m_colors.size()-1);
-		self->m_index_sel=index;
-		gtk_widget_queue_draw(GTK_WIDGET(widget));
+		self->selection(pos_y*self->m_n_cols + pos_x);
 		if(self->r_cb_obj!=nullptr)
 			{self->m_cb(self->r_cb_obj,*self);}
 		}
