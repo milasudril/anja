@@ -37,7 +37,7 @@ class XYPlot::Impl:public XYPlot
 		void curvesRemove()
 			{
 			m_curves.clear();
-			m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
+			m_dom_full=Domain();
 			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 			}
 
@@ -86,7 +86,7 @@ class XYPlot::Impl:public XYPlot
 			{return m_cursors_y[index];}
 
 		void showAll() noexcept
-			{domain(m_curves.size()==0?Domain{{-1,-1},{1,1}}:m_dom_full);}
+			{domain(m_curves.size()==0?Domain{Point{-1,-1},Point{1,1}}:m_dom_full);}
 
 
 
@@ -124,13 +124,13 @@ class XYPlot::Impl:public XYPlot
 			};
 		std::vector<TickMark> m_axis_x;
 		std::vector<TickMark> m_axis_y;
-		
+
 		size_t m_N_ticks_x;
 		double m_dx;
 
 		size_t m_N_ticks_y;
 		double m_dy;
-		
+
 		GtkDrawingArea* m_canvas;
 		bool m_dark;
 
@@ -148,9 +148,9 @@ class XYPlot::Impl:public XYPlot
 			,const std::vector<TickMark>& axis_y);
 		void draw_axis_x(cairo_t* cr,const Domain& dom_window) const;
 		void draw_axis_y(cairo_t* cr,const Domain& dom_window) const;
-		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window,int dark) const; 
-		void draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const; 
-		void draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const; 
+		void draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_window,int dark) const;
+		void draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const;
+		void draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const;
 
 		Point to_window_coords(const Point& p,const Domain& dom_window) const
 			{return map_to_domain_inv_y(p,m_dom,dom_window);}
@@ -163,19 +163,17 @@ class XYPlot::Impl:public XYPlot
 			{
 			auto d=source;
 			auto w=target;
-			auto xi=(point.x-d.min.x)/(d.max.x - d.min.x);
-			auto eta=(point.y-d.min.y)/(d.max.y - d.min.y);
-			return
-				{
-				 xi*w.max.x+(1-xi)*w.min.x
-				,eta*w.min.y+(1-eta)*w.max.y
-				};
+			auto xi=componentsDiv(point - d.min,d.max-d.min);
+			xi.y()=1.0-xi.y();
+			Point one{1.0,1.0};
+
+			return componentsMul(xi,w.max) + componentsMul(one - xi,w.min);
 			}
 
 		static bool inside(const Point& p,const Domain& dom)
 			{
-			return (p.x>=dom.min.x && p.x<=dom.max.x)
-				&& (p.y>=dom.min.y && p.y<=dom.max.y);
+			return (p.x()>=dom.min.x() && p.x()<=dom.max.x())
+				&& (p.y()>=dom.min.y() && p.y()<=dom.max.y());
 			}
 	};
 
@@ -281,12 +279,11 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 
 	g_object_ref_sink(widget);
 	cnt.add(widget);
-	domain({{-1,-1},{1,1}});
+	domain(Domain{Point{-1,-1},Point{1,1}});
 	m_N_ticks_x=10;
 	m_dx=0.2;
 	m_N_ticks_y=10;
 	m_dy=0.2;
-	m_dom_full={{INFINITY,INFINITY},{-INFINITY,-INFINITY}};
 	m_dark=0;
 	m_grabbed=0;
 	m_cursor_grabbed=-1;
@@ -308,8 +305,8 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 	Domain dom=m_dom_full;
 	std::for_each(begin,end,[&c,&dom](const Point& p)
 		{
-		auto M=Point{std::max(dom.max.x,p.x),std::max(dom.max.y,p.y)};
-		auto m=Point{std::min(dom.min.x,p.x),std::min(dom.min.y,p.y)};
+		auto M=componentsMax(dom.max,p);
+		auto m=componentsMin(dom.min,p);
 		dom=Domain{m,M};
 		c.points.push_back(p);
 		});
@@ -339,7 +336,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 		switch(self->m_cursor_current)
 			{
 			case CURSOR_X_MOVE:
-				self->m_cursors_x[self->m_cursor_grabbed].position=pos_cursor_plot.x;
+				self->m_cursors_x[self->m_cursor_grabbed].position=pos_cursor_plot.x();
 				gtk_widget_queue_draw(widget);
 				if(self->r_cb_obj!=nullptr)
 					{
@@ -348,7 +345,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 					}
 				break;
 			case CURSOR_Y_MOVE:
-				self->m_cursors_y[self->m_cursor_grabbed].position=pos_cursor_plot.y;
+				self->m_cursors_y[self->m_cursor_grabbed].position=pos_cursor_plot.y();
 				gtk_widget_queue_draw(widget);
 				if(self->r_cb_obj!=nullptr)
 					{
@@ -374,14 +371,14 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 			}
 		return FALSE;
 		}
-	
+
 	//	Test X cursors
 		{
 		auto cursor=std::find_if(self->m_cursors_x.begin(),self->m_cursors_x.end()
 			,[&dom_window,self,pos_cursor](Cursor& c)
 				{
 				auto position=self->to_window_coords(Point{c.position,0},dom_window);
-				return std::abs(pos_cursor.x - position.x)<2;
+				return std::abs(pos_cursor.x() - position.x())<2;
 				});
 		if(cursor!=self->m_cursors_x.end())
 			{
@@ -398,7 +395,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 			,[&dom_window,self,pos_cursor](Cursor& c)
 				{
 				auto position=self->to_window_coords(Point{0,c.position},dom_window);
-				return std::abs(pos_cursor.y - position.y)<2;
+				return std::abs(pos_cursor.y() - position.y())<2;
 				});
 		if(cursor!=self->m_cursors_y.end())
 			{
@@ -456,26 +453,26 @@ gboolean XYPlot::Impl::mousewheel(GtkWidget* widget,GdkEvent* event,void* obj)
 
 	if(e.state&GDK_CONTROL_MASK)
 		{
-		auto w_in=dom.max.x - dom.min.x;
+		auto w_in=dom.max.x() - dom.min.x();
 		auto w=factor_x*w_in;
-		if(w>2*(self->m_dom_full.max.x - self->m_dom_full.min.x) 
-			|| w<1e-7*(self->m_dom_full.max.x - self->m_dom_full.min.x))
+		if(w>2*(self->m_dom_full.max.x() - self->m_dom_full.min.x())
+			|| w<1e-7*(self->m_dom_full.max.x() - self->m_dom_full.min.x()))
 			{return TRUE;}
-		auto x=w*(pos.x - dom.min.x)/w_in;
-		dom.min.x=pos.x - x;
-		dom.max.x=dom.min.x + w;		
+		auto x=w*(pos.x() - dom.min.x())/w_in;
+		dom.min.x()=pos.x() - x;
+		dom.max.x()=dom.min.x() + w;
 		}
-	
+
 	if(e.state&GDK_SHIFT_MASK)
 		{
-		auto h_in=dom.max.y - dom.min.y;
+		auto h_in=dom.max.y() - dom.min.y();
 		auto h=factor_y*h_in;
-		if(h>2*(self->m_dom_full.max.y - self->m_dom_full.min.y) 
-			|| h<1e-7*(self->m_dom_full.max.y - self->m_dom_full.min.y))
+		if(h>2*(self->m_dom_full.max.y() - self->m_dom_full.min.y() )
+			|| h<1e-7*(self->m_dom_full.max.y() - self->m_dom_full.min.y() ))
 			{return TRUE;}
-		auto y=h*(pos.y - dom.min.y)/h_in;
-		dom.min.y=pos.y - y;
-		dom.max.y=dom.min.y + h;	
+		auto y=h*(pos.y() - dom.min.y())/h_in;
+		dom.min.y()=pos.y() - y;
+		dom.max.y()=dom.min.y() + h;
 		}
 
 	self->domain(dom);
@@ -512,24 +509,24 @@ void XYPlot::Impl::ticks_count()
 	auto w_window=gtk_widget_get_allocated_width(GTK_WIDGET(m_canvas));
 	auto h_window=gtk_widget_get_allocated_height(GTK_WIDGET(m_canvas));
 
-	auto w=domain.max.x - domain.min.x;
-	auto h=domain.max.y - domain.min.y;
+	auto size=domain.max - domain.min;
+
 
 //	Render axes with with two ticks. This is required in order to compute the margin
 //	needed for axes
 	auto N_y=2;
-	auto dy=h/N_y;
-	prerender_y(cr,domain.min.y,N_y,dy);
+	auto dy=size.y()/N_y;
+	prerender_y(cr,domain.min.y(),N_y,dy);
 
 	auto N_x=2;
-	auto dx=w/N_x;
-	prerender_x(cr,domain.min.x,N_x,dx);
+	auto dx=size.x()/N_x;
+	prerender_x(cr,domain.min.x(),N_x,dx);
 
 	auto dom_window=window_domain_adjust(w_window,h_window,m_axis_x,m_axis_y);
 
 //	Compute Y ticks
 		{
-		auto h_dom=dom_window.max.y - dom_window.min.y;
+		auto h_dom=dom_window.max.y() - dom_window.min.y();
 		auto N_y_temp=h_dom/(4*m_axis_y.front().extent_y); //Make each tick 4 units high
 		if(N_y_temp==0.0)
 			{
@@ -537,22 +534,22 @@ void XYPlot::Impl::ticks_count()
 			cairo_destroy(cr);
 			return;
 			}
-		dy=nicenum( h/N_y_temp ); //Update dy using the number of ticks
-		m_N_ticks_y=h/dy; //Save values
+		dy=nicenum( size.y()/N_y_temp ); //Update dy using the number of ticks
+		m_N_ticks_y=size.y()/dy; //Save values
 		m_dy=dy;
 		}
 
 	// Compute X ticks
 		{
-		auto fits=[cr,w,&domain,this,w_window,h_window](int N_x)
+		auto fits=[cr,size,&domain,this,w_window,h_window](int N_x)
 			{
-			auto dx=nicenum(w/N_x);
-			prerender_x(cr,dx*std::ceil(domain.min.x/dx),N_x,dx);
+			auto dx=nicenum(size.x()/N_x);
+			prerender_x(cr,dx*std::ceil(domain.min.x()/dx),N_x,dx);
 			auto dx_min=m_axis_x.back().extent_x+16; //The largest possible extent for any label
 		//	Compute the number of pixels for dx. This value must be larger than dx_min
 			auto dom_window=window_domain_adjust(w_window,h_window,m_axis_x,m_axis_y);
-			auto dom_win_width=dom_window.max.x - dom_window.min.x;
-			auto dx_win=dx * dom_win_width/w;
+			auto dom_win_width=dom_window.max.x() - dom_window.min.x();
+			auto dx_win=dx * dom_win_width/size.x();
 			return dx_win > dx_min;
 			};
 
@@ -564,15 +561,15 @@ void XYPlot::Impl::ticks_count()
 		auto N_x_lower=2;
 		auto mid=0;
 		while(N_x_lower < N_x_upper)
-			{	
+			{
 			mid=(N_x_upper + N_x_lower)/2; //There shoule be no risk for overflow
 			if(fits(mid))
 				{N_x_lower=mid + 1;}
 			else
 				{N_x_upper=mid;}
 			}
-		dx=nicenum(w/(mid-1));
-		m_N_ticks_x=w/dx;
+		dx=nicenum(size.x()/(mid-1));
+		m_N_ticks_x=size.x()/dx;
 		m_dx=dx;
 		};
 
@@ -596,12 +593,13 @@ void XYPlot::Impl::prerender_x(cairo_t* cr,double x_0,size_t N,double dx)
 		tm.extent_y=extents_in.height;
 
 		m_axis_x.push_back(tm);
-		max_extent.x=tm.extent_x>max_extent.x?
-			tm.extent_x : max_extent.x;
-		max_extent.y=tm.extent_y>max_extent.y?
-			tm.extent_y : max_extent.y;
+
+		max_extent.x()=tm.extent_x>max_extent.x()?
+			tm.extent_x : max_extent.x();
+		max_extent.y()=tm.extent_y>max_extent.y()?
+			tm.extent_y : max_extent.y();
 		}
-	m_axis_x.push_back({0,float(max_extent.x),float(max_extent.y)});
+	m_axis_x.push_back({0,float(max_extent.x()),float(max_extent.y())});
 	}
 
 void XYPlot::Impl::prerender_y(cairo_t* cr,double y_0,size_t N,double dy)
@@ -637,12 +635,12 @@ XYPlot::Domain XYPlot::Impl::window_domain_adjust(int width,int height
 
 	return Domain
 		{
-			{
+			Point{
 			 margin_left
 			// std::max(margin_left,margin_left+0.5*axis_x.front().extent_x)
 			,margin_top
 			}
-			,{
+			,Point{
 			 width-margin_right
 			,height-margin_bottom
 			}
@@ -660,11 +658,11 @@ void XYPlot::Impl::draw_axis_y(cairo_t* cr,const Domain& dom_window) const
 	while(ptr!=ptr_end)
 		{
 		auto pos=ptr->value;
-		if(pos>m_dom.max.y)
+		if(pos>m_dom.max.y())
 			{return;}
-		auto point_out=to_window_coords({0,pos},dom_window);
+		auto point_out=to_window_coords(Point{0,pos},dom_window);
 		cairo_move_to(cr,max_extent - ptr->extent_x
-			,point_out.y + 0.5*ptr->extent_y);
+			,point_out.y() + 0.5*ptr->extent_y);
 		cairo_show_text(cr,ptr->text);
 		++ptr;
 		++k;
@@ -682,11 +680,11 @@ void XYPlot::Impl::draw_axis_x(cairo_t* cr,const Domain& dom_window) const
 	while(ptr!=ptr_end)
 		{
 		auto pos=ptr->value;
-		if(pos>m_dom.max.x)
+		if(pos>m_dom.max.x())
 			{return;}
-		auto point_out=to_window_coords({pos,domain.min.y},dom_window);
-		cairo_move_to(cr,point_out.x-0.5*ptr->extent_x
-			,point_out.y+1.25*max_extent+4);
+		auto point_out=to_window_coords(Point{pos,domain.min.y()},dom_window);
+		cairo_move_to(cr,point_out.x()-0.5*ptr->extent_x
+			,point_out.y()+1.25*max_extent+4);
 		cairo_show_text(cr,ptr->text);
 		++ptr;
 		++k;
@@ -716,7 +714,7 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 
 	//	TODO: draw line segment to the edge of the box
 		auto point_out=to_window_coords(*i,dom_window);
-		cairo_move_to(cr,point_out.x,point_out.y);
+		cairo_move_to(cr,point_out.x(),point_out.y());
 		i=std::find_if(i,c.points.end()
 			,[cr,this,&dom_window,&point_out](const Point& p)
 			{
@@ -726,11 +724,10 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 			//	TODO: draw line segment to the edge of the box
 				return 1;
 				}
-			auto dx=point_out_next.x - point_out.x;
-			auto dy=point_out_next.y - point_out.y;
-			if(dx*dx + dy*dy > 4)
+			auto dr=point_out_next- point_out;
+			if(dot(dr,dr) > 4)
 				{
-				cairo_line_to(cr,point_out.x,point_out.y);
+				cairo_line_to(cr,point_out.x(),point_out.y());
 				point_out=point_out_next;
 				}
 			return 0;
@@ -741,27 +738,27 @@ void XYPlot::Impl::draw_curve(cairo_t* cr,const Curve& c,const Domain& dom_windo
 
 void XYPlot::Impl::draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
 	{
-	auto point_out=to_window_coords(Point{c.position,m_dom.min.y},dom_window);
-	if(point_out.x<dom_window.min.x || point_out.x>dom_window.max.x)
+	auto point_out=to_window_coords(Point{c.position,m_dom.min.y()},dom_window);
+	if(point_out.x()<dom_window.min.x() || point_out.x()>dom_window.max.x() )
 		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
-	cairo_move_to(cr,point_out.x,point_out.y);
-	point_out=to_window_coords(Point{c.position,m_dom.max.y},dom_window);
-	cairo_line_to(cr,point_out.x,point_out.y);
+	cairo_move_to(cr,point_out.x(),point_out.y());
+	point_out=to_window_coords(Point{c.position,m_dom.max.y()},dom_window);
+	cairo_line_to(cr,point_out.x(),point_out.y());
 	cairo_stroke(cr);
 	}
 
 void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
 	{
-	auto point_out=to_window_coords(Point{m_dom.min.x,c.position},dom_window);
-	if(point_out.y<dom_window.min.y || point_out.y>dom_window.max.y)
+	auto point_out=to_window_coords(Point{m_dom.min.x(),c.position},dom_window);
+	if(point_out.y()<dom_window.min.y() || point_out.y()>dom_window.max.y())
 		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
-	cairo_move_to(cr,point_out.x,point_out.y);
-	point_out=to_window_coords(Point{m_dom.max.x,c.position},dom_window);
-	cairo_line_to(cr,point_out.x,point_out.y);
+	cairo_move_to(cr,point_out.x(),point_out.y());
+	point_out=to_window_coords(Point{m_dom.max.x(),c.position},dom_window);
+	cairo_line_to(cr,point_out.x(),point_out.y());
 	cairo_stroke(cr);
 	}
 
@@ -777,9 +774,9 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 
-	self->prerender_x(cr,self->m_dx*std::ceil(self->m_dom.min.x/self->m_dx)
+	self->prerender_x(cr,self->m_dx*std::ceil(self->m_dom.min.x()/self->m_dx)
 		,self->m_N_ticks_x,self->m_dx);
-	self->prerender_y(cr,self->m_dy*std::ceil(self->m_dom.min.y/self->m_dy)
+	self->prerender_y(cr,self->m_dy*std::ceil(self->m_dom.min.y()/self->m_dy)
 		,self->m_N_ticks_y,self->m_dy);
 	auto w=gtk_widget_get_allocated_width(GTK_WIDGET(self->m_canvas));
 	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
@@ -806,9 +803,8 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 	//	Draw plot area background rectangle
 		{
-		auto w=dom_window.max.x - dom_window.min.x;
-		auto h=dom_window.max.y - dom_window.min.y;
-		cairo_rectangle(cr,dom_window.min.x,dom_window.min.y,w,h);
+		auto size=dom_window.max - dom_window.min;
+		cairo_rectangle(cr,dom_window.min.x(),dom_window.min.y(),size.x(),size.y());
 		cairo_set_source_rgba(cr,bg.red,bg.green,bg.blue,bg.alpha);
 		cairo_fill(cr);
 		}
@@ -832,9 +828,12 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 	//	Draw border
 		{
-		auto w=dom_window.max.x - dom_window.min.x;
-		auto h=dom_window.max.y - dom_window.min.y;
-		cairo_rectangle(cr,dom_window.min.x-1,dom_window.min.y-1,w+2,h+2);
+		auto size=dom_window.max - dom_window.min;
+		auto one=Point{1,1};
+		auto two=Point{2,2};
+		auto start=dom_window.min-one;
+		size+=two;
+		cairo_rectangle(cr,start.x(),start.y(),size.x(),size.y());
 		cairo_set_source_rgba(cr,fg.red,fg.green,fg.blue,fg.alpha);
 		cairo_set_line_width(cr,1);
 		cairo_stroke(cr);

@@ -7,7 +7,9 @@
 #define ANJA_XYPLOT_HPP
 
 #include "keymask.hpp"
+#include "../common/vec2.hpp"
 #include <utility>
+#include <cmath>
 
 namespace Anja
 	{
@@ -33,12 +35,7 @@ namespace Anja
 			XYPlot& callback(Callback& cb,IdType id) noexcept
 				{return callback(Vtable(cb,id),&cb,static_cast<int>(id));}
 
-		//	TODO: Convert this into a SSE type (vec2_t<double>)
-			struct Point
-				{
-				double x;
-				double y;
-				};
+			typedef Vec2 Point;
 
 			template<class PointRange>
 			XYPlot& curve(const PointRange& points,float hue)
@@ -49,11 +46,17 @@ namespace Anja
 
 			struct Domain
 				{
+				Domain():min(Point{INFINITY,INFINITY}),max(Point{-INFINITY,-INFINITY})
+					{}
+
+				explicit Domain(Point m,Point M):min(m),max(M)
+					{}
+
 				Point min;
 				Point max;
 				};
 
-			XYPlot& domain(const Domain& dom) noexcept;		
+			XYPlot& domain(const Domain& dom) noexcept;
 			Domain domain() const noexcept;
 
 			struct Cursor
