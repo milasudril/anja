@@ -66,7 +66,6 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 		{ref_temp.append("/");}
 	reference=ref_temp.begin();
 
-	unsigned int gen_count_target=0;
 	auto path_old=path;
 //	Count the number of generations the the common stem
 	while(*reference!='\0' && *path!='\0')
@@ -75,65 +74,26 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 		path=pathTokenGet(path,path_tok);
 		reference=pathTokenGet(reference,ref_tok);
 
-		if(strcmp(path_tok.begin(),ref_tok.begin())==0)
-			{
-		//	Increment the number of identical parts
-			++gen_count_target;
-			}
-		else
+		if(strcmp(path_tok.begin(),ref_tok.begin()))
 			{break;}
 		}
 
-	auto ref_val_last=*reference;
-	auto path_val_last=*path;
-
-//	We have read through reference. This means that all but possibly the last
-//	components of reference are equal to the corresponding part in path.
-	if(ref_val_last=='\0')
+	if(strcmp(path_tok.begin(),ref_tok.begin()))
 		{
-	//	If we have reached end of path
-		if(path_val_last=='\0')
-			{
-		//	Since we have processed both paths, the only difference must be in the
-		//	last component. Just go up and down
-			ret.append("../").append(path_tok);
-			return ret;
-			}
-		else
-	//	Ohterwise, check if the two last tokens are equal. If so, just append
-	//	the remaining part of path
-		if(strcmp(path_tok.begin(),ref_tok.begin())==0)
-			{
-			ret.append(path);
-			return ret;
-			}
-		}
-
-	auto gen_count_tot=gen_count_target;
-
-//	Add the last part to gen_count_tot, but only if there are remaining
-//	components of path. This is because when there are no parts left in path,
-//	the parts that differs remains in reference
-	if(path_val_last!='\0')
-		{++gen_count_tot;}
-
-//	Count the number of remaining parts
-	while(*reference!='\0')
-		{
-		if(*reference=='/')
-			{++gen_count_tot;}
-		++reference;
-		}
-
-//	Go up from the reference path
-	while(gen_count_tot!=gen_count_target)
-		{
+	//	There last tokens of `reference` differs from `path. Consume the
+	//	remaining parts of `reference` while adding "up" operators. Notice that
+	//	we have eaten one element too much. Therefore, add one extra "up"
+	//	operator.
 		ret.append("../");
-		--gen_count_tot;
+		while(*reference!='\0')
+			{
+			reference=pathTokenGet(reference,ref_tok);
+			ret.append("../");
+			}
+		return ret.append(path_old);
 		}
-	if(path_val_last!='\0' || ref_val_last=='\0')
-		{ret.append(path_old);}
-	return ret;
+
+	return String(path);
 	}
 
 bool Anja::fileIs(const char* path)
