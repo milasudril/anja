@@ -46,7 +46,7 @@ namespace Anja
 					auto id=static_cast<IdType>( self.id() );
 					x->indexSelected(self,id);
 					};
-				return callback(cb_wrapper,&cb_obj,static_cast<int>(id)); 
+				return callback(cb_wrapper,&cb_obj,static_cast<int>(id));
 				}
 
 			int id() const noexcept;
@@ -57,7 +57,7 @@ namespace Anja
 
 			const ColorRGBA& color(int index) const noexcept;
 
-			PaletteView& color(const ColorRGBA& color,int index);
+			PaletteView& color(int index,const ColorRGBA& color);
 
 			const ColorRGBA* paletteBegin() const noexcept;
 

@@ -13,6 +13,12 @@
 
 using namespace Anja;
 
+ WaveformEditor& WaveformEditor::channelName(int index,const char* name)
+	{
+	m_channel_input.replace(index,name);
+	return *this;
+	}
+
 WaveformEditor& WaveformEditor::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
 	{
 	r_color_presets_begin=begin;

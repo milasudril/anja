@@ -40,7 +40,7 @@ class PaletteView::Impl:public PaletteView
 		const ColorRGBA& color(int index) const noexcept
 			{return m_colors[index];}
 
-		void color(const ColorRGBA& color,int index) noexcept
+		void color(int index,const ColorRGBA& color) noexcept
 			{
 			m_colors[index]=color;
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
@@ -101,9 +101,9 @@ PaletteView& PaletteView::callback(CallbackImpl cb,void* cb_obj,int id)
 	return *this;
 	}
 
-PaletteView& PaletteView::color(const ColorRGBA& color,int index)
+PaletteView& PaletteView::color(int index,const ColorRGBA& color)
 	{
-	m_impl->color(color,index);
+	m_impl->color(index,color);
 	return *this;
 	}
 

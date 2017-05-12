@@ -23,6 +23,7 @@
 namespace Anja
 	{
 	class Session;
+
 	template<class T>
 	class ArraySimple;
 
@@ -71,6 +72,8 @@ namespace Anja
 				{return colorPresets(colors.begin(),colors.end());}
 
 			WaveformEditor& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
+
+			WaveformEditor& channelName(int index,const char* name);
 
 			void clicked(Button& src,ButtonId id);
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);

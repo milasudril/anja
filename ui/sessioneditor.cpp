@@ -7,7 +7,7 @@ using namespace Anja;
 
 void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
 	{
-//	m_waveform.channelName(strip.name(),id);
+	m_waveform.channelName(id,strip.name().begin());
 	}
 
 void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)

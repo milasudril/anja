@@ -35,7 +35,7 @@ namespace Anja
 			Listbox& selected(int index) noexcept;
 
 			int selected() const noexcept;
-			
+
 			Listbox& clear() noexcept;
 
 			template<class EntryCallback,class IdType>
@@ -47,7 +47,7 @@ namespace Anja
 					auto id=static_cast<IdType>(self.id());
 					x->changed(self,id);
 					};
-				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id));
 				}
 
 		private:
