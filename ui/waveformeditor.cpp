@@ -70,7 +70,8 @@ static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	auto threshold=plot.cursorY(0).position;
 	auto i=std::find_if(wfdb.begin(),wfdb.end(),[threshold](float val)
 		{return val>threshold;});
-	waveform.offsetBeginSet(static_cast<int32_t>(i - wfdb.begin()));
+	auto t=static_cast<double>(i - wfdb.begin())*0.5e-3;
+	waveform.offsetBeginSet(t);
 	offset_begin_update(waveform,entry,plot);
 	}
 
@@ -82,7 +83,8 @@ static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	auto i_end=std::reverse_iterator<const float*>(wfdb.begin());
 	auto i=std::find_if(i_begin,i_end,[threshold](float val)
 		{return val>threshold;});
-	waveform.offsetEndSet(static_cast<int32_t>(i.base() - wfdb.begin()));
+	auto t=static_cast<double>(i.base() - wfdb.begin())*0.5e-3;
+	waveform.offsetEndSet(t);
 	offset_end_update(waveform,entry,plot);
 	}
 
@@ -154,13 +156,13 @@ static ArraySimple<float> decimate(const ArraySimple<float>& src,double dt)
 	return std::move(ret);
 	}
 
-void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
+void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 	{
 	ArraySimple<XYPlot::Point> points(end - begin);
 	size_t k=0;
-	std::transform(begin,end,points.begin(),[&k,fs](float val)
+	std::transform(begin,end,points.begin(),[&k,dt](float val)
 		{
-		auto t=static_cast<double>(k)/static_cast<double>(fs);
+		auto t=static_cast<double>(k)*dt;
 		++k;
 		return XYPlot::Point{t,static_cast<double>(val)};
 		});
@@ -170,13 +172,14 @@ void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
 static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
 	e.content(waveform.filenameGet().begin());
+	auto fs=static_cast<double>(waveform.sampleRateGet());
 	auto ms=decimate(mean_square(waveform.beginFull(),waveform.endFull()
-		,waveform.sampleRateGet()/1000),waveform.sampleRateGet()/2000);
+		,fs/1000.0),0.5e-3*fs);
 
 	std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
 		{return std::max(powerToDb(x),-145.0f);});
 
-	plot_append(ms.begin(),ms.end(),waveform.sampleRateGet(),plot.curvesRemove());
+	plot_append(ms.begin(),ms.end(),0.5e-3,plot.curvesRemove());
 	return std::move(ms);
 	}
 
