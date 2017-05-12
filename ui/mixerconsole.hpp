@@ -30,7 +30,16 @@ namespace Anja
 
 			MixerConsole& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
 
+			enum class SliderId:int{MASTER_GAIN};
+
+			void changed(Slider& slider,SliderId id);
+
+			enum class TextEntryId:int{MASTER_GAIN};
+
+			void changed(TextEntry& entry,TextEntryId id);
+
 		private:
+			float m_master_gain;
 			Box m_sections;
 				ScrolledWindow m_channels;
 					Box m_strip_box;
