@@ -1,9 +1,10 @@
 //@	{
-//@	 "targets":{"name":"filenameselect.hpp","type":"include"}
+//@	 "targets":[{"name":"filenameselect.hpp","type":"include"}]
 //@	,"dependencies_extra":[{"ref":"filenameselect.o","rel":"implementation"}]
 //@	}
-#ifndef ANJA_FILENAMEPICKER_HPP
-#define ANJA_FILENAMEPICKER_HPP
+
+#ifndef ANJA_FILENAMESELECT_HPP
+#define ANJA_FILENAMESELECT_HPP
 
 #include "container.hpp"
 
@@ -16,7 +17,7 @@ namespace Anja
 	enum class FilenameSelectMode:int{OPEN,SAVE};
 
 	typedef bool (*FilenameSelectFilter)(void* cb_obj,const char* filename_check);
-	
+
 	bool filenameSelect(const Container& cnt,std::string& filename_in,FilenameSelectMode mode
 		,FilenameSelectFilter cb,void* cb_obj,const char* filter_name);
 

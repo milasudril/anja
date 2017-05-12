@@ -1,6 +1,6 @@
 //@	{
-//@	 "dependencies_extra":[{"ref":"mutex.o","rel":"implementation"}]
-//@	,"targets":[{"name":"mutex.h","type":"include"}]
+//@	 "targets":[{"name":"mutex.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"mutex.o","rel":"implementation"}]
 //@	}
 
 #ifndef ANJA_MUTEX_HPP
