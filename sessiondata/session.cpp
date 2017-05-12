@@ -189,6 +189,15 @@ void Session::channelsClear()
 		});
 	}
 
+Session& Session::colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end)
+	{
+	m_color_presets.clear();
+	std::for_each(begin,end,[this](const ColorRGBA& c)
+		{m_color_presets.append(c);});
+	return *this;
+	}
+
+
 void Session::clear()
 	{
 	waveformsClear();

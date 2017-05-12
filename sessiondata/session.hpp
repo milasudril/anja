@@ -145,6 +145,8 @@ namespace Anja
 			void dirtyClear() noexcept
 				{m_state_flags&=~SESSION_DIRTY;}
 
+			Session& colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end);
+
 		private:
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;

@@ -13,13 +13,18 @@
 namespace Anja
 	{
 	class Session;
-	class SessionEditorBase
+	class SessionEditor
 		{
 		public:
-			SessionEditorBase& operator=(SessionEditorBase&&)=delete;
-			SessionEditorBase(SessionEditorBase&&)=delete;
+			SessionEditor& operator=(SessionEditor&&)=delete;
+			SessionEditor(SessionEditor&&)=delete;
 
-			SessionEditorBase(Container& cnt,Session& session);
+			SessionEditor(Container& cnt,Session& session);
+
+			void channelNameChanged(ChannelStrip& strip,int id);
+			void channelColorChanged(ChannelStrip& strip,int id);
+			void colorPresetsChanged(ColorPicker& picker);
+
 		private:
 			Session& r_session;
 			TabView m_tabs;

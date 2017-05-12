@@ -42,8 +42,10 @@ namespace Anja
 				{return m_channel.colorGet();}
 
 			template<class Callback,class IdType>
-			ChannelStrip& callback(Callback& cb,IdType id)
+			ChannelStrip& callback(Callback& cb,IdType id) noexcept
 				{
+				m_id=id;
+				r_cb_obj=&cb;
 				m_vtable=Vtable(cb,id);
 				return *this;
 				}

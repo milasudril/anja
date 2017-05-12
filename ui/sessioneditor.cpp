@@ -5,7 +5,25 @@
 
 using namespace Anja;
 
-SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
+void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
+	{
+//	m_waveform.channelName(strip.name(),id);
+	}
+
+void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
+	{
+//	Keyboard view....
+	}
+
+void SessionEditor::colorPresetsChanged(ColorPicker& picker)
+	{
+	r_session.colorPresetsSet(picker.presetsBegin(),picker.presetsEnd());
+	m_waveform.colorPresets(r_session.colorPresetsGet());
+	m_mixer.colorPresets(r_session.colorPresetsGet());
+	}
+
+
+SessionEditor::SessionEditor(Container& cnt,Session& session)
 	:r_session(session)
 	,m_tabs(cnt)
 		,m_waveform(m_tabs.tabTitle("Waveform")
@@ -15,4 +33,5 @@ SessionEditorBase::SessionEditorBase(Container& cnt,Session& session)
 	{
 	m_waveform.colorPresets(session.colorPresetsGet());
 	m_mixer.colorPresets(session.colorPresetsGet());
+	m_mixer.channelsCallback(*this);
 	}

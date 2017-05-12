@@ -38,6 +38,18 @@ namespace Anja
 
 			void changed(TextEntry& entry,TextEntryId id);
 
+			template<class Callback>
+			MixerConsole& channelsCallback(Callback& cb_obj) noexcept
+				{
+				auto k=0;
+				std::for_each(m_strips.begin(),m_strips.end(),[&cb_obj,&k](ChannelStrip& strip)
+					{
+					strip.callback(cb_obj,k);
+					++k;
+					});
+				return *this;
+				}
+
 		private:
 			float m_master_gain;
 			Box m_sections;

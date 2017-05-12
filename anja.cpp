@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 		Anja::Window mainwin(session.filenameGet().begin());
 		Anja::Paned paned(mainwin,true);
 		Anja::Label lbl(paned,"Keyboard view placeholder");
-		Anja::SessionEditorBase editor(paned.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}),session);
+		Anja::SessionEditor editor(paned.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}),session);
 		Anja::SessionControl ctrl(ctx);
 		mainwin.callback(ctrl,0);
 		mainwin.show();
