@@ -4,6 +4,7 @@
 #include "wavefilereader.hpp"
 #include "wavefileinfo.hpp"
 #include "../common/arraysimple.hpp"
+#include "../common/pathutils.hpp"
 
 #include <sndfile.h>
 #include <cstring>
@@ -71,7 +72,7 @@ unsigned int WavefileReader::Impl::dataRead(float* buffer, unsigned int n_frames
 
 bool WavefileReader::check(const char* path,WavefileInfo& info)
 	{
-	return WavefileReader::Impl::check(path,info);
+	return fileIs(path) && WavefileReader::Impl::check(path,info);
 	}
 
 bool WavefileReader::Impl::check(const char* path,WavefileInfo& info)

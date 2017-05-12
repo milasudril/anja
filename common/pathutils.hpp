@@ -16,6 +16,7 @@ namespace Anja
 	inline bool absoluteIs(const String& path)
 		{return absoluteIs(path.begin());}
 	String makeRelativeTo(const char* path, const char* reference);
+	bool fileIs(const char* path);
 	}
 
 #endif

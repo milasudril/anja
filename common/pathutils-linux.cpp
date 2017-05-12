@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <memory>
 #include <cstring>
+#include <sys/stat.h>
 
 using namespace Anja;
 
@@ -133,4 +134,12 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 	if(path_val_last!='\0' || ref_val_last=='\0')
 		{ret.append(path_old);}
 	return ret;
+	}
+
+bool Anja::fileIs(const char* path)
+	{
+	struct stat st;
+	if(stat(path,&st)==-1)
+		{return 0;}
+	return S_ISREG(st.st_mode);
 	}
