@@ -20,7 +20,7 @@ WaveformEditor& WaveformEditor::colorPresets(const ColorRGBA* begin,const ColorR
 	if(m_color_dlg)
 		{
 		if(m_color_dlg)
-			{m_color_dlg->widget().palette(begin,end);}
+			{m_color_dlg->widget().presets(begin,end);}
 		}
 	return *this;
 	}
@@ -296,7 +296,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
 				.color(m_waveform.keyColorGet())
-				.palette(r_color_presets_begin,r_color_presets_end);
+				.presets(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
 	src.state(0);

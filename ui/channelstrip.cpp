@@ -15,7 +15,7 @@ ChannelStrip& ChannelStrip::colorPresets(const ColorRGBA* begin,const ColorRGBA*
 	if(m_color_dlg)
 		{
 		if(m_color_dlg)
-			{m_color_dlg->widget().palette(begin,end);}
+			{m_color_dlg->widget().presets(begin,end);}
 		}
 	return *this;
 	}
@@ -63,6 +63,8 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 		{
 		case TextEntryId::LABEL:
 			m_channel.labelSet(Anja::String(entry.content()));
+			if(r_cb_obj!=nullptr)
+				{m_vtable.name_changed(r_cb_obj,*this,m_id);}
 			label_update(m_channel,entry);
 			break;
 
@@ -94,7 +96,7 @@ void ChannelStrip::clicked(ColorView& entry,ColorViewId id)
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
 				.color(m_channel.colorGet())
-				.palette(r_color_presets_begin,r_color_presets_end);
+				.presets(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
 	}
@@ -127,6 +129,11 @@ void ChannelStrip::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 		{
 		case PopupId::COLOR_SELECT:
 			m_channel.colorSet(dlg.widget().color());
+			if(r_cb_obj!=nullptr)
+				{
+				m_vtable.color_changed(r_cb_obj,*this,m_id);
+				m_vtable.color_presets_changed(r_cb_obj,dlg.widget());
+				}
 			color_update(m_channel,m_color);
 			m_color_dlg.reset();
 			break;
@@ -135,7 +142,8 @@ void ChannelStrip::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 
 
 ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
-	m_channel(channel)
+	 r_cb_obj(nullptr)
+	,m_channel(channel)
 	,m_box(cnt,true)
 		,m_name(m_box)
 		,m_color(m_box)

@@ -39,15 +39,15 @@ namespace Anja
 				return *this;
 				}
 
-			const ColorRGBA* paletteBegin() const noexcept
+			const ColorRGBA* presetsBegin() const noexcept
 				{return m_pal_view.paletteBegin();}
 
-			const ColorRGBA* paletteEnd() const noexcept
+			const ColorRGBA* presetsEnd() const noexcept
 				{return m_pal_view.paletteEnd();}
 
 			void changed(TextEntry& entry,int id) noexcept;
 
-			ColorPicker& palette(const ColorRGBA* pal_begin,const ColorRGBA* pal_end);
+			ColorPicker& presets(const ColorRGBA* pal_begin,const ColorRGBA* pal_end);
 
 		private:
 			Box m_box;

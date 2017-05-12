@@ -30,7 +30,6 @@ namespace Anja
 
 			MixerConsole& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
 
-
 		private:
 			Box m_sections;
 				ScrolledWindow m_channels;

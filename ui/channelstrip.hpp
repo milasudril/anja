@@ -35,6 +35,18 @@ namespace Anja
 
 			ChannelStrip& colorPresets(const ColorRGBA* colors_begin,const ColorRGBA* colors_end);
 
+			const String& name() const noexcept
+				{return m_channel.labelGet();}
+
+			const ColorRGBA& color() const noexcept
+				{return m_channel.colorGet();}
+
+			template<class Callback,class IdType>
+			ChannelStrip& callback(Callback& cb,IdType id)
+				{
+				m_vtable=Vtable(cb,id);
+				return *this;
+				}
 
 			void changed(TextEntry& entry,TextEntryId id);
 			void clicked(ColorView& entry,ColorViewId id);
@@ -44,6 +56,31 @@ namespace Anja
 
 
 		private:
+			struct Vtable
+				{
+				Vtable():name_changed(nullptr),color_changed(nullptr),color_presets_changed(nullptr)
+					{}
+
+				template<class Callback,class IdType>
+				Vtable(Callback& cb_obj,IdType id)
+					{
+					name_changed=[](void* cb_obj,ChannelStrip& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->channelNameChanged(self,static_cast<IdType>(id));};
+					color_changed=[](void* cb_obj,ChannelStrip& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->channelColorChanged(self,static_cast<IdType>(id));};
+					color_presets_changed=[](void* cb_obj,ColorPicker& self)
+						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
+					}
+
+				void (*name_changed)(void* cb_obj,ChannelStrip& self,int id);
+				void (*color_changed)(void* cb_obj,ChannelStrip& self,int id);
+				void (*color_presets_changed)(void* cb_obj,ColorPicker& self);
+				};
+
+			int m_id;
+			void* r_cb_obj;
+			Vtable m_vtable;
+
 			ChannelView m_channel;
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
