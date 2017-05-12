@@ -35,7 +35,8 @@ void MixerConsole::changed(Slider& slider,SliderId id)
 		{
 		case SliderId::MASTER_GAIN:
 			m_master_gain=gain_map(slider.value());
-		//	TODO: forward message to owner
+			if(r_cb_obj!=nullptr)
+				{m_cb(r_cb_obj,*this,m_id);}
 			gain_update(m_master_gain,slider,m_master_entry);
 			break;
 		}
@@ -52,7 +53,8 @@ void MixerConsole::changed(TextEntry& entry,TextEntryId id)
 			if(convert(entry.content(),val_new))
 				{
 				m_master_gain=val_new;
-			//	TODO: forward message to owner
+				if(r_cb_obj!=nullptr)
+					{m_cb(r_cb_obj,*this,m_id);}
 				}
 			gain_update(m_master_gain,m_master_slider,entry);
 			}
@@ -61,7 +63,8 @@ void MixerConsole::changed(TextEntry& entry,TextEntryId id)
 	}
 
 MixerConsole::MixerConsole(Container& cnt,Session& session):
-	 m_master_gain(session.gainGet())
+	 r_cb_obj(nullptr)
+	,m_master_gain(session.gainGet())
 	,m_sections(cnt,false)
 		,m_channels(m_sections.insertMode({0,Box::EXPAND|Box::FILL}))
 			,m_strip_box(m_channels,false)

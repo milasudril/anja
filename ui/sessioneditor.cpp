@@ -8,6 +8,7 @@ using namespace Anja;
 void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
 	{
 	m_waveform.channelName(id,strip.name().begin());
+//	m_keyboard.channelName(id,strip.name().begin());
 	}
 
 void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
@@ -22,6 +23,10 @@ void SessionEditor::colorPresetsChanged(ColorPicker& picker)
 	m_mixer.colorPresets(r_session.colorPresetsGet());
 	}
 
+void SessionEditor::masterGainChanged(MixerConsole& mixer,MixerId id)
+	{
+	r_session.gainSet(mixer.masterGain());
+	}
 
 SessionEditor::SessionEditor(Container& cnt,Session& session)
 	:r_session(session)
@@ -33,5 +38,6 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 	{
 	m_waveform.colorPresets(session.colorPresetsGet());
 	m_mixer.colorPresets(session.colorPresetsGet());
-	m_mixer.channelsCallback(*this);
+	m_mixer.channelsCallback(*this)
+		.callback(*this,MixerId::CHANNEL_MIXER);
 	}

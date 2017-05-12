@@ -25,6 +25,10 @@ namespace Anja
 			void channelColorChanged(ChannelStrip& strip,int id);
 			void colorPresetsChanged(ColorPicker& picker);
 
+			enum class MixerId:int{CHANNEL_MIXER};
+
+			void masterGainChanged(MixerConsole& mixer,MixerId id);
+
 		private:
 			Session& r_session;
 			TabView m_tabs;

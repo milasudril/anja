@@ -50,7 +50,27 @@ namespace Anja
 				return *this;
 				}
 
+			template<class Callback,class IdType>
+			MixerConsole& callback(Callback& cb_obj,IdType id)
+				{
+				auto cb=[](void* cb_obj,MixerConsole& self,int id)
+					{
+					reinterpret_cast<Callback*>(cb_obj)->masterGainChanged(self,static_cast<IdType>(id));
+					};
+				m_id=static_cast<int>(id);
+				r_cb_obj=&cb_obj;
+				m_cb=cb;
+				return *this;
+				}
+
+			float masterGain() const noexcept
+				{return m_master_gain;}
+
 		private:
+			int m_id;
+			void* r_cb_obj;
+			void (*m_cb)(void* cb_obj,MixerConsole& self,int id);
+
 			float m_master_gain;
 			Box m_sections;
 				ScrolledWindow m_channels;
