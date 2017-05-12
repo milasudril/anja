@@ -116,7 +116,6 @@
       <File Name="ui/paletteview.cpp"/>
       <File Name="ui/colorview.hpp"/>
       <File Name="ui/colorview.cpp"/>
-      <File Name="ui/dlgbuttonorder.txt"/>
       <File Name="ui/dialog.hpp"/>
       <File Name="ui/imageview.hpp"/>
       <File Name="ui/imageview.cpp"/>

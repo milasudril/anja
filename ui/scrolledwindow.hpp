@@ -8,6 +8,7 @@
 
 #include "container.hpp"
 #include <utility>
+#include <cstdint>
 
 namespace Anja
 	{
@@ -31,6 +32,9 @@ namespace Anja
 			ScrolledWindow& sensitive(bool val);
 			void* toplevel() const;
 			ScrolledWindow& border(bool val);
+			static constexpr uint32_t VERTICAL=1;
+			static constexpr uint32_t HORIZONTAL=2;
+			ScrolledWindow& directions(uint32_t direction_flags);
 
 		protected:
 			class Impl;

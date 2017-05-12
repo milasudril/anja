@@ -28,6 +28,28 @@ class ScrolledWindow::Impl:private ScrolledWindow
 		void border(bool val)
 			{gtk_scrolled_window_set_shadow_type(m_handle,val?GTK_SHADOW_IN:GTK_SHADOW_NONE);}
 
+		void directions(uint32_t direction_flags)
+			{
+			switch(direction_flags)
+				{
+				case 0:
+					gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_NEVER,GTK_POLICY_NEVER);
+					break;
+
+				case 1:
+					gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_NEVER,GTK_POLICY_AUTOMATIC);
+					break;
+
+				case 2:
+					gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_AUTOMATIC,GTK_POLICY_NEVER);
+					break;
+
+				case 3:
+					gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
+					break;
+				}
+			}
+
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkScrolledWindow* m_handle;
@@ -65,6 +87,12 @@ ScrolledWindow& ScrolledWindow::border(bool val)
 
 void* ScrolledWindow::toplevel() const
 	{return m_impl->_toplevel();}
+
+ScrolledWindow& ScrolledWindow::directions(uint32_t direction_flags)
+	{
+	m_impl->directions(direction_flags);
+	return *this;
+	}
 
 ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{

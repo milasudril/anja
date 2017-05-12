@@ -7,6 +7,7 @@
 #define ANJA_MIXERCONSOLE_HPP
 
 #include "box.hpp"
+#include "scrolledwindow.hpp"
 #include "../common/arraysimple.hpp"
 #include "channelstrip.hpp"
 #include "../common/arraydynamicshort.hpp"
@@ -31,9 +32,11 @@ namespace Anja
 
 
 		private:
-			Box m_strip_box;
-				ArrayDynamicShort<Separator> m_separators;
-				ArraySimple<ChannelStrip> m_strips;
+			Box m_sections;
+				ScrolledWindow m_channels;
+					Box m_strip_box;
+						ArrayDynamicShort<Separator> m_separators;
+						ArraySimple<ChannelStrip> m_strips;
 				Box m_master;
 					Label m_master_label;
 					Slider m_master_slider;
