@@ -140,6 +140,20 @@ static ArraySimple<float> mean_square(const float* begin,const float* end,int le
 	return std::move(vals_ms);
 	}
 
+static ArraySimple<float> decimate(const ArraySimple<float>& src,double dt)
+	{
+	auto N=static_cast<size_t>( src.length()/dt + 0.5 );
+	size_t k=0;
+	ArraySimple<float> ret(N);
+	std::for_each(ret.begin(),ret.end(),[src,&k,dt](float& val)
+		{
+		auto pos=static_cast<size_t>( k*dt );
+		val=src[pos];
+		++k;
+		});
+	return std::move(ret);
+	}
+
 void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
 	{
 	ArraySimple<XYPlot::Point> points(end - begin);
@@ -156,8 +170,8 @@ void plot_append(const float* begin,const float* end,int fs,XYPlot& plot)
 static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
 	e.content(waveform.filenameGet().begin());
-	auto ms=mean_square(waveform.beginFull(),waveform.endFull()
-		,waveform.sampleRateGet()/1000); //TODO: Decimate ms
+	auto ms=decimate(mean_square(waveform.beginFull(),waveform.endFull()
+		,waveform.sampleRateGet()/1000),waveform.sampleRateGet()/2000);
 
 	std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
 		{return std::max(powerToDb(x),-145.0f);});
@@ -183,7 +197,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::FILENAME:
 			if(!m_waveform.fileLoaded(entry.content()))
 				{
-			//	TODO: catch exceptions from fileLoad
+			//TODO: catch exceptions from fileLoad
 				m_waveform.fileLoad(entry.content());
 				m_waveform_db=filename_update(m_waveform,entry,m_plot);
 				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
