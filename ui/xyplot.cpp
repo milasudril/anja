@@ -132,7 +132,7 @@ class XYPlot::Impl:public XYPlot
 		double m_dy;
 
 		GtkDrawingArea* m_canvas;
-		bool m_dark;
+	//	bool m_dark;
 
 		enum{NORMAL,PAN,CURSOR_X_MOVE,CURSOR_Y_MOVE,CURSOR_INDEX_MAX};
 		GdkCursor* m_cursors[CURSOR_INDEX_MAX];
@@ -284,7 +284,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	m_dx=0.2;
 	m_N_ticks_y=10;
 	m_dy=0.2;
-	m_dark=0;
+//	m_dark=0;
 	m_grabbed=0;
 	m_cursor_grabbed=-1;
 	m_cursor_current=NORMAL;
@@ -762,7 +762,7 @@ void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_w
 	cairo_stroke(cr);
 	}
 
-static int dark_check(GtkWidget* widget)
+static inline int dark_check(GtkWidget* widget)
 	{
 	auto color=ambientColor(widget);
 	auto luma=luma709(color);
@@ -783,10 +783,10 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 //	dark_check is only reliable for sensitive widget in active window
 	auto state=gtk_widget_get_state_flags(widget);
-	self->m_dark=dark_check(widget);
+	auto dark=dark_check(widget);
 
-	auto bg=self->m_dark?ColorRGBA{0,0,0,1}:ColorRGBA{1,1,1,1};
-	auto fg=self->m_dark?ColorRGBA{1,1,1,1}:ColorRGBA{0,0,0,1};
+	auto bg=dark?ColorRGBA{0,0,0,1}:ColorRGBA{1,1,1,1};
+	auto fg=dark?ColorRGBA{1,1,1,1}:ColorRGBA{0,0,0,1};
 	if(state & (GTK_STATE_FLAG_BACKDROP|GTK_STATE_FLAG_INSENSITIVE))
 		{
 		auto bg_temp=bg;
@@ -810,17 +810,17 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	//	Draw curves
 		cairo_set_line_width(cr,1);
 		std::for_each(self->m_curves.begin(),self->m_curves.end()
-			,[&cr,&dom_window,self](const Curve& c)
-				{self->draw_curve(cr,c,dom_window,self->m_dark);});
+			,[&cr,&dom_window,self,dark](const Curve& c)
+				{self->draw_curve(cr,c,dom_window,dark);});
 
 	//	Draw cursors
 		std::for_each(self->m_cursors_x.begin(),self->m_cursors_x.end()
-			,[&cr,&dom_window,self](const Cursor& c)
-				{self->draw_cursor_x(cr,c,dom_window,self->m_dark);});
+			,[&cr,&dom_window,self,dark](const Cursor& c)
+				{self->draw_cursor_x(cr,c,dom_window,dark);});
 
 		std::for_each(self->m_cursors_y.begin(),self->m_cursors_y.end()
-			,[&cr,&dom_window,self](const Cursor& c)
-				{self->draw_cursor_y(cr,c,dom_window,self->m_dark);});
+			,[&cr,&dom_window,self,dark](const Cursor& c)
+				{self->draw_cursor_y(cr,c,dom_window,dark);});
 
 
 
