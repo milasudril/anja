@@ -126,6 +126,8 @@
       <File Name="ui/separator.cpp"/>
       <File Name="ui/mixerconsole.hpp"/>
       <File Name="ui/mixerconsole.cpp"/>
+      <File Name="ui/uiutility.hpp"/>
+      <File Name="ui/uiutility.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

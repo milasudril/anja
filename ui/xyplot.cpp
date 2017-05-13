@@ -2,7 +2,7 @@
 
 #include "xyplot.hpp"
 #include "container.hpp"
-#include "../common/color.hpp"
+#include "uiutility.hpp"
 #include <gtk/gtk.h>
 #include <vector>
 #include <cstring>
@@ -764,10 +764,9 @@ void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_w
 
 static int dark_check(GtkWidget* widget)
 	{
-	auto context=gtk_widget_get_style_context(widget);
-	GdkRGBA color;
-	gtk_style_context_get_color(context,GTK_STATE_FLAG_NORMAL,&color);
-	return luma709(ColorRGBA(color.red,color.green,color.blue,color.alpha)) > 0.5f;
+	auto color=ambientColor(widget);
+	auto luma=luma709(color);
+	return luma < 0.5f;
 	}
 
 gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
@@ -784,8 +783,7 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 //	dark_check is only reliable for sensitive widget in active window
 	auto state=gtk_widget_get_state_flags(widget);
-	self->m_dark=state&(GTK_STATE_FLAG_BACKDROP|GTK_STATE_FLAG_INSENSITIVE)?
-		self->m_dark:dark_check(widget);
+	self->m_dark=dark_check(widget);
 
 	auto bg=self->m_dark?ColorRGBA{0,0,0,1}:ColorRGBA{1,1,1,1};
 	auto fg=self->m_dark?ColorRGBA{1,1,1,1}:ColorRGBA{0,0,0,1};
