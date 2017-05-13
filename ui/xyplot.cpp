@@ -781,7 +781,6 @@ gboolean XYPlot::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	auto h=gtk_widget_get_allocated_height(GTK_WIDGET(self->m_canvas));
 	auto dom_window=window_domain_adjust(w,h,self->m_axis_x,self->m_axis_y);
 
-//	dark_check is only reliable for sensitive widget in active window
 	auto state=gtk_widget_get_state_flags(widget);
 	auto dark=dark_check(widget);
 
