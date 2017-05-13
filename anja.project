@@ -128,6 +128,8 @@
       <File Name="ui/mixerconsole.cpp"/>
       <File Name="ui/uiutility.hpp"/>
       <File Name="ui/uiutility.cpp"/>
+      <File Name="ui/knob.py"/>
+      <File Name="ui/knob.blend"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
