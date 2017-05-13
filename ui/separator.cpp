@@ -24,8 +24,6 @@ Separator::~Separator()
 
 Separator::Impl::Impl(Container& cnt,bool vertical):Separator(*this)
 	{
-	printf("Separator %p ctor\n",this);
-
 	auto widget=gtk_separator_new(vertical?GTK_ORIENTATION_VERTICAL
 		:GTK_ORIENTATION_HORIZONTAL);
 
@@ -38,5 +36,4 @@ Separator::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Separator %p dtor\n",this);
 	}
