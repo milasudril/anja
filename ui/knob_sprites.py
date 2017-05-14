@@ -39,21 +39,7 @@ try:
 	os.rename(target_dir+'/'+in_dir+'/knob_1.png',target_dir+'/'+in_dir+'/knob-ambient-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_2.png',target_dir+'/'+in_dir+'/knob-diffuse-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_3.png',target_dir+'/'+in_dir+'/knob-mask-in.png')
-
 	subprocess.run(['octave-cli',in_dir+'/knob_sprites.m',target_dir,in_dir],check=True);
-
-#	subprocess.run(['composite','-compose','subtract',target_dir+'/'+in_dir+'/knob_1.png' \
-#		,target_dir+'/'+in_dir+'/knob-diffuse.png',target_dir+'/'+in_dir+'/knob_1.png'],check=True)
-#	subprocess.run(['convert',target_dir+'/'+in_dir+'/knob_1.png' \
-#		,'-channel','R','-separate',target_dir+'/'+in_dir+'/knob_1.png'],check=True)
-#	subprocess.run(['convert',target_dir+'/'+in_dir+'/knob_1.png' \
-#		,target_dir+'/'+in_dir+'/knob-mask.png' \
-#		,'-channel-fx','| gray=>alpha',target_dir+'/'+in_dir+'/knob-ambient.png'],check=True)
-#
-#	subprocess.run(['convert',target_dir+'/'+in_dir+'/knob-ambient.png' \
-#		,target_dir+'/'+in_dir+'/knob-mask.png'
-#		,'-compose','copy-opacity' \
-#		,'-composite',target_dir+'/'+in_dir+'/knob-ambient.png'])
 	sys.exit(0)
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))

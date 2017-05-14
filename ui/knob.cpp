@@ -16,6 +16,7 @@
 #include "uiutility.hpp"
 #include "../common/blob.hpp"
 #include "../common/color.hpp"
+#include "../common/vec2.hpp"
 #include <gtk/gtk.h>
 #include <maike/targetinclude.hpp>
 #include <vector>
@@ -47,13 +48,18 @@ class Knob::Impl:public Knob
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
+		double m_value;
+		bool m_grabbed;
 		cairo_surface_t* m_ambient;
 		cairo_surface_t* m_diffuse;
 		cairo_surface_t* m_mask;
 
 		GtkDrawingArea* m_handle;
-		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
+		static gboolean draw(GtkWidget* widget,cairo_t* cr,void* obj);
+		static gboolean mouse_move(GtkWidget* object,GdkEventMotion* event,void* obj);
+		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
+		static gboolean mousewheel(GtkWidget* widget,GdkEvent* event,void* obj);
 	};
 
 Knob::Knob(Container& cnt)
@@ -99,12 +105,23 @@ Knob::Impl::Impl(Container& cnt):Knob(*this),r_cb_obj(nullptr)
 	m_ambient=image_load(knob_ambient_begin,knob_ambient_end);
 	m_mask=image_load(knob_mask_begin,knob_mask_end);
 	m_diffuse=image_load(knob_diffuse_begin,knob_diffuse_end);
+	m_value=0;
+	m_grabbed=0;
 	auto widget=gtk_drawing_area_new();
-	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
-	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
-	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
+	gtk_widget_set_can_focus(widget,TRUE);
+	gtk_widget_add_events(widget,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK
+		|GDK_BUTTON_RELEASE_MASK|GDK_KEY_PRESS_MASK|GDK_KEY_RELEASE_MASK
+		|GDK_SCROLL_MASK);
+
+
+
 	gtk_widget_set_size_request(widget,40,40);
 	m_handle=GTK_DRAWING_AREA(widget);
+	g_signal_connect(m_handle,"draw",G_CALLBACK(draw),this);
+	g_signal_connect(m_handle,"motion-notify-event",G_CALLBACK(mouse_move),this);
+	g_signal_connect(m_handle,"button-press-event",G_CALLBACK(mouse_down),this);
+	g_signal_connect(m_handle,"button-release-event",G_CALLBACK(mouse_up),this);
+//TODO:	g_signal_connect(m_handle,"scroll-event", G_CALLBACK(mousewheel),this);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
 	}
@@ -150,6 +167,30 @@ static void image_render(cairo_t* cr,cairo_surface_t* img,double w_out,double h_
 	cairo_restore(cr);
 	}
 
+static constexpr double pi=std::acos(-1);
+
+static double value_to_angle(double val)
+	{
+	return (1-val)*(-pi/6.0) + val*7.0*pi/6.0;
+	}
+
+static double angle_to_value(double angle)
+	{
+	return (angle - (-pi/6.0))/(7.0*pi/6.0 - (-pi/6.0));
+	}
+
+static Vec2 angle_to_pos(double r,double angle,Vec2 O)
+	{return r*Vec2{cos(angle),sin(angle)} + O;}
+
+static double pos_to_angle(Vec2 pos,Vec2 O)
+	{
+	pos-=O;
+	return atan2(pos.y(),pos.x()) + 2*pi;
+	}
+
+static Vec2 flip_y(Vec2 v,double h)
+	{return Vec2{v.x(),h-v.y()};}
+
 gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
@@ -187,13 +228,49 @@ gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 	cairo_paint(cr);
 
+	GdkRGBA c;
+	auto context=gtk_widget_get_style_context(widget);
+	gtk_style_context_get_color(context,GTK_STATE_FLAG_NORMAL,&c);
+	cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
+	auto r0=std::min(w,h);
+	auto o=flip_y(angle_to_pos(0.28*r0,value_to_angle(1.0 - self->m_value),0.5*Vec2{w,h}),h);
+	cairo_arc(cr,o.x(),o.y(),0.04*r0,0,2.0*pi);
+	cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
+	cairo_fill(cr);
+
 	return TRUE;
 	}
 
 gboolean Knob::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	if(self->r_cb_obj!=nullptr)
-		{self->m_cb(self->r_cb_obj,*self);}
+	self->m_grabbed=0;
 	return TRUE;
+	}
+
+gboolean Knob::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	self->m_grabbed=1;
+	return TRUE;
+	}
+
+gboolean Knob::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(self->m_grabbed)
+		{
+		auto w=static_cast<double>(gtk_widget_get_allocated_width(widget));
+		auto h=static_cast<double>(gtk_widget_get_allocated_height(widget));
+		auto pos=Vec2{event->x,event->y};
+		pos=flip_y(pos,h);
+		auto angle=pos_to_angle(pos,0.5*Vec2{w,h});
+		self->m_value=1.0 - angle_to_value(angle);
+		printf("%.15g\n",self->m_value);
+		gtk_widget_queue_draw(widget);
+		if(self->r_cb_obj!=nullptr)
+			{self->m_cb(self->r_cb_obj,*self);}
+		return TRUE;
+		}
+	return FALSE;
 	}

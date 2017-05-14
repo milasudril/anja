@@ -252,7 +252,6 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
-	gtk_widget_set_can_focus(widget,TRUE);
 	gtk_widget_add_events(widget
 		,GDK_POINTER_MOTION_MASK
 		|GDK_BUTTON_PRESS_MASK
@@ -354,7 +353,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 					}
 				break;
 			case PAN:
-			//	TODO: Requires that cursor offset is saved in mouse_down
+			//TODO: Requires that cursor offset is saved in mouse_down
 				break;
 			}
 		return TRUE;
