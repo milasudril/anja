@@ -25,9 +25,9 @@ ColorRGBA Anja::ambientColor(void* widget_handle)
 			cairo_surface_destroy(surface);
 			return ret;
 			}
-		widget_handle=gtk_widget_get_parent(GTK_WIDGET(widget_handle));		
+		widget_handle=gtk_widget_get_parent(GTK_WIDGET(widget_handle));
 		}
 	cairo_destroy(cr);
 	cairo_surface_destroy(surface);
-	return ColorRGBA{0.0f,0.0f,0.0f,0.0f};
+	return ColorRGBA{1.0f,1.0f,1.0f,1.0f};
 	}

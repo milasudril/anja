@@ -147,12 +147,13 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
 	,m_box(cnt,true)
 		,m_name(m_box)
 		,m_color(m_box)
-		,m_sep_a(m_box.insertMode({4,0}),false)
+		,m_sep_a(m_box.insertMode({4,Box::EXPAND|Box::FILL}),false)
 		,m_ft_label(m_box.insertMode({0,0}),"Fade\ntime/s")
-		,m_ft_input(m_box)
-		,m_sep_b(m_box.insertMode({4,0}),false)
-		,m_gain_slider(m_box.insertMode(Box::InsertMode{0,Box::EXPAND|Box::FILL}),true)
-		,m_gain_input(m_box.insertMode(Box::InsertMode{0,0}))
+		,m_ft_knob(m_box.insertMode({4,Box::EXPAND|Box::FILL}))
+		,m_ft_input(m_box.insertMode({0,0}))
+		,m_sep_b(m_box.insertMode({4,Box::EXPAND|Box::FILL}),false)
+		,m_gain_slider(m_box.insertMode({0,Box::EXPAND|Box::FILL}),true)
+		,m_gain_input(m_box.insertMode({0,0}))
 	{
 	m_name.small(1).width(7);
 	m_ft_input.small(1).width(7);
