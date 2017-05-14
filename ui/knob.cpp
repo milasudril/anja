@@ -175,7 +175,7 @@ gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 
 	float light=luma709(bg)>0.5f?1.0f:0.0f;
-	float i=0.7f*light + (1.0f - light)*0.4;
+	float i=light + (1.0f - light)*0.4f;
 
 	cairo_push_group(cr);
 		cairo_set_source_rgba(cr,i,i,i,1);
