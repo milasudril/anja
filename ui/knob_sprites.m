@@ -1,3 +1,21 @@
+%@  {
+%@  "targets":
+%@      [
+%@           {
+%@			 "name":"knob-ambient.png"
+%@			,"dependencies":[{"ref":"knob-diffuse-in.png","rel":"generated"},{"ref":"knob-ambient-in.png","rel":"generated"}]
+%@			 }
+%@           ,{
+%@			 "name":"knob-diffuse.png","dependencies":
+%@				[{"ref":"knob-ambient-in.png","rel":"generated"}]
+%@			 }
+%@           ,{
+%@			 "name":"knob-mask.png","dependencies":
+%@				[{"ref":"knob-mask-in.png","rel":"generated"}]
+%@			 }
+%@      ]
+%@  }
+
 args=argv();
 target_dir=char(args(1));
 in_dir=char(args(2));

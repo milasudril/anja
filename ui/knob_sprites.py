@@ -2,16 +2,16 @@
 #@  "targets":
 #@      [
 #@           {
-#@			 "name":"knob-ambient.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob-ambient-in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
-#@			 "name":"knob-diffuse.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob-diffuse-in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
-#@			 "name":"knob-mask.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob-mask-in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@      ]
 #@  }
@@ -39,7 +39,6 @@ try:
 	os.rename(target_dir+'/'+in_dir+'/knob_1.png',target_dir+'/'+in_dir+'/knob-ambient-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_2.png',target_dir+'/'+in_dir+'/knob-diffuse-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_3.png',target_dir+'/'+in_dir+'/knob-mask-in.png')
-	subprocess.run(['octave-cli',in_dir+'/knob_sprites.m',target_dir,in_dir],check=True);
 	sys.exit(0)
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))
