@@ -3,12 +3,6 @@
 //@		[{
 //@		"name":"knob.o","type":"object","pkgconfig_libs":["gtk+-3.0"]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
-//@		,"dependencies":
-//@			[
-//@				 {"ref":"knob-ambient.png","rel":"generated"}
-//@				,{"ref":"knob-diffuse.png","rel":"generated"}
-//@				,{"ref":"knob-mask.png","rel":"generated"}
-//@			]
 //@		}]
 //@	}
 
@@ -26,9 +20,9 @@
 #include <vector>
 #include <cstring>
 
-ANJA_BLOB(uint8_t,knob_ambient,MAIKE_TARGET(knob-ambient.png));
-ANJA_BLOB(uint8_t,knob_diffuse,MAIKE_TARGET(knob-diffuse.png));
-ANJA_BLOB(uint8_t,knob_mask,MAIKE_TARGET(knob-mask.png));
+ANJA_BLOB(uint8_t,knob_ambient,MAIKE_TARGET(knob_ambient.png));
+ANJA_BLOB(uint8_t,knob_diffuse,MAIKE_TARGET(knob_diffuse.png));
+ANJA_BLOB(uint8_t,knob_mask,MAIKE_TARGET(knob_mask.png));
 
 using namespace Anja;
 

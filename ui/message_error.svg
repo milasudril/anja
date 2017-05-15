@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="info.svg">
+   sodipodi:docname="error.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.9195959"
-     inkscape:cx="17.356164"
-     inkscape:cy="25.231492"
+     inkscape:cx="53.908846"
+     inkscape:cy="26.029429"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -36,8 +36,8 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1024"
-     inkscape:window-height="719"
+     inkscape:window-width="1920"
+     inkscape:window-height="1139"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -70,11 +70,12 @@
      id="layer1"
      transform="translate(-3.970499,-996.30326)">
     <circle
-       style="fill:#0006ff;fill-opacity:1;stroke:none;stroke-width:5.02402782;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path3342"
-       cy="1024.3328"
-       cx="31.999998"
-       r="28.029499" />
+       cy="1024.7577"
+       cx="14.553995"
+       transform="matrix(0.99985553,-0.01699778,0.01699778,0.99985553,0,0)"
+       r="25.499941" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:30px;line-height:125%;font-family:Sans;-inkscape-font-specification:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -87,11 +88,19 @@
          x="31.418514"
          y="1038.4852"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:45px;font-family:'Linux Libertine O';-inkscape-font-specification:'Linux Libertine O Semi-Bold';text-align:center;text-anchor:middle;fill:#ffffff">i</tspan></text>
-    <circle
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.21099997;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path3342-8"
-       cy="1024.3328"
-       cx="31.999998"
-       r="25.724096" />
+    <g
+       id="g4318"
+       transform="matrix(0.89297621,0,0,0.89297628,3.4247599,109.62789)">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4227"
+         d="m 21.971533,1014.3044 20.056931,20.0568"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:5.59925222;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4227-2"
+         d="m 42.028398,1014.3043 -20.056799,20.057"
+         style="fill:#ff0000;fill-rule:evenodd;stroke:#ff0000;stroke-width:5.59925222;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
