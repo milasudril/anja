@@ -60,6 +60,8 @@ class Knob::Impl:public Knob
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean mousewheel(GtkWidget* widget,GdkEvent* event,void* obj);
+
+		void value_update(Vec2 position);
 	};
 
 Knob::Knob(Container& cnt)
@@ -112,9 +114,6 @@ Knob::Impl::Impl(Container& cnt):Knob(*this),r_cb_obj(nullptr)
 	gtk_widget_add_events(widget,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK
 		|GDK_BUTTON_RELEASE_MASK|GDK_KEY_PRESS_MASK|GDK_KEY_RELEASE_MASK
 		|GDK_SCROLL_MASK);
-
-
-
 	gtk_widget_set_size_request(widget,40,40);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_signal_connect(m_handle,"draw",G_CALLBACK(draw),this);
@@ -248,10 +247,23 @@ gboolean Knob::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	return TRUE;
 	}
 
+void Knob::Impl::value_update(Vec2 pos)
+	{
+	auto w=static_cast<double>(gtk_widget_get_allocated_width(GTK_WIDGET(m_handle)));
+	auto h=static_cast<double>(gtk_widget_get_allocated_height(GTK_WIDGET(m_handle)));
+	pos=flip_y(pos,h);
+	auto angle=pos_to_angle(pos,0.5*Vec2{w,h});
+	m_value=1.0 - std::max(0.0,std::min(angle_to_value(angle),1.0));
+	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+	if(r_cb_obj!=nullptr)
+		{m_cb(r_cb_obj,*this);}
+	}
+
 gboolean Knob::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	self->m_grabbed=1;
+	self->value_update(Vec2{event->x,event->y});
 	return TRUE;
 	}
 
@@ -260,16 +272,7 @@ gboolean Knob::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* ob
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(self->m_grabbed)
 		{
-		auto w=static_cast<double>(gtk_widget_get_allocated_width(widget));
-		auto h=static_cast<double>(gtk_widget_get_allocated_height(widget));
-		auto pos=Vec2{event->x,event->y};
-		pos=flip_y(pos,h);
-		auto angle=pos_to_angle(pos,0.5*Vec2{w,h});
-		self->m_value=1.0 - angle_to_value(angle);
-		printf("%.15g\n",self->m_value);
-		gtk_widget_queue_draw(widget);
-		if(self->r_cb_obj!=nullptr)
-			{self->m_cb(self->r_cb_obj,*self);}
+		self->value_update(Vec2{event->x,event->y});
 		return TRUE;
 		}
 	return FALSE;
