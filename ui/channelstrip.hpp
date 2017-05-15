@@ -29,6 +29,7 @@ namespace Anja
 			enum class TextEntryId:int{LABEL,FADETIME,GAIN};
 			enum class ColorViewId:int{COLOR};
 			enum class SliderId:int{GAIN};
+			enum class KnobId:int{FADETIME};
 			enum class PopupId:int{COLOR_SELECT};
 
 			ChannelStrip& operator=(ChannelStrip&&)=delete;
@@ -56,6 +57,7 @@ namespace Anja
 			void changed(Slider& slider,SliderId id);
 			void dismiss(Dialog<ColorPicker>& dlg,PopupId id);
 			void confirmPositive(Dialog<ColorPicker>& dlg,PopupId id);
+			void changed(Knob& knob,KnobId id);
 
 
 		private:

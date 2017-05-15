@@ -37,13 +37,13 @@ static void color_update(const ChannelView& channel,ColorView& e)
 	e.color(channel.colorGet());
 	}
 
-static void fade_time_update(const ChannelView& channel,TextEntry& e)
+static void fade_time_update(const ChannelView& channel,TextEntry& e,Knob& k)
 	{
-	auto g=channel.fadeTimeGet();
+	auto t=channel.fadeTimeGet();
 	char buffer[16];
-	sprintf(buffer,"%.3f",g);
+	sprintf(buffer,"%.3f",t);
 	e.content(buffer);
-//	s.value(gain_map_inv(g));
+	k.value(t);
 	}
 
 
@@ -73,7 +73,7 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 			double val_new;
 			if(convert(entry.content(),val_new))
 				{m_channel.fadeTimeSet(val_new);}
-			fade_time_update(m_channel,entry);
+			fade_time_update(m_channel,entry,m_ft_knob);
 			}
 			break;
 
@@ -108,6 +108,16 @@ void ChannelStrip::changed(Slider& slider,SliderId id)
 		case SliderId::GAIN:
 			m_channel.gainSet( gain_map(slider.value()) );
 			gain_update(m_channel,slider,m_gain_input);
+			break;
+		}
+	}
+
+void ChannelStrip::changed(Knob& knob,KnobId id)
+	{
+	switch(id)
+		{
+		case KnobId::FADETIME:
+			
 			break;
 		}
 	}
@@ -161,6 +171,7 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
 
 	m_name.callback(*this,TextEntryId::LABEL);
 	m_color.callback(*this,ColorViewId::COLOR);
+	m_ft_knob.callback(*this,KnobId::FADETIME);
 	m_ft_input.callback(*this,TextEntryId::FADETIME);
 	m_gain_slider.callback(*this,SliderId::GAIN);
 	m_gain_input.callback(*this,TextEntryId::GAIN);
@@ -168,6 +179,6 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
 
 	label_update(channel,m_name);
 	color_update(channel,m_color);
-	fade_time_update(channel,m_ft_input);
+	fade_time_update(channel,m_ft_input,m_ft_knob);
 	gain_update(channel,m_gain_slider,m_gain_input);
 	}

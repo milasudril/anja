@@ -28,19 +28,19 @@ namespace Anja
 			Knob(Knob&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-			Knob& minHeight(int w);
-
-			Knob& minWidth(int h);
-
 			template<class Callback,class IdType>
 			Knob& callback(Callback& cb_obj,IdType id)
 				{
 				auto cb=[](void* cb_obj,Knob& source)
-					{reinterpret_cast<Callback*>(cb_obj)->clicked(source,static_cast<IdType>(source.id()));};
+					{reinterpret_cast<Callback*>(cb_obj)->changed(source,static_cast<IdType>(source.id()));};
 				return callback(cb,&cb_obj,static_cast<int>(id));
 				}
 
 			int id() const noexcept;
+
+			double value() const noexcept;
+
+			Knob& value(double x);
 
 		private:
 			class Impl;

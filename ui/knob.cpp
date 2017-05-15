@@ -44,6 +44,15 @@ class Knob::Impl:public Knob
 			m_id=id;
 			}
 
+		void value(double x)
+			{
+			m_value=std::max(0.0,std::min(x,1.0));
+			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+			}
+
+		double value() const noexcept
+			{return m_value;}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
@@ -78,6 +87,16 @@ Knob& Knob::callback(CallbackImpl cb,void* cb_obj,int id)
 
 int Knob::id() const noexcept
 	{return m_impl->id();}
+
+double Knob::value() const noexcept
+	{return m_impl->value();}
+
+Knob& Knob::value(double x)
+	{
+	m_impl->value(x);
+	return *this;
+	}
+
 
 
 
