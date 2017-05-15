@@ -185,7 +185,7 @@ static Vec2 angle_to_pos(double r,double angle,Vec2 O)
 static double pos_to_angle(Vec2 pos,Vec2 O)
 	{
 	pos-=O;
-	return atan2(pos.y(),pos.x()) + 2*pi;
+	return atan2(-pos.x(),pos.y()) + 0.5*pi;
 	}
 
 static Vec2 flip_y(Vec2 v,double h)
