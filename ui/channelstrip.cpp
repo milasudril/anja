@@ -27,6 +27,14 @@ static double gain_map(double x)
 static double gain_map_inv(double x)
 	{return (x + 72)/(72 + 6);}
 
+static double fade_time_map(double x)
+	{return 1e-3*pow(10,4*x);}
+
+static double fade_time_map_inv(double x)
+	{return log10(1e3*x)/4.0;}
+
+
+
 static void label_update(const ChannelView& channel,TextEntry& e)
 	{
 	e.content(channel.labelGet().begin());
@@ -37,13 +45,13 @@ static void color_update(const ChannelView& channel,ColorView& e)
 	e.color(channel.colorGet());
 	}
 
-static void fade_time_update(const ChannelView& channel,TextEntry& e,Knob& k)
+static void fade_time_update(const ChannelView& channel,Knob& k,TextEntry& e)
 	{
 	auto t=channel.fadeTimeGet();
 	char buffer[16];
-	sprintf(buffer,"%.3f",t);
+	sprintf(buffer,"%.2e",t);
 	e.content(buffer);
-	k.value(t);
+	k.value(fade_time_map_inv(t));
 	}
 
 
@@ -73,7 +81,7 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 			double val_new;
 			if(convert(entry.content(),val_new))
 				{m_channel.fadeTimeSet(val_new);}
-			fade_time_update(m_channel,entry,m_ft_knob);
+			fade_time_update(m_channel,m_ft_knob,entry);
 			}
 			break;
 
@@ -117,7 +125,8 @@ void ChannelStrip::changed(Knob& knob,KnobId id)
 	switch(id)
 		{
 		case KnobId::FADETIME:
-			
+			m_channel.fadeTimeSet(fade_time_map(knob.value()));
+			fade_time_update(m_channel,knob,m_ft_input);
 			break;
 		}
 	}
@@ -179,6 +188,6 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
 
 	label_update(channel,m_name);
 	color_update(channel,m_color);
-	fade_time_update(channel,m_ft_input,m_ft_knob);
+	fade_time_update(channel,m_ft_knob,m_ft_input);
 	gain_update(channel,m_gain_slider,m_gain_input);
 	}
