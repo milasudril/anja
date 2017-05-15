@@ -19,17 +19,20 @@
             "config":{
                 "appcompile":{
                     "args":[
-                        "-g",
-                        "-fpic",
-						"-march=native",
-						"--fast-math",
+                        "-O3",
                         "{cxxversion}",
                         "-Wall",
+						"-fno-stack-protector",
+						"-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
+						"-fno-PIE",
+						"-march=native",
+						"--fast-math",
+						"-s",
                         "-o",
                         "{target}",
                         "{source}",
@@ -44,12 +47,12 @@
                 "cxxversion_min":201402,
                 "dllcompile":{
                     "args":[
-                        "-g",
+                        "-O3",
                         "-fpic",
-						"-march=native",
-						"--fast-math",
+						"-fno-stack-protector",
                         "{cxxversion}",
                         "-Wall",
+						"-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
@@ -86,10 +89,12 @@
                 "objcompile":{
                     "args":[
                         "-c",
-                        "-g",
+                        "-O3",
                         "-fpic",
 						"-march=native",
 						"--fast-math",
+						"-flto",
+						"-fno-stack-protector",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -202,6 +207,6 @@
     ],
     "targetinfo":{
         "project_root":"",
-        "target_directory":"__targets_dbg"
+        "target_directory":"__targets_rel"
     }
 }

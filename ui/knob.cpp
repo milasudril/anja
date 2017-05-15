@@ -2,6 +2,7 @@
 //@	 "targets":
 //@		[{
 //@		"name":"knob.o","type":"object","pkgconfig_libs":["gtk+-3.0"]
+//@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
 //@		,"dependencies":
 //@			[
 //@				 {"ref":"knob-ambient.png","rel":"generated"}
