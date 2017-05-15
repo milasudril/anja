@@ -500,6 +500,8 @@ static double nicenum(double x)
 
 void XYPlot::Impl::ticks_count()
 	{
+	if(!gtk_widget_get_realized(GTK_WIDGET(m_canvas)))
+		{return;}
 	auto domain=m_dom;
 	auto cr=gdk_cairo_create(gtk_widget_get_window(GTK_WIDGET(m_canvas)));
 	if(cr==NULL)
