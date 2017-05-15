@@ -1,5 +1,7 @@
 //@	{"targets":[{"name":"xyplot.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]}
 
+//TODO: implement arrow key navigation
+
 #include "xyplot.hpp"
 #include "container.hpp"
 #include "uiutility.hpp"
@@ -138,6 +140,7 @@ class XYPlot::Impl:public XYPlot
 		GdkCursor* m_cursors[CURSOR_INDEX_MAX];
 		int m_cursor_current;
 		int m_cursor_grabbed;
+		Point m_grab_pos;
 		bool m_grabbed;
 
 		void ticks_count();
@@ -283,7 +286,6 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 	m_dx=0.2;
 	m_N_ticks_y=10;
 	m_dy=0.2;
-//	m_dark=0;
 	m_grabbed=0;
 	m_cursor_grabbed=-1;
 	m_cursor_current=NORMAL;
@@ -353,7 +355,11 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 					}
 				break;
 			case PAN:
-			//TODO: Requires that cursor offset is saved in mouse_down
+				{
+				auto pos_grab=self->to_plot_coords(self->m_grab_pos,dom_window);
+			//TODO: Ajust domain such that pos_grab aligns with pos_cursor_plot
+				gtk_widget_queue_draw(widget);
+				}
 				break;
 			}
 		return TRUE;
@@ -414,7 +420,10 @@ gboolean XYPlot::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(event->button==1 && self->m_cursor_current!=NORMAL)
-		{self->m_grabbed=1;}
+		{
+		self->m_grabbed=1;
+		self->m_grab_pos=Point(event->x,event->y);
+		}
 
 	return TRUE;
 	}

@@ -1,21 +1,12 @@
 //@	 {"targets":[{"name":"keyboardlayout.o","type":"object"}]}
 
+//TODO: Rewrite
+
 #include "keyboardlayout.hpp"
 #include <cstring>
 #include <algorithm>
 
 using namespace Anja;
-
-static constexpr int8_t s_keyboard_layout[]=
-	{
-	 1,  0, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 87, 88,  0,  0, 70,119,  0,  0,  0,  0,  0,
-	 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-	41,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,  0,110,102,104,  0, 69, 98, 55, 74,
-	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,  0,111,107,109,  0, 71, 72, 73, 78,
-	58, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 43, 28,  0,  0,  0,  0,  0, 75, 76, 77, 78,
-	42, 86, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 54,  0,  0,103,  0,  0, 79, 80, 81, 96,
-	29,125, 56, 57, 57, 57, 57, 57, 57, 57,100,126,127, 97,  0,105,108,106,  0, 82, 82, 83, 96
-	};
 
 constexpr KeyboardLayout::KeyDescriptor
 KeyboardLayout::s_key_normal=KeyDescriptor

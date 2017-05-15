@@ -12,6 +12,9 @@
 //@		}]
 //@	}
 
+//TODO: Add mousewheel
+//TODO: Add arrow keys
+
 #include "knob.hpp"
 #include "container.hpp"
 #include "uiutility.hpp"
