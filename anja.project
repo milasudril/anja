@@ -133,6 +133,13 @@
       <File Name="ui/knob_sprites.m"/>
       <File Name="ui/knob_sprites.py"/>
       <File Name="ui/knob_sprites.blend"/>
+      <File Name="ui/message_info.py"/>
+      <File Name="ui/message_error.svg"/>
+      <File Name="ui/message_info.svg"/>
+      <File Name="ui/message_warning.svg"/>
+      <File Name="ui/inkscape.py"/>
+      <File Name="ui/message_error.py"/>
+      <File Name="ui/message_warning.py"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
