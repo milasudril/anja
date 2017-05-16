@@ -140,6 +140,8 @@
       <File Name="ui/inkscape.py"/>
       <File Name="ui/message_error.py"/>
       <File Name="ui/message_warning.py"/>
+      <File Name="ui/filler.hpp"/>
+      <File Name="ui/filler.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

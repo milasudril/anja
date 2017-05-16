@@ -4,7 +4,6 @@
 
 #include "imageview.hpp"
 #include "container.hpp"
-#include "../common/color.hpp"
 #include <gtk/gtk.h>
 #include <vector>
 #include <cstring>
@@ -97,12 +96,12 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 		auto w_in=static_cast<double>( cairo_image_surface_get_width(img) );
 		auto h_in=static_cast<double>( cairo_image_surface_get_height(img) );
-	
+
 		auto scale=[w_in,&w_out,h_in,&h_out]()
 			{
 			auto r_out=w_out/h_out;
 			auto r_in=w_in/h_in;
-			if(r_out>r_in) 
+			if(r_out>r_in)
 				{
 				w_out=h_out*r_in;
 				return w_out/w_in;
