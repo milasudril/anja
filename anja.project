@@ -142,6 +142,8 @@
       <File Name="ui/message_warning.py"/>
       <File Name="ui/filler.hpp"/>
       <File Name="ui/filler.cpp"/>
+      <File Name="ui/message.hpp"/>
+      <File Name="ui/message.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>

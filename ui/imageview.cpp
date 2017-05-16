@@ -32,6 +32,7 @@ class ImageView::Impl:public ImageView
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
+		int m_height_request;
 		cairo_surface_t* m_img;
 		GtkDrawingArea* m_handle;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
@@ -69,7 +70,8 @@ ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
-	gtk_widget_set_size_request(widget,32,32);
+	m_height_request=48;
+	gtk_widget_set_size_request(widget,-1,m_height_request);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
@@ -139,6 +141,12 @@ void ImageView::Impl::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_en
 	if(m_img!=nullptr)
 		{cairo_surface_destroy(m_img);}
 	m_img=temp;
+		{
+		auto w_in=static_cast<double>( cairo_image_surface_get_width(m_img) );
+		auto h_in=static_cast<double>( cairo_image_surface_get_height(m_img) );
+		auto w=m_height_request*w_in/h_in;
+		gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,m_height_request);
+		}
 	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 	}
 

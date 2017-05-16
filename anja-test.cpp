@@ -2,8 +2,7 @@
 
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
-#include "ui/mixerconsole.hpp"
-#include "sessiondata/session.hpp"
+#include "ui/message.hpp"
 
 #include <cstdio>
 #include <cstdint>
@@ -37,9 +36,7 @@ int main(int argc, char **argv)
 		ctx.dark(1);
 		SessionControl ctrl(ctx);
 		Anja::Window mainwin("Test");
-		Anja::Session session;
-		session.load("testbank/testbank.txt");
-		Anja::MixerConsole mixer(mainwin,session);
+		Anja::Message msg(mainwin,"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed arcu mi, scelerisque in sapien in, finibus viverra lorem. Fusce et efficitur augue.",Anja::Message::Type::ERROR);
 		mainwin.callback(ctrl,0);
 		mainwin.show();
 		ctx.run(ctrl);
