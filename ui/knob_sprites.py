@@ -39,6 +39,7 @@ try:
 	os.rename(target_dir+'/'+in_dir+'/knob_1.png',target_dir+'/'+in_dir+'/knob-ambient-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_2.png',target_dir+'/'+in_dir+'/knob-diffuse-in.png')
 	os.rename(target_dir+'/'+in_dir+'/knob_3.png',target_dir+'/'+in_dir+'/knob-mask-in.png')
+#TODO: Leave this to Maike
 	subprocess.run(['octave-cli',in_dir+'/knob_sprites.m',target_dir,in_dir],check=True);
 	sys.exit(0)
 except Exception:
