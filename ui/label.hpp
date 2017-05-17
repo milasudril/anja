@@ -29,7 +29,9 @@ namespace Anja
 
 			Label& content(const char* text);
 
-			const char* content()const noexcept;
+			const char* content() const noexcept;
+
+			Label& wrap(bool status);
 
 		protected:
 			class Impl;

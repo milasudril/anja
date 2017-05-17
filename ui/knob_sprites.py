@@ -2,16 +2,16 @@
 #@  "targets":
 #@      [
 #@           {
-#@			 "name":"knob-ambient.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob_ambient_in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
-#@			 "name":"knob-diffuse.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob_diffuse_in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
-#@			 "name":"knob-mask.png","dependencies":
-#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"knob_sprites.m","rel":"file"}]
+#@			 "name":"knob_mask_in.png","dependencies":
+#@				[{"ref":"knob_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@      ]
 #@  }
@@ -36,11 +36,10 @@ try:
 		progress=lines.decode('utf8').rstrip().split('|')
 		print('# Blender: %s'%(progress[-1].strip()))
 
-	os.rename(target_dir+'/'+in_dir+'/knob_1.png',target_dir+'/'+in_dir+'/knob-ambient-in.png')
-	os.rename(target_dir+'/'+in_dir+'/knob_2.png',target_dir+'/'+in_dir+'/knob-diffuse-in.png')
-	os.rename(target_dir+'/'+in_dir+'/knob_3.png',target_dir+'/'+in_dir+'/knob-mask-in.png')
-#TODO: Leave this to Maike
-	subprocess.run(['octave-cli',in_dir+'/knob_sprites.m',target_dir,in_dir],check=True);
+	os.rename(target_dir+'/'+in_dir+'/knob_1.png',target_dir+'/'+in_dir+'/knob_ambient_in.png')
+	os.rename(target_dir+'/'+in_dir+'/knob_2.png',target_dir+'/'+in_dir+'/knob_diffuse_in.png')
+	os.rename(target_dir+'/'+in_dir+'/knob_3.png',target_dir+'/'+in_dir+'/knob_mask_in.png')
+
 	sys.exit(0)
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))

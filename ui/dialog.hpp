@@ -6,6 +6,7 @@
 #include "window.hpp"
 #include "button.hpp"
 #include "box.hpp"
+#include "filler.hpp"
 #include "../common/addmemberif.hpp"
 #include <array>
 
@@ -61,9 +62,12 @@ namespace Anja
 
 			Dialog(Container& owner,const char* title):m_window(title,&owner)
 				,m_content(m_window,true)
-					,m_widget(m_content.insertMode(Box::InsertMode{0,Box::FILL|Box::EXPAND}))
-					,m_buttons_box(m_content.insertMode(Box::InsertMode{0,0}),false)
-						,m_buttons(buttons_create<button_count()>(m_buttons_box.homogenous(true).insertMode(Box::InsertMode{0,Box::EXPAND})))
+					,m_widget(m_content.insertMode({0,Box::FILL|Box::EXPAND}))
+						,m_buttons_outer(m_content.insertMode(Box::InsertMode{0,0}),false)
+							,m_filler_l(m_buttons_outer.insertMode({0,Box::FILL|Box::EXPAND}))
+							,m_buttons_box(m_buttons_outer.insertMode({0,0}),false)
+								,m_buttons(buttons_create<button_count()>(m_buttons_box.homogenous(true).insertMode(Box::InsertMode{2,Box::FILL|Box::EXPAND})))
+							,m_filler_r(m_buttons_outer.insertMode({0,Box::FILL|Box::EXPAND}))
 				{
 				m_window.modal(true).show();
 				if(has_dismiss())
@@ -266,8 +270,11 @@ Windows: Yes, No, Cancel
 			Window m_window;
 				Box m_content;
 					Widget m_widget;
-					Box m_buttons_box;
-						std::array<Button,button_count()> m_buttons;
+					Box m_buttons_outer;
+						Filler m_filler_l;
+						Box m_buttons_box;
+							std::array<Button,button_count()> m_buttons;
+						Filler m_filler_r;
 		};
 	}
 

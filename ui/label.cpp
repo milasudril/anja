@@ -18,6 +18,13 @@ class Label::Impl:private Label
 		void content(const char* text)
 			{gtk_label_set_text(m_handle,text);}
 
+		void wrap(bool status)
+			{
+			gtk_label_set_line_wrap(m_handle,status);
+			gtk_label_set_max_width_chars(m_handle,80);
+			gtk_widget_set_size_request(GTK_WIDGET(m_handle),1,1);
+			}
+
 	private:
 		GtkLabel* m_handle;
 	};
@@ -36,6 +43,13 @@ Label& Label::content(const char* x)
 	m_impl->content(x);
 	return *this;
 	}
+
+Label& Label::wrap(bool status)
+	{
+	m_impl->wrap(status);
+	return *this;
+	}
+
 
 Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 	{
