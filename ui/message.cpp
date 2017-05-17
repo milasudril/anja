@@ -1,5 +1,14 @@
 //@	{
-//@	 "targets":[{"name":"message.o","type":"object","cxxoptions":{"cflags_extra":["fno-lto"]}}]
+//@	 "targets":
+//@		[{
+//@		"name":"message.o","type":"object","cxxoptions":{"cflags_extra":["fno-lto"]}
+//@		,"dependencies":
+//@			[
+//@				 {"ref":"message_error.png","rel":"generated"}
+//@				,{"ref":"message_info.png","rel":"generated"}
+//@				,{"ref":"message_warning.png","rel":"generated"}
+//@			]
+//@		}]
 //@	}
 
 

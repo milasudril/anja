@@ -3,6 +3,12 @@
 //@		[{
 //@		"name":"knob.o","type":"object","pkgconfig_libs":["gtk+-3.0"]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
+//@		,"dependencies":
+//@			[
+//@				 {"ref":"knob_ambient.png","rel":"generated"}
+//@				,{"ref":"knob_diffuse.png","rel":"generated"}
+//@				,{"ref":"knob_mask.png","rel":"generated"}
+//@			]
 //@		}]
 //@	}
 
