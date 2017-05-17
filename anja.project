@@ -148,6 +148,7 @@
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
     <File Name="testbank/testbank.txt"/>
+    <File Name="maikeconfig-rel.json"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

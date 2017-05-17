@@ -7,7 +7,7 @@
 %@			 }
 %@           ,{
 %@			 "name":"knob_diffuse.png","dependencies":
-%@				[{"ref":"knob_ambient_in.png","rel":"generated"}]
+%@				[{"ref":"knob_diffuse_in.png","rel":"generated"}]
 %@			 }
 %@           ,{
 %@			 "name":"knob_mask.png","dependencies":

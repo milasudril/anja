@@ -157,6 +157,22 @@
             ],
             "name":"targetpython_default",
             "plugin":"targetpython"
+        }, 
+       {
+            "config":{
+                "command":{
+                    "args":[
+                        "{script}",
+                        "{args}"
+                    ],
+                    "name":"octave-cli"
+                }
+            },
+            "filename_exts":[
+                ".m"
+            ],
+            "name":"targetoctave_default",
+            "plugin":"targetoctave"
         },
         {
             "config":{
