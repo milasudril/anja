@@ -9,6 +9,7 @@
 #include "../common/pathutils.hpp"
 #include "../common/floatconv.hpp"
 #include "../common/colorstring.hpp"
+#include "../common/error.hpp"
 
 #include <cstring>
 
@@ -65,10 +66,10 @@ Session::Session(const char* filename):m_slot_active(0)
 	SessionFileRecordImpl record;
 
 	if(!reader.recordNextGet(record))
-		{throw "Invalid session file";}
+		{throw Error(filename," is not a valid session file.");}
 
 	if(record.sectionLevelGet()!=0)
-		{throw "Invalid session file";}
+		{throw Error(filename," is not a valid session file.");}
 
 //	Get data from file header
 		{
@@ -81,7 +82,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			LocaleGuard locale("C");
 			auto slot_num=atol(slot_num_str->begin());
 			if(slot_num<1 || slot_num>128)
-				{throw "Invalid slot number";}
+				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
 			slotActiveSet(slot_num-1);
 			}
 
@@ -123,7 +124,7 @@ Session::Session(const char* filename):m_slot_active(0)
 				slot_num=atol(title_ptr);
 				}
 			if(slot_num<1 || slot_num>128)
-				{throw "The slot number has to be between 1 and 128 inclusive";}
+				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
 			--slot_num;
 
 			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory)
@@ -139,7 +140,7 @@ Session::Session(const char* filename):m_slot_active(0)
 				ch=atol(title_ptr);
 				}
 			if(ch<1 || ch>16)
-				{throw "The channel number has to be between 1 and 16 inclusive";}
+				{throw Error(filename," contains invalid data. Channel numbers must be between 1 to 16 inclusive.");}
 			--ch;
 			ChannelView(m_channels[ch],m_channel_data[ch]).load(record);
 			}

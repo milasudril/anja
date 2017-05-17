@@ -3,6 +3,7 @@
 #include "sessionfilereader.hpp"
 #include "sessionfilerecord.hpp"
 #include "../common/string.hpp"
+#include "../common/error.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -54,11 +55,10 @@ SessionFileReader::Impl::Impl(const char* filename):
 	{
 	if(m_source.get()==NULL)
 		{
-	//	TODO throw something better than "const char*"
-		throw "Could not open session file.";
+		throw Error("It was not possible to open the file ",filename,". ",SysError(errno));
 		}
 	if(!tokenGet(m_tok))
-		{throw "Invalid session file.";}
+		{throw Error(filename," is not a valid session file.");}
 	}
 
 SessionFileReader::Impl::~Impl()
@@ -161,7 +161,7 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 
 			case State::SECTION_TITLE_BEFORE:
 				if(ch_in>='\0' && ch_in<=' ')
-					{throw "Whitespace not allowed before section title";}
+					{throw Error("Parse error: Whitespace not allowed before section title.");}
 
 				if(ch_in!=ch_trigg)
 					{
@@ -201,7 +201,7 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 					}
 
 				if(!(ch_in==ch_trigg || ch_in=='\n'))
-					{throw "Invalid character after section title";}
+					{throw Error("Parse error: Invalid character after section title.");}
 				break;
 
 			case State::KEY:
@@ -247,9 +247,7 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 				if(ch_in=='\n')
 					{
 					if(state_prev!=State::VALUE)
-						{
-						throw "Section title or key cannot end with newline";
-						}
+						{throw Error("Parse error: Section title or key cannot end with newline.");}
 
 					tok.buffer.append('\0');
 					tok.type=TokenType::VALUE;
@@ -273,7 +271,7 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 		}
 
 	if(state_current!=State::INIT)
-		{throw "Incomplete record";}
+		{throw Error("Parse error: Incomplete record.");}
 
 	return 0;
 	}

@@ -3,6 +3,7 @@
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecord.hpp"
 #include "../common/string.hpp"
+#include "../common/error.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <cassert>
@@ -32,10 +33,7 @@ SessionFileWriter::Impl::Impl(const char* filename):
 	m_sink{fopen(filename,"wb"),fclose}
 	{
 	if(m_sink.get()==NULL)
-		{
-	//	TODO throw something better than "const char*"
-		throw "Could not open target session file.";
-		}
+		{throw Error("It was not possible to open the file ",filename,". ",SysError(errno));}
 	}
 
 SessionFileWriter::Impl::~Impl()
@@ -58,7 +56,7 @@ void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 			marker='-';
 			break;
 		default:
-			throw "Invalid section level";
+			throw Error("Internal error: Invalid section level.");
 		}
 
 	fprintf(m_sink.get(),"%c%s%c\n",marker,record.titleGet().begin(),marker);

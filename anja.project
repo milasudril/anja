@@ -70,6 +70,7 @@
       <File Name="common/vectortype.hpp"/>
       <File Name="common/arrayinit.hpp"/>
       <File Name="common/vec2.hpp"/>
+      <File Name="common/error.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

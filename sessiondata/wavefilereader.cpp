@@ -5,6 +5,7 @@
 #include "wavefileinfo.hpp"
 #include "../common/arraysimple.hpp"
 #include "../common/pathutils.hpp"
+#include "../common/error.hpp"
 
 #include <sndfile.h>
 #include <cstring>
@@ -41,7 +42,7 @@ WavefileReader::Impl::Impl(const char* path,WavefileInfo& info)
 	memset(&m_info,0,sizeof(m_info));
 	m_handle=sf_open(path,SFM_READ,&m_info);
 	if(m_handle==NULL)
-		{throw "Could not open file";}
+		{throw Error("It was not poossible to load audio data from ",path,". ",sf_strerror(NULL));}
 	info.fs=m_info.samplerate;
 	info.n_frames=m_info.frames;
 	info.n_channels=m_info.channels;

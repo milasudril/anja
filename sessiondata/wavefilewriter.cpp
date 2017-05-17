@@ -3,6 +3,7 @@
 #include "wavefilewriter.hpp"
 #include "wavefileinfo.hpp"
 #include "../common/arraysimple.hpp"
+#include "../common/error.hpp"
 #include <sndfile.h>
 #include <cstring>
 
@@ -37,7 +38,7 @@ WavefileWriter::Impl::Impl(const char* path,const WavefileInfo& info)
 	m_info.format=SF_FORMAT_WAVEX | SF_FORMAT_FLOAT;
 	m_handle=sf_open(path,SFM_WRITE,&m_info);
 	if(m_handle==NULL)
-		{throw "Could not open file";}
+		{throw Error("It was not poossible to write audio data to ",path,". ",sf_strerror(NULL));}
 	}
 
 WavefileWriter::Impl::~Impl()
