@@ -17,6 +17,7 @@
 #include "xyplot.hpp"
 #include "dialog.hpp"
 #include "colorpicker.hpp"
+#include "message.hpp"
 #include "../sessiondata/waveformview.hpp"
 #include "../common/arraysimple.hpp"
 
@@ -51,8 +52,6 @@ namespace Anja
 			enum class PlotId:int
 				{WAVEFORM};
 
-			enum class PopupId:int
-				{COLOR_SELECT};
 
 			WaveformEditor& operator=(WaveformEditor&&)=delete;
 			WaveformEditor(WaveformEditor&&)=delete;
@@ -82,13 +81,16 @@ namespace Anja
 			void changed(Listbox& lb,ListboxId id);
 			void cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 			void cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask);
-			void dismiss(Dialog<ColorPicker>& dlg,PopupId id);
-			void confirmPositive(Dialog<ColorPicker>& dlg,PopupId id);
+
+			void dismiss(Dialog<ColorPicker>& dlg,int id);
+			void confirmPositive(Dialog<ColorPicker>& dlg,int id);
+			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
 		private:
 			WaveformView m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
+			std::unique_ptr<Dialog<Message,DialogOk>> m_err_dlg;
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
 			Box m_box;
