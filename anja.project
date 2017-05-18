@@ -148,6 +148,8 @@
       <File Name="ui/filler.cpp"/>
       <File Name="ui/message.hpp"/>
       <File Name="ui/message.cpp"/>
+      <File Name="ui/keyboardview.hpp"/>
+      <File Name="ui/keyboardview.cpp"/>
     </VirtualDirectory>
     <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
@@ -196,11 +198,29 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no" EnableCpp14="no">
+      <Completion EnableCpp11="yes" EnableCpp14="yes">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths/>
+        <SearchPaths>/usr/include/gtk-3.0
+I/usr/include/at-spi2-atk/2.0
+/usr/include/at-spi-2.0
+/usr/include/dbus-1.0
+/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+/usr/include/gio-unix-2.0/
+/usr/include/mirclient
+/usr/include/mircommon
+/usr/include/mircookie
+/usr/include/cairo
+/usr/include/pango-1.0
+/usr/include/harfbuzz
+/usr/include/atk-1.0
+/usr/include/pixman-1
+/usr/include/freetype2
+/usr/include/libpng12
+/usr/include/gdk-pixbuf-2.0
+/usr/include/glib-2.0
+/usr/lib/x86_64-linux-gnu/glib-2.0/include</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -236,11 +256,29 @@
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no" EnableCpp14="no">
+      <Completion EnableCpp11="yes" EnableCpp14="yes">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
-        <SearchPaths/>
+        <SearchPaths>/usr/include/gtk-3.0
+I/usr/include/at-spi2-atk/2.0
+/usr/include/at-spi-2.0
+/usr/include/dbus-1.0
+/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+/usr/include/gio-unix-2.0/
+/usr/include/mirclient
+/usr/include/mircommon
+/usr/include/mircookie
+/usr/include/cairo
+/usr/include/pango-1.0
+/usr/include/harfbuzz
+/usr/include/atk-1.0
+/usr/include/pixman-1
+/usr/include/freetype2
+/usr/include/libpng12
+/usr/include/gdk-pixbuf-2.0
+/usr/include/glib-2.0
+/usr/lib/x86_64-linux-gnu/glib-2.0/include</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>
