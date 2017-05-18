@@ -6,6 +6,8 @@
 #ifndef ANJA_FLOATCONV_HPP
 #define ANJA_FLOATCONV_HPP
 
+#include "error.hpp"
+
 namespace Anja
 	{
 	bool convert(const char* string,double& result);
@@ -22,7 +24,7 @@ namespace Anja
 		{
 		double ret;
 		if(!convert(string,ret))
-			{throw "Invalid number format";}
+			{throw Error(string," is not a valid number.");}
 		return ret;
 		}
 	}

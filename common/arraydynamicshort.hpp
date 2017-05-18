@@ -6,6 +6,7 @@
 #include "vectortype.hpp"
 #include "arrayinit.hpp"
 #include "memoryalloc.hpp"
+#include "error.hpp"
 
 #include <limits>
 #include <cstdint>
@@ -269,7 +270,7 @@ namespace Anja
 		auto N_2=nextpow2(N);
 		if(N_2 > std::numeric_limits<uint32_t>::max())
 			{
-			throw "Data does not fit in the array";
+			throw Error("Data does not fit in the array.");
 			}
 
 		T* block_new=reinterpret_cast<T*>(memoryRealloc(begin(),N_2*sizeof(T)));

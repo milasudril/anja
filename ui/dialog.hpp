@@ -51,6 +51,7 @@ namespace Anja
 	inline std::array<Button,3> buttons_create<3>(Container& cnt)
 		{return std::array<Button,3>{Button(cnt,""),Button(cnt,""),Button(cnt,"")};}
 
+
 	template<class Widget,class DialogTraits=DialogOkCancel>
 	class Dialog
 		{
@@ -60,9 +61,10 @@ namespace Anja
 			Dialog& operator=(Dialog&&)=delete;
 			Dialog(Dialog&&)=delete;
 
-			Dialog(Container& owner,const char* title):m_window(title,&owner)
+			template<class ... WidgetParams>
+			Dialog(Container& owner,const char* title,WidgetParams... params):m_window(title,&owner)
 				,m_content(m_window,true)
-					,m_widget(m_content.insertMode({0,Box::FILL|Box::EXPAND}))
+					,m_widget(m_content.insertMode({0,Box::FILL|Box::EXPAND}),params...)
 						,m_buttons_outer(m_content.insertMode(Box::InsertMode{0,0}),false)
 							,m_filler_l(m_buttons_outer.insertMode({0,Box::FILL|Box::EXPAND}))
 							,m_buttons_box(m_buttons_outer.insertMode({0,0}),false)
@@ -116,7 +118,12 @@ namespace Anja
 				}
 
 			void closing(Window& win,int id)
-				{m_vtable.dismiss(r_cb_obj,*this,m_id);}
+				{
+				if(has_dismiss())
+					{m_vtable.dismiss(r_cb_obj,*this,m_id);}
+				else
+					{m_vtable.confirm_positive(r_cb_obj,*this,m_id);}
+				}
 
 		private:
 			static constexpr bool has_dismiss()

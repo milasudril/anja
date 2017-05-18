@@ -200,12 +200,20 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::FILENAME:
 			if(!m_waveform.fileLoaded(entry.content()))
 				{
-			//TODO: catch exceptions from fileLoad
-				m_waveform.fileLoad(entry.content());
-				m_waveform_db=filename_update(m_waveform,entry,m_plot);
-				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-				m_plot.showAll();
+				try
+					{
+					m_waveform.fileLoad(entry.content());
+					m_waveform_db=filename_update(m_waveform,entry,m_plot);
+					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					m_plot.showAll();
+					}
+				catch(const char* msg)
+					{
+					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+					m_err_dlg->callback(*this,0);
+					entry.content(m_waveform.filenameGet().begin());
+					}
 				}
 			break;
 
@@ -265,6 +273,11 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		}
 	}
 
+void WaveformEditor::confirmPositive(Dialog<Message,DialogOk>& dlg,int id)
+	{
+	m_err_dlg.reset();
+	}
+
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
@@ -296,28 +309,42 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				,[this](const char* path)
 					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
-			//	TODO: catch exceptions from fileLoad
-				m_waveform.fileLoad(temp.c_str());
-				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
-				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-				m_plot.showAll();
+				try
+					{
+					m_waveform.fileLoad(temp.c_str());
+					m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					m_plot.showAll();
+					}
+				catch(const char* msg)
+					{
+					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+					m_err_dlg->callback(*this,0);
+					}
 				}
 			}
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
-		//	TODO: catch exceptions from fileLoad
-			m_waveform.fileLoad(m_waveform.filenameGet().begin());
-			m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
-			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-			m_plot.showAll();
+			try
+				{
+				m_waveform.fileLoad(m_waveform.filenameGet().begin());
+				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
+				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				m_plot.showAll();
+				}
+			catch(const char* msg)
+				{
+				m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+				m_err_dlg->callback(*this,0);
+				}
 			break;
 
 		case ButtonId::COLOR_PICK:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
-			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
+			m_color_dlg->callback(*this,0).widget()
 				.color(m_waveform.keyColorGet())
 				.presets(r_color_presets_begin,r_color_presets_end);
 			break;
@@ -369,28 +396,18 @@ void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 		}
 	}
 
-void WaveformEditor::dismiss(Dialog<ColorPicker>& win,PopupId id)
+void WaveformEditor::dismiss(Dialog<ColorPicker>& win,int id)
 	{
-	switch(id)
-		{
-		case PopupId::COLOR_SELECT:
-			m_color_dlg.reset();
-			break;
-		}
+	m_color_dlg.reset();
 	}
 
-void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
+void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 	{
-	switch(id)
-		{
-		case PopupId::COLOR_SELECT:
-			m_color_input.content(ColorString(dlg.widget().color()).begin());
-			m_waveform.keyColorSet(dlg.widget().color());
-		//	TODO: Send key color change event
-		//	TODO: Send palette change event
-			m_color_dlg.reset();
-			break;
-		}
+	m_color_input.content(ColorString(dlg.widget().color()).begin());
+	m_waveform.keyColorSet(dlg.widget().color());
+//	TODO: Send key color change event
+//	TODO: Send palette change event
+	m_color_dlg.reset();
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform

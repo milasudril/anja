@@ -29,7 +29,7 @@ namespace Anja
 	/**\brief Allocates N bytes from the heap.
 	 *
 	 * This function allocates N bytes from the heap. If the function fails
-	 * to allocate memory, an ErrorMessage is thrown.
+	 * to allocate memory, an Error is thrown.
 	 *
 	 * \note The pointer returned is properly aligned so vectorized instructions
 	 * can be used.
