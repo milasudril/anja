@@ -39,10 +39,10 @@ class KeyboardView::Impl:public KeyboardView
 			{return m_labels[scancode];}
 
 		void keyLabel(int scancode,const KeyLabel& lbl)
-			{
-			m_labels[scancode]=lbl;
-			gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
-			}
+			{m_labels[scancode]=lbl;}
+
+		void redraw()
+			{gtk_widget_queue_draw(GTK_WIDGET(m_canvas));}
 
 
 	private:
@@ -94,6 +94,12 @@ const KeyboardView::KeyLabel& KeyboardView::keyLabel(int scancode) const noexcep
 KeyboardView& KeyboardView::keyLabel(int scancode,const KeyLabel& label)
 	{
 	m_impl->keyLabel(scancode,label);
+	return *this;
+	}
+
+KeyboardView& KeyboardView::redraw()
+	{
+	m_impl->redraw();
 	return *this;
 	}
 

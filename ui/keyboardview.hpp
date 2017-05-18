@@ -51,6 +51,8 @@ namespace Anja
 
 			KeyboardView& keyLabel(int scancode,const KeyLabel& lbl);
 
+			KeyboardView& redraw();
+
 	private:
 		class Impl;
 		Impl* m_impl;
