@@ -71,6 +71,9 @@
       <File Name="common/arrayinit.hpp"/>
       <File Name="common/vec2.hpp"/>
       <File Name="common/error.hpp"/>
+      <File Name="common/syserror.hpp"/>
+      <File Name="common/error.cpp"/>
+      <File Name="common/syserror.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

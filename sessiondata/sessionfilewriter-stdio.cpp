@@ -4,6 +4,7 @@
 #include "sessionfilerecord.hpp"
 #include "../common/string.hpp"
 #include "../common/error.hpp"
+#include "../common/syserror.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <cassert>

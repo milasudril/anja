@@ -208,9 +208,10 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
-				catch(const char* msg)
+				catch(const Error& err)
 					{
-					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+						,err.message(),Message::Type::ERROR));
 					m_err_dlg->callback(*this,0);
 					entry.content(m_waveform.filenameGet().begin());
 					}
@@ -317,9 +318,10 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
-				catch(const char* msg)
+				catch(const Error& err)
 					{
-					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+						,err.message(),Message::Type::ERROR));
 					m_err_dlg->callback(*this,0);
 					}
 				}
@@ -335,9 +337,10 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 				m_plot.showAll();
 				}
-			catch(const char* msg)
+			catch(const Error& err)
 				{
-				m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja",msg,Message::Type::ERROR));
+				m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+					,err.message(),Message::Type::ERROR));
 				m_err_dlg->callback(*this,0);
 				}
 			break;

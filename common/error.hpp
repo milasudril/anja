@@ -1,4 +1,7 @@
-//@	{"targets":[{"name":"error.hpp","type":"include"}]}
+//@	{
+//@	"targets":[{"name":"error.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"error.o","rel":"implementation"}]
+//@	}
 
 #ifndef ANJA_ERROR_HPP
 #define ANJA_ERROR_HPP
@@ -14,8 +17,11 @@ namespace Anja
 		{
 		public:
 			template<class ... T>
-			Error(T ... args) noexcept
+			explicit Error(T ... args) noexcept
 				{message_build(m_buffer.begin(),args...);}
+
+			const char* message() const noexcept
+				{return m_buffer.begin();}
 
 		private:
 			ArrayFixed<char,4096> m_buffer;
@@ -23,16 +29,16 @@ namespace Anja
 			template<class Head,class ... T>
 			char* message_build(char* pos,const Head& obj,T ... args)
 				{
-				pos=append<Head>(obj,pos,m_buffer.end());
+				pos=append<Head>(obj,pos,m_buffer.end()-1);
 				return message_build(pos,args...);
 				}
 
 			char* message_build(char* pos)
-				{return pos;}
+				{
+				*pos=0;
+				return pos+1;
+				}
 		};
-
-	template<>
-	char* append<const char*>(const char* src,char* ptr,char* ptr_max);
 	}
 
 #endif

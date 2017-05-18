@@ -89,7 +89,7 @@ void WaveformView::fileLoad(const char* filename)
 	else
 		{
 		auto fullpath=String(r_dir_current);
-		fullpath.append('/').append(filename);
+		fullpath.append(filename);
 		r_waveform.fileLoad(fullpath.begin());
 		r_waveform_data.filenameSet(String(filename));
 		}

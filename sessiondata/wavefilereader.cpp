@@ -42,7 +42,7 @@ WavefileReader::Impl::Impl(const char* path,WavefileInfo& info)
 	memset(&m_info,0,sizeof(m_info));
 	m_handle=sf_open(path,SFM_READ,&m_info);
 	if(m_handle==NULL)
-		{throw Error("It was not poossible to load audio data from ",path,". ",sf_strerror(NULL));}
+		{throw Error("It was not possible to load any audio data from ",path,". ",sf_strerror(NULL));}
 	info.fs=m_info.samplerate;
 	info.n_frames=m_info.frames;
 	info.n_channels=m_info.channels;

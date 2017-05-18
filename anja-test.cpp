@@ -3,6 +3,7 @@
 #include "ui/window.hpp"
 #include "ui/uicontext.hpp"
 #include "ui/message.hpp"
+#include "common/error.hpp"
 
 #include <cstdio>
 #include <cstdint>
@@ -41,9 +42,9 @@ int main(int argc, char **argv)
 		mainwin.show();
 		ctx.run(ctrl);
 		}
-	catch(const char* err)
+	catch(const Anja::Error& e)
 		{
-		fprintf(stderr,"Error: %s\n",err);
+		fprintf(stderr,"Error: %s\n",e.message());
 		return -1;
 		}
 	return 0;

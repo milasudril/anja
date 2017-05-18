@@ -47,9 +47,9 @@ int main(int argc, char **argv)
 		mainwin.show();
 		ctx.run(ctrl);
 		}
-	catch(const char* err)
+	catch(const Anja::Error& err)
 		{
-		fprintf(stderr,"Error: %s\n",err);
+		fprintf(stderr,"Error: %s\n",err.message());
 		return -1;
 		}
 	return 0;
