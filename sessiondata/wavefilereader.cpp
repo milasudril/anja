@@ -79,6 +79,7 @@ bool WavefileReader::check(const char* path,WavefileInfo& info)
 bool WavefileReader::Impl::check(const char* path,WavefileInfo& info)
 	{
 	SF_INFO sfinfo;
+	memset(&sfinfo,0,sizeof(sfinfo));
 	auto handle=sf_open(path,SFM_READ,&sfinfo);
 	if(handle==NULL)
 		{return 0;}
