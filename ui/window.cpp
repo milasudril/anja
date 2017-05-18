@@ -24,7 +24,13 @@ class Window::Impl:private Window
 			}
 
 		void _add(GtkWidget* handle)
-			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
+			{
+			gtk_widget_set_margin_start(handle,4);
+			gtk_widget_set_margin_end(handle,4);
+			gtk_widget_set_margin_top(handle,4);
+			gtk_widget_set_margin_bottom(handle,4);
+			gtk_container_add(GTK_CONTAINER(m_handle),handle);
+			}
 
 		void _show()
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
