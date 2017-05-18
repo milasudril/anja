@@ -134,13 +134,13 @@ class XYPlot::Impl:public XYPlot
 		double m_dy;
 
 		GtkDrawingArea* m_canvas;
-	//	bool m_dark;
 
 		enum{NORMAL,PAN,CURSOR_X_MOVE,CURSOR_Y_MOVE,CURSOR_INDEX_MAX};
 		GdkCursor* m_cursors[CURSOR_INDEX_MAX];
 		int m_cursor_current;
 		int m_cursor_grabbed;
 		Point m_grab_pos;
+		Domain m_grab_dom;
 		bool m_grabbed;
 
 		void ticks_count();
@@ -265,7 +265,7 @@ XYPlot::Impl::Impl(Container& cnt):XYPlot(*this),m_id(0),r_cb_obj(nullptr)
 
 	auto display=gdk_display_get_default();
 	m_cursors[NORMAL]=gdk_cursor_new_from_name(display,"default");
-	m_cursors[PAN]=gdk_cursor_new_from_name(display,"default"); //Move when implemented
+	m_cursors[PAN]=gdk_cursor_new_from_name(display,"move");
 	m_cursors[CURSOR_X_MOVE]=gdk_cursor_new_from_name(display,"col-resize");
 	m_cursors[CURSOR_Y_MOVE]=gdk_cursor_new_from_name(display,"row-resize");
 
@@ -357,7 +357,10 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 			case PAN:
 				{
 				auto pos_grab=self->to_plot_coords(self->m_grab_pos,dom_window);
-			//TODO: Ajust domain such that pos_grab aligns with pos_cursor_plot
+				auto offset=pos_grab - pos_cursor_plot;
+				auto dom=self->m_grab_dom;
+				auto dom_new=Domain{dom.min + offset,dom.max + offset};
+				self->m_dom=dom_new;
 				gtk_widget_queue_draw(widget);
 				}
 				break;
@@ -423,6 +426,7 @@ gboolean XYPlot::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 		{
 		self->m_grabbed=1;
 		self->m_grab_pos=Point(event->x,event->y);
+		self->m_grab_dom=self->m_dom;
 		}
 
 	return TRUE;
