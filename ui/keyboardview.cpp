@@ -356,7 +356,6 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	draw_keys(s_typing_area,s_typing_area_x_pos,cr,Vec2{0,1.5},key_width,&cairo_stroke);
 	draw_keys(s_function_keys,s_function_keys_x_pos,cr,Vec2{1.5,0},key_width,&cairo_stroke);
 
-
 	return FALSE;
 	}
 
