@@ -255,7 +255,7 @@ constexpr KeyPolygon s_key_skip
 	{
 	};
 
-constexpr ArrayFixed<KeyPolygon,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area_default
+constexpr ArrayFixed<KeyPolygon,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area
 	{
 	 s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
 	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
@@ -278,6 +278,14 @@ constexpr ArrayFixed<KeyPolygon,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area
 	,s_key_skip,s_key_normal,s_key_normal,s_key_normal,s_key_ctrl_r
 	};
 
+static constexpr auto FUNCTION_KEYS_COLS=12;
+
+constexpr ArrayFixed<KeyPolygon,FUNCTION_KEYS_COLS> s_function_keys
+	{
+	 s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	};
 
 static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	,double w,Vec2 O)
@@ -291,18 +299,19 @@ static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	cairo_close_path(cr);
 	}
 
-template<class DrawFunction>
-void draw_typing_area(cairo_t* cr,double key_width,DrawFunction&& fn)
+template<class KeyArray,class DrawFunction>
+void draw_keys(const KeyArray& keys,cairo_t* cr,Vec2 O,double key_width
+	,DrawFunction&& fn)
 	{
 	auto x=0.0;
 	auto k=0;
-	std::for_each(s_typing_area_default.begin(),s_typing_area_default.end()
-		,[key_width,cr,&x,&k,fn](const KeyPolygon& p)
+	std::for_each(keys.begin(),keys.end()
+		,[key_width,O,cr,&x,&k,fn](const KeyPolygon& p)
 			{
 			if(p.size()!=0)
 				{
 				key_make_path(p,cr,ColorRGBA{0.5,0.5,0.5,1.0},key_width
-					,Vec2{x/16.0,static_cast<double>( k/TYPING_AREA_COLS )} ); //TODO Add 1.5 to y to make room for function keys
+					,O + Vec2{x/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 				x+=std::max_element(p.begin(),p.end(),[](KeyPolygonVertex a,KeyPolygonVertex b)
 					{return a.x < b.x;})->x;
 				fn(cr);
@@ -318,12 +327,12 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	auto self=reinterpret_cast<Impl*>(obj);
 	auto width=gtk_widget_get_allocated_width(object);
 	auto height=gtk_widget_get_allocated_height(object);
-	auto n_rows=static_cast<double>(TYPING_AREA_ROWS);
+	auto n_rows=static_cast<double>(TYPING_AREA_ROWS) + 1.5;
 	auto key_width=static_cast<double>(height)/n_rows;
 
 	cairo_set_line_width(cr,4);
-	draw_typing_area(cr,key_width,&cairo_stroke);
-
+	draw_keys(s_typing_area,cr,Vec2{0,1.5},key_width,&cairo_stroke);
+	draw_keys(s_function_keys,cr,Vec2{1.5,0},key_width,&cairo_stroke);
 	
 
 	return FALSE;
