@@ -154,13 +154,13 @@ namespace
 				m_data({1,sizeof...(verts)+1},verts...)
 				{}
 
-			const KeyPolygonVertex* begin() const noexcept
+			constexpr const KeyPolygonVertex* begin() const noexcept
 				{return m_data.begin() + (m_data.begin()->x);}
 
-			const KeyPolygonVertex* end() const noexcept
+			constexpr const KeyPolygonVertex* end() const noexcept
 				{return m_data.begin() + (m_data.begin()->y);}
 
-			size_t size() const noexcept
+			constexpr size_t size() const noexcept
 				{return end() - begin();}
 
 
@@ -278,6 +278,34 @@ constexpr ArrayFixed<KeyPolygon,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area
 	,s_key_skip,s_key_normal,s_key_normal,s_key_normal,s_key_ctrl_r
 	};
 
+static constexpr uint8_t x_max(const KeyPolygon& p)
+	{
+	if(p.size()==0)
+		{return 0;}
+	auto ptr=p.begin();
+	auto ptr_end=p.end();
+	auto ret=ptr->x;
+	++ptr;
+	while(ptr!=ptr_end)
+		{
+		ret=std::max(ptr->x,ret);
+		++ptr;
+		}
+	return ret;
+	}
+
+template<size_t N>
+static constexpr auto x_positions(const ArrayFixed<KeyPolygon,N>& keys,size_t n_cols)
+	{
+	ArrayFixed<uint8_t,N> ret;
+	ret[0]=0;
+	for(size_t k=1;k<N;++k)
+		{ret[k]=k%n_cols==0?0:ret[k-1]+x_max(keys[k-1]);}
+	return ret;
+	}
+
+static constexpr auto s_typing_area_x_pos=x_positions(s_typing_area,TYPING_AREA_COLS);
+
 static constexpr auto FUNCTION_KEYS_COLS=12;
 
 constexpr ArrayFixed<KeyPolygon,FUNCTION_KEYS_COLS> s_function_keys
@@ -286,6 +314,8 @@ constexpr ArrayFixed<KeyPolygon,FUNCTION_KEYS_COLS> s_function_keys
 	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
 	,s_key_normal,s_key_normal,s_key_normal,s_key_normal
 	};
+
+static constexpr auto s_function_keys_x_pos=x_positions(s_function_keys,FUNCTION_KEYS_COLS);
 
 static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	,double w,Vec2 O)
@@ -299,26 +329,18 @@ static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	cairo_close_path(cr);
 	}
 
-template<class KeyArray,class DrawFunction>
-void draw_keys(const KeyArray& keys,cairo_t* cr,Vec2 O,double key_width
-	,DrawFunction&& fn)
+template<class KeyArray,class PositionArray,class DrawFunction>
+void draw_keys(const KeyArray& keys,const PositionArray& pos,cairo_t* cr
+	,Vec2 O,double key_width,DrawFunction&& fn)
 	{
-	auto x=0.0;
 	auto k=0;
 	std::for_each(keys.begin(),keys.end()
-		,[key_width,O,cr,&x,&k,fn](const KeyPolygon& p)
+		,[key_width,O,cr,&pos,&k,fn](const KeyPolygon& p)
 			{
-			if(p.size()!=0)
-				{
-				key_make_path(p,cr,ColorRGBA{0.5,0.5,0.5,1.0},key_width
-					,O + Vec2{x/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
-				x+=std::max_element(p.begin(),p.end(),[](KeyPolygonVertex a,KeyPolygonVertex b)
-					{return a.x < b.x;})->x;
+			key_make_path(p,cr,ColorRGBA{0.5,0.5,0.5,1.0},key_width
+				,O + Vec2{pos[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 				fn(cr);
-				}
 			++k;
-			if(k%TYPING_AREA_COLS==0)
-				{x=0;}
 			});
 	}
 
@@ -331,9 +353,9 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	auto key_width=static_cast<double>(height)/n_rows;
 
 	cairo_set_line_width(cr,4);
-	draw_keys(s_typing_area,cr,Vec2{0,1.5},key_width,&cairo_stroke);
-	draw_keys(s_function_keys,cr,Vec2{1.5,0},key_width,&cairo_stroke);
-	
+	draw_keys(s_typing_area,s_typing_area_x_pos,cr,Vec2{0,1.5},key_width,&cairo_stroke);
+	draw_keys(s_function_keys,s_function_keys_x_pos,cr,Vec2{1.5,0},key_width,&cairo_stroke);
+
 
 	return FALSE;
 	}

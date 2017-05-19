@@ -14,7 +14,7 @@ namespace Anja
 			constexpr const T& operator[](size_t i) const
 				{return data[i];}
 
-			T& operator[](size_t i)
+			constexpr T& operator[](size_t i)
 				{return data[i];}
 
 			constexpr const T* begin() const
