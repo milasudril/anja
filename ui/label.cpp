@@ -22,7 +22,7 @@ class Label::Impl:private Label
 			{
 			gtk_label_set_line_wrap(m_handle,status);
 			gtk_label_set_max_width_chars(m_handle,80);
-			gtk_widget_set_size_request(GTK_WIDGET(m_handle),1,1);
+			gtk_widget_set_size_request(GTK_WIDGET(m_handle),256,1);
 			}
 
 	private:
