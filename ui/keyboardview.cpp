@@ -291,20 +291,13 @@ static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	cairo_close_path(cr);
 	}
 
-gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
+template<class DrawFunction>
+void draw_typing_area(cairo_t* cr,double key_width,DrawFunction&& fn)
 	{
-	auto self=reinterpret_cast<Impl*>(obj);
-	auto width=gtk_widget_get_allocated_width(object);
-	auto height=gtk_widget_get_allocated_height(object);
-	auto n_cols=static_cast<double>(TYPING_AREA_COLS);
-	auto n_rows=static_cast<double>(TYPING_AREA_ROWS);
-	auto key_width=static_cast<double>(height)/n_rows;
 	auto x=0.0;
 	auto k=0;
-
-	cairo_set_line_width(cr,4);
 	std::for_each(s_typing_area_default.begin(),s_typing_area_default.end()
-		,[key_width,cr,n_cols,&x,&k](const KeyPolygon& p)
+		,[key_width,cr,&x,&k,fn](const KeyPolygon& p)
 			{
 			if(p.size()!=0)
 				{
@@ -312,13 +305,26 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 					,Vec2{x/16.0,static_cast<double>( k/TYPING_AREA_COLS )} ); //TODO Add 1.5 to y to make room for function keys
 				x+=std::max_element(p.begin(),p.end(),[](KeyPolygonVertex a,KeyPolygonVertex b)
 					{return a.x < b.x;})->x;
-				cairo_stroke(cr);
+				fn(cr);
 				}
-				++k;
+			++k;
 			if(k%TYPING_AREA_COLS==0)
 				{x=0;}
 			});
+	}
 
+gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	auto width=gtk_widget_get_allocated_width(object);
+	auto height=gtk_widget_get_allocated_height(object);
+	auto n_rows=static_cast<double>(TYPING_AREA_ROWS);
+	auto key_width=static_cast<double>(height)/n_rows;
+
+	cairo_set_line_width(cr,4);
+	draw_typing_area(cr,key_width,&cairo_stroke);
+
+	
 
 	return FALSE;
 	}
