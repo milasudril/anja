@@ -5,6 +5,7 @@
 #include "keyboardview.hpp"
 #include "container.hpp"
 #include "../common/arrayfixed.hpp"
+#include "../common/vec2.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
@@ -105,6 +106,10 @@ KeyboardView& KeyboardView::redraw()
 
 
 
+
+static constexpr uint8_t TYPING_AREA_COLS=15;
+static constexpr uint8_t TYPING_AREA_ROWS=5;
+
 KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
 	{
 	auto widget=gtk_drawing_area_new();
@@ -112,7 +117,7 @@ KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
-	gtk_widget_set_size_request(widget,15*32,6*32);
+	gtk_widget_set_size_request(widget,TYPING_AREA_COLS*48,TYPING_AREA_ROWS*48);
 	g_object_ref_sink(m_canvas);
 	cnt.add(m_canvas);
 	}
@@ -123,9 +128,198 @@ KeyboardView::Impl::~Impl()
 	gtk_widget_destroy(GTK_WIDGET(m_canvas));
 	}
 
+namespace
+	{
+	struct KeyPolygonVertex
+		{
+		constexpr KeyPolygonVertex(uint8_t _x,uint8_t _y):
+			x(_x),y(_y)
+			{}
+
+		constexpr KeyPolygonVertex(uint8_t _x):x(_x),y(_x){}
+
+		constexpr KeyPolygonVertex():x(0),y(0){}
+		uint8_t x;
+		uint8_t y;
+
+		Vec2 normalize() const noexcept
+			{return Vec2{static_cast<double>(x)/16.0,static_cast<double>(y)/16.0};}
+		};
+
+	class KeyPolygon
+		{
+		public:
+			template<class ... T>
+			constexpr KeyPolygon(T ... verts) noexcept:
+				m_data({1,sizeof...(verts)+1},verts...)
+				{}
+
+			const KeyPolygonVertex* begin() const noexcept
+				{return m_data.begin() + (m_data.begin()->x);}
+
+			const KeyPolygonVertex* end() const noexcept
+				{return m_data.begin() + (m_data.begin()->y);}
+
+			size_t size() const noexcept
+				{return end() - begin();}
+
+
+		private:
+			ArrayFixed<KeyPolygonVertex,8> m_data;
+		};
+	}
+
+constexpr KeyPolygon s_key_normal
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{16,0}
+	,KeyPolygonVertex{16,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_backspace
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{29,0}
+	,KeyPolygonVertex{29,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_tab
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{22,0}
+	,KeyPolygonVertex{22,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_capslock
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{29,0}
+	,KeyPolygonVertex{29,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_return
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{23,0}
+	,KeyPolygonVertex{23,32}
+	,KeyPolygonVertex{23-16,32}
+	,KeyPolygonVertex{23-16,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_shift_l
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{19,0}
+	,KeyPolygonVertex{19,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_shift_r
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{42,0}
+	,KeyPolygonVertex{42,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_ctrl_l
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{26,0}
+	,KeyPolygonVertex{26,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_ctrl_r
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{22-3,0}
+	,KeyPolygonVertex{22-3,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_space
+	{
+	 KeyPolygonVertex{0,0}
+	,KeyPolygonVertex{7*16,0}
+	,KeyPolygonVertex{7*16,16}
+	,KeyPolygonVertex{0,16}
+	};
+
+constexpr KeyPolygon s_key_skip
+	{
+	};
+
+constexpr ArrayFixed<KeyPolygon,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area_default
+	{
+	 s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_backspace,s_key_skip
+
+	,s_key_tab,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_return,s_key_skip
+
+	,s_key_capslock,s_key_skip,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_skip
+
+	,s_key_shift_l,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_normal,s_key_normal,s_key_normal
+	,s_key_normal,s_key_normal,s_key_shift_r,s_key_skip,s_key_skip
+
+	,s_key_ctrl_l,s_key_normal,s_key_normal,s_key_space,s_key_skip
+	,s_key_skip,s_key_skip,s_key_skip,s_key_skip,s_key_skip
+	,s_key_skip,s_key_normal,s_key_normal,s_key_normal,s_key_ctrl_r
+	};
+
+
+static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
+	,double w,Vec2 O)
+	{
+	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	std::for_each(p.begin(),p.end(),[cr,color,O,w](KeyPolygonVertex v)
+		{
+		auto p=w*(O + v.normalize() );
+		cairo_line_to(cr,p.x(),p.y());
+		});
+	cairo_close_path(cr);
+	}
 
 gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	auto width=gtk_widget_get_allocated_width(object);
+	auto height=gtk_widget_get_allocated_height(object);
+	auto n_cols=static_cast<double>(TYPING_AREA_COLS);
+	auto n_rows=static_cast<double>(TYPING_AREA_ROWS);
+	auto key_width=static_cast<double>(height)/n_rows;
+	auto x=0.0;
+	auto k=0;
+
+	cairo_set_line_width(cr,4);
+	std::for_each(s_typing_area_default.begin(),s_typing_area_default.end()
+		,[key_width,cr,n_cols,&x,&k](const KeyPolygon& p)
+			{
+			if(p.size()!=0)
+				{
+				key_make_path(p,cr,ColorRGBA{0.5,0.5,0.5,1.0},key_width
+					,Vec2{x/16.0,static_cast<double>( k/TYPING_AREA_COLS )} ); //TODO Add 1.5 to y to make room for function keys
+				x+=std::max_element(p.begin(),p.end(),[](KeyPolygonVertex a,KeyPolygonVertex b)
+					{return a.x < b.x;})->x;
+				cairo_stroke(cr);
+				}
+				++k;
+			if(k%TYPING_AREA_COLS==0)
+				{x=0;}
+			});
+
+
 	return FALSE;
 	}
 
