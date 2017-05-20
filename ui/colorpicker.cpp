@@ -62,7 +62,8 @@ void ColorPicker::changed(Slider& slider,SliderId id)
 void ColorPicker::viewUpdate(const ColorRGBA& color)
 	{
 	m_result.color(color);
-	m_pal_view.color(m_pal_view.selection(),color);
+	if(m_pal_view.selection()!=-1)
+		{m_pal_view.color(m_pal_view.selection(),color);}
 	m_rgb.content(ColorString(color).begin());
 	ColorHSLA hsla(color);
 	hsla.saturation=0.0f;
