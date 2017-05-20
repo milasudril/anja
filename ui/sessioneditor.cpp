@@ -99,7 +99,11 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 			}
 		}
 
-
+		{
+		auto slot=session.slotActiveGet();
+		if(slot>=0 && slot<sizeof(s_slot_scancodes));
+			{m_keyboard.selection(s_slot_scancodes[slot]);}
+		}
 
 	m_waveform.colorPresets(session.colorPresetsGet())
 		.callback(*this,WaveformEditId::WAVEFORM_CURRENT);
