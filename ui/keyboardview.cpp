@@ -231,10 +231,10 @@ static constexpr auto s_typing_area_x_pos=x_positions(s_typing_area,TYPING_AREA_
 
 constexpr ArrayFixed<const char*,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area_labels_swe
 	{
-	 "§","1","2","3","4","5","6","7","8","9","0","+","`","⟵"," "
-	,"⇋","Q","W","E","R","T","Y","U","I","O","P","Å","¨","↲"," "
-	,"Caps"," ","A","S","D","F","G","H","J","K","L","Ö","Ä","'"," "
-	,"⇑","<","Z","X","C","V","B","N","M",",",".","-","⇑"," "," "
+	 "§","1","2","3","4","5","6","7","8","9","0","+","`","⟵",""
+	,"⇋","Q","W","E","R","T","Y","U","I","O","P","Å","¨","↲","↲"
+	,"Caps","","A","S","D","F","G","H","J","K","L","Ö","Ä","'",""
+	,"⇑","<","Z","X","C","V","B","N","M",",",".","-","⇑","",""
 	,"Ctrl","❖","Alt","Space"," "," "," "," "," "," "," ","Alt Gr","❖","❏","Ctrl"
 	};
 
@@ -397,7 +397,8 @@ KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
 	m_selection=-1;
 	for(size_t k=0;k<s_typing_area_labels_swe.length();++k)
 		{
-		m_labels[ s_typing_area_scancodes[k] ]=s_typing_area_labels_swe[k];
+		if(*(s_typing_area_labels_swe[k])!='\0')
+			{m_labels[ s_typing_area_scancodes[k] ]=s_typing_area_labels_swe[k];}
 		}
 	for(size_t k=0;k<s_function_keys_labels.length();++k)
 		{
@@ -421,15 +422,18 @@ KeyboardView::Impl::~Impl()
 static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	,double w,Vec2 O)
 	{
-	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
-	auto pos=O + w*p.begin()->normalize();
-	cairo_move_to(cr,pos.x(),pos.y());
-	std::for_each(p.begin(),p.end(),[cr,color,O,w](KeyPolygonVertex v)
+	if(p.size()!=0)
 		{
-		auto pos=O + w*v.normalize();
-		cairo_line_to(cr,pos.x(),pos.y());
-		});
-	cairo_close_path(cr);
+		cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+		auto pos=O + w*p.begin()->normalize();
+		cairo_move_to(cr,pos.x(),pos.y());
+		std::for_each(p.begin(),p.end(),[cr,color,O,w](KeyPolygonVertex v)
+			{
+			auto pos=O + w*v.normalize();
+			cairo_line_to(cr,pos.x(),pos.y());
+			});
+		cairo_close_path(cr);
+		}
 	}
 
 template<class DrawFunction>
@@ -445,7 +449,7 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 			,O + key_width*Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 		fn(cr);
 
-		if(labels[key].length()!=0)
+		if(labels[key].length()!=0 && keys[k].size()!=0)
 			{
 			if(luma709(color)>0.5)
 				{cairo_set_source_rgba(cr,0,0,0,1);}
@@ -461,8 +465,6 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 					+ 0.5*extents.height
 				};
 			cairo_move_to(cr,text_pos.x(),text_pos.y());
-		/*	cairo_move_to(cr,(x + 0.5*x_max)*width-0.5*extents.width
-				,(y + row + 0.5)*width+0.5*extents.height);*/
 			cairo_show_text(cr,labels[key].c_str());
 			}
 		}
