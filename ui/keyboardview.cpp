@@ -261,7 +261,7 @@ static constexpr uint8_t scancode_function_keys(uint8_t scancode)
 	{
 	if(scancode>=59 && scancode<69)
 		{return scancode - 59;}
-	if(scancode>=87 && scancode<88)
+	if(scancode>=87 && scancode<89)
 		{return 10 + (scancode - 87);}
 	return 0xff;
 	}
@@ -509,16 +509,24 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	auto width=static_cast<double>( gtk_widget_get_allocated_width(object) );
-	auto height=static_cast<double>( gtk_widget_get_allocated_height(object) );
-	auto ratio_out=width/height;
+	Vec2 size_out
+		{
+		 static_cast<double>( gtk_widget_get_allocated_width(object) )
+		,static_cast<double>( gtk_widget_get_allocated_height(object) )
+		};
+	auto ratio_out=size_out.x()/size_out.y();
 
-	auto n_rows=static_cast<double>(TYPING_AREA_ROWS) + 1.5;
-	auto n_cols=static_cast<double>(TYPING_AREA_COLS);
-	auto ratio_in=n_cols/n_rows;
-	auto key_width=ratio_in>ratio_out? width/n_cols : height/n_rows;
+	Vec2 size_in
+		{
+		 static_cast<double>(TYPING_AREA_COLS)
+		,static_cast<double>(TYPING_AREA_ROWS) + 1.5
+		};
+	auto ratio_in=size_in.x()/size_in.y();
+	auto key_width=ratio_in>ratio_out?
+		size_out.x()/size_in.x() : size_out.y()/size_in.y();
+	auto keyboard_size=Vec2{key_width,key_width}.componentsMul(size_in);
 
-	auto O=0.5*Vec2{width - key_width*n_cols,height - key_width*n_rows};
+	auto O=0.5*(size_out - keyboard_size);
 
 	cairo_set_line_width(cr,key_width/16);
 	cairo_set_font_size(cr,std::min(key_width/4,12.0));
@@ -547,7 +555,6 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 		{
 		case KeyType::FUNCTION_KEY:
 			{
-			cairo_set_line_width(cr,2);
 			auto color=self->m_colors[self->m_selection];
 			color.red=1.0f-color.red;
 			color.green=1.0f-color.green;
@@ -560,7 +567,6 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			break;
 		case KeyType::TYPING_KEY:
 			{
-			cairo_set_line_width(cr,2);
 			auto color=self->m_colors[self->m_selection];
 			color.red=1.0f-color.red;
 			color.green=1.0f-color.green;
@@ -581,7 +587,70 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	return FALSE;
 	}
 
+static constexpr uint8_t s_typing_area_keymap[]=
+	{
+	 0,  0, 41,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 14,
+	 0, 15, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 28,
+	 0, 58, 58, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 43, 28,  0,
+	42, 42, 86, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 54, 54,  0,
+	29, 29,125, 56, 57, 57, 57, 57, 57, 57, 57,100,126,127, 97, 97,  0
+	};
+static constexpr uint8_t s_ncols_keymap=17;
+
+
+static uint8_t scancode_typing_area(Vec2 pos)
+	{
+	auto row=uint8_t(pos.y());
+	auto col=uint8_t(pos.x()-0.4f*row+2);
+	if(row>4 || col>s_ncols_keymap-1)
+		{return 0;}
+	return s_typing_area_keymap[col+row*s_ncols_keymap];
+	}
+
 gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* obj)
 	{
+	Vec2 pos{event->x,event->y};
+	auto self=reinterpret_cast<Impl*>(obj);
+	Vec2 size_out
+		{
+		 static_cast<double>( gtk_widget_get_allocated_width(object) )
+		,static_cast<double>( gtk_widget_get_allocated_height(object) )
+		};
+	auto ratio_out=size_out.x()/size_out.y();
+
+	Vec2 size_in
+		{
+		 static_cast<double>(TYPING_AREA_COLS)
+		,static_cast<double>(TYPING_AREA_ROWS) + 1.5
+		};
+	auto ratio_in=size_in.x()/size_in.y();
+	auto key_width=ratio_in>ratio_out?
+		size_out.x()/size_in.x() : size_out.y()/size_in.y();
+	auto keyboard_size=Vec2{key_width,key_width}.componentsMul(size_in);
+
+	auto O=0.5*(size_out - keyboard_size);
+
+	pos-=O;
+	pos/=key_width;
+
+	if(pos.y()>=0.0 && pos.y()<1.0 && pos.x()>=1.5 && pos.x()<1.5 + FUNCTION_KEYS_COLS)
+		{
+		auto scancode=s_function_keys_scancodes[static_cast<int>( pos.x() - 1.5)];
+		printf("Scancode: %d\n",scancode);
+		self->selection(scancode);
+		//TODO emit click event
+		return FALSE;
+		}
+
+	if(pos.y()>=1.5 && pos.y()<size_in.y() && pos.x()>=0.0 && pos.x()<size_in.x())
+		{
+		auto scancode=scancode_typing_area(pos - Vec2{0.0,1.5});
+		printf("Scancode: %d\n",scancode);
+		self->selection(scancode);
+		//TODO emeit click events
+		return FALSE;
+		}
+
+
 	return TRUE;
 	}

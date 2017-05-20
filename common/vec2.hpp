@@ -71,6 +71,12 @@ namespace Anja
 				return *this;
 				}
 
+			Vec2& operator/=(double c) noexcept
+				{
+				m_data/=c;
+				return *this;
+				}
+
 
 		private:
 			vec2_t<double> m_data;
@@ -99,6 +105,9 @@ namespace Anja
 
 	inline Vec2 operator*(double x,Vec2 a)
 		{return a*=x;}
+
+	inline Vec2 operator/(Vec2 a,double x)
+		{return a/=x;}
 	}
 
 #endif
