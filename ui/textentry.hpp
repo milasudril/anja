@@ -26,7 +26,7 @@ namespace Anja
 
 			TextEntry(TextEntry&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
-			
+
 			template<class EntryCallback,class IdType>
 			TextEntry& callback(EntryCallback& cb,IdType id)
 				{
@@ -36,7 +36,7 @@ namespace Anja
 					auto id=static_cast<IdType>(self.id());
 					x->changed(self,id);
 					};
-				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id));
 				}
 
 			const char* content() const noexcept;
@@ -50,6 +50,8 @@ namespace Anja
 			TextEntry& alignment(float x) noexcept;
 
 			int id() const noexcept;
+
+			TextEntry& focus();
 
 		protected:
 			typedef void (*Callback)(void* cb_obj,TextEntry& self);

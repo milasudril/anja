@@ -40,6 +40,9 @@ class TextEntry::Impl:private TextEntry
 		int id() const noexcept
 			{return m_id;}
 
+		void focus()
+			{gtk_widget_grab_focus(GTK_WIDGET(m_handle));}
+
 	private:
 		int m_id;
 		Callback r_cb;
@@ -90,6 +93,12 @@ TextEntry& TextEntry::alignment(float x) noexcept
 
 int TextEntry::id() const noexcept
 	{return m_impl->id();}
+
+TextEntry& TextEntry::focus()
+	{
+	m_impl->focus();
+	return *this;
+	}
 
 
 

@@ -413,7 +413,7 @@ const char* KeyboardView::keyLabel(int scancode) const noexcept
 
 
 
-KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
+KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this),r_cb_obj(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
@@ -638,7 +638,8 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 		auto scancode=s_function_keys_scancodes[static_cast<int>( pos.x() - 1.5)];
 		printf("Scancode: %d\n",scancode);
 		self->selection(scancode);
-		//TODO emit click event
+		if(self->r_cb_obj!=nullptr)
+			{self->m_cb(self->r_cb_obj,*self);}
 		return FALSE;
 		}
 
@@ -647,7 +648,8 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 		auto scancode=scancode_typing_area(pos - Vec2{0.0,1.5});
 		printf("Scancode: %d\n",scancode);
 		self->selection(scancode);
-		//TODO emeit click events
+		if(self->r_cb_obj!=nullptr)
+			{self->m_cb(self->r_cb_obj,*self);}
 		return FALSE;
 		}
 

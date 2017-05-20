@@ -59,6 +59,12 @@ namespace Anja
 			void confirmPositive(Dialog<ColorPicker>& dlg,PopupId id);
 			void changed(Knob& knob,KnobId id);
 
+			ChannelStrip& focus()
+				{
+				m_name.focus();
+				return *this;
+				}
+
 
 		private:
 			struct Vtable

@@ -66,6 +66,12 @@ namespace Anja
 			float masterGain() const noexcept
 				{return m_master_gain;}
 
+			MixerConsole& focus(int index)
+				{
+				m_strips[index].focus();
+				return *this;
+				}
+
 		private:
 			int m_id;
 			void* r_cb_obj;

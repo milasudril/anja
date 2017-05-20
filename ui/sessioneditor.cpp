@@ -16,7 +16,7 @@ static constexpr uint8_t scancode_channels(uint8_t scancode)
 	{
 	if(scancode>=59 && scancode<69)
 		{return scancode - 59;}
-	if(scancode>=87 && scancode<88)
+	if(scancode>=87 && scancode<89)
 		{return 10 + (scancode - 87);}
 	return 0xff;
 	}
@@ -80,6 +80,18 @@ void SessionEditor::masterGainChanged(MixerConsole& mixer,MixerId id)
 	r_session.gainSet(mixer.masterGain());
 	}
 
+void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
+	{
+	auto scancode=keyboard.selection();
+	auto index=scancode_channels(scancode);
+	if(index!=0xff)
+		{
+		m_mixer.focus(index);
+		m_tabs.activate(1);
+		}
+	}
+
+
 SessionEditor::SessionEditor(Container& cnt,Session& session)
 	:r_session(session)
 	,m_hsplit(cnt,true)
@@ -119,6 +131,7 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 			{m_keyboard.selection(s_slot_scancodes[slot]);}
 		}
 
+	m_keyboard.callback(*this,KeyboardViewId::KEYBOARD_MAIN);
 	m_waveform.colorPresets(session.colorPresetsGet())
 		.callback(*this,WaveformEditId::WAVEFORM_CURRENT);
 	m_mixer.colorPresets(session.colorPresetsGet());
