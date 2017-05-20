@@ -28,6 +28,11 @@ namespace Anja
 			void colorPresetsChanged(ColorPicker& picker);
 
 			enum class MixerId:int{CHANNEL_MIXER};
+			enum class WaveformEditId:int{WAVEFORM_CURRENT};
+
+
+			void waveformDescriptionChanged(WaveformEditor& wf,WaveformEditId id);
+			void waveformColorChanged(WaveformEditor& wf,WaveformEditId id);
 
 			void masterGainChanged(MixerConsole& mixer,MixerId id);
 

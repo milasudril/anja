@@ -220,7 +220,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 
 		case TextEntryId::DESCRIPTION:
 			m_waveform.descriptionSet(String(entry.content()));
-		//	TODO: Pass message so the keyboard can be updated
+			if(r_cb_obj!=nullptr)
+				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
 			description_update(m_waveform,entry);
 			break;
 
@@ -230,7 +231,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			if(colorFromString(entry.content(),c))
 				{
 				m_waveform.keyColorSet(c);
-			//	TODO: Pass message so the keyboard can be updated
+				if(r_cb_obj!=nullptr)
+					{m_vtable.color_changed(r_cb_obj,*this,m_id);}
 				}
 			color_update(m_waveform,entry);
 			}
@@ -415,13 +417,14 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const String* channel_names_begin,const String* channel_names_end):
-	 m_waveform(waveform)
+	 r_cb_obj(nullptr)
+	,m_waveform(waveform)
 	,m_waveform_db(2)
 	,m_box(cnt,true)
 		,m_filename(m_box.insertMode({1,0}),false)
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
 			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
-			,m_filename_browse(m_filename.insertMode({0,0}),"Browse")
+			,m_filename_browse(m_filename.insertMode({0,0}),"Browse...")
 			,m_filename_reload(m_filename,"↺")
 		,m_description(m_box,false)
 			,m_description_label(m_description.insertMode({2,0}),"Description:")

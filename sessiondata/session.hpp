@@ -88,6 +88,11 @@ namespace Anja
 			void slotActiveSet(uint8_t slot)
 				{m_slot_active=slot;}
 
+			int slotsCountGet() const noexcept
+				{return Wavetable::length();}
+
+
+
 			void channelsClear();
 
 			void clear();

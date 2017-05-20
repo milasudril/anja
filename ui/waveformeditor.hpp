@@ -74,6 +74,15 @@ namespace Anja
 
 			WaveformEditor& channelName(int index,const char* name);
 
+			template<class Callback,class IdType>
+			WaveformEditor& callback(Callback& cb,IdType id) noexcept
+				{
+				m_id=static_cast<int>(id);
+				r_cb_obj=&cb;
+				m_vtable=Vtable(cb,id);
+				return *this;
+				}
+
 			void clicked(Button& src,ButtonId id);
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
@@ -87,6 +96,31 @@ namespace Anja
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
 		private:
+			struct Vtable
+				{
+				Vtable():description_changed(nullptr),color_changed(nullptr),color_presets_changed(nullptr)
+					{}
+
+				template<class Callback,class IdType>
+				Vtable(Callback& cb_obj,IdType id)
+					{
+					description_changed=[](void* cb_obj,WaveformEditor& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->waveformDescriptionChanged(self,static_cast<IdType>(id));};
+					color_changed=[](void* cb_obj,WaveformEditor& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->waveformColorChanged(self,static_cast<IdType>(id));};
+					color_presets_changed=[](void* cb_obj,ColorPicker& self)
+						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
+					}
+
+				void (*description_changed)(void* cb_obj,WaveformEditor& self,int id);
+				void (*color_changed)(void* cb_obj,WaveformEditor& self,int id);
+				void (*color_presets_changed)(void* cb_obj,ColorPicker& self);
+				};
+
+			int m_id;
+			void* r_cb_obj;
+			Vtable m_vtable;
+
 			WaveformView m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
