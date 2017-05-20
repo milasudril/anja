@@ -329,6 +329,17 @@ class KeyboardView::Impl:public KeyboardView
 			{gtk_widget_queue_draw(GTK_WIDGET(m_canvas));}
 
 
+		void keyLabel(int scancode,const char* label)
+			{
+			m_labels[scancode]=std::string(label);
+			}
+
+		const char* keyLabel(int scancode) const noexcept
+			{
+			return m_labels[scancode].c_str();
+			}
+
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
@@ -387,6 +398,18 @@ KeyboardView& KeyboardView::redraw()
 	m_impl->redraw();
 	return *this;
 	}
+
+KeyboardView& KeyboardView::keyLabel(int scancode,const char* label)
+	{
+	m_impl->keyLabel(scancode,label);
+	return *this;
+	}
+
+const char* KeyboardView::keyLabel(int scancode) const noexcept
+	{
+	return m_impl->keyLabel(scancode);
+	}
+
 
 
 

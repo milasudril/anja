@@ -45,6 +45,11 @@ namespace Anja
 
 			const ColorRGBA& keyColor(int scancode) const noexcept;
 
+			KeyboardView& keyLabel(int scancode,const char* label);
+
+			const char* keyLabel(int scancode) const noexcept;
+
+
 			KeyboardView& redraw();
 
 			enum class KeyType:int{TYPING_KEY,FUNCTION_KEY,OTHER};

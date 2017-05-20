@@ -35,7 +35,8 @@ constexpr uint8_t s_slot_scancodes[]=
 void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
 	{
 	m_waveform.channelName(id,strip.name().begin());
-//TODO	m_keyboard.channelName(id,strip.name().begin());
+	if(id>=0 && id<12)
+		{m_keyboard.keyLabel(s_channel_scancodes[id],strip.name().begin()).redraw();}
 	}
 
 void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
@@ -48,7 +49,14 @@ void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
 
 
 void SessionEditor::waveformDescriptionChanged(WaveformEditor& wf,WaveformEditId id)
-	{}
+	{
+	auto slot=r_session.slotActiveGet();
+	if(slot>=0 && slot<sizeof(s_slot_scancodes));
+		{
+		m_keyboard.keyLabel(s_slot_scancodes[slot]
+			,r_session.waveformViewGet(slot).keyLabelGet().begin()).redraw();
+		}
+	}
 
 void SessionEditor::waveformColorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
@@ -87,7 +95,9 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 		auto N=std::min(session.channelsCountGet(),12);
 		for(decltype(N) k=0;k<N;++k)
 			{
-			m_keyboard.keyColor(s_channel_scancodes[k],session.channelViewGet(k).colorGet());
+			auto key=s_channel_scancodes[k];
+			auto ch=session.channelViewGet(k);
+			m_keyboard.keyColor(key,ch.colorGet()).keyLabel(key,ch.labelGet().begin());
 			}
 		}
 
@@ -95,7 +105,11 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 		auto N=std::min(static_cast<int>(sizeof(s_slot_scancodes)),session.slotsCountGet());
 		for(decltype(N) k=0;k<N;++k)
 			{
-			m_keyboard.keyColor(s_slot_scancodes[k],session.waveformViewGet(k).keyColorGet());
+			auto key=s_slot_scancodes[k];
+			auto wf=session.waveformViewGet(k);
+			m_keyboard.keyColor(key,wf.keyColorGet());
+			if(wf.keyLabelGet().length()!=0)
+				{m_keyboard.keyLabel(key,wf.keyLabelGet().begin());}
 			}
 		}
 
