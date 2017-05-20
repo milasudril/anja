@@ -32,7 +32,7 @@ namespace Anja
 			static constexpr size_t length()
 				{return N;}
 
-			static constexpr size_t size()
+			static constexpr size_t sizeBytes()
 				{return N*sizeof(T);}
 
 			constexpr ArrayFixed() noexcept:data{}

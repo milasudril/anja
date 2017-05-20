@@ -9,6 +9,8 @@
 #include "tabview.hpp"
 #include "waveformeditor.hpp"
 #include "mixerconsole.hpp"
+#include "paned.hpp"
+#include "keyboardview.hpp"
 
 namespace Anja
 	{
@@ -31,10 +33,12 @@ namespace Anja
 
 		private:
 			Session& r_session;
-			TabView m_tabs;
-				WaveformEditor m_waveform;
-				MixerConsole m_mixer;
-		//		SettingsPanel m_settings;
+			Paned m_hsplit;
+				KeyboardView m_keyboard;
+				TabView m_tabs;
+					WaveformEditor m_waveform;
+					MixerConsole m_mixer;
+			//		SettingsPanel m_settings;
 		};
 	}
 

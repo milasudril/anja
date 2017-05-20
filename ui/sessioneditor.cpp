@@ -30,11 +30,13 @@ void SessionEditor::masterGainChanged(MixerConsole& mixer,MixerId id)
 
 SessionEditor::SessionEditor(Container& cnt,Session& session)
 	:r_session(session)
-	,m_tabs(cnt)
-		,m_waveform(m_tabs.tabTitle("Waveform")
-			,session.waveformViewGet(session.slotActiveGet())
-			,session.channelLabelsGet())
-		,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
+	,m_hsplit(cnt,true)
+		,m_keyboard(m_hsplit.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}))
+		,m_tabs(m_hsplit)
+			,m_waveform(m_tabs.tabTitle("Waveform")
+				,session.waveformViewGet(session.slotActiveGet())
+				,session.channelLabelsGet())
+			,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
 	{
 	m_waveform.colorPresets(session.colorPresetsGet());
 	m_mixer.colorPresets(session.colorPresetsGet());

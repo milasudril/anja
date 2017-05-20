@@ -41,17 +41,17 @@ namespace Anja
 
 			KeyboardView& selection(int scancode);
 
-			struct KeyLabel
-				{
-				std::string label;
-				ColorRGBA color;
-				};
+			KeyboardView& keyColor(int scancode,const ColorRGBA& color);
 
-			const KeyLabel& keyLabel(int scancode) const noexcept;
-
-			KeyboardView& keyLabel(int scancode,const KeyLabel& lbl);
+			const ColorRGBA& keyColor(int scancode) const noexcept;
 
 			KeyboardView& redraw();
+
+			enum class KeyType:int{TYPING_KEY,FUNCTION_KEY,OTHER};
+
+			KeyType keyType(int scancode) const noexcept;
+
+			bool modifier(int scancode) const noexcept;
 
 	private:
 		class Impl;

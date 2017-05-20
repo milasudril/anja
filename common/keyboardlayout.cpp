@@ -297,7 +297,7 @@ KeyboardLayout::KeyboardLayout()
 	//	Initialize typing area
 		{
 		memcpy(m_typing_area.begin(),s_typing_area_default.begin()
-			,m_typing_area.size());
+			,m_typing_area.sizeBytes());
 
 		auto ptr=m_typing_area.begin();
 		auto ptr_end=m_typing_area.end();
@@ -387,7 +387,7 @@ KeyboardLayout::KeyboardLayout()
 	// Initialize function keys
 		{
 		memcpy(m_function_keys.begin(),s_function_keys_default.begin()
-			,m_function_keys.size());
+			,m_function_keys.sizeBytes());
 
 		auto ptr=m_function_keys.begin();
 		auto ptr_end=m_function_keys.end();
