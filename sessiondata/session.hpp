@@ -50,6 +50,8 @@ namespace Anja
 
 			ArraySimple<String> channelLabelsGet() const;
 
+			ArraySimple<ColorRGBA> channelColorsGet() const;
+
 			int channelsCountGet() noexcept
 				{return m_channel_data.length();}
 

@@ -176,6 +176,18 @@ ArraySimple<String> Session::channelLabelsGet() const
 	return std::move(ret);
 	}
 
+ArraySimple<ColorRGBA> Session::channelColorsGet() const
+	{
+	ArraySimple<ColorRGBA> ret(m_channel_data.length());
+	auto k=0;
+	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&ret,&k](const auto& x)
+		{
+		ret[k]=x.colorGet();
+		++k;
+		});
+	return std::move(ret);
+	}
+
 
 void Session::channelsClear()
 	{
