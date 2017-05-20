@@ -138,6 +138,32 @@ constexpr KeyPolygon s_key_skip
 	{
 	};
 
+static constexpr uint8_t x_max(const KeyPolygon& p)
+	{
+	if(p.size()==0)
+		{return 0;}
+	auto ptr=p.begin();
+	auto ptr_end=p.end();
+	auto ret=ptr->x;
+	++ptr;
+	while(ptr!=ptr_end)
+		{
+		ret=std::max(ptr->x,ret);
+		++ptr;
+		}
+	return ret;
+	}
+
+template<size_t N>
+static constexpr auto x_positions(const ArrayFixed<KeyPolygon,N>& keys,size_t n_cols)
+	{
+	ArrayFixed<uint8_t,N> ret;
+	ret[0]=0;
+	for(size_t k=1;k<N;++k)
+		{ret[k]=k%n_cols==0?0:ret[k-1]+x_max(keys[k-1]);}
+	return ret;
+	}
+
 
 
 static constexpr uint8_t TYPING_AREA_COLS=15;
@@ -201,36 +227,21 @@ static constexpr uint8_t scancode_typing_area_keys(uint8_t scancode)
 	return s_scancode_typing_area_keys[scancode];
 	}
 
-static constexpr uint8_t x_max(const KeyPolygon& p)
-	{
-	if(p.size()==0)
-		{return 0;}
-	auto ptr=p.begin();
-	auto ptr_end=p.end();
-	auto ret=ptr->x;
-	++ptr;
-	while(ptr!=ptr_end)
-		{
-		ret=std::max(ptr->x,ret);
-		++ptr;
-		}
-	return ret;
-	}
-
-template<size_t N>
-static constexpr auto x_positions(const ArrayFixed<KeyPolygon,N>& keys,size_t n_cols)
-	{
-	ArrayFixed<uint8_t,N> ret;
-	ret[0]=0;
-	for(size_t k=1;k<N;++k)
-		{ret[k]=k%n_cols==0?0:ret[k-1]+x_max(keys[k-1]);}
-	return ret;
-	}
-
 static constexpr auto s_typing_area_x_pos=x_positions(s_typing_area,TYPING_AREA_COLS);
 
-static constexpr auto FUNCTION_KEYS_COLS=12;
+constexpr ArrayFixed<const char*,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area_labels_swe
+	{
+	 "§","1","2","3","4","5","6","7","8","9","0","+","`","⟵"," "
+	,"⇋","Q","W","E","R","T","Y","U","I","O","P","Å","¨","↲"," "
+	,"Caps"," ","A","S","D","F","G","H","J","K","L","Ö","Ä","'"," "
+	,"⇑","<","Z","X","C","V","B","N","M",",",".","-","⇑"," "," "
+	,"Ctrl","❖","Alt","Space"," "," "," "," "," "," "," ","Alt Gr","❖","❏","Ctrl"
+	};
 
+
+
+
+static constexpr auto FUNCTION_KEYS_COLS=12;
 
 constexpr ArrayFixed<KeyPolygon,FUNCTION_KEYS_COLS> s_function_keys
 	{
@@ -257,6 +268,14 @@ static constexpr uint8_t scancode_function_keys(uint8_t scancode)
 
 static constexpr auto s_function_keys_x_pos=x_positions(s_function_keys,FUNCTION_KEYS_COLS);
 
+constexpr ArrayFixed<const char*,FUNCTION_KEYS_COLS> s_function_keys_labels
+	{
+	 "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"
+	};
+
+
+
+
 std::pair<KeyboardView::KeyType,int> KeyboardView::keyType(int scancode) const noexcept
 	{
 	auto index=scancode_function_keys(scancode);
@@ -271,7 +290,6 @@ std::pair<KeyboardView::KeyType,int> KeyboardView::keyType(int scancode) const n
 
 bool KeyboardView::modifier(int scancode) const noexcept
 	{return scancode==42 || scancode==29 || scancode==56 || scancode==100 || scancode==97;}
-
 
 
 
@@ -319,6 +337,7 @@ class KeyboardView::Impl:public KeyboardView
 		GtkDrawingArea* m_canvas;
 
 		ArrayFixed<ColorRGBA,256> m_colors;
+		ArrayFixed<std::string,256> m_labels;
 
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
@@ -375,7 +394,16 @@ KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
-	m_selection=28;
+	m_selection=-1;
+	for(size_t k=0;k<s_typing_area_labels_swe.length();++k)
+		{
+		m_labels[ s_typing_area_scancodes[k] ]=s_typing_area_labels_swe[k];
+		}
+	for(size_t k=0;k<s_function_keys_labels.length();++k)
+		{
+		m_labels[ s_function_keys_scancodes[k] ]=s_function_keys_labels[k];
+		}
+
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
@@ -394,24 +422,49 @@ static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 	,double w,Vec2 O)
 	{
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	auto pos=O + w*p.begin()->normalize();
+	cairo_move_to(cr,pos.x(),pos.y());
 	std::for_each(p.begin(),p.end(),[cr,color,O,w](KeyPolygonVertex v)
 		{
-		auto p=w*(O + v.normalize() );
-		cairo_line_to(cr,p.x(),p.y());
+		auto pos=O + w*v.normalize();
+		cairo_line_to(cr,pos.x(),pos.y());
 		});
 	cairo_close_path(cr);
 	}
 
 template<class DrawFunction>
 void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
-	,const uint8_t* key_index,const ColorRGBA* key_colors
+	,const uint8_t* key_index,const ColorRGBA* key_colors,const std::string* labels
 	,cairo_t* cr,Vec2 O,double key_width,DrawFunction&& fn)
 	{
 	for(decltype(N_keys) k=0;k<N_keys;++k)
 		{
-		key_make_path(keys[k],cr,key_colors[key_index[k]],key_width
-			,O + Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
+		auto key=key_index[k];
+		auto color=key_colors[key];
+		key_make_path(keys[k],cr,color,key_width
+			,O + key_width*Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 		fn(cr);
+
+		if(labels[key].length()!=0)
+			{
+			if(luma709(color)>0.5)
+				{cairo_set_source_rgba(cr,0,0,0,1);}
+			else
+				{cairo_set_source_rgba(cr,1,1,1,1);}
+			cairo_text_extents_t extents;
+			cairo_text_extents(cr,labels[key].c_str(),&extents);
+			Vec2 text_pos=O;
+			text_pos+=Vec2
+				{
+				 key_width*key_positions[k]/16.0 + 0.5*key_width - 0.5*extents.width
+				,key_width*(static_cast<double>( k/TYPING_AREA_COLS ) + 0.5)
+					+ 0.5*extents.height
+				};
+			cairo_move_to(cr,text_pos.x(),text_pos.y());
+		/*	cairo_move_to(cr,(x + 0.5*x_max)*width-0.5*extents.width
+				,(y + row + 0.5)*width+0.5*extents.height);*/
+			cairo_show_text(cr,labels[key].c_str());
+			}
 		}
 	}
 
@@ -423,7 +476,7 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 	for(decltype(N_keys) k=0;k<N_keys;++k)
 		{
 		key_make_path(keys[k],cr,color,key_width
-			,O + Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
+			,O + key_width*Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 		fn(cr);
 		}
 	}
@@ -436,24 +489,25 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	auto n_rows=static_cast<double>(TYPING_AREA_ROWS) + 1.5;
 	auto key_width=static_cast<double>(height)/n_rows;
 
-	cairo_set_line_width(cr,4);
+	cairo_set_line_width(cr,key_width/16);
+	cairo_set_font_size(cr,std::min(key_width/4,12.0));
 
 	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
-		,s_function_keys_scancodes,self->m_colors.begin(),cr,Vec2{1.5,0}
+		,s_function_keys_scancodes,self->m_colors.begin(),self->m_labels.begin(),cr,key_width*Vec2{1.5,0}
 		,key_width,&cairo_fill);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
 		,s_typing_area_scancodes
-		,self->m_colors.begin(),cr,Vec2{0,1.5}
+		,self->m_colors.begin(),self->m_labels.begin(),cr,key_width*Vec2{0,1.5}
 		,key_width,&cairo_fill);
 
 
 	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,Vec2{1.5,0}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,key_width*Vec2{1.5,0}
 		,key_width,&cairo_stroke);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,Vec2{0,1.5}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,key_width*Vec2{0,1.5}
 		,key_width,&cairo_stroke);
 
 
@@ -468,8 +522,8 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_function_keys[selection.second],cr,color,key_width
-				,Vec2{1.5,0}
-				+ Vec2{s_function_keys_x_pos[selection.second]/16.0,0} );
+				,key_width*(Vec2{1.5,0}
+				+ Vec2{s_function_keys_x_pos[selection.second]/16.0,0}) );
 			cairo_stroke(cr);
 			}
 			break;
@@ -481,12 +535,12 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_typing_area[selection.second],cr,color,key_width
-				,Vec2{0,1.5}
+				,key_width*(Vec2{0,1.5}
 				+ Vec2
 					{
 					 s_typing_area_x_pos[selection.second]/16.0
 					,static_cast<double>(selection.second/TYPING_AREA_COLS)
-					});
+					}));
 			cairo_stroke(cr);
 			}
 			break;
