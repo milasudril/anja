@@ -36,38 +36,11 @@ namespace Anja
 #endif
 
 	/**\brief Vector type with four components.
-	 *
-	 * This type represents a vector with four components. For example,
-	 * \code
-	 * Anja::vec4_t<int> a{1,2,3,4};
-	 * Anja::vec4_t<int> b{4,3,2,1};
-	 * auto c=a+b;
-	 * Anja::logWrite(Log::MessageType::INFORMATION,"c=[%d,%d,%d,%d]"
-	 *     ,c[0],c[1],c[2],c[3]);
-	 * \endcode
-	 * will print
-	 *
-	 *     (i) c=[5,5,5,5]
-	 *
-	 * to the console.
 	 */
 	template<class T>
 	using vec4_t __attribute__ ((vector_size(4*sizeof(T))))=vector_type(T);
 
 	/**\brief Vector type with two components.
-	 *
-	 * This type represents a vector with four components. For example,
-	 * \code
-	 * Anja::vec2_t<int> a{1,2};
-	 * Anja::vec2_t<int> b{4,3};
-	 * auto c=a+b;
-	 * Anja::logWrite(Log::MessageType::INFORMATION,"c=[%d,%d]",c[0],c[1]);
-	 * \endcode
-	 * will print
-	 *
-	 *     (i) c=[5,5]
-	 *
-	 * to the console.
 	 */
 	template<class T>
 	using vec2_t __attribute__ ((vector_size(2*sizeof(T))))=vector_type(T);

@@ -114,8 +114,10 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	if(index!=0xff)
 		{
 		m_tabs.activate(0);
-		//TODO Switch slot
+		m_waveform.waveform(r_session.waveformViewGet(index));
+		r_session.slotActiveSet(index);
 		}
+
 	auto slot=r_session.slotActiveGet();
 	if(slot>=0 && slot<sizeof(s_slot_scancodes));
 		{keyboard.selection(s_slot_scancodes[slot]);}

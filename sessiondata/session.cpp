@@ -127,8 +127,8 @@ Session::Session(const char* filename):m_slot_active(0)
 				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
 			--slot_num;
 
-			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory)
-				.load(record);
+			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
+				,slot_num).load(record);
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -269,7 +269,7 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
 
-			WaveformView wv(m_waveforms[k],*waveform,dir);
+			WaveformView wv(m_waveforms[k],*waveform,dir,k);
 			wv.store(record_out);
 			writer.recordWrite(record_out);
 			wv.dirtyClear();

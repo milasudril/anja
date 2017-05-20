@@ -172,15 +172,26 @@ void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
 	{
 	e.content(waveform.filenameGet().begin());
-	auto fs=static_cast<double>(waveform.sampleRateGet());
-	auto ms=decimate(mean_square(waveform.beginFull(),waveform.endFull()
-		,fs/1000.0),0.5e-3*fs);
+	if(waveform.lengthFull()!=0)
+		{
+		auto fs=static_cast<double>(waveform.sampleRateGet());
+		auto ms=decimate(mean_square(waveform.beginFull(),waveform.endFull()
+			,fs/1000.0),0.5e-3*fs);
 
-	std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
-		{return std::max(powerToDb(x),-145.0f);});
+		std::transform(ms.begin(),ms.end(),ms.begin(),[](float x)
+			{return std::max(powerToDb(x),-145.0f);});
 
-	plot_append(ms.begin(),ms.end(),0.5e-3,plot.curvesRemove());
-	return std::move(ms);
+		plot_append(ms.begin(),ms.end(),0.5e-3,plot.curvesRemove());
+		return std::move(ms);
+		}
+	else
+		{
+		ArraySimple<float> ret(2);
+		ret[0]=-145.0f;
+		ret[1]=-145.0f;
+		plot.curvesRemove();
+		return std::move(ret);
+		}
 	}
 
 static void description_update(const WaveformView& waveform,TextEntry& e)
@@ -204,7 +215,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 					{
 					m_waveform.fileLoad(entry.content());
 					m_waveform_db=filename_update(m_waveform,entry,m_plot);
-					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
 					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
@@ -316,7 +327,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 					{
 					m_waveform.fileLoad(temp.c_str());
 					m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
-					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
 					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
@@ -335,7 +346,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				{
 				m_waveform.fileLoad(m_waveform.filenameGet().begin());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_plot);
-				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
 				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 				m_plot.showAll();
 				}
@@ -416,6 +427,29 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 		m_vtable.color_presets_changed(r_cb_obj,m_color_dlg->widget());
 		}
 	m_color_dlg.reset();
+	}
+
+WaveformEditor& WaveformEditor::waveform(const WaveformView& waveform)
+	{
+	description_update(waveform,m_description_input);
+	color_update(waveform,m_color_input);
+	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
+	gain_random_update(waveform,m_gain_random_input_text,m_gain_random_input_slider);
+
+	m_channel_input.selected(m_waveform.channelGet());
+	m_options_input.selected(waveform.flagsGet());
+
+		{
+		m_waveform_db=filename_update(waveform,m_filename_input,m_plot);
+		if(waveform.index()!=m_waveform.index())
+			{m_plot.showAll();}
+		m_filename_input.focus();
+		}
+	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
+	offset_end_update(waveform,m_cursor_end_entry,m_plot);
+
+	m_waveform=waveform;
+	return *this;
 	}
 
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
@@ -505,12 +539,9 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 
 	m_channel_input.selected(m_waveform.channelGet());
 	m_options_input.selected(waveform.flagsGet());
-
-		{
-		m_waveform_db=filename_update(waveform,m_filename_input,m_plot);
-	//	Only when slot changed (Not when user selects keyboard view and clicks the same slot)
-		m_plot.showAll();
-		}
+	m_waveform_db=filename_update(waveform,m_filename_input,m_plot);
+	m_plot.showAll();
+	m_filename_input.focus();
 	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
 	offset_end_update(waveform,m_cursor_end_entry,m_plot);
 	}

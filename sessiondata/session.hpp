@@ -43,7 +43,7 @@ namespace Anja
 				{return m_waveforms[slot];}
 
 			WaveformView waveformViewGet(uint8_t slot) noexcept
-				{return WaveformView(m_waveforms[slot],m_waveform_data[slot],m_directory);}
+				{return WaveformView(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
 
 			ChannelView channelViewGet(int ch) noexcept
 				{return ChannelView(m_channels[ch],m_channel_data[ch]);}

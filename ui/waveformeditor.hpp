@@ -95,6 +95,8 @@ namespace Anja
 			void confirmPositive(Dialog<ColorPicker>& dlg,int id);
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
+			WaveformEditor& waveform(const WaveformView& waveform);
+
 		private:
 			struct Vtable
 				{
