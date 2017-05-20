@@ -49,7 +49,7 @@ namespace Anja
 
 			enum class KeyType:int{TYPING_KEY,FUNCTION_KEY,OTHER};
 
-			KeyType keyType(int scancode) const noexcept;
+			std::pair<KeyType,int> keyType(int scancode) const noexcept;
 
 			bool modifier(int scancode) const noexcept;
 

@@ -257,13 +257,16 @@ static constexpr uint8_t scancode_function_keys(uint8_t scancode)
 
 static constexpr auto s_function_keys_x_pos=x_positions(s_function_keys,FUNCTION_KEYS_COLS);
 
-KeyboardView::KeyType KeyboardView::keyType(int scancode) const noexcept
+std::pair<KeyboardView::KeyType,int> KeyboardView::keyType(int scancode) const noexcept
 	{
-	if(scancode_function_keys(scancode)!=0xff)
-		{return KeyType::FUNCTION_KEY;}
-	if(scancode_typing_area_keys(scancode)!=0xff)
-		{return KeyType::TYPING_KEY;}
-	return KeyType::OTHER;
+	auto index=scancode_function_keys(scancode);
+	if(index!=0xff)
+		{return {KeyType::FUNCTION_KEY,index};}
+
+	index=scancode_typing_area_keys(scancode);
+	if(index!=0xff)
+		{return {KeyType::TYPING_KEY,index};}
+	return {KeyType::OTHER,0xff};
 	}
 
 bool KeyboardView::modifier(int scancode) const noexcept
@@ -372,7 +375,7 @@ KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
-	m_selection=-1;
+	m_selection=28;
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
@@ -454,7 +457,8 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 		,key_width,&cairo_stroke);
 
 
-	switch(self->keyType(self->m_selection))
+	auto selection=self->keyType(self->m_selection);
+	switch(selection.first)
 		{
 		case KeyType::FUNCTION_KEY:
 			{
@@ -463,10 +467,9 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.red=1.0f-color.red;
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
-			auto key=scancode_function_keys(self->m_selection);
-			key_make_path(s_function_keys[key],cr,color,key_width
+			key_make_path(s_function_keys[selection.second],cr,color,key_width
 				,Vec2{1.5,0}
-				+ Vec2{s_function_keys_x_pos[key]/16.0,0} );
+				+ Vec2{s_function_keys_x_pos[selection.second]/16.0,0} );
 			cairo_stroke(cr);
 			}
 			break;
@@ -477,10 +480,13 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.red=1.0f-color.red;
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
-			auto key=scancode_typing_area_keys(self->m_selection);
-			key_make_path(s_typing_area[key],cr,color,key_width
+			key_make_path(s_typing_area[selection.second],cr,color,key_width
 				,Vec2{0,1.5}
-				+ Vec2{s_typing_area_x_pos[key]/16.0,static_cast<double>(key/TYPING_AREA_COLS)} );
+				+ Vec2
+					{
+					 s_typing_area_x_pos[selection.second]/16.0
+					,static_cast<double>(selection.second/TYPING_AREA_COLS)
+					});
 			cairo_stroke(cr);
 			}
 			break;
