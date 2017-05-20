@@ -29,7 +29,26 @@ constexpr uint8_t s_slot_scancodes[]=
 	,86, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
 	};
 
+static constexpr ArrayFixed<uint8_t,Wavetable::length()> gen_scancode_slots()
+	{
+	ArrayFixed<uint8_t,Wavetable::length()> ret;
+	for(decltype(ret.length()) k=0;k<ret.length();++k)
+		{
+		uint8_t index=0xff;
+		for(size_t l=0;l<sizeof(s_slot_scancodes);++l)
+			{
+			if(s_slot_scancodes[l]==k)
+				{
+				index=l;
+				break;
+				}
+			}
+		ret[k]=index;
+		}
+	return ret;
+	}
 
+static constexpr auto s_scancode_slots=gen_scancode_slots();
 
 
 void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
@@ -86,9 +105,20 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	auto index=scancode_channels(scancode);
 	if(index!=0xff)
 		{
-		m_mixer.focus(index);
 		m_tabs.activate(1);
+		m_mixer.focus(index);
+		return;
 		}
+
+	index=s_scancode_slots[scancode];
+	if(index!=0xff)
+		{
+		m_tabs.activate(0);
+		//TODO Switch slot
+		}
+	auto slot=r_session.slotActiveGet();
+	if(slot>=0 && slot<sizeof(s_slot_scancodes));
+		{keyboard.selection(s_slot_scancodes[slot]);}
 	}
 
 
