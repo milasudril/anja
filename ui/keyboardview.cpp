@@ -509,30 +509,36 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	auto width=gtk_widget_get_allocated_width(object);
-	auto height=gtk_widget_get_allocated_height(object);
+	auto width=static_cast<double>( gtk_widget_get_allocated_width(object) );
+	auto height=static_cast<double>( gtk_widget_get_allocated_height(object) );
+	auto ratio_out=width/height;
+
 	auto n_rows=static_cast<double>(TYPING_AREA_ROWS) + 1.5;
-	auto key_width=static_cast<double>(height)/n_rows;
+	auto n_cols=static_cast<double>(TYPING_AREA_COLS);
+	auto ratio_in=n_cols/n_rows;
+	auto key_width=ratio_in>ratio_out? width/n_cols : height/n_rows;
+
+	auto O=0.5*Vec2{width - key_width*n_cols,height - key_width*n_rows};
 
 	cairo_set_line_width(cr,key_width/16);
 	cairo_set_font_size(cr,std::min(key_width/4,12.0));
 
 	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
-		,s_function_keys_scancodes,self->m_colors.begin(),self->m_labels.begin(),cr,key_width*Vec2{1.5,0}
-		,key_width,&cairo_fill);
+		,s_function_keys_scancodes,self->m_colors.begin(),self->m_labels.begin(),cr
+		,O+key_width*Vec2{1.5,0},key_width,&cairo_fill);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
 		,s_typing_area_scancodes
-		,self->m_colors.begin(),self->m_labels.begin(),cr,key_width*Vec2{0,1.5}
+		,self->m_colors.begin(),self->m_labels.begin(),cr,O+key_width*Vec2{0,1.5}
 		,key_width,&cairo_fill);
 
 
 	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,key_width*Vec2{1.5,0}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2{1.5,0}
 		,key_width,&cairo_stroke);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,key_width*Vec2{0,1.5}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2{0,1.5}
 		,key_width,&cairo_stroke);
 
 
@@ -547,7 +553,7 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_function_keys[selection.second],cr,color,key_width
-				,key_width*(Vec2{1.5,0}
+				,O + key_width*(Vec2{1.5,0}
 				+ Vec2{s_function_keys_x_pos[selection.second]/16.0,0}) );
 			cairo_stroke(cr);
 			}
@@ -560,7 +566,7 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_typing_area[selection.second],cr,color,key_width
-				,key_width*(Vec2{0,1.5}
+				,O + key_width*(Vec2{0,1.5}
 				+ Vec2
 					{
 					 s_typing_area_x_pos[selection.second]/16.0
