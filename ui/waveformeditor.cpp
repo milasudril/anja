@@ -410,8 +410,11 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 	{
 	m_color_input.content(ColorString(dlg.widget().color()).begin());
 	m_waveform.keyColorSet(dlg.widget().color());
-//	TODO: Send key color change event
-//	TODO: Send palette change event
+	if(r_cb_obj!=nullptr)
+		{
+		m_vtable.color_changed(r_cb_obj,*this,m_id);
+		m_vtable.color_presets_changed(r_cb_obj,m_color_dlg->widget());
+		}
 	m_color_dlg.reset();
 	}
 
