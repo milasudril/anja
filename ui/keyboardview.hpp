@@ -58,6 +58,8 @@ namespace Anja
 
 			bool modifier(int scancode) const noexcept;
 
+			KeyboardView& reset();
+
 	private:
 		class Impl;
 		Impl* m_impl;

@@ -193,20 +193,7 @@ namespace Anja
 			void capacitySet(uint32_t capacity_new)
 				{m_data.capacity(capacity_new);}
 
-			void clear()
-				{
-				m_data.clear();
-				offsetsReset();
-				m_flags|=DIRTY;
-				}
-
-			static Waveform nullGet()
-				{
-				float vals[2]={1.0e-7f,1.0e-7f};
-				return Waveform(vals,2,1000.0f);
-				}
-
-			Waveform& valuesInit() noexcept
+			void clear() noexcept
 				{
 				m_gain=0.0f;
 				m_gain_random=0.0f;
@@ -214,9 +201,15 @@ namespace Anja
 				m_flags=0.0f;
 				m_offset_begin=0;
 				m_fs=1000.0f;
+				m_data.clear();
 				m_offset_end=m_data.length();
-				m_flags|=DIRTY;
-				return *this;
+				m_flags=0;
+				}
+
+			static Waveform nullGet()
+				{
+				float vals[2]={1.0e-7f,1.0e-7f};
+				return Waveform(vals,2,1000.0f);
 				}
 
 			bool dirtyIs() const noexcept

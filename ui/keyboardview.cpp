@@ -339,6 +339,7 @@ class KeyboardView::Impl:public KeyboardView
 			return m_labels[scancode].c_str();
 			}
 
+		void reset();
 
 	private:
 		int m_id;
@@ -410,6 +411,11 @@ const char* KeyboardView::keyLabel(int scancode) const noexcept
 	return m_impl->keyLabel(scancode);
 	}
 
+KeyboardView& KeyboardView::reset()
+	{
+	m_impl->reset();
+	return *this;
+	}
 
 
 
@@ -417,16 +423,7 @@ KeyboardView::Impl::Impl(Container& cnt):KeyboardView(*this),r_cb_obj(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	m_canvas=GTK_DRAWING_AREA(widget);
-	m_selection=-1;
-	for(size_t k=0;k<s_typing_area_labels_swe.length();++k)
-		{
-		if(*(s_typing_area_labels_swe[k])!='\0')
-			{m_labels[ s_typing_area_scancodes[k] ]=s_typing_area_labels_swe[k];}
-		}
-	for(size_t k=0;k<s_function_keys_labels.length();++k)
-		{
-		m_labels[ s_function_keys_scancodes[k] ]=s_function_keys_labels[k];
-		}
+	reset();
 
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
@@ -440,6 +437,20 @@ KeyboardView::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_canvas));
+	}
+
+void KeyboardView::Impl::reset()
+	{
+	m_selection=-1;
+	for(size_t k=0;k<s_typing_area_labels_swe.length();++k)
+		{
+		if(*(s_typing_area_labels_swe[k])!='\0')
+			{m_labels[ s_typing_area_scancodes[k] ]=s_typing_area_labels_swe[k];}
+		}
+	for(size_t k=0;k<s_function_keys_labels.length();++k)
+		{
+		m_labels[ s_function_keys_scancodes[k] ]=s_function_keys_labels[k];
+		}
 	}
 
 static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color

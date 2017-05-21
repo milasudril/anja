@@ -125,6 +125,7 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 
 SessionEditor& SessionEditor::sessionUpdated()
 	{
+	m_keyboard.reset();
 		{
 		auto N=std::min(r_session.channelsCountGet(),12);
 		for(decltype(N) k=0;k<N;++k)
@@ -152,6 +153,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 		if(slot>=0 && slot<sizeof(s_slot_scancodes));
 			{m_keyboard.selection(s_slot_scancodes[slot]);}
 		}
+	m_keyboard.redraw();
 
 	auto& color_presets=r_session.colorPresetsGet();
 	auto channel_names=r_session.channelLabelsGet();

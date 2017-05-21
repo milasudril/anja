@@ -150,18 +150,13 @@ Session::Session(const char* filename):m_slot_active(0)
 
 void Session::waveformsClear()
 	{
-	//	Reset waveform data
-		{
-		auto ptr=m_waveform_data.begin();
-		auto ptr_end=m_waveform_data.end();
-		while(ptr!=ptr_end)
-			{
-			ptr->clear();
-			++ptr;
-			}
-		}
+	std::for_each(m_waveforms.begin(),m_waveforms.end(),[](Waveform& wf)
+		{wf.clear();});
 
-		slotActiveSet(0);
+	std::for_each(m_waveform_data.begin(),m_waveform_data.end(),[](WaveformData& wd)
+		{wd.clear();});
+
+	slotActiveSet(0);
 	}
 
 ArraySimple<String> Session::channelLabelsGet() const

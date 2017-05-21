@@ -22,7 +22,7 @@ const char* const* Waveform::flagNames() noexcept
 
 Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	{
-	valuesInit();
+	clear();
 	fileLoad(filename);
 	auto value=record.propertyGet(String("Playback gain/dB"));
 	if(value!=nullptr)
@@ -116,11 +116,6 @@ void Waveform::fileLoad(const char* filename)
 	if(filename==nullptr || *filename=='\0')
 		{
 		clear();
-		float vals[2]={1e-7f,1e-7f};
-		append(vals,2);
-		valuesInit();
-		sampleRateSet(1000.0);
-		dirtyClear();
 		return;
 		}
 

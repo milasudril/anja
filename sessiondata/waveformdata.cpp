@@ -33,9 +33,8 @@ WaveformData::WaveformData(const SessionFileRecord& record):m_filename(""),m_des
 void WaveformData::clear()
 	{
 	m_filename.clear();
-	m_filename.append('\0');
 	m_description.clear();
-	m_description.append('\0');
+	m_key_label.clear();
 	m_color=COLORS[ColorID::BLACK];
 	m_stateflags=0;
 	}
@@ -91,7 +90,6 @@ void WaveformData::descriptionSet(const char* description)
 			++ptr;
 			}
 		}
-	m_key_label.append('\0');
 	m_stateflags|=DIRTY;
 	}
 

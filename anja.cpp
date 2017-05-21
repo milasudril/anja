@@ -23,7 +23,7 @@ namespace Anja
 				m_session_control.append("New session","Load session","Save session"
 					,"Save session as","","Start engine","Stop engine","","Fullscreen"
 					,"Exit","About Anja");
-				m_ctx.dark(1);
+				m_session_control.callback(*this,0);
 				m_mainwin.callback(*this,0);
 				m_mainwin.show();
 				}
@@ -44,6 +44,23 @@ namespace Anja
 			void keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 				{
 				printf("%d up\n",scancode);
+				}
+
+			void clicked(ButtonList& buttons,int id,Button& btn)
+				{
+				switch(btn.id())
+					{
+					case 0:
+						//TODO: Check if session is dirty first
+						m_session.clear();
+						m_session_editor.sessionUpdated();
+						break;
+					case 2:
+						//TODO: Save is broken...
+						//m_session.save(m_session.filenameGet().begin());
+						break;
+					}
+				btn.state(0);
 				}
 
 			Application& run()
