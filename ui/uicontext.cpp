@@ -11,7 +11,10 @@ class UiContext::Impl:public UiContext
 	{
 	public:
 		Impl():UiContext(*this),m_stop(0)
-			{gtk_init(NULL,NULL);}
+			{
+			gtk_disable_setlocale();
+			gtk_init(NULL,NULL);
+			}
 
 		~Impl();
 
