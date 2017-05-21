@@ -319,8 +319,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 		case ButtonId::FILENAME_BROWSE:
 			{
 			std::string temp(m_waveform.filenameGet().begin());
-			if(filenameSelect(m_filename,temp,FilenameSelectMode::OPEN
-				,[this](const char* path)
+			if(filenameSelect(m_filename,m_waveform.directoryGet().begin(),temp
+				,FilenameSelectMode::OPEN,[this](const char* path)
 					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
 				try

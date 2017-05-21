@@ -6,15 +6,15 @@
 
 using namespace Anja;
 
-bool Anja::filenameSelect(const Container& cnt,std::string& filename_in
-	,FilenameSelectMode mode,FilenameSelectFilter cb,void* cb_obj
-	,const char* filter_name)
+bool Anja::filenameSelect(const Container& cnt,const char* working_dir
+	,std::string& filename_in,FilenameSelectMode mode,FilenameSelectFilter cb
+	,void* cb_obj,const char* filter_name)
 	{
 	auto action=mode==FilenameSelectMode::OPEN?
 		 GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
 
 	const char* text_ok=mode==FilenameSelectMode::OPEN? "Open" : "Save";
-	const char* text_title=mode==FilenameSelectMode::OPEN? 
+	const char* text_title=mode==FilenameSelectMode::OPEN?
 		"Select file to open" : "Choose filename";
 
 	auto parent=cnt.toplevel();
@@ -22,7 +22,16 @@ bool Anja::filenameSelect(const Container& cnt,std::string& filename_in
 		,action,"Cancel",GTK_RESPONSE_CANCEL,text_ok,GTK_RESPONSE_ACCEPT,NULL);
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dlg)
 		,mode==FilenameSelectMode::SAVE);
-	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),filename_in.c_str());
+	if(filename_in.length()!=0)
+		{
+		auto filename_tot=std::string(working_dir);
+		filename_tot+=filename_in;
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),filename_tot.c_str());
+		}
+	else
+		{gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg),working_dir);}
+	gtk_file_chooser_add_shortcut_folder(GTK_FILE_CHOOSER(dlg),working_dir,NULL);
+
 	auto filter=gtk_file_filter_new();
 	gtk_file_filter_set_name(filter,filter_name);
 	std::pair<FilenameSelectFilter,void*> cb_obj_gtk{cb,cb_obj};

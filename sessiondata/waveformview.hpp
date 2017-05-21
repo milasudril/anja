@@ -28,6 +28,9 @@ namespace Anja
 			const String& filenameGet() const
 				{return r_waveform_data->filenameGet();}
 
+			const String& directoryGet() const noexcept
+				{return *r_dir_current;}
+
 			void filenameSet(const String& filename);
 
 			const String& descriptionGet() const noexcept
