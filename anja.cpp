@@ -23,6 +23,16 @@ namespace Anja
 				return UiContext::RunStatus::WAIT;
 				}
 
+			void keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
+				{
+				printf("%d down\n",scancode);
+				}
+
+			void keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
+				{
+				printf("%d up\n",scancode);
+				}
+
 		private:
 			UiContext& r_ctx;
 		};

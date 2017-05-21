@@ -41,9 +41,9 @@ class Window::Impl:private Window
 		void* _toplevel() const
 			{return m_handle;}
 
-		void callback(Callback cb,void* cb_obj,int id)
+		void callback(const Vtable& vt,void* cb_obj,int id)
 			{
-			r_cb=cb;
+			m_vt=vt;
 			r_cb_obj=cb_obj;
 			m_id=id;
 			}
@@ -55,11 +55,16 @@ class Window::Impl:private Window
 			{gtk_window_set_modal(m_handle,state);}
 
 	private:
-		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
+		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,void* user_data);
+		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
+		static gboolean key_up(GtkWidget* widget,GdkEvent* event,void* user_data);
+		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* user_data);
+
 		int m_id;
-		Callback r_cb;
 		void* r_cb_obj;
+		Vtable m_vt;
 		GtkWindow* m_handle;
+		GtkWidget* r_focus_old;
 		std::string m_title;
 	};
 
@@ -102,9 +107,9 @@ void* Window::toplevel() const
 int Window::id() const noexcept
 	{return m_impl->id();}
 
-Window& Window::callback(Callback cb,void* cb_obj,int id)
+Window& Window::callback(const Vtable& vt,void* cb_obj,int id)
 	{
-	m_impl->callback(cb,cb_obj,id);
+	m_impl->callback(vt,cb_obj,id);
 	return *this;
 	}
 
@@ -115,10 +120,15 @@ Window& Window::modal(bool state)
 	}
 
 
-Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0),r_cb(nullptr)
+Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
+	,r_cb_obj(nullptr),r_focus_old(nullptr)
 	{
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(widget,"delete-event",G_CALLBACK(delete_callback),this);
+	g_signal_connect(widget,"key-press-event",G_CALLBACK(key_down),this);
+	g_signal_connect(widget,"key-release-event",G_CALLBACK(key_up),this);
+	g_signal_connect(widget,"button-press-event",G_CALLBACK(mouse_down),this);
+
 	m_handle=GTK_WINDOW(widget);
 	title(ti);
 	if(owner!=nullptr)
@@ -128,14 +138,86 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0),r_cb(n
 Window::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	r_cb=nullptr;
+	r_cb_obj=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-gboolean Window::Impl::delete_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+gboolean Window::Impl::delete_callback(GtkWidget* widget,GdkEvent* event,void* user_data)
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
-	if(self->r_cb!=nullptr)
-		{self->r_cb(self->r_cb_obj,*self);}
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.closing(self->r_cb_obj,*self,self->m_id);}
 	return TRUE;
 	}
+
+gboolean Window::Impl::key_down(GtkWidget* widget,GdkEvent* event,void* user_data)
+	{
+	auto self=reinterpret_cast<Impl*>(user_data);
+	auto& key=event->key;
+	auto scancode=key.hardware_keycode - 8;
+	auto keymask=keymaskFromSystem(key.state);
+#ifndef __linux__
+	#waring "Scancode key offset is not tested. Pressing esc should print 1"
+	printf("%d\n",key.hardware_keycode - 8);
+#endif
+	auto w=gtk_window_get_focus(GTK_WINDOW(widget));
+	if(w!=NULL)
+		{
+		self->r_focus_old=w;
+		switch(scancode)
+			{
+			case 1: //ESC
+				gtk_window_set_focus(GTK_WINDOW(widget),NULL);
+				if(self->r_cb_obj!=nullptr)
+					{self->m_vt.key_down(self->r_cb_obj,*self,scancode,keymask,self->m_id);}
+				break;
+			case 28: //RETURN
+				if(gtk_window_get_transient_for(GTK_WINDOW(widget))!=NULL) //Dialog box
+					{
+					gtk_window_set_focus(GTK_WINDOW(widget),NULL);
+					if(self->r_cb_obj!=nullptr)
+						{self->m_vt.key_down(self->r_cb_obj,*self,scancode,keymask,self->m_id);}
+					}
+				break;
+			}
+		return FALSE;
+		}
+	if(scancode==15)
+		{
+		gtk_window_set_focus(GTK_WINDOW(widget),self->r_focus_old);
+		return TRUE;
+		}
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.key_down(self->r_cb_obj,*self,scancode,keymask,self->m_id);}
+	return TRUE;
+	}
+
+gboolean Window::Impl::key_up(GtkWidget* widget,GdkEvent* event,void* user_data)
+	{
+	auto w=gtk_window_get_focus(GTK_WINDOW(widget));
+	if(w!=NULL)
+		{return FALSE;}
+	auto self=reinterpret_cast<Impl*>(user_data);
+	auto& key=event->key;
+	auto scancode=key.hardware_keycode - 8;
+	auto keymask=keymaskFromSystem(key.state);
+#ifndef __linux__
+	#waring "Scancode key offset is not tested. Pressing esc should print 1"
+	printf("%d\n",key.hardware_keycode - 8);
+#endif
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.key_up(self->r_cb_obj,*self,scancode,keymask,self->m_id);}
+	return TRUE;
+	}
+
+
+gboolean Window::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* user_data)
+	{
+	auto self=reinterpret_cast<Impl*>(user_data);
+	auto w=gtk_window_get_focus(GTK_WINDOW(widget));
+	if(w!=NULL)
+		{self->r_focus_old=w;}
+	gtk_window_set_focus(GTK_WINDOW(widget),NULL);
+	return FALSE;
+	}
+

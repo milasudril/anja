@@ -125,6 +125,27 @@ namespace Anja
 					{m_vtable.confirm_positive(r_cb_obj,*this,m_id);}
 				}
 
+			void keyDown(Window& win,int scancode,keymask_t keymask,int id)
+				{
+				switch(scancode)
+					{
+					case 1: //ESC
+						if(has_dismiss())
+							{m_vtable.dismiss(r_cb_obj,*this,m_id);}
+						else
+							{m_vtable.confirm_positive(r_cb_obj,*this,m_id);}
+						break;
+					case 28:
+						m_vtable.confirm_positive(r_cb_obj,*this,m_id);
+						break;
+					default:
+						break;
+					}
+				}
+
+			void keyUp(Window& win,int scancode,keymask_t keymask,int id)
+				{}
+
 		private:
 			static constexpr bool has_dismiss()
 				{return DialogTraits::dismiss()!=nullptr;}

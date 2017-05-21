@@ -7,6 +7,7 @@
 #define ANJA_WINDOW_HPP
 
 #include "container.hpp"
+#include "keymask.hpp"
 #include <utility>
 
 namespace Anja
@@ -37,13 +38,7 @@ namespace Anja
 			template<class WindowCallback,class IdType>
 			Window& callback(WindowCallback& cb,IdType id) noexcept
 				{
-				auto cb_wrapper=[](void* wc,Window& self)
-					{
-					auto x=reinterpret_cast<WindowCallback*>(wc);
-					auto id=static_cast<IdType>(self.id());
-					x->closing(self,id);
-					};
-				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
+				return callback(Vtable(cb,id),&cb,static_cast<int>(id));
 				}
 
 			int id() const noexcept;
@@ -51,8 +46,29 @@ namespace Anja
 			Window& modal(bool state);
 
 		protected:
-			typedef void (*Callback)(void* cb_obj,Window& self);
-			Window& callback(Callback cb,void* cb_obj,int id);
+			struct Vtable
+				{
+				Vtable():closing(nullptr),key_down(nullptr),key_up(nullptr)
+					{}
+
+				template<class Callback,class IdType>
+				Vtable(Callback& cb_obj,IdType id)
+					{
+					closing=[](void* cb_obj,Window& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->closing(self,static_cast<IdType>(id));};
+					key_down=[](void* cb_obj,Window& self,int scancode,keymask_t keymask,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->keyDown(self,scancode,keymask,static_cast<IdType>(id));};
+					key_up=[](void* cb_obj,Window& self,int scancode,keymask_t keymask,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->keyUp(self,scancode,keymask,static_cast<IdType>(id));};
+					}
+
+				void (*closing)(void* cb_obj,Window& self,int id);
+				void (*key_down)(void* cb_obj,Window& self,int scancode,keymask_t keymask,int id);
+				void (*key_up)(void* cb_obj,Window& self,int scancode,keymask_t keymask,int id);
+				};
+
+
+			Window& callback(const Vtable& vt,void* cb_obj,int id);
 
 			class Impl;
 			Impl* m_impl;

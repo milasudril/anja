@@ -19,6 +19,12 @@ namespace
 			void closing(Anja::Window& win,int id)
 				{r_ctx.exit();}
 
+			void keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
+				{}
+
+			void keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
+				{}
+
 			Anja::UiContext::RunStatus idle(Anja::UiContext& ctx)
 				{
 				return Anja::UiContext::RunStatus::WAIT;

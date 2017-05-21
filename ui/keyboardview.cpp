@@ -636,7 +636,6 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 	if(pos.y()>=0.0 && pos.y()<1.0 && pos.x()>=1.5 && pos.x()<1.5 + FUNCTION_KEYS_COLS)
 		{
 		auto scancode=s_function_keys_scancodes[static_cast<int>( pos.x() - 1.5)];
-		printf("Scancode: %d\n",scancode);
 		self->selection(scancode);
 		if(self->r_cb_obj!=nullptr)
 			{self->m_cb(self->r_cb_obj,*self);}
@@ -646,7 +645,6 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 	if(pos.y()>=1.5 && pos.y()<size_in.y() && pos.x()>=0.0 && pos.x()<size_in.x())
 		{
 		auto scancode=scancode_typing_area(pos - Vec2{0.0,1.5});
-		printf("Scancode: %d\n",scancode);
 		self->selection(scancode);
 		if(self->r_cb_obj!=nullptr)
 			{self->m_cb(self->r_cb_obj,*self);}
