@@ -452,6 +452,21 @@ WaveformEditor& WaveformEditor::waveform(const WaveformView& waveform)
 	return *this;
 	}
 
+WaveformEditor& WaveformEditor::waveformUpdate()
+	{
+	//TODO: rerender RMS plot?
+	m_plot.showAll();
+	return *this;
+	}
+
+WaveformEditor& WaveformEditor::channelNames(const String* names_begin,const String* names_end)
+	{
+	m_channel_input.clear();
+	std::for_each(names_begin,names_end,[this](const String& str)
+		{m_channel_input.append(str.begin());});
+	return *this;
+	}
+
 WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	,const String* channel_names_begin,const String* channel_names_end):
 	 r_cb_obj(nullptr)
@@ -528,8 +543,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
 //	Session changed...
-	std::for_each(channel_names_begin,channel_names_end,[this](const String& str)
-		{m_channel_input.append(str.begin());});
+	channelNames(channel_names_begin,channel_names_end);
 
 //	Slot changed
 	description_update(waveform,m_description_input);

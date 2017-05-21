@@ -159,6 +159,15 @@ void ChannelStrip::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 		}
 	}
 
+ChannelStrip& ChannelStrip::channel(const ChannelView& ch)
+	{
+	m_channel=ch;
+	label_update(ch,m_name);
+	color_update(ch,m_color);
+	fade_time_update(ch,m_ft_knob,m_ft_input);
+	gain_update(ch,m_gain_slider,m_gain_input);
+	return *this;
+	}
 
 ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
 	 r_cb_obj(nullptr)

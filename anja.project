@@ -149,7 +149,6 @@
       <File Name="ui/keyboardview.hpp"/>
       <File Name="ui/keyboardview.cpp"/>
     </VirtualDirectory>
-    <File Name="anja-test.cpp"/>
     <File Name="anja.cpp"/>
     <File Name="testbank/testbank.txt"/>
     <File Name="maikeconfig-rel.json"/>

@@ -74,6 +74,12 @@ namespace Anja
 
 			WaveformEditor& channelName(int index,const char* name);
 
+			template<class StringRange>
+			WaveformEditor& channelNames(const StringRange& channel_names)
+				{return channelNames(channel_names.begin(),channel_names.end());}
+
+			WaveformEditor& channelNames(const String* names_begin,const String* names_end);
+
 			template<class Callback,class IdType>
 			WaveformEditor& callback(Callback& cb,IdType id) noexcept
 				{
@@ -96,6 +102,7 @@ namespace Anja
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
 			WaveformEditor& waveform(const WaveformView& waveform);
+			WaveformEditor& waveformUpdate();
 
 		private:
 			struct Vtable

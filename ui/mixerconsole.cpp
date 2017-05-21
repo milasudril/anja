@@ -42,7 +42,6 @@ void MixerConsole::changed(Slider& slider,SliderId id)
 		}
 	}
 
-
 void MixerConsole::changed(TextEntry& entry,TextEntryId id)
 	{
 	switch(id)
@@ -60,6 +59,17 @@ void MixerConsole::changed(TextEntry& entry,TextEntryId id)
 			}
 			break;
 		}
+	}
+
+MixerConsole& MixerConsole::channels(Session& session)
+	{
+	int k=0;
+	std::for_each(m_strips.begin(),m_strips.end(),[&session,&k](ChannelStrip& strip)
+		{
+		strip.channel(session.channelViewGet(k));
+		++k;
+		});
+	return *this;
 	}
 
 MixerConsole::MixerConsole(Container& cnt,Session& session):

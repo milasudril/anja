@@ -123,6 +123,50 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 		{keyboard.selection(s_slot_scancodes[slot]);}
 	}
 
+SessionEditor& SessionEditor::sessionUpdated()
+	{
+		{
+		auto N=std::min(r_session.channelsCountGet(),12);
+		for(decltype(N) k=0;k<N;++k)
+			{
+			auto key=s_channel_scancodes[k];
+			auto ch=r_session.channelViewGet(k);
+			m_keyboard.keyColor(key,ch.colorGet()).keyLabel(key,ch.labelGet().begin());
+			}
+		}
+
+		{
+		auto N=std::min(static_cast<int>(sizeof(s_slot_scancodes)),r_session.slotsCountGet());
+		for(decltype(N) k=0;k<N;++k)
+			{
+			auto key=s_slot_scancodes[k];
+			auto wf=r_session.waveformViewGet(k);
+			m_keyboard.keyColor(key,wf.keyColorGet());
+			if(wf.keyLabelGet().length()!=0)
+				{m_keyboard.keyLabel(key,wf.keyLabelGet().begin());}
+			}
+		}
+
+		{
+		auto slot=r_session.slotActiveGet();
+		if(slot>=0 && slot<sizeof(s_slot_scancodes));
+			{m_keyboard.selection(s_slot_scancodes[slot]);}
+		}
+
+	auto& color_presets=r_session.colorPresetsGet();
+	auto channel_names=r_session.channelLabelsGet();
+
+	m_waveform.colorPresets(color_presets)
+		.channelNames(channel_names)
+		.waveform(r_session.waveformViewGet(r_session.slotActiveGet()))
+		.waveformUpdate();
+
+	m_mixer.colorPresets(color_presets).channels(r_session);
+
+
+	return *this;
+	}
+
 
 SessionEditor::SessionEditor(Container& cnt,Session& session)
 	:r_session(session)
@@ -135,33 +179,7 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 			,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
 	{
 
-		{
-		auto N=std::min(session.channelsCountGet(),12);
-		for(decltype(N) k=0;k<N;++k)
-			{
-			auto key=s_channel_scancodes[k];
-			auto ch=session.channelViewGet(k);
-			m_keyboard.keyColor(key,ch.colorGet()).keyLabel(key,ch.labelGet().begin());
-			}
-		}
-
-		{
-		auto N=std::min(static_cast<int>(sizeof(s_slot_scancodes)),session.slotsCountGet());
-		for(decltype(N) k=0;k<N;++k)
-			{
-			auto key=s_slot_scancodes[k];
-			auto wf=session.waveformViewGet(k);
-			m_keyboard.keyColor(key,wf.keyColorGet());
-			if(wf.keyLabelGet().length()!=0)
-				{m_keyboard.keyLabel(key,wf.keyLabelGet().begin());}
-			}
-		}
-
-		{
-		auto slot=session.slotActiveGet();
-		if(slot>=0 && slot<sizeof(s_slot_scancodes));
-			{m_keyboard.selection(s_slot_scancodes[slot]);}
-		}
+	sessionUpdated();
 
 	m_keyboard.callback(*this,KeyboardViewId::KEYBOARD_MAIN);
 	m_waveform.colorPresets(session.colorPresetsGet())

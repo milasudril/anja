@@ -3,20 +3,33 @@
 #include "ui/uicontext.hpp"
 #include "ui/window.hpp"
 #include "ui/sessioneditor.hpp"
+#include "ui/paned.hpp"
+#include "ui/buttonlist.hpp"
 #include "sessiondata/session.hpp"
 #include <cstdio>
 #include <time.h>
 
 namespace Anja
 	{
-	class SessionControl
+	class Application
 		{
 		public:
-			SessionControl(UiContext& ctx):r_ctx(ctx)
-				{}
+			Application():
+				m_mainwin("New session--Anja")
+					,m_cols(m_mainwin,false)
+						,m_session_control(m_cols,true)
+						,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
+				{
+				m_session_control.append("New session","Load session","Save session"
+					,"Save session as","","Start engine","Stop engine","","Fullscreen"
+					,"Exit","About Anja");
+				m_ctx.dark(1);
+				m_mainwin.callback(*this,0);
+				m_mainwin.show();
+				}
 
 			void closing(Window& win,int id)
-				{r_ctx.exit();}
+				{m_ctx.exit();}
 
 			UiContext::RunStatus idle(UiContext& ctx)
 				{
@@ -33,8 +46,26 @@ namespace Anja
 				printf("%d up\n",scancode);
 				}
 
+			Application& run()
+				{
+				m_ctx.run(*this);
+				return *this;
+				}
+
+			Application& sessionLoad(const char* filename)
+				{
+				m_session.load(filename);
+				m_session_editor.sessionUpdated();
+				return *this;
+				}
+
 		private:
-			UiContext& r_ctx;
+			UiContext m_ctx;
+			Session m_session;
+			Window m_mainwin;
+				Box m_cols;
+					Anja::ButtonList m_session_control;
+					Anja::SessionEditor m_session_editor;
 		};
 	}
 
@@ -42,16 +73,9 @@ int main(int argc, char **argv)
 	{
 	try
 		{
-		Anja::UiContext ctx;
-		ctx.dark(1);
-		Anja::Session session;
-		session.load("testbank/testbank.txt");
-		Anja::Window mainwin(session.filenameGet().begin());
-		Anja::SessionEditor editor(mainwin,session);
-		Anja::SessionControl ctrl(ctx);
-		mainwin.callback(ctrl,0);
-		mainwin.show();
-		ctx.run(ctrl);
+		Anja::Application anja;
+		anja.sessionLoad("testbank/testbank.txt");
+		anja.run();
 		}
 	catch(const Anja::Error& err)
 		{

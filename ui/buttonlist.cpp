@@ -4,7 +4,7 @@
 
 using namespace Anja;
 
-ButtonListImpl& ButtonListImpl::append(const char* const* labels)
+ButtonList& ButtonList::append(const char* const* labels)
 	{
 	while(*labels!=nullptr)
 		{
@@ -12,4 +12,14 @@ ButtonListImpl& ButtonListImpl::append(const char* const* labels)
 		++labels;
 		}
 	return *this;
+	}
+
+void ButtonList::callbacks_assign()
+	{
+	int k=0;
+	std::for_each(m_buttons.begin(),m_buttons.end(),[this,&k](Button& btn)
+		{
+		btn.callback(*this,k);
+		++k;
+		});
 	}

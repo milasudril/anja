@@ -37,6 +37,8 @@ namespace Anja
 			void waveformColorChanged(WaveformEditor& wf,WaveformEditId id);
 			void masterGainChanged(MixerConsole& mixer,MixerId id);
 
+			SessionEditor& sessionUpdated();
+
 		private:
 			Session& r_session;
 			Paned m_hsplit;

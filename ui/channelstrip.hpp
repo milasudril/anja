@@ -65,6 +65,8 @@ namespace Anja
 				return *this;
 				}
 
+			ChannelStrip& channel(const ChannelView& ch);
+
 
 		private:
 			struct Vtable

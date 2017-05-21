@@ -72,6 +72,8 @@ namespace Anja
 				return *this;
 				}
 
+			MixerConsole& channels(Session& session);
+
 		private:
 			int m_id;
 			void* r_cb_obj;
