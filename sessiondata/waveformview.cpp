@@ -29,10 +29,10 @@ namespace
 
 static IdGenerator s_id_gen;
 
-static String filename_get(const String& filename,const String& load_path)
+static String filename_get(const char* filename,const String& load_path)
 	{
 	if(absoluteIs(filename))
-		{return filename;}
+		{return String(filename);}
 	auto fullpath=load_path;
 	fullpath.append(filename);
 	return fullpath;
@@ -56,7 +56,7 @@ void WaveformView::load(const SessionFileRecord& rec)
 		{r_waveform->dataSet(rec);}
 	else
 		{
-		auto f=::filename_get(r_waveform_data->filenameGet(),*r_dir_current);
+		auto f=::filename_get(r_waveform_data->filenameGet().begin(),*r_dir_current);
 		r_waveform->dataSet(rec,f.begin());
 		r_waveform_data->filenameSet(f.begin());
 		}
@@ -94,9 +94,9 @@ void WaveformView::fileLoad(const char* filename)
 		}
 	else
 		{
-		auto fullpath=::filename_get(String(filename),*r_dir_current);
+		auto fullpath=::filename_get(filename,*r_dir_current);
 		r_waveform->fileLoad(fullpath.begin());
-		r_waveform_data->filenameSet(fullpath.begin());
+		r_waveform_data->filenameSet(std::move(fullpath));
 		}
 	}
 
@@ -109,9 +109,9 @@ void WaveformView::fileSave(const char* filename) const
 		}
 	else
 		{
-		auto fullpath=::filename_get(String(filename),*r_dir_current);
+		auto fullpath=::filename_get(filename,*r_dir_current);
 		r_waveform->fileSave(fullpath.begin());
-		r_waveform_data->filenameSet(fullpath.begin());
+		r_waveform_data->filenameSet(std::move(fullpath));
 		}
 	}
 

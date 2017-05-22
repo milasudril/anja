@@ -35,8 +35,11 @@ namespace Anja
 			const String& descriptionGet() const noexcept
 				{return r_waveform_data->descriptionGet();}
 
-			void descriptionSet(const String& description)
+			void descriptionSet(const char* description)
 				{r_waveform_data->descriptionSet(description);}
+
+			void descriptionSet(String&& description)
+				{r_waveform_data->descriptionSet(std::move(description));}
 
 			const String& keyLabelGet() const noexcept
 				{return r_waveform_data->keyLabelGet();;}

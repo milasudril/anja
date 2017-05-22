@@ -59,9 +59,7 @@ namespace Anja
 						m_session_editor.sessionUpdated();
 						break;
 					case 2:
-						//TODO: Save is broken...
-						//m_session.save(m_session.filenameGet().begin());
-						m_session.save("temp.txt");
+						m_session.save(m_session.filenameGet().begin());
 						break;
 					case 6:
 						m_fullscreen=!m_fullscreen;
@@ -105,7 +103,7 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::Application anja;
-		anja.sessionLoad("temp.txt");
+		anja.sessionLoad("testbank/testbank.txt");
 		anja.run();
 		}
 	catch(const Anja::Error& err)

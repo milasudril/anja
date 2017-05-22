@@ -10,7 +10,7 @@
 
 namespace Anja
 	{
-	String realpath(const String& path);
+	String realpath(const char* path);
 	String parentDirectory(const String& path);
 	bool absoluteIs(const char* path);
 	inline bool absoluteIs(const String& path)
