@@ -25,8 +25,7 @@ namespace Anja
 
 			void store(SessionFileRecord& rec);
 
-			const String& filenameGet() const
-				{return r_waveform_data->filenameGet();}
+			String filenameGet() const;
 
 			const String& directoryGet() const noexcept
 				{return *r_dir_current;}

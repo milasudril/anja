@@ -12,7 +12,6 @@ using namespace Anja;
 void ChannelData::clear()
 	{
 	m_label.clear();
-	m_label.append('\0');
 	m_color=COLORS[ColorID::BLACK];
 	m_state_flags=0;
 	}

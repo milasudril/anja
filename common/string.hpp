@@ -32,6 +32,7 @@ namespace Anja
 				{
 				ArrayDynamicShort<char>::append('\0');
 				append(c_str);
+				assert(*(ArrayDynamicShort<char>::end()-1)=='\0');
 				}
 
 			const char* beginAfter(char ch) const noexcept;
@@ -42,18 +43,24 @@ namespace Anja
 			String& append(const char* c_str)
 				{
 				assert(c_str!=begin());
-				return appendImpl(c_str);
+				appendImpl(c_str);
+				assert(*(ArrayDynamicShort<char>::end()-1)=='\0');
+				return *this;
 				}
 
 			String& append(const String& str)
 				{
-				ArrayDynamicShort<char>::truncate().append(str.begin(),str.length());
+				ArrayDynamicShort<char>::truncate().append(str.begin(),str.length())
+					.append('\0');
+				assert(*(ArrayDynamicShort<char>::end()-1)=='\0');
 				return *this;
 				}
 
 			String& append(char ch)
 				{
+				assert(ch!='\0');
 				ArrayDynamicShort<char>::truncate().append(ch).append('\0');
+				assert(*(ArrayDynamicShort<char>::end()-1)=='\0');
 				return *this;
 				}
 

@@ -29,10 +29,10 @@ namespace Anja
 				{*this=WaveformData(rec);}
 
 
-			const String& filenameGet() const
+			const String& filenameGet() const noexcept
 				{return m_filename;}
 
-			void filenameSet(const String& filename);
+			void filenameSet(const char* filename);
 
 			const String& descriptionGet() const noexcept
 				{return m_description;}

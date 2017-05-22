@@ -54,6 +54,14 @@ class Window::Impl:private Window
 		void modal(bool state)
 			{gtk_window_set_modal(m_handle,state);}
 
+		void fullscreen(bool state)
+			{
+			if(state)
+				{gtk_window_fullscreen(m_handle);}
+			else
+				{gtk_window_unfullscreen(m_handle);}
+			}
+
 	private:
 		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
@@ -118,6 +126,13 @@ Window& Window::modal(bool state)
 	m_impl->modal(state);
 	return *this;
 	}
+
+Window& Window::fullscreen(bool state)
+	{
+	m_impl->fullscreen(state);
+	return *this;
+	}
+
 
 
 Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)

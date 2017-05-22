@@ -47,9 +47,9 @@ void WaveformData::dataGet(SessionFileRecord& record) const
 //	TODO Save other data not interpreted by Anja
 	}
 
-void WaveformData::filenameSet(const String& filename)
+void WaveformData::filenameSet(const char* filename)
 	{
-	m_filename=filename;
+	m_filename=String(filename);
 	m_stateflags|=DIRTY;
 	}
 

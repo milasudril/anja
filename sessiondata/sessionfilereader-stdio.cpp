@@ -249,8 +249,6 @@ bool SessionFileReader::Impl::tokenGet(Token& tok)
 					{
 					if(state_prev!=State::VALUE)
 						{throw Error("Parse error: Section title or key cannot end with newline.");}
-
-					tok.buffer.append('\0');
 					tok.type=TokenType::VALUE;
 					m_state=State::INIT;
 					return 1;

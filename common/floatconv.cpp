@@ -34,7 +34,6 @@ bool Anja::convert(const char* string,double& result)
 				}
 			}
 		}
-	buffer.append('\0');
 
 	char* ptr_end;
 	auto text=buffer.begin();

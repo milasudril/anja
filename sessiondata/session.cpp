@@ -211,10 +211,8 @@ void Session::clear()
 	waveformsClear();
 	channelsClear();
 	m_filename.clear();
-	m_filename.append('\0');
 	m_title=String("New session");
 	m_description.clear();
-	m_description.append('\0');
 	gainSet(-6);
 	m_color_presets.clear();
 	std::for_each(COLORS,COLORS + ColorID::COLOR_END,[this](const ColorRGBA& x)
@@ -226,7 +224,6 @@ void Session::clear()
 void Session::save(const char* filename)
 	{
 	char buffer[32];
-	SessionFileWriter writer(filename);
 	SessionFileRecordImpl record_out;
 	auto dir=parentDirectory(realpath(String(filename)));
 	record_out.sectionLevelSet(0);
@@ -248,6 +245,7 @@ void Session::save(const char* filename)
 			,string_from_color_presets(m_color_presets));
 		}
 
+	SessionFileWriter writer(filename);
 //	TODO Save other data not interpreted by Anja
 	writer.recordWrite(record_out);
 	record_out.clear();
@@ -284,8 +282,10 @@ void Session::save(const char* filename)
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
-			ChannelView(m_channels[k],*channel).store(record_out);
+			ChannelView cv(m_channels[k],*channel);
+			cv.store(record_out);
 			writer.recordWrite(record_out);
+			cv.dirtyClear();
 			++k;
 			++channel;
 			}

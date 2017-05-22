@@ -29,7 +29,10 @@ namespace Anja
 				}
 
 			void closing(Window& win,int id)
-				{m_ctx.exit();}
+				{
+				//TODO: Ask for saving data
+				m_ctx.exit();
+				}
 
 			UiContext::RunStatus idle(UiContext& ctx)
 				{
@@ -58,6 +61,16 @@ namespace Anja
 					case 2:
 						//TODO: Save is broken...
 						//m_session.save(m_session.filenameGet().begin());
+						m_session.save("temp.txt");
+						break;
+					case 6:
+						m_fullscreen=!m_fullscreen;
+						m_mainwin.fullscreen(m_fullscreen);
+						btn.label(m_fullscreen?"Windowed":"Fullscreen");
+						break;
+					case 7:
+						//TODO: Ask for saving data
+						m_ctx.exit();
 						break;
 					}
 				btn.state(0);
@@ -83,6 +96,7 @@ namespace Anja
 				Box m_cols;
 					Anja::ButtonList m_session_control;
 					Anja::SessionEditor m_session_editor;
+			bool m_fullscreen;
 		};
 	}
 
@@ -91,7 +105,7 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::Application anja;
-		anja.sessionLoad("testbank/testbank.txt");
+		anja.sessionLoad("temp.txt");
 		anja.run();
 		}
 	catch(const Anja::Error& err)

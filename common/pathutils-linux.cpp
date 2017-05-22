@@ -59,9 +59,8 @@ String Anja::makeRelativeTo(const char* path, const char* reference)
 	String path_tok;
 	String ref_tok;
 
-//	Make shure the reference path ends with '/'
+//	Make sure the reference path ends with '/'
 	String ref_temp(reference);
-	ref_temp.truncate();
 	if(*(ref_temp.end()-1)!='/')
 		{ref_temp.append("/");}
 	reference=ref_temp.begin();

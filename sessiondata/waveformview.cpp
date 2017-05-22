@@ -29,7 +29,7 @@ namespace
 
 static IdGenerator s_id_gen;
 
-static String filenameGet(const String& filename,const String& load_path)
+static String filename_get(const String& filename,const String& load_path)
 	{
 	if(absoluteIs(filename))
 		{return filename;}
@@ -56,24 +56,30 @@ void WaveformView::load(const SessionFileRecord& rec)
 		{r_waveform->dataSet(rec);}
 	else
 		{
-		auto f=::filenameGet(r_waveform_data->filenameGet(),*r_dir_current);
+		auto f=::filename_get(r_waveform_data->filenameGet(),*r_dir_current);
 		r_waveform->dataSet(rec,f.begin());
+		r_waveform_data->filenameSet(f.begin());
 		}
+	}
+
+static String filename_generate(const String& str,const String& in_dir)
+	{
+	if(absoluteIs(str))
+		{return makeRelativeTo(str.begin(),in_dir.begin());}
+	return String(in_dir).append(str);
+	}
+
+String WaveformView::filenameGet() const
+	{
+	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	}
 
 void WaveformView::store(SessionFileRecord& rec)
 	{
 	if(r_waveform->flagsGet()&Waveform::RECORDED)
-		{
-		auto filename=::filenameGet(filenameGenerate(r_waveform_data->keyLabelGet()),*r_dir_current);
-		r_waveform_data->filenameSet(makeRelativeTo(filename.begin(),r_dir_current->begin()));
-		r_waveform->fileSave(filename.begin());
-		}
+		{r_waveform->fileSave(r_waveform_data->filenameGet().begin());}
 
-	auto filename_out=r_waveform_data->filenameGet();
-	if(*filename_out.begin()!='\0')
-		{filename_out=makeRelativeTo(filename_out.begin(),r_dir_current->begin());}
-	rec.propertySet(String("Filename"),filename_out);
+	rec.propertySet(String("Filename"),filenameGet());
 	r_waveform->dataGet(rec);
 	r_waveform_data->dataGet(rec);
 	}
@@ -84,14 +90,13 @@ void WaveformView::fileLoad(const char* filename)
 	if(absoluteIs(filename))
 		{
 		r_waveform->fileLoad(filename);
-		r_waveform_data->filenameSet(makeRelativeTo(filename,r_dir_current->begin()));
+		r_waveform_data->filenameSet(filename);
 		}
 	else
 		{
-		auto fullpath=String(*r_dir_current);
-		fullpath.append(filename);
+		auto fullpath=::filename_get(String(filename),*r_dir_current);
 		r_waveform->fileLoad(fullpath.begin());
-		r_waveform_data->filenameSet(String(filename));
+		r_waveform_data->filenameSet(fullpath.begin());
 		}
 	}
 
@@ -100,14 +105,13 @@ void WaveformView::fileSave(const char* filename) const
 	if(absoluteIs(filename))
 		{
 		r_waveform->fileSave(filename);
-		r_waveform_data->filenameSet(makeRelativeTo(filename,r_dir_current->begin()));
+		r_waveform_data->filenameSet(makeRelativeTo(filename,r_dir_current->begin()).begin());
 		}
 	else
 		{
-		auto fullpath=String(*r_dir_current);
-		fullpath.append('/').append(filename);
+		auto fullpath=::filename_get(String(filename),*r_dir_current);
 		r_waveform->fileSave(fullpath.begin());
-		r_waveform_data->filenameSet(String(filename));
+		r_waveform_data->filenameSet(fullpath.begin());
 		}
 	}
 

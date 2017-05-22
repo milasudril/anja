@@ -45,6 +45,8 @@ namespace Anja
 
 			Window& modal(bool state);
 
+			Window& fullscreen(bool state);
+
 		protected:
 			struct Vtable
 				{
