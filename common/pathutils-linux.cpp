@@ -6,17 +6,35 @@
 //@	]
 
 #include "pathutils.hpp"
+#include "error.hpp"
+#include "syserror.hpp"
 #include <cstdlib>
 #include <memory>
 #include <cstring>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 using namespace Anja;
 
-String Anja::realpath(const String& path)
+String Anja::realpath(const char* path)
 	{
-	std::unique_ptr<char,decltype(&free)> result
-		{::realpath(path.begin(),NULL),free};
+	auto fd=open(path,O_CREAT|O_EXCL,S_IRUSR|S_IWUSR);
+	if(fd==-1)
+		{
+		if(errno!=EEXIST)
+			{throw Error("Resolving ",path," failed. ",SysError(errno));}
+		std::unique_ptr<char,decltype(&free)> result{::realpath(path,NULL),free};
+		if(result.get()==nullptr)
+			{throw Error("Resolving ",path," failed. ",SysError(errno));}
+		return String(result.get());
+		}
+
+	std::unique_ptr<char,decltype(&free)> result{::realpath(path,NULL),free};
+	close(fd);
+	unlink(path);
+	if(result.get()==nullptr)
+		{throw Error("Resolving ",path," failed. ",SysError(errno));}
 	return String(result.get());
 	}
 
@@ -54,6 +72,9 @@ static const char* pathTokenGet(const char* path,String& token)
 
 String Anja::makeRelativeTo(const char* path, const char* reference)
 	{
+	if(*reference=='\0')
+		{return String(path);}
+
 //	Assume that path and reference are absolute paths
 	String ret;
 	String path_tok;

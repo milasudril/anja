@@ -16,7 +16,7 @@ WaveformData::WaveformData(const SessionFileRecord& record):m_filename(""),m_des
 	{
 	auto value=record.propertyGet(String("Description"));
 	if(value!=nullptr)
-		{descriptionSet(*value);}
+		{descriptionSet(value->begin());}
 
 	value=record.propertyGet(String("Color"));
 	if(value!=nullptr)
@@ -47,20 +47,11 @@ void WaveformData::dataGet(SessionFileRecord& record) const
 //	TODO Save other data not interpreted by Anja
 	}
 
-void WaveformData::filenameSet(const char* filename)
+void WaveformData::key_label_update()
 	{
-	m_filename=String(filename);
-	m_stateflags|=DIRTY;
-	}
-
-void WaveformData::descriptionSet(const char* description)
-	{
-	if(strcmp(m_description.begin(),description)==0)
-		{return;}
-	m_description=String(description);
 	m_key_label.clear();
 	auto state=0;
-	auto ptr=description;
+	auto ptr=m_description.begin();
 	while(*ptr!='\0' && *ptr!=']')
 		{
 		switch(*ptr)
@@ -83,7 +74,7 @@ void WaveformData::descriptionSet(const char* description)
 
 	if(m_key_label.length()==0)
 		{
-		auto ptr=description;
+		auto ptr=m_description.begin();
 		while(*ptr!=' ' && *ptr!='\0')
 			{
 			m_key_label.append(*ptr);
@@ -92,12 +83,6 @@ void WaveformData::descriptionSet(const char* description)
 		}
 	m_stateflags|=DIRTY;
 	}
-
-void WaveformData::descriptionSet(const String& description)
-	{
-	descriptionSet(description.begin());
-	}
-
 
 void WaveformData::keyColorSet(const ColorRGBA& color)
 	{

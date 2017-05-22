@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::Application anja;
-		anja.sessionLoad("temp.txt");
+		anja.sessionLoad("testbank/testbank.txt");
 		anja.run();
 		}
 	catch(const Anja::Error& err)

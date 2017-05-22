@@ -74,7 +74,7 @@ Session::Session(const char* filename):m_slot_active(0)
 //	Get data from file header
 		{
 		m_filename=String(filename);
-		m_directory=parentDirectory(realpath(m_filename));
+		m_directory=parentDirectory(realpath(filename));
 		titleSet(record.titleGet());
 		auto slot_num_str=record.propertyGet(String("Active slot"));
 		if(slot_num_str!=nullptr)
@@ -225,7 +225,7 @@ void Session::save(const char* filename)
 	{
 	char buffer[32];
 	SessionFileRecordImpl record_out;
-	auto dir=parentDirectory(realpath(String(filename)));
+	auto dir=parentDirectory(realpath(filename));
 	record_out.sectionLevelSet(0);
 	record_out.sectionTitleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);

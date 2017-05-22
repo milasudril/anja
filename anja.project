@@ -34,6 +34,7 @@
       <File Name="sessiondata/waveformview.cpp"/>
       <File Name="sessiondata/channelview.hpp"/>
       <File Name="sessiondata/channelview.cpp"/>
+      <File Name="sessiondata/waveformview.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
@@ -61,7 +62,6 @@
       <File Name="common/thread.hpp"/>
       <File Name="common/thread.cpp"/>
       <File Name="common/addmemberif.hpp"/>
-      <File Name="sessiondata/waveformview.hpp"/>
       <File Name="common/blob.hpp"/>
       <File Name="common/memoryalloc.hpp"/>
       <File Name="common/memoryalloc.cpp"/>
