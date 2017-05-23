@@ -211,7 +211,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	switch(id)
 		{
 		case TextEntryId::FILENAME:
-			if(!m_waveform.fileLoaded(entry.content()))
+			if(*entry.content()!='\0'
+				&& !m_waveform.fileLoaded(entry.content()))
 				{
 				try
 					{
@@ -436,6 +437,7 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 
 WaveformEditor& WaveformEditor::waveform(const WaveformView& waveform)
 	{
+	m_waveform=waveform;
 	description_update(waveform,m_description_input);
 	color_update(waveform,m_color_input);
 	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
@@ -453,7 +455,6 @@ WaveformEditor& WaveformEditor::waveform(const WaveformView& waveform)
 	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
 	offset_end_update(waveform,m_cursor_end_entry,m_plot);
 
-	m_waveform=waveform;
 	return *this;
 	}
 
