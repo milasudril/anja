@@ -165,7 +165,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 
 	m_mixer.colorPresets(color_presets).channels(r_session);
 
-
+	m_settings.sessionUpdated();
 	return *this;
 	}
 

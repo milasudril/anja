@@ -19,4 +19,12 @@ SessionProperties::SessionProperties(Container& cnt,Session& session):
 		,m_options_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}),true)
 	{
 	m_options_input.append(session.flagNames());
+	sessionUpdated();
+	}
+
+void SessionProperties::sessionUpdated()
+	{
+	m_title_input.content(r_session->titleGet().begin());
+	m_description_input.content(r_session->descriptionGet().begin());
+	m_options_input.selected(r_session->flagsGet());
 	}

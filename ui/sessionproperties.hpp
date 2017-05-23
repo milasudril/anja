@@ -18,6 +18,7 @@ namespace Anja
 		{
 		public:
 			SessionProperties(Container& cnt,Session& session);
+			void sessionUpdated();
 
 		private:
 			Session* r_session;
