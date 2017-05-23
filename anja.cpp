@@ -19,6 +19,7 @@ namespace Anja
 					,m_cols(m_mainwin,false)
 						,m_session_control(m_cols,true)
 						,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
+				,m_fullscreen(0)
 				{
 				m_session_control.append("New session","Load session","Save session"
 					,"Save session as","","Start engine","Stop engine","","Fullscreen"
