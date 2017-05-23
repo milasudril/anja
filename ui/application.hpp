@@ -11,12 +11,28 @@
 #include "buttonlist.hpp"
 #include "sessionpropertieseditor.hpp"
 #include "sessioneditor.hpp"
+#include "dialog.hpp"
+#include "message.hpp"
 #include "../sessiondata/session.hpp"
+#include <memory>
 
 namespace Anja
 	{
 	class Application
 		{
+		private:
+			struct ConfirmSaveDialog
+				{
+				static constexpr const char* dismiss() noexcept
+					{return "Cancel";}
+
+				static constexpr const char* confirmPositive() noexcept
+					{return "Save";}
+
+				static constexpr const char* confirmNegative() noexcept
+					{return "Don't save";}
+				};
+
 		public:
 			Application();
 
@@ -29,6 +45,9 @@ namespace Anja
 				}
 
 			Application& sessionLoad(const char* filename);
+			Application& sessionLoad();
+			bool sessionSave();
+			bool sessionSaveAs();
 
 			UiContext::RunStatus idle(UiContext& ctx);
 
@@ -40,6 +59,11 @@ namespace Anja
 			void descriptionChanged(SessionPropertiesEditor& editor,int id);
 			void optionChanged(SessionPropertiesEditor& editor,int id,int option);
 
+			enum class ConfirmSaveDialogId:int{SESSION_NEW,SESSION_LOAD,SESSION_RELOAD,EXIT};
+
+			void dismiss(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
+			void confirmPositive(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
+			void confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 
 		private:
 			UiContext m_ctx;
@@ -49,6 +73,9 @@ namespace Anja
 					Anja::ButtonList m_session_control;
 					Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
+
+			std::unique_ptr<Dialog<Message,ConfirmSaveDialog> > m_confirm;
+			void save_ask(ConfirmSaveDialogId id);
 		};
 	}
 

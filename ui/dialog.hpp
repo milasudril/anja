@@ -18,7 +18,7 @@ namespace Anja
 			{return "Cancel";}
 
 		static constexpr const char* confirmPositive() noexcept
-			{return "Ok";}
+			{return "OK";}
 
 		static constexpr const char* confirmNegative() noexcept
 			{return nullptr;}
@@ -30,7 +30,7 @@ namespace Anja
 			{return nullptr;}
 
 		static constexpr const char* confirmPositive() noexcept
-			{return "Ok";}
+			{return "OK";}
 
 		static constexpr const char* confirmNegative() noexcept
 			{return nullptr;}

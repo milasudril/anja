@@ -175,6 +175,8 @@ namespace Anja
 
 			Session& colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end);
 
+			bool loadPossible(const char* filename) const;
+
 		private:
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;

@@ -221,6 +221,11 @@ void Session::clear()
 	m_flags=0;
 	}
 
+bool Session::loadPossible(const char* filename) const
+	{
+	return SessionFileReader::check(filename);
+	}
+
 void Session::save(const char* filename)
 	{
 	char buffer[32];

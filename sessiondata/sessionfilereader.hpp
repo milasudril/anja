@@ -18,6 +18,7 @@ namespace Anja
 			explicit SessionFileReader(const char* filename);
 			~SessionFileReader();
 			bool recordNextGet(SessionFileRecord& record);
+			static bool check(const char* filenmae);
 
 		private:
 			class Impl;

@@ -1,10 +1,11 @@
 //@	{"targets":[{"name":"sessionfilereader.o","type":"object"}]}
 
 #include "sessionfilereader.hpp"
-#include "sessionfilerecord.hpp"
+#include "sessionfilerecordimpl.hpp"
 #include "../common/string.hpp"
 #include "../common/error.hpp"
 #include "../common/syserror.hpp"
+#include "../common/pathutils.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -65,6 +66,23 @@ SessionFileReader::Impl::Impl(const char* filename):
 SessionFileReader::Impl::~Impl()
 	{}
 
+bool SessionFileReader::check(const char* filename)
+	{
+	if(fileIs(filename))
+		{
+		try
+			{
+			SessionFileReader reader(filename);
+			SessionFileRecordImpl rec;
+			while(reader.recordNextGet(rec))
+				{}
+			return 1;
+			}
+		catch(...)
+			{return 0;}
+		}
+	return 0;
+	}
 
 bool SessionFileReader::recordNextGet(SessionFileRecord& record)
 	{
