@@ -1,10 +1,10 @@
 //@	{
-//@	 "targets":[{"name":"sessionproperties.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"sessionproperties.o","rel":"implementation"}]
+//@	 "targets":[{"name":"sessionpropertieseditor.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"sessionpropertieseditor.o","rel":"implementation"}]
 //@	}
 
-#ifndef ANJA_SESSIONPROPERTIES_HPP
-#define ANJA_SESSIONPROPERTIES_HPP
+#ifndef ANJA_SESSIONPROPERTIESEDITOR_HPP
+#define ANJA_SESSIONPROPERTIESEDITOR_HPP
 
 #include "box.hpp"
 #include "label.hpp"
@@ -15,13 +15,13 @@
 namespace Anja
 	{
 	class Session;
-	class SessionProperties
+	class SessionPropertiesEditor
 		{
 		public:
-			SessionProperties& operator=(SessionProperties&&)=delete;
-			SessionProperties(SessionProperties&&)=delete;
+			SessionPropertiesEditor& operator=(SessionPropertiesEditor&&)=delete;
+			SessionPropertiesEditor(SessionPropertiesEditor&&)=delete;
 
-			SessionProperties(Container& cnt,Session& session);
+			SessionPropertiesEditor(Container& cnt,Session& session);
 			void sessionUpdated();
 
 			enum class TextEntryId:int{TITLE};
@@ -33,7 +33,7 @@ namespace Anja
 			void clicked(OptionList& options,OptionListId id,Checkbox& option);
 
 			template<class Callback,class IdType>
-			SessionProperties& callback(Callback& cb,IdType id) noexcept
+			SessionPropertiesEditor& callback(Callback& cb,IdType id) noexcept
 				{
 				m_id=id;
 				r_cb_obj=&cb;
@@ -51,17 +51,17 @@ namespace Anja
 				template<class Callback,class IdType>
 				Vtable(Callback& cb_obj,IdType id)
 					{
-					title_changed=[](void* cb_obj,SessionProperties& self,int id)
+					title_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->titleChanged(self,static_cast<IdType>(id));};
-					description_changed=[](void* cb_obj,SessionProperties& self,int id)
+					description_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->descriptionChanged(self,static_cast<IdType>(id));};
-					options_changed=[](void* cb_obj,SessionProperties& self,int id)
+					options_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->optionsChanged(self,static_cast<IdType>(id));};
 					}
 
-				void (*title_changed)(void* cb_obj,SessionProperties& self,int id);
-				void (*description_changed)(void* cb_obj,SessionProperties& self,int id);
-				void (*options_changed)(void* cb_obj,SessionProperties& self,int id);
+				void (*title_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
+				void (*description_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
+				void (*options_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
 				};
 			int m_id;
 			void* r_cb_obj;

@@ -1,11 +1,11 @@
-//@	{"targets":[{"name":"sessionproperties.o","type":"object"}]}
+//@	{"targets":[{"name":"sessionpropertieseditor.o","type":"object"}]}
 
-#include "sessionproperties.hpp"
+#include "sessionpropertieseditor.hpp"
 #include "../sessiondata/session.hpp"
 
 using namespace Anja;
 
-void SessionProperties::changed(TextEntry& entry,TextEntryId id)
+void SessionPropertiesEditor::changed(TextEntry& entry,TextEntryId id)
 	{
 	switch(id)
 		{
@@ -16,7 +16,7 @@ void SessionProperties::changed(TextEntry& entry,TextEntryId id)
 		}
 	}
 
-void SessionProperties::changed(SourceView& entry,SourceViewId id)
+void SessionPropertiesEditor::changed(SourceView& entry,SourceViewId id)
 	{
 	switch(id)
 		{
@@ -27,7 +27,7 @@ void SessionProperties::changed(SourceView& entry,SourceViewId id)
 		}
 	}
 
-void SessionProperties::clicked(OptionList& options,OptionListId id,Checkbox& option)
+void SessionPropertiesEditor::clicked(OptionList& options,OptionListId id,Checkbox& option)
 	{
 	switch(id)
 		{
@@ -41,14 +41,14 @@ void SessionProperties::clicked(OptionList& options,OptionListId id,Checkbox& op
 		}
 	}
 
-void SessionProperties::sessionUpdated()
+void SessionPropertiesEditor::sessionUpdated()
 	{
 	m_title_input.content(r_session->titleGet().begin());
 	m_description_input.content(r_session->descriptionGet().begin());
 	m_options_input.selected(r_session->flagsGet());
 	}
 
-SessionProperties::SessionProperties(Container& cnt,Session& session):
+SessionPropertiesEditor::SessionPropertiesEditor(Container& cnt,Session& session):
 	 r_session(&session)
 	,m_box(cnt,true)
 		,m_title(m_box.insertMode({1,0}),false)

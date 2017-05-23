@@ -148,10 +148,10 @@
       <File Name="ui/message.cpp"/>
       <File Name="ui/keyboardview.hpp"/>
       <File Name="ui/keyboardview.cpp"/>
-      <File Name="ui/sessionproperties.hpp"/>
-      <File Name="ui/sessionproperties.cpp"/>
       <File Name="ui/sourceview.cpp"/>
       <File Name="ui/sourceview.hpp"/>
+      <File Name="ui/sessionpropertieseditor.hpp"/>
+      <File Name="ui/sessionpropertieseditor.cpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="testbank/testbank.txt"/>
