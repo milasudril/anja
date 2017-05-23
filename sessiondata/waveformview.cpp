@@ -127,9 +127,8 @@ bool WaveformView::loadPossible(const char* filename) const
 bool WaveformView::fileLoaded(const char* filename) const
 	{
 	if(absoluteIs(filename))
-		{
-		auto cmp=makeRelativeTo(filename,r_dir_current->begin());
-		return cmp==r_waveform_data->filenameGet();
-		}
-	return r_waveform_data->filenameGet()==filename;
+		{return r_waveform_data->filenameGet()==filename;}
+	auto cmp=*r_dir_current;
+	cmp.append(filename);
+	return cmp==r_waveform_data->filenameGet();
 	}

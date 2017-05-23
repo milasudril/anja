@@ -34,14 +34,20 @@ namespace Anja
 
 			void filenameSet(const char* filename)
 				{
-				m_filename=String(filename);
-				m_stateflags|=DIRTY;
+				if(m_filename!=filename)
+					{
+					m_filename=String(filename);
+					m_stateflags|=DIRTY;
+					}
 				}
 
 			void filenameSet(String&& filename) noexcept
 				{
-				m_filename=std::move(filename);
-				m_stateflags|=DIRTY;
+				if(m_filename!=filename)
+					{
+					m_filename=std::move(filename);
+					m_stateflags|=DIRTY;
+					}
 				}
 
 			const String& descriptionGet() const noexcept
@@ -49,16 +55,22 @@ namespace Anja
 
 			void descriptionSet(String&& description)
 				{
-				m_description=std::move(description);
-				m_stateflags|=DIRTY;
-				key_label_update();
+				if(m_description!=description)
+					{
+					m_description=std::move(description);
+					m_stateflags|=DIRTY;
+					key_label_update();
+					}
 				}
 
 			void descriptionSet(const char* desc)
 				{
-				m_description=String(desc);
-				m_stateflags|=DIRTY;
-				key_label_update();
+				if(m_description!=desc)
+					{
+					m_description=String(desc);
+					m_stateflags|=DIRTY;
+					key_label_update();
+					}
 				}
 
 			const String& keyLabelGet() const noexcept

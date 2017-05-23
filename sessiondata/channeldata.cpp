@@ -48,4 +48,15 @@ void ChannelData::dataGet(SessionFileRecord& record) const
 //	TODO Save other data not interpreted by Anja
 	}
 
+void ChannelData::colorSet(const ColorRGBA& color) noexcept
+	{
+	if(std::abs(color.red - m_color.red) > 1e-3f
+		|| std::abs(color.green - m_color.green) > 1e-3f
+		|| std::abs(color.blue - m_color.blue) > 1e-3f
+		|| std::abs(color.alpha - m_color.alpha) > 1e-3f)
+		{
+		m_color=color;
+		m_state_flags|=DIRTY;
+		}
+	}
 

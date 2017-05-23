@@ -24,7 +24,10 @@ namespace Anja
 			const String& labelGet() const noexcept
 				{return r_channel_data->labelGet();}
 
-			void labelSet(const String& label)
+			void labelSet(String&& label)
+				{r_channel_data->labelSet(std::move(label));}
+
+			void labelSet(const char* label)
 				{r_channel_data->labelSet(label);}
 
 			const ColorRGBA& colorGet() const noexcept

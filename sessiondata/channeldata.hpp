@@ -25,20 +25,28 @@ namespace Anja
 			const String& labelGet() const noexcept
 				{return m_label;}
 
-			void labelSet(const String& label)
+			void labelSet(const char* label)
 				{
-				m_label=label;
-				m_state_flags|=DIRTY;
+				if(m_label!=label)
+					{
+					m_label=String(label);
+					m_state_flags|=DIRTY;
+					}
+				}
+
+			void labelSet(String&& label)
+				{
+				if(m_label!=label)
+					{
+					m_label=std::move(label);
+					m_state_flags|=DIRTY;
+					}
 				}
 
 			const ColorRGBA& colorGet() const noexcept
 				{return m_color;}
 
-			void colorSet(const ColorRGBA& color) noexcept
-				{
-				m_color=color;
-				m_state_flags|=DIRTY;
-				}
+			void colorSet(const ColorRGBA& color) noexcept;
 
 			void dataGet(SessionFileRecord& record) const;
 
