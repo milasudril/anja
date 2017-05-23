@@ -179,6 +179,7 @@ SessionEditor::SessionEditor(Container& cnt,Session& session)
 				,session.waveformViewGet(session.slotActiveGet())
 				,session.channelLabelsGet())
 			,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
+			,m_settings(m_tabs.tabTitle("Session"),session)
 	{
 
 	sessionUpdated();

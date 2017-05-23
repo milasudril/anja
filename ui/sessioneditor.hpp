@@ -11,6 +11,7 @@
 #include "mixerconsole.hpp"
 #include "paned.hpp"
 #include "keyboardview.hpp"
+#include "sessionproperties.hpp"
 
 namespace Anja
 	{
@@ -46,7 +47,7 @@ namespace Anja
 				TabView m_tabs;
 					WaveformEditor m_waveform;
 					MixerConsole m_mixer;
-			//		SettingsPanel m_settings;
+					SessionProperties m_settings;
 		};
 	}
 

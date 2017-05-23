@@ -34,33 +34,6 @@ namespace Anja
 			const String& directoryGet() const noexcept
 				{return m_directory;}
 
-			void waveformsClear();
-
-			Waveform& waveformGet(uint8_t slot) noexcept
-				{return m_waveforms[slot];}
-
-			const Waveform& waveformGet(uint8_t slot) const noexcept
-				{return m_waveforms[slot];}
-
-			WaveformView waveformViewGet(uint8_t slot) noexcept
-				{return WaveformView(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
-
-			ChannelView channelViewGet(int ch) noexcept
-				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
-
-			ArraySimple<String> channelLabelsGet() const;
-
-			ArraySimple<ColorRGBA> channelColorsGet() const;
-
-			int channelsCountGet() noexcept
-				{return m_channel_data.length();}
-
-			const Channel& channelGet(unsigned int index) const noexcept
-				{return m_channels[index];}
-
-			Channel& channelGet(unsigned int index) noexcept
-				{return m_channels[index];}
-
 
 
 			void titleSet(const String& title_new) noexcept
@@ -80,22 +53,6 @@ namespace Anja
 
 			const String& descriptionGet() const noexcept
 				{return m_description;}
-
-
-			uint8_t slotActiveGet() const noexcept
-				{return m_slot_active;}
-
-			void slotActiveSet(uint8_t slot)
-				{m_slot_active=slot;}
-
-			int slotsCountGet() const noexcept
-				{return Wavetable::length();}
-
-
-
-			void channelsClear();
-
-			void clear();
 
 			static const char* const* flagNames() noexcept;
 
@@ -126,6 +83,58 @@ namespace Anja
 
 			Session& flagUnset(unsigned int index) noexcept
 				{return flagsUnset(1<<index);}
+
+
+
+
+			void waveformsClear();
+
+			Waveform& waveformGet(uint8_t slot) noexcept
+				{return m_waveforms[slot];}
+
+			const Waveform& waveformGet(uint8_t slot) const noexcept
+				{return m_waveforms[slot];}
+
+			WaveformView waveformViewGet(uint8_t slot) noexcept
+				{return WaveformView(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
+
+			ChannelView channelViewGet(int ch) noexcept
+				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
+
+			ArraySimple<String> channelLabelsGet() const;
+
+			ArraySimple<ColorRGBA> channelColorsGet() const;
+
+			int channelsCountGet() noexcept
+				{return m_channel_data.length();}
+
+			const Channel& channelGet(unsigned int index) const noexcept
+				{return m_channels[index];}
+
+			Channel& channelGet(unsigned int index) noexcept
+				{return m_channels[index];}
+
+
+
+
+
+
+
+			uint8_t slotActiveGet() const noexcept
+				{return m_slot_active;}
+
+			void slotActiveSet(uint8_t slot)
+				{m_slot_active=slot;}
+
+			int slotsCountGet() const noexcept
+				{return Wavetable::length();}
+
+
+			void channelsClear();
+
+			void clear();
+
+
 
 
 
