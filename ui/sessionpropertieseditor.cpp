@@ -11,7 +11,8 @@ void SessionPropertiesEditor::changed(TextEntry& entry,TextEntryId id)
 		{
 		case TextEntryId::TITLE:
 			r_session->titleSet(entry.content());
-			//TODO Notify owner
+			if(r_cb_obj!=nullptr)
+				{m_vtable.title_changed(r_cb_obj,*this,m_id);}
 			break;
 		}
 	}
@@ -22,7 +23,8 @@ void SessionPropertiesEditor::changed(SourceView& entry,SourceViewId id)
 		{
 		case SourceViewId::DESCRIPTION:
 			r_session->descriptionSet(entry.content());
-			//TODO Notify owner
+			if(r_cb_obj!=nullptr)
+				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
 			break;
 		}
 	}
@@ -36,7 +38,8 @@ void SessionPropertiesEditor::clicked(OptionList& options,OptionListId id,Checkb
 				{r_session->flagSet(option.id());}
 			else
 				{r_session->flagsUnset(option.id());}
-			//TODO Notify owner
+			if(r_cb_obj!=nullptr)
+				{m_vtable.options_changed(r_cb_obj,*this,m_id,option.id());}
 			break;
 		}
 	}
@@ -49,7 +52,8 @@ void SessionPropertiesEditor::sessionUpdated()
 	}
 
 SessionPropertiesEditor::SessionPropertiesEditor(Container& cnt,Session& session):
-	 r_session(&session)
+	 r_cb_obj(nullptr)
+	,r_session(&session)
 	,m_box(cnt,true)
 		,m_title(m_box.insertMode({1,0}),false)
 			,m_title_label(m_title.insertMode({2,0}),"Title:")

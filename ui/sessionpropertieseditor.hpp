@@ -55,13 +55,13 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->titleChanged(self,static_cast<IdType>(id));};
 					description_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->descriptionChanged(self,static_cast<IdType>(id));};
-					options_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id)
-						{reinterpret_cast<Callback*>(cb_obj)->optionsChanged(self,static_cast<IdType>(id));};
+					options_changed=[](void* cb_obj,SessionPropertiesEditor& self,int id,int option_id)
+						{reinterpret_cast<Callback*>(cb_obj)->optionsChanged(self,static_cast<IdType>(id),option_id);};
 					}
 
 				void (*title_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
 				void (*description_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
-				void (*options_changed)(void* cb_obj,SessionPropertiesEditor& self,int id);
+				void (*options_changed)(void* cb_obj,SessionPropertiesEditor& self,int id,int option_id);
 				};
 			int m_id;
 			void* r_cb_obj;
