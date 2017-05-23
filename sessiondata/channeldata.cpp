@@ -28,13 +28,6 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 	if(value!=nullptr)
 		{m_color=colorFromString(value->begin());}
 
-/*	TODO: Move this...
-	if(r_key!=nullptr)
-		{
-		r_key->labelSet(m_label.begin());
-		r_key->colorBackgroundSet(m_color);
-		}
-*/
 	dirtyClear();
 //	TODO Store other data not interpreted by Anja
 	}
