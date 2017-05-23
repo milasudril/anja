@@ -28,6 +28,7 @@ namespace Anja
 				{
 				m_gain=0.0f;
 				m_fade_time=1.0f;
+				m_state_flags=0;
 				dirtyClear();
 				}
 

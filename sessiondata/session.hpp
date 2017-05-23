@@ -38,14 +38,20 @@ namespace Anja
 
 			void titleSet(String&& title_new) noexcept
 				{
-				m_title=std::move(title_new);
-				m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
+				if(title_new!=m_title)
+					{
+					m_title=std::move(title_new);
+					m_state_flags|=SESSION_DIRTY;
+					}
 				}
 
 			void titleSet(const char* title_new) noexcept
 				{
-				m_title=String(title_new);
-				m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
+				if(m_title!=title_new)
+					{
+					m_title=String(title_new);
+					m_state_flags|=SESSION_DIRTY;
+					}
 				}
 
 			const String& titleGet() const noexcept
@@ -53,14 +59,20 @@ namespace Anja
 
 			void descriptionSet(String&& description_new) noexcept
 				{
-				m_description=std::move(description_new);
-				m_state_flags|=SESSION_DIRTY;
+				if(m_description!=description_new)
+					{
+					m_description=std::move(description_new);
+					m_state_flags|=SESSION_DIRTY;
+					}
 				}
 
 			void descriptionSet(const char* description_new) noexcept
 				{
-				m_description=String(description_new);
-				m_state_flags|=SESSION_DIRTY;
+				if(m_description!=description_new)
+					{
+					m_description=String(description_new);
+					m_state_flags|=SESSION_DIRTY;
+					}
 				}
 
 			const String& descriptionGet() const noexcept
@@ -77,8 +89,6 @@ namespace Anja
 
 			Session& flagsSet(unsigned int flags) noexcept
 				{
-				if( (m_flags&MULTIOUTPUT) != (flags&MULTIOUTPUT) )
-					{m_state_flags|=RESTART_NEEDED;}
 				m_flags|=flags;
 				m_state_flags|=SESSION_DIRTY;
 				return *this;
@@ -160,13 +170,9 @@ namespace Anja
 
 			void gainSet(float value) noexcept
 				{
+				m_state_flags|=(std::abs(value - m_gain)>1e-4? SESSION_DIRTY : 0);
 				m_gain=value;
-				m_state_flags|=SESSION_DIRTY;
 				}
-
-
-			bool restartNeeded() const noexcept
-				{return m_state_flags&RESTART_NEEDED;}
 
 			bool dirtyIs() const noexcept;
 
@@ -195,7 +201,6 @@ namespace Anja
 			static constexpr unsigned int MULTIOUTPUT=0x1;
 			unsigned int m_flags;
 
-			static constexpr unsigned int RESTART_NEEDED=0x1;
 			static constexpr unsigned int SESSION_DIRTY=0x2;
 
 			unsigned int m_state_flags;

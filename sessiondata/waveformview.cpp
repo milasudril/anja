@@ -59,6 +59,7 @@ void WaveformView::load(const SessionFileRecord& rec)
 		auto f=::filename_get(r_waveform_data->filenameGet().begin(),*r_dir_current);
 		r_waveform->dataSet(rec,f.begin());
 		r_waveform_data->filenameSet(f.begin());
+		r_waveform_data->dirtyClear();
 		}
 	}
 

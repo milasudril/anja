@@ -65,11 +65,17 @@ void Application::confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,Confirm
 			sessionLoad(m_session.filenameGet().begin());
 			break;
 		case ConfirmSaveDialogId::SESSION_NEW:
-			m_session.clear();
-			m_session_editor.sessionUpdated();
-			title_update(m_session,m_mainwin);
+			sessionNew();
 			break;
 		}
+	}
+
+Application& Application::sessionNew()
+	{
+	m_session.clear();
+	m_session_editor.sessionUpdated();
+	title_update(m_session,m_mainwin);
+	return *this;
 	}
 
 bool Application::sessionSave()
@@ -108,7 +114,10 @@ Application& Application::sessionLoad()
 
 void Application::closing(Window& win,int id)
 	{
-	save_ask(ConfirmSaveDialogId::EXIT);
+	if(m_session.dirtyIs())
+		{save_ask(ConfirmSaveDialogId::EXIT);}
+	else
+		{m_ctx.exit();}
 	}
 
 UiContext::RunStatus Application::idle(UiContext& ctx)
@@ -132,13 +141,21 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 	switch(btn.id())
 		{
 		case 0:
-			save_ask(ConfirmSaveDialogId::SESSION_NEW);
+			if(m_session.dirtyIs())
+				{save_ask(ConfirmSaveDialogId::SESSION_NEW);}
+			else
+				{sessionNew();}
 			break;
 		case 1:
-			save_ask(ConfirmSaveDialogId::SESSION_LOAD);
+			if(m_session.dirtyIs())
+				{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}			else
+				{sessionLoad();}
 			break;
 		case 2:
-			save_ask(ConfirmSaveDialogId::SESSION_RELOAD);
+			if(m_session.dirtyIs())
+				{save_ask(ConfirmSaveDialogId::SESSION_RELOAD);}
+			else
+				{sessionLoad(m_session.filenameGet().begin());}
 			break;
 		case 3:
 			sessionSave();
@@ -158,7 +175,10 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 			btn.label(m_fullscreen?"Windowed":"Fullscreen");
 			break;
 		case 8:
-			save_ask(ConfirmSaveDialogId::EXIT);
+			if(m_session.dirtyIs())
+				{save_ask(ConfirmSaveDialogId::EXIT);}
+			else
+				{m_ctx.exit();}
 			break;
 		case 9:
 			//TODO: About

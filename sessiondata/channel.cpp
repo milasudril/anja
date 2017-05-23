@@ -18,6 +18,7 @@ Channel::Channel(const SessionFileRecord& record)
 	value=record.propertyGet(String("Fade time/s"));
 	if(value!=nullptr)
 		{fadeTimeSet(convert(value->begin()));}
+	dirtyClear();
 	}
 
 void Channel::dataGet(SessionFileRecord& record) const

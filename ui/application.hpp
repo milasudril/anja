@@ -44,6 +44,7 @@ namespace Anja
 				return *this;
 				}
 
+			Application& sessionNew();
 			Application& sessionLoad(const char* filename);
 			Application& sessionLoad();
 			bool sessionSave();

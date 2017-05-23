@@ -145,7 +145,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			ChannelView(m_channels[ch],m_channel_data[ch]).load(record);
 			}
 		}
-	m_state_flags=0;
+	dirtyClear();
 	}
 
 void Session::waveformsClear()
@@ -193,7 +193,15 @@ void Session::channelsClear()
 		char buffer[16];
 		sprintf(buffer,"Ch %d",k);
 		x.labelSet(String(buffer));
+		x.dirtyClear();
 		++k;
+		});
+
+	std::for_each(m_channels.begin(),m_channels.end(),[](auto& x)
+		{
+		x.gainSet(0.0f);
+		x.fadeTimeSet(1e-3f);
+		x.dirtyClear();
 		});
 	}
 
@@ -202,6 +210,7 @@ Session& Session::colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end)
 	m_color_presets.clear();
 	std::for_each(begin,end,[this](const ColorRGBA& c)
 		{m_color_presets.append(c);});
+	m_state_flags|=SESSION_DIRTY;
 	return *this;
 	}
 
@@ -213,7 +222,7 @@ void Session::clear()
 	m_filename.clear();
 	m_title=String("New session");
 	m_description.clear();
-	gainSet(-6);
+	m_gain=-6;
 	m_color_presets.clear();
 	std::for_each(COLORS,COLORS + ColorID::COLOR_END,[this](const ColorRGBA& x)
 		{m_color_presets.append(x);});
