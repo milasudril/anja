@@ -10,6 +10,7 @@
 #include "label.hpp"
 #include "textentry.hpp"
 #include "optionlist.hpp"
+#include "sourceview.hpp"
 
 namespace Anja
 	{
@@ -28,10 +29,10 @@ namespace Anja
 					TextEntry m_title_input;
 				Box m_description;
 					Label m_description_label;
-					TextEntry m_description_input;
+				SourceView m_description_input;
 				Box m_options;
 					Label m_options_label;
-					OptionList m_options_input;
+				OptionList m_options_input;
 		};
 	}
 

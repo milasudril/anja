@@ -13,12 +13,13 @@ SessionProperties::SessionProperties(Container& cnt,Session& session):
 			,m_title_input(m_title.insertMode({2,Box::EXPAND|Box::FILL}))
 		,m_description(m_box,false)
 			,m_description_label(m_description.insertMode({2,0}),"Description:")
-			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}))
-		,m_options(m_box,false)
+		,m_description_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}))
+		,m_options(m_box.insertMode({1,0}),false)
 			,m_options_label(m_options.insertMode({2,0}),"Options:")
-		,m_options_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}),true)
+		,m_options_input(m_box,true)
 	{
 	m_options_input.append(session.flagNames());
+	m_description_input.wordwrap(1);
 	sessionUpdated();
 	}
 

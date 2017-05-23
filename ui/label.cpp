@@ -18,7 +18,7 @@ class Label::Impl:private Label
 		void content(const char* text)
 			{gtk_label_set_text(m_handle,text);}
 
-		void wrap(bool status)
+		void wordwrap(bool status)
 			{
 			gtk_label_set_line_wrap(m_handle,status);
 			gtk_label_set_max_width_chars(m_handle,80);
@@ -44,9 +44,9 @@ Label& Label::content(const char* x)
 	return *this;
 	}
 
-Label& Label::wrap(bool status)
+Label& Label::wordwrap(bool status)
 	{
-	m_impl->wrap(status);
+	m_impl->wordwrap(status);
 	return *this;
 	}
 

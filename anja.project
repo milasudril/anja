@@ -150,6 +150,8 @@
       <File Name="ui/keyboardview.cpp"/>
       <File Name="ui/sessionproperties.hpp"/>
       <File Name="ui/sessionproperties.cpp"/>
+      <File Name="ui/sourceview.cpp"/>
+      <File Name="ui/sourceview.hpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="testbank/testbank.txt"/>

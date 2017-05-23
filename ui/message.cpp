@@ -27,7 +27,7 @@ Message::Message(Container& cnt,const char* message,Type type):
 		,m_icon(m_cols.insertMode({2,0}))
 		,m_text(m_cols.insertMode({2,Box::EXPAND|Box::FILL}),message)
 	{
-	m_text.wrap(1);
+	m_text.wordwrap(1);
 	switch(type)
 		{
 		case Type::ERROR:
