@@ -26,6 +26,7 @@ namespace Anja
 					,"Exit","About Anja");
 				m_session_control.callback(*this,0);
 				m_mainwin.callback(*this,0);
+				m_session_editor.sessionChangedCallback(*this,0);
 				title_update(m_session,m_mainwin);
 				m_mainwin.show();
 				}
@@ -90,6 +91,17 @@ namespace Anja
 				title_update(m_session,m_mainwin);
 				return *this;
 				}
+
+			void titleChanged(SessionPropertiesEditor& editor,int id)
+				{
+				title_update(m_session,m_mainwin);
+				}
+
+			void descriptionChanged(SessionPropertiesEditor& editor,int id)
+				{}
+
+			void optionChanged(SessionPropertiesEditor& editor,int id,int option)
+				{}
 
 		private:
 			UiContext m_ctx;

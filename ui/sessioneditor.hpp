@@ -41,6 +41,13 @@ namespace Anja
 
 			SessionEditor& sessionUpdated();
 
+			template<class Callback,class IdType>
+			SessionEditor& sessionChangedCallback(Callback& cb,IdType id)
+				{
+				m_settings.callback(cb,id);
+				return *this;
+				}
+
 		private:
 			Session& r_session;
 			Paned m_hsplit;
