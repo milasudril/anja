@@ -152,6 +152,8 @@
       <File Name="ui/sourceview.hpp"/>
       <File Name="ui/sessionpropertieseditor.hpp"/>
       <File Name="ui/sessionpropertieseditor.cpp"/>
+      <File Name="ui/application.hpp"/>
+      <File Name="ui/application.cpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="testbank/testbank.txt"/>
