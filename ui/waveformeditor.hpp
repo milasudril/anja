@@ -114,9 +114,9 @@ namespace Anja
 				Vtable(Callback& cb_obj,IdType id)
 					{
 					description_changed=[](void* cb_obj,WaveformEditor& self,int id)
-						{reinterpret_cast<Callback*>(cb_obj)->waveformDescriptionChanged(self,static_cast<IdType>(id));};
+						{reinterpret_cast<Callback*>(cb_obj)->descriptionChanged(self,static_cast<IdType>(id));};
 					color_changed=[](void* cb_obj,WaveformEditor& self,int id)
-						{reinterpret_cast<Callback*>(cb_obj)->waveformColorChanged(self,static_cast<IdType>(id));};
+						{reinterpret_cast<Callback*>(cb_obj)->colorChanged(self,static_cast<IdType>(id));};
 					color_presets_changed=[](void* cb_obj,ColorPicker& self)
 						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
 					}

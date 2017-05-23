@@ -78,9 +78,9 @@ namespace Anja
 				Vtable(Callback& cb_obj,IdType id)
 					{
 					name_changed=[](void* cb_obj,ChannelStrip& self,int id)
-						{reinterpret_cast<Callback*>(cb_obj)->channelNameChanged(self,static_cast<IdType>(id));};
+						{reinterpret_cast<Callback*>(cb_obj)->nameChanged(self,static_cast<IdType>(id));};
 					color_changed=[](void* cb_obj,ChannelStrip& self,int id)
-						{reinterpret_cast<Callback*>(cb_obj)->channelColorChanged(self,static_cast<IdType>(id));};
+						{reinterpret_cast<Callback*>(cb_obj)->colorChanged(self,static_cast<IdType>(id));};
 					color_presets_changed=[](void* cb_obj,ColorPicker& self)
 						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
 					}

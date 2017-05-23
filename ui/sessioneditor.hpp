@@ -24,19 +24,20 @@ namespace Anja
 
 			SessionEditor(Container& cnt,Session& session);
 
-			void channelNameChanged(ChannelStrip& strip,int id);
-			void channelColorChanged(ChannelStrip& strip,int id);
-			void colorPresetsChanged(ColorPicker& picker);
-
-
 			enum class MixerId:int{CHANNEL_MIXER};
 			enum class WaveformEditId:int{WAVEFORM_CURRENT};
 			enum class KeyboardViewId:int{KEYBOARD_MAIN};
 
-			void indexSelected(KeyboardView& keyboard,KeyboardViewId id);
-			void waveformDescriptionChanged(WaveformEditor& wf,WaveformEditId id);
-			void waveformColorChanged(WaveformEditor& wf,WaveformEditId id);
+			void nameChanged(ChannelStrip& strip,int id);
+			void colorChanged(ChannelStrip& strip,int id);
+			void colorPresetsChanged(ColorPicker& picker);
+
 			void masterGainChanged(MixerConsole& mixer,MixerId id);
+
+			void indexSelected(KeyboardView& keyboard,KeyboardViewId id);
+			void descriptionChanged(WaveformEditor& wf,WaveformEditId id);
+			void colorChanged(WaveformEditor& wf,WaveformEditId id);
+
 
 			SessionEditor& sessionUpdated();
 

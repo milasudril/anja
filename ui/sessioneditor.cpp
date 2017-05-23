@@ -51,14 +51,14 @@ static constexpr ArrayFixed<uint8_t,Wavetable::length()> gen_scancode_slots()
 static constexpr auto s_scancode_slots=gen_scancode_slots();
 
 
-void SessionEditor::channelNameChanged(ChannelStrip& strip,int id)
+void SessionEditor::nameChanged(ChannelStrip& strip,int id)
 	{
 	m_waveform.channelName(id,strip.name().begin());
 	if(id>=0 && id<12)
 		{m_keyboard.keyLabel(s_channel_scancodes[id],strip.name().begin()).redraw();}
 	}
 
-void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
+void SessionEditor::colorChanged(ChannelStrip& strip,int id)
 	{
 	if(id>=0 && id<12)
 		{
@@ -67,7 +67,7 @@ void SessionEditor::channelColorChanged(ChannelStrip& strip,int id)
 	}
 
 
-void SessionEditor::waveformDescriptionChanged(WaveformEditor& wf,WaveformEditId id)
+void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();
 	if(slot>=0 && slot<sizeof(s_slot_scancodes));
@@ -77,7 +77,7 @@ void SessionEditor::waveformDescriptionChanged(WaveformEditor& wf,WaveformEditId
 		}
 	}
 
-void SessionEditor::waveformColorChanged(WaveformEditor& wf,WaveformEditId id)
+void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();
 	if(slot>=0 && slot<sizeof(s_slot_scancodes));

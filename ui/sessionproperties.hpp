@@ -18,6 +18,9 @@ namespace Anja
 	class SessionProperties
 		{
 		public:
+			SessionProperties& operator=(SessionProperties&&)=delete;
+			SessionProperties(SessionProperties&&)=delete;
+
 			SessionProperties(Container& cnt,Session& session);
 			void sessionUpdated();
 
@@ -29,7 +32,41 @@ namespace Anja
 			void changed(SourceView& entry,SourceViewId id);
 			void clicked(OptionList& options,OptionListId id,Checkbox& option);
 
+			template<class Callback,class IdType>
+			SessionProperties& callback(Callback& cb,IdType id) noexcept
+				{
+				m_id=id;
+				r_cb_obj=&cb;
+				m_vtable=Vtable(cb,id);
+				return *this;
+				}
+
 		private:
+			struct Vtable
+				{
+				Vtable():title_changed(nullptr),description_changed(nullptr)
+					,options_changed(nullptr)
+					{}
+
+				template<class Callback,class IdType>
+				Vtable(Callback& cb_obj,IdType id)
+					{
+					title_changed=[](void* cb_obj,SessionProperties& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->titleChanged(self,static_cast<IdType>(id));};
+					description_changed=[](void* cb_obj,SessionProperties& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->descriptionChanged(self,static_cast<IdType>(id));};
+					options_changed=[](void* cb_obj,SessionProperties& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->optionsChanged(self,static_cast<IdType>(id));};
+					}
+
+				void (*title_changed)(void* cb_obj,SessionProperties& self,int id);
+				void (*description_changed)(void* cb_obj,SessionProperties& self,int id);
+				void (*options_changed)(void* cb_obj,SessionProperties& self,int id);
+				};
+			int m_id;
+			void* r_cb_obj;
+			Vtable m_vtable;
+
 			Session* r_session;
 			Box m_box;
 				Box m_title;
