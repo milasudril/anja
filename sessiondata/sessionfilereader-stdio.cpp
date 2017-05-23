@@ -61,6 +61,8 @@ SessionFileReader::Impl::Impl(const char* filename):
 		}
 	if(!tokenGet(m_tok))
 		{throw Error(filename," is not a valid session file.");}
+	if(m_tok.type!=TokenType::SECTION_TITLE_0)
+		{throw Error(filename," is not a valid session file.");}
 	}
 
 SessionFileReader::Impl::~Impl()
@@ -74,9 +76,7 @@ bool SessionFileReader::check(const char* filename)
 			{
 			SessionFileReader reader(filename);
 			SessionFileRecordImpl rec;
-			while(reader.recordNextGet(rec))
-				{}
-			return 1;
+			return reader.recordNextGet(rec);
 			}
 		catch(...)
 			{return 0;}
