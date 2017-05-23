@@ -75,7 +75,7 @@ Session::Session(const char* filename):m_slot_active(0)
 		{
 		m_filename=String(filename);
 		m_directory=parentDirectory(realpath(filename));
-		titleSet(record.titleGet());
+		titleSet(record.titleGet().begin());
 		auto slot_num_str=record.propertyGet(String("Active slot"));
 		if(slot_num_str!=nullptr)
 			{
@@ -88,7 +88,7 @@ Session::Session(const char* filename):m_slot_active(0)
 
 		auto value=record.propertyGet(String("Description"));
 		if(value!=nullptr)
-			{descriptionSet(*value);}
+			{descriptionSet(value->begin());}
 
 		value=record.propertyGet(String("Master gain/dB"));
 		if(value!=nullptr)

@@ -5,6 +5,49 @@
 
 using namespace Anja;
 
+void SessionProperties::changed(TextEntry& entry,TextEntryId id)
+	{
+	switch(id)
+		{
+		case TextEntryId::TITLE:
+			r_session->titleSet(entry.content());
+			//TODO Notify owner
+			break;
+		}
+	}
+
+void SessionProperties::changed(SourceView& entry,SourceViewId id)
+	{
+	switch(id)
+		{
+		case SourceViewId::DESCRIPTION:
+			r_session->descriptionSet(entry.content());
+			//TODO Notify owner
+			break;
+		}
+	}
+
+void SessionProperties::clicked(OptionList& options,OptionListId id,Checkbox& option)
+	{
+	switch(id)
+		{
+		case OptionListId::OPTIONS:
+			if(option.state())
+				{r_session->flagSet(option.id());}
+			else
+				{r_session->flagsUnset(option.id());}
+			//TODO Notify owner
+			break;
+		}
+	}
+
+void SessionProperties::sessionUpdated()
+	{
+	m_title_input.content(r_session->titleGet().begin());
+	m_description_input.content(r_session->descriptionGet().begin());
+	m_options_input.selected(r_session->flagsGet());
+	}
+
 SessionProperties::SessionProperties(Container& cnt,Session& session):
 	 r_session(&session)
 	,m_box(cnt,true)
@@ -20,12 +63,8 @@ SessionProperties::SessionProperties(Container& cnt,Session& session):
 	{
 	m_options_input.append(session.flagNames());
 	m_description_input.wordwrap(1);
+	m_title_input.callback(*this,TextEntryId::TITLE);
+	m_description_input.callback(*this,SourceViewId::DESCRIPTION);
+	m_options_input.callback(*this,OptionListId::OPTIONS);
 	sessionUpdated();
-	}
-
-void SessionProperties::sessionUpdated()
-	{
-	m_title_input.content(r_session->titleGet().begin());
-	m_description_input.content(r_session->descriptionGet().begin());
-	m_options_input.selected(r_session->flagsGet());
 	}

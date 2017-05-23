@@ -21,6 +21,14 @@ namespace Anja
 			SessionProperties(Container& cnt,Session& session);
 			void sessionUpdated();
 
+			enum class TextEntryId:int{TITLE};
+			enum class SourceViewId:int{DESCRIPTION};
+			enum class OptionListId:int{OPTIONS};
+
+			void changed(TextEntry& entry,TextEntryId id);
+			void changed(SourceView& entry,SourceViewId id);
+			void clicked(OptionList& options,OptionListId id,Checkbox& option);
+
 		private:
 			Session* r_session;
 			Box m_box;

@@ -36,18 +36,30 @@ namespace Anja
 
 
 
-			void titleSet(const String& title_new) noexcept
+			void titleSet(String&& title_new) noexcept
 				{
-				m_title=title_new;
+				m_title=std::move(title_new);
+				m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
+				}
+
+			void titleSet(const char* title_new) noexcept
+				{
+				m_title=String(title_new);
 				m_state_flags|=RESTART_NEEDED|SESSION_DIRTY;
 				}
 
 			const String& titleGet() const noexcept
 				{return m_title;}
 
-			void descriptionSet(const String& description_new) noexcept
+			void descriptionSet(String&& description_new) noexcept
 				{
-				m_description=description_new;
+				m_description=std::move(description_new);
+				m_state_flags|=SESSION_DIRTY;
+				}
+
+			void descriptionSet(const char* description_new) noexcept
+				{
+				m_description=String(description_new);
 				m_state_flags|=SESSION_DIRTY;
 				}
 
