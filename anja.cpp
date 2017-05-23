@@ -26,6 +26,7 @@ namespace Anja
 					,"Exit","About Anja");
 				m_session_control.callback(*this,0);
 				m_mainwin.callback(*this,0);
+				title_update(m_session,m_mainwin);
 				m_mainwin.show();
 				}
 
@@ -58,6 +59,7 @@ namespace Anja
 						//TODO: Check if session is dirty first
 						m_session.clear();
 						m_session_editor.sessionUpdated();
+						title_update(m_session,m_mainwin);
 						break;
 					case 2:
 						m_session.save(m_session.filenameGet().begin());
@@ -85,6 +87,7 @@ namespace Anja
 				{
 				m_session.load(filename);
 				m_session_editor.sessionUpdated();
+				title_update(m_session,m_mainwin);
 				return *this;
 				}
 
@@ -96,6 +99,13 @@ namespace Anja
 					Anja::ButtonList m_session_control;
 					Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
+
+			static void title_update(const Session& session,Window& win)
+				{
+				String title(session.titleGet());
+				title.append("—Anja");
+				win.title(title.begin());
+				}
 		};
 	}
 
