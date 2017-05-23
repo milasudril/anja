@@ -32,6 +32,7 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	if(value!=nullptr)
 		{gainRandomSet(convert(value->begin()));}
 
+	m_flags=0;
 	value=record.propertyGet(String("Options"));
 	if(value!=nullptr)
 		{flagsSet(optionsFromString(value->begin(),FLAG_NAMES));}
