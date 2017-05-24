@@ -162,6 +162,7 @@
       <File Name="testbank/testbank.txt"/>
     </VirtualDirectory>
     <File Name="projectinfo.py"/>
+    <File Name="build.sh"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

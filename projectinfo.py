@@ -1,7 +1,7 @@
 #@  {
 #@  "targets":
 #@      [{
-#@		 "name":"projinfo.hpp"
+#@		 "name":"projectinfo.hpp"
 #@		,"dependencies":[{"ref":"externals.json","rel":"generated"}
 #@			,{"ref":"maikeconfig.json","rel":"generated"}
 #@			,{"ref":"projectinfo.json","rel":"file"}]
@@ -97,7 +97,7 @@ try:
 	substitutes['compiler']=compiler_version(compiler_name(config))
 	substitutes['architecture']=config['targetinfo']['architecture']
 
-	with open('/dev/stdout','wb') as output:
+	with open(target_dir + '/' + in_dir + '/projectinfo.hpp','wb') as output:
 		output.write(projinfo_template.substitute(substitutes).encode('utf-8'))
 	sys.exit(0)
 
