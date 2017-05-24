@@ -156,8 +156,12 @@
       <File Name="ui/application.cpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
-    <File Name="testbank/testbank.txt"/>
     <File Name="maikeconfig-rel.json"/>
+    <File Name="projectinfo.json"/>
+    <VirtualDirectory Name="testbank">
+      <File Name="testbank/testbank.txt"/>
+    </VirtualDirectory>
+    <File Name="projectinfo.py"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
