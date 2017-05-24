@@ -1,6 +1,8 @@
 //@	{"targets":[{"name":"anja","type":"application"}]}
 
 #include "ui/application.hpp"
+#include <maike/targetinclude.hpp>
+#include MAIKE_TARGET(projectinfo.hpp)
 #include <cstdio>
 #include <time.h>
 
