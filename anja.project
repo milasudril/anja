@@ -154,6 +154,7 @@
       <File Name="ui/sessionpropertieseditor.cpp"/>
       <File Name="ui/application.hpp"/>
       <File Name="ui/application.cpp"/>
+      <File Name="ui/aboutbox.hpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>

@@ -13,6 +13,7 @@
 #include "sessioneditor.hpp"
 #include "dialog.hpp"
 #include "message.hpp"
+#include "aboutbox.hpp"
 #include "../sessiondata/session.hpp"
 #include <memory>
 
@@ -65,6 +66,7 @@ namespace Anja
 			void dismiss(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmPositive(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
+			void confirmPositive(Dialog<AboutBox,DialogOk>& dlg,int id);
 
 		private:
 			UiContext m_ctx;
@@ -77,6 +79,8 @@ namespace Anja
 
 			std::unique_ptr<Dialog<Message,ConfirmSaveDialog> > m_confirm;
 			void save_ask(ConfirmSaveDialogId id);
+
+			std::unique_ptr<Dialog<AboutBox,DialogOk>> m_about;
 		};
 	}
 

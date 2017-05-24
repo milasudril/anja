@@ -28,16 +28,76 @@ projinfo_template=string.Template('''/*Information about $projname
 
 namespace Anja
 	{
-	constexpr const char* LIBRARIES[]={"$libraries"};
-	constexpr const char* TOOLS[]={"$tools"};
-	constexpr const char* COMPILATION_DATE="$date";
-	constexpr const char* COMPILER="$compiler";
-	constexpr const char* ARCHITECTURE="$architecture";
-	constexpr const char* AUTHOR="$author";
-	constexpr const char* LEGALBRIEF="$legal_brief";
-	constexpr const char* YEARS="$years";
-	constexpr const char* ACKNOWLEDGEMENT[]={"$acknowledgement"};
-	constexpr const char* REVISION="$revision";
+	struct ProjectInfo
+		{
+		public:
+			constexpr const char* name() const noexcept
+				{return s_projname;}
+
+			constexpr const char* revision() const noexcept
+				{return s_revision;}
+
+			constexpr const char* nameAndRevision() const noexcept
+				{return s_name_rev;}
+
+			constexpr const char* description() const noexcept
+				{return s_description;}
+
+			constexpr const char* author() const noexcept
+				{return s_author;}
+
+			constexpr const char* years() const noexcept
+				{return s_years;}
+
+			constexpr const char* copyright() const noexcept
+				{return s_copyright;}
+
+			constexpr const char* const* acknowledgement() const noexcept
+				{return s_acknowledgement;}
+
+			constexpr const char* acknowledgementAll() const noexcept
+				{return s_acknowledgement_all;}
+
+			constexpr const char* legalBrief() const noexcept
+				{return s_legal_brief;}
+
+			constexpr const char* const* libraries() const noexcept
+				{return s_libraries;}
+
+			constexpr const char* const* tools() const noexcept
+				{return s_tools;}
+
+			constexpr const char* compilationDate() const noexcept
+				{return s_compilation_date;}
+
+			constexpr const char* compiler() const noexcept
+				{return s_compiler;}
+
+			constexpr const char* architecture() const noexcept
+				{return s_architecture;}
+
+			constexpr const char* techstring() const noexcept
+				{return s_techstring;}
+
+		private:
+			static constexpr const char* s_projname="$projname";
+			static constexpr const char* s_revision="$revision";
+			static constexpr const char* s_name_rev="$projname, $revision";
+			static constexpr const char* s_description="$description";
+			static constexpr const char* s_author="$author";
+			static constexpr const char* s_years="$years";
+			static constexpr const char* s_copyright="©\xa0$years\xa0$author";
+			static constexpr const char* s_acknowledgement[]={"$acknowledgement",nullptr};
+			static constexpr const char* s_acknowledgement_all="$acknowledgement_all";
+			static constexpr const char* s_legal_brief="$legal_brief";
+			static constexpr const char* s_libraries[]={"$libraries",nullptr};
+			static constexpr const char* s_tools[]={"$tools",nullptr};
+			static constexpr const char* s_compilation_date="$date";
+			static constexpr const char* s_compiler="$compiler";
+			static constexpr const char* s_architecture="$architecture";
+			static constexpr const char* s_techstring="This $projname was "
+				"compiled for $architecture by\\n$compiler\\non $date, using $libstring.";
+		};
 	}
 
 #endif
@@ -78,19 +138,22 @@ try:
 	target_dir=sys.argv[1]
 	in_dir=sys.argv[2]
 	substitutes=dict()
-	substitutes['srcfile']=sys.argv[0]
+	substitutes['srcfile']=in_dir + '/' + sys.argv[0]
 	substitutes['date']=time.strftime('%Y-%m-%d %H:%M %Z')
 
 	projinfo=load(in_dir + '/projectinfo.json')
 	substitutes['projname']=projinfo['name']
 	substitutes['acknowledgement']='","'.join(projinfo['acknowledgement'])
+	substitutes['acknowledgement_all']='\\n'.join(projinfo['acknowledgement'])
 	substitutes['author']=projinfo['author']
 	substitutes['legal_brief']=projinfo['legal_brief']
 	substitutes['years']=str(projinfo['years']).replace(', ','–').strip('[]')
 	substitutes['revision']=get_revision()
+	substitutes['description']=projinfo['description']
 
 	externals=load(target_dir + '/externals.json')
 	substitutes['libraries']='","'.join(externals['libraries'])
+	substitutes['libstring']=', '.join(externals['libraries'])
 	substitutes['tools']='","'.join(externals['tools'])
 
 	config=load(target_dir + '/maikeconfig.json')

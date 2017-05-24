@@ -5,6 +5,9 @@
 #include "application.hpp"
 #include "filenameselect.hpp"
 
+#include <maike/targetinclude.hpp>
+#include MAIKE_TARGET(../projectinfo.hpp)
+
 using namespace Anja;
 
 static void title_update(const Session& session,Window& win)
@@ -181,11 +184,15 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				{m_ctx.exit();}
 			break;
 		case 9:
-			//TODO: About
+			m_about.reset(new Dialog<AboutBox,DialogOk>(m_mainwin,"About Anja",ProjectInfo{}));
+			m_about->callback(*this,0);
 			break;
 		}
 	btn.state(0);
 	}
+
+void Application::confirmPositive(Dialog<AboutBox,DialogOk>& dlg,int id)
+	{m_about.reset();}
 
 void Application::titleChanged(SessionPropertiesEditor& editor,int id)
 	{

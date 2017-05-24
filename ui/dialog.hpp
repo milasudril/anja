@@ -64,7 +64,7 @@ namespace Anja
 			template<class ... WidgetParams>
 			Dialog(Container& owner,const char* title,WidgetParams... params):m_window(title,&owner)
 				,m_content(m_window,true)
-					,m_widget(m_content.insertMode({0,Box::FILL|Box::EXPAND}),params...)
+					,m_widget(m_content.insertMode({2,Box::FILL|Box::EXPAND}),params...)
 						,m_buttons_outer(m_content.insertMode(Box::InsertMode{0,0}),false)
 							,m_filler_l(m_buttons_outer.insertMode({0,Box::FILL|Box::EXPAND}))
 							,m_buttons_box(m_buttons_outer.insertMode({0,0}),false)
