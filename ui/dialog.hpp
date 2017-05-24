@@ -233,9 +233,9 @@ Windows: Yes, No, Cancel
 					template<class Callback,class IdType>
 					explicit Vtable(Callback& cb,IdType) noexcept
 						{
-						Dismiss::value(dismiss_call<Callback,IdType,has_dismiss()>::callback);
-						ConfirmNeg::value(confirm_negative_call<Callback,IdType,has_confirm_neg()>::callback);
-						ConfirmPos::value(confirm_positive_call<Callback,IdType,has_confirm_pos()>::callback);
+						Dismiss::value(call<Dismiss,Callback,IdType,has_dismiss()>::callback);
+						ConfirmNeg::value(call<ConfirmNeg,Callback,IdType,has_confirm_neg()>::callback);
+						ConfirmPos::value(call<ConfirmPos,Callback,IdType,has_confirm_pos()>::callback);
 						}
 
 					void dismiss(void* cb_obj,Dialog& dlg,int id)
@@ -248,46 +248,32 @@ Windows: Yes, No, Cancel
 						{ConfirmPos::value()(cb_obj,dlg,id);}
 
 				private:
-					template<class Callback,class IdType,bool enable>
-					struct dismiss_call
+					template<class Action,class Callback,class IdType,bool enable>
+					struct call
+						{
+						static void callback(void* cb_obj,Dialog& self,int id)
+							{}
+						};
+
+					template<class Callback,class IdType>
+					struct call<Dismiss,Callback,IdType,true>
 						{
 						static void callback(void* cb_obj,Dialog& self,int id)
 							{reinterpret_cast<Callback*>(cb_obj)->dismiss(self,static_cast<IdType>(id));}
 						};
 
 					template<class Callback,class IdType>
-					struct dismiss_call<Callback,IdType,0>
-						{
-						static void callback(void* cb_obj,Dialog& self,int id)
-							{}
-						};
-
-					template<class Callback,class IdType,bool enable>
-					struct confirm_negative_call
+					struct call<ConfirmNeg,Callback,IdType,true>
 						{
 						static void callback(void* cb_obj,Dialog& self,int id)
 							{reinterpret_cast<Callback*>(cb_obj)->confirmNegative(self,static_cast<IdType>(id));}
 						};
 
 					template<class Callback,class IdType>
-					struct confirm_negative_call<Callback,IdType,0>
-						{
-						static void callback(void* cb_obj,Dialog& self,int id)
-							{}
-						};
-
-					template<class Callback,class IdType,bool enable>
-					struct confirm_positive_call
+					struct call<ConfirmPos,Callback,IdType,true>
 						{
 						static void callback(void* cb_obj,Dialog& self,int id)
 							{reinterpret_cast<Callback*>(cb_obj)->confirmPositive(self,static_cast<IdType>(id));}
-						};
-
-					template<class Callback,class IdType>
-					struct confirm_positive_call<Callback,IdType,0>
-						{
-						static void callback(void* cb_obj,Dialog& self,int id)
-							{}
 						};
 				};
 
