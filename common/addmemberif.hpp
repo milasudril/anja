@@ -5,7 +5,7 @@
 
 namespace Anja
 	{
-	template<bool cond,class T>
+	template<bool cond,class T,int tag>
 	class AddMemberIf
 		{
 		public:
@@ -14,8 +14,8 @@ namespace Anja
 				{return T{};}
 		};
 
-	template<class T>
-	struct AddMemberIf<true,T>
+	template<class T,int tag>
+	struct AddMemberIf<true,T,tag>
 		{
 		public:
 			typedef T type;

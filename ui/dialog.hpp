@@ -222,32 +222,32 @@ Windows: Yes, No, Cancel
 
 			typedef void (*DialogCallback)(void* cb_obj,Dialog& self,int id);
 
-			class Vtable
+			typedef AddMemberIf<has_dismiss(),DialogCallback,0> Dismiss;
+			typedef AddMemberIf<has_confirm_neg(),DialogCallback,1> ConfirmNeg;
+			typedef AddMemberIf<has_confirm_pos(),DialogCallback,2> ConfirmPos;
+
+			class Vtable:Dismiss,ConfirmNeg,ConfirmPos
 				{
 				public:
 					Vtable(){}
 					template<class Callback,class IdType>
 					explicit Vtable(Callback& cb,IdType) noexcept
 						{
-						m_dismiss.value(dismiss_call<Callback,IdType,has_dismiss()>::callback);
-						m_confirm_negative.value(confirm_negative_call<Callback,IdType,has_confirm_neg()>::callback);
-						m_confirm_positive.value(confirm_positive_call<Callback,IdType,has_confirm_pos()>::callback);
+						Dismiss::value(dismiss_call<Callback,IdType,has_dismiss()>::callback);
+						ConfirmNeg::value(confirm_negative_call<Callback,IdType,has_confirm_neg()>::callback);
+						ConfirmPos::value(confirm_positive_call<Callback,IdType,has_confirm_pos()>::callback);
 						}
 
 					void dismiss(void* cb_obj,Dialog& dlg,int id)
-						{m_dismiss.value()(cb_obj,dlg,id);}
+						{Dismiss::value()(cb_obj,dlg,id);}
 
 					void confirm_negative(void* cb_obj,Dialog& dlg,int id)
-						{m_confirm_negative.value()(cb_obj,dlg,id);}
+						{ConfirmNeg::value()(cb_obj,dlg,id);}
 
 					void confirm_positive(void* cb_obj,Dialog& dlg,int id)
-						{m_confirm_positive.value()(cb_obj,dlg,id);}
+						{ConfirmPos::value()(cb_obj,dlg,id);}
 
 				private:
-					AddMemberIf<has_dismiss(),DialogCallback > m_dismiss;
-					AddMemberIf<has_confirm_neg(),DialogCallback> m_confirm_negative;
-					AddMemberIf<has_confirm_pos(),DialogCallback> m_confirm_positive;
-
 					template<class Callback,class IdType,bool enable>
 					struct dismiss_call
 						{
