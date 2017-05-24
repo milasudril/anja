@@ -118,8 +118,11 @@ namespace Anja
 
 			void channelSet(int32_t x) noexcept
 				{
-				m_flags|=(x!=m_channel? DIRTY : 0);
-				m_channel=x;
+				if(x>=0)
+					{
+					m_flags|=(x!=m_channel? DIRTY : 0);
+					m_channel=x;
+					}
 				}
 
 
