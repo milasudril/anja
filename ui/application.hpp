@@ -40,6 +40,24 @@ namespace Anja
 					{return nullptr;}
 				};
 
+			struct AboutDialog
+				{
+				static constexpr const char* dismiss() noexcept
+					{return nullptr;}
+
+				static constexpr const char* confirmPositive() noexcept
+					{return "OK";}
+
+				static constexpr const char* confirmNegative() noexcept
+					{return nullptr;}
+
+				static constexpr const char* user1() noexcept
+					{return "Legal info…";}
+
+				static constexpr const char* user2() noexcept
+					{return "Tech info…";}
+				};
+
 		public:
 			Application();
 
@@ -72,7 +90,10 @@ namespace Anja
 			void dismiss(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmPositive(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
-			void confirmPositive(Dialog<AboutBox,DialogOk>& dlg,int id);
+			void confirmPositive(Dialog<AboutBox,AboutDialog>& dlg,int id);
+			void user1(Dialog<AboutBox,AboutDialog>& dlg,int id);
+			void user2(Dialog<AboutBox,AboutDialog>& dlg,int id);
+
 
 		private:
 			UiContext m_ctx;
@@ -86,7 +107,7 @@ namespace Anja
 			std::unique_ptr<Dialog<Message,ConfirmSaveDialog> > m_confirm;
 			void save_ask(ConfirmSaveDialogId id);
 
-			std::unique_ptr<Dialog<AboutBox,DialogOk>> m_about;
+			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
 		};
 	}
 

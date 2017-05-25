@@ -96,7 +96,7 @@ namespace Anja
 			static constexpr const char* s_compiler="$compiler";
 			static constexpr const char* s_architecture="$architecture";
 			static constexpr const char* s_techstring="This $projname was "
-				"compiled for $architecture by\\n$compiler\\non $date, using $libstring.";
+				"compiled for $architecture by\\n$compiler, on $date, using $libstring.";
 		};
 	}
 
@@ -157,7 +157,7 @@ try:
 	substitutes['tools']='","'.join(externals['tools'])
 
 	config=load(target_dir + '/maikeconfig.json')
-	substitutes['compiler']=compiler_version(compiler_name(config))
+	substitutes['compiler']=compiler_version(compiler_name(config)).replace(' ','\xa0')
 	substitutes['architecture']=config['targetinfo']['architecture']
 
 	with open(target_dir + '/' + in_dir + '/projectinfo.hpp','wb') as output:

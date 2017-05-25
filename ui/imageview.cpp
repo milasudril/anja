@@ -10,7 +10,7 @@
 
 using namespace Anja;
 
-class ImageView::Impl:public ImageView
+class ImageView::Impl:private ImageView
 	{
 	public:
 		Impl(Container& cnt);
@@ -28,13 +28,22 @@ class ImageView::Impl:public ImageView
 			m_id=id;
 			}
 
+		void minHeight(int h)
+			{
+			m_height_request=h;
+			gtk_widget_set_size_request(GTK_WIDGET(m_handle),-1,h);
+			}
+
+		void minWidth(int w)
+			{gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,-1);}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
-		int m_height_request;
 		cairo_surface_t* m_img;
 		GtkDrawingArea* m_handle;
+		int m_height_request;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 	};
@@ -59,6 +68,18 @@ ImageView& ImageView::callback(CallbackImpl cb,void* cb_obj,int id)
 
 int ImageView::id() const noexcept
 	{return m_impl->id();}
+
+ImageView& ImageView::minHeight(int h)
+	{
+	m_impl->minHeight(h);
+	return *this;
+	}
+
+ImageView& ImageView::minWidth(int w)
+	{
+	m_impl->minWidth(w);
+	return *this;
+	}
 
 
 

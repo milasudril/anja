@@ -1,14 +1,16 @@
 //@	{
-//@	"targets":[{"name":"application.o","type":"object"}]
+//@	"targets":[{"name":"application.o","type":"object","dependencies":[{"ref":"../logo.png","rel":"generated"}]}]
 //@	}
 
 #include "application.hpp"
 #include "filenameselect.hpp"
-
+#include "../common/blob.hpp"
 #include <maike/targetinclude.hpp>
 #include MAIKE_TARGET(../projectinfo.hpp)
 
 using namespace Anja;
+
+ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo.png));
 
 static void title_update(const Session& session,Window& win)
 	{
@@ -184,15 +186,22 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				{m_ctx.exit();}
 			break;
 		case 9:
-			m_about.reset(new Dialog<AboutBox,DialogOk>(m_mainwin,"About Anja",ProjectInfo{}));
+			m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
+			m_about->widget().logo(s_logo_begin,s_logo_end);
 			m_about->callback(*this,0);
 			break;
 		}
 	btn.state(0);
 	}
 
-void Application::confirmPositive(Dialog<AboutBox,DialogOk>& dlg,int id)
+void Application::confirmPositive(Dialog<AboutBox,AboutDialog>& dlg,int id)
 	{m_about.reset();}
+
+void Application::user1(Dialog<AboutBox,AboutDialog>& dlg,int id)
+	{dlg.widget().legalBrief();}
+
+void Application::user2(Dialog<AboutBox,AboutDialog>& dlg,int id)
+	{dlg.widget().techstring();}
 
 void Application::titleChanged(SessionPropertiesEditor& editor,int id)
 	{
@@ -223,6 +232,7 @@ Application::Application():
 			,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
 	,m_fullscreen(0)
 	{
+	m_ctx.dark(1);
 	m_session_control.append("New session","Load session","Reload session","Save session"
 		,"Save session as","","Start engine","Stop engine","","Fullscreen"
 		,"Exit","About Anja");

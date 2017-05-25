@@ -30,9 +30,9 @@ namespace Anja
 
 			ImageView& showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end);
 
-			ImageView& minHeight(int w);
+			ImageView& minHeight(int h);
 
-			ImageView& minWidth(int h);
+			ImageView& minWidth(int w);
 
 			template<class Callback,class IdType>
 			ImageView& callback(Callback& cb_obj,IdType id)

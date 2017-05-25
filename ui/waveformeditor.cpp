@@ -482,7 +482,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
 		,m_filename(m_box.insertMode({1,0}),false)
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
 			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
-			,m_filename_browse(m_filename.insertMode({0,0}),"Browse...")
+			,m_filename_browse(m_filename.insertMode({0,0}),"Browse…")
 			,m_filename_reload(m_filename,"↺")
 		,m_description(m_box,false)
 			,m_description_label(m_description.insertMode({2,0}),"Description:")

@@ -281,10 +281,10 @@ namespace Anja
 					static constexpr ButtonId s_button_order[]=
 						{
 						 ButtonId::USER_1
+						,ButtonId::USER_2
 						,ButtonId::CONFIRM_POSITIVE
 						,ButtonId::CONFIRM_NEGATIVE
 						,ButtonId::DISMISS
-						,ButtonId::USER_2
 						};
 				#else
 					static constexpr ButtonId s_button_order[]=
@@ -292,8 +292,8 @@ namespace Anja
 						 ButtonId::CONFIRM_NEGATIVE
 						,ButtonId::DISMISS
 						,ButtonId::USER_1
-						,ButtonId::CONFIRM_POSITIVE
 						,ButtonId::USER_2
+						,ButtonId::CONFIRM_POSITIVE
 						};
 				#endif
 				};

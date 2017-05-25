@@ -164,6 +164,7 @@
     </VirtualDirectory>
     <File Name="projectinfo.py"/>
     <File Name="build.sh"/>
+    <File Name="logo.py"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
