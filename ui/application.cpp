@@ -1,5 +1,10 @@
 //@	{
-//@	"targets":[{"name":"application.o","type":"object","dependencies":[{"ref":"../logo.png","rel":"generated"}]}]
+//@	"targets":
+//@		[{
+//@		"name":"application.o","type":"object"
+//@		,"dependencies":[{"ref":"../logo.png","rel":"generated"}]
+//@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
+//@		}]
 //@	}
 
 #include "application.hpp"
