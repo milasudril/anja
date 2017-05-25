@@ -32,6 +32,12 @@ namespace Anja
 
 				static constexpr const char* confirmNegative() noexcept
 					{return "Don't save";}
+
+				static constexpr const char* user1() noexcept
+					{return nullptr;}
+
+				static constexpr const char* user2() noexcept
+					{return nullptr;}
 				};
 
 		public:

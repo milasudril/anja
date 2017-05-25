@@ -9,6 +9,7 @@
 #include "filler.hpp"
 #include "../common/addmemberif.hpp"
 #include <array>
+#include <cassert>
 
 namespace Anja
 	{
@@ -22,6 +23,12 @@ namespace Anja
 
 		static constexpr const char* confirmNegative() noexcept
 			{return nullptr;}
+
+		static constexpr const char* user1() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user2() noexcept
+			{return nullptr;}
 		};
 
 	struct DialogOk
@@ -33,6 +40,12 @@ namespace Anja
 			{return "OK";}
 
 		static constexpr const char* confirmNegative() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user1() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user2() noexcept
 			{return nullptr;}
 		};
 
@@ -51,12 +64,24 @@ namespace Anja
 	inline std::array<Button,3> buttons_create<3>(Container& cnt)
 		{return std::array<Button,3>{Button(cnt,""),Button(cnt,""),Button(cnt,"")};}
 
+	template<>
+	inline std::array<Button,4> buttons_create<4>(Container& cnt)
+		{return std::array<Button,4>{Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,"")};}
+
+	template<>
+	inline std::array<Button,5> buttons_create<5>(Container& cnt)
+		{
+		return std::array<Button,5>
+				{Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,"")};
+		}
+
 
 	template<class Widget,class DialogTraits=DialogOkCancel>
 	class Dialog
 		{
 		public:
-			enum class ButtonId:int{DISMISS,CONFIRM_NEGATIVE,CONFIRM_POSITIVE};
+			enum class ButtonId:int{DISMISS,CONFIRM_NEGATIVE,CONFIRM_POSITIVE,USER_1,USER_2};
+
 
 			Dialog& operator=(Dialog&&)=delete;
 			Dialog(Dialog&&)=delete;
@@ -71,13 +96,32 @@ namespace Anja
 								,m_buttons(buttons_create<button_count()>(m_buttons_box.homogenous(true).insertMode(Box::InsertMode{2,Box::FILL|Box::EXPAND})))
 							,m_filler_r(m_buttons_outer.insertMode({0,Box::FILL|Box::EXPAND}))
 				{
-				m_window.modal(true).show();
 				if(has_dismiss())
-					{m_buttons[dismiss_index()].label(DialogTraits::dismiss());}
+					{
+					assert(ButtonIndex::dismiss()!=-1);
+					m_buttons[ButtonIndex::dismiss()].label(DialogTraits::dismiss());
+					}
 				if(has_confirm_neg())
-					{m_buttons[confirm_neg_index()].label(DialogTraits::confirmNegative());}
+					{
+					assert(ButtonIndex::confirmNegative()!=-1);
+					m_buttons[ButtonIndex::confirmNegative()].label(DialogTraits::confirmNegative());
+					}
 				if(has_confirm_pos())
-					{m_buttons[confirm_pos_index()].label(DialogTraits::confirmPositive());}
+					{
+					assert(ButtonIndex::confirmPositive()!=-1);
+					m_buttons[ButtonIndex::confirmPositive()].label(DialogTraits::confirmPositive());
+					}
+				if(has_user_1())
+					{
+					assert(ButtonIndex::user1()!=-1);
+					m_buttons[ButtonIndex::user1()].label(DialogTraits::user1());
+					}
+				if(has_user_2())
+					{
+					assert(ButtonIndex::user2()!=-1);
+					m_buttons[ButtonIndex::user2()].label(DialogTraits::user2());
+					}
+				m_window.modal(true).show();
 				}
 
 			template<class Callback,class IdType>
@@ -86,9 +130,11 @@ namespace Anja
 				m_vtable=Vtable(cb_obj,id);
 				r_cb_obj=&cb_obj;
 				m_id=static_cast<int>(id);
-				button_callback_assign<dismiss_index()>(ButtonId::DISMISS);
-				button_callback_assign<confirm_neg_index()>(ButtonId::CONFIRM_NEGATIVE);
-				button_callback_assign<confirm_pos_index()>(ButtonId::CONFIRM_POSITIVE);
+				button_callback_assign<ButtonIndex::dismiss()>(ButtonId::DISMISS);
+				button_callback_assign<ButtonIndex::confirmNegative()>(ButtonId::CONFIRM_NEGATIVE);
+				button_callback_assign<ButtonIndex::confirmPositive()>(ButtonId::CONFIRM_POSITIVE);
+				button_callback_assign<ButtonIndex::user1()>(ButtonId::USER_1);
+				button_callback_assign<ButtonIndex::user2()>(ButtonId::USER_2);
 				m_window.callback(*this,0);
 				return *this;
 				}
@@ -113,6 +159,12 @@ namespace Anja
 					case ButtonId::CONFIRM_POSITIVE:
 						m_vtable.confirm_positive(r_cb_obj,*this,m_id);
 						break;
+					case ButtonId::USER_1:
+						m_vtable.user_1(r_cb_obj,*this,m_id);
+						break;
+					case ButtonId::USER_2:
+						m_vtable.user_2(r_cb_obj,*this,m_id);
+						break;
 					}
 				//	We are dead now
 				}
@@ -135,7 +187,7 @@ namespace Anja
 						else
 							{m_vtable.confirm_positive(r_cb_obj,*this,m_id);}
 						break;
-					case 28:
+					case 28: //ENTER
 						m_vtable.confirm_positive(r_cb_obj,*this,m_id);
 						break;
 					default:
@@ -147,60 +199,106 @@ namespace Anja
 				{}
 
 		private:
-			static constexpr bool has_dismiss()
+			static constexpr bool has_dismiss() noexcept
 				{return DialogTraits::dismiss()!=nullptr;}
 
-			static constexpr bool has_confirm_neg()
+			static constexpr bool has_confirm_neg() noexcept
 				{return DialogTraits::confirmNegative()!=nullptr;}
 
-			static constexpr bool has_confirm_pos()
+			static constexpr bool has_confirm_pos() noexcept
 				{return DialogTraits::confirmPositive()!=nullptr;}
+
+			static constexpr bool has_user_1() noexcept
+				{return DialogTraits::user1()!=nullptr;}
+
+			static constexpr bool has_user_2() noexcept
+				{return DialogTraits::user2()!=nullptr;}
 
 			static constexpr int button_count() noexcept
 				{
 				return static_cast<int>(has_dismiss())
 					+ static_cast<int>(has_confirm_neg())
-					+ static_cast<int>(has_confirm_pos());
+					+ static_cast<int>(has_confirm_pos())
+					+ static_cast<int>(has_user_1())
+					+ static_cast<int>(has_user_2());
 				}
 
-/*
-GNU/Linux: No, Cancel, Yes
-MacOS: No, Cancel, Yes
-Windows: Yes, No, Cancel
-*/
-
-			static constexpr int dismiss_index() noexcept
+			static constexpr bool has_button(ButtonId id)
 				{
-				if(!has_dismiss())
-					{return -1;}
-			#ifdef _WIN32
-				return button_count()-1;
-			#else
+				switch(id)
+					{
+					case ButtonId::DISMISS: return has_dismiss();
+					case ButtonId::CONFIRM_NEGATIVE: return has_confirm_neg();
+					case ButtonId::CONFIRM_POSITIVE: return has_confirm_pos();
+					case ButtonId::USER_1: return has_user_1();
+					case ButtonId::USER_2: return has_user_2();
+					}
 				return 0;
-			#endif
 				}
 
-			static constexpr int confirm_neg_index() noexcept
+			class ButtonIndex
 				{
-				if(!has_confirm_neg())
-					{return -1;}
-			#ifdef _WIN32
-				return has_confirm_pos()?1:0;
-			#else
-				return has_dismiss()?1:0;
-			#endif
-				}
+				public:
+					static constexpr int dismiss() noexcept
+						{return s_dismiss;}
 
-			static constexpr int confirm_pos_index() noexcept
-				{
-				if(!has_confirm_pos())
-					{return -1;}
-			#ifdef _WIN32
-				return 0;
-			#else
-				return button_count() - 1;
-			#endif
-				}
+					static constexpr int confirmPositive() noexcept
+						{return s_confirm_positive;}
+
+					static constexpr int confirmNegative() noexcept
+						{return s_confirm_negative;}
+
+					static constexpr int user1() noexcept
+						{return s_user_1;}
+
+					static constexpr int user2() noexcept
+						{return s_user_2;}
+
+				private:
+					template<ButtonId button>
+					static constexpr int get() noexcept
+						{
+						int l=0;
+						for(int k=0;k<5;++k)
+							{
+							if(has_button(s_button_order[k]))
+								{
+								if(button==s_button_order[k])
+									{return l;}
+								++l;
+								}
+							}
+						return -1;
+						}
+
+					static constexpr int s_dismiss=get<ButtonId::DISMISS>();
+					static constexpr int s_confirm_positive=get<ButtonId::CONFIRM_POSITIVE>();
+					static constexpr int s_confirm_negative=get<ButtonId::CONFIRM_NEGATIVE>();
+					static constexpr int s_user_1=get<ButtonId::USER_1>();
+					static constexpr int s_user_2=get<ButtonId::USER_2>();
+
+				#ifdef _WIN32
+					static constexpr ButtonId s_button_order[]=
+						{
+						 ButtonId::USER_1
+						,ButtonId::CONFIRM_POSITIVE
+						,ButtonId::CONFIRM_NEGATIVE
+						,ButtonId::DISMISS
+						,ButtonId::USER_2
+						};
+				#else
+					static constexpr ButtonId s_button_order[]=
+						{
+						 ButtonId::CONFIRM_NEGATIVE
+						,ButtonId::DISMISS
+						,ButtonId::USER_1
+						,ButtonId::CONFIRM_POSITIVE
+						,ButtonId::USER_2
+						};
+				#endif
+				};
+
+
 
 			template<int index,bool dummy=true>
 			struct button_callback_assign_do
@@ -225,8 +323,10 @@ Windows: Yes, No, Cancel
 			typedef AddMemberIf<has_dismiss(),DialogCallback,0> Dismiss;
 			typedef AddMemberIf<has_confirm_neg(),DialogCallback,1> ConfirmNeg;
 			typedef AddMemberIf<has_confirm_pos(),DialogCallback,2> ConfirmPos;
+			typedef AddMemberIf<has_user_1(),DialogCallback,3> User1;
+			typedef AddMemberIf<has_user_2(),DialogCallback,4> User2;
 
-			class Vtable:Dismiss,ConfirmNeg,ConfirmPos
+			class Vtable:Dismiss,ConfirmNeg,ConfirmPos,User1,User2
 				{
 				public:
 					Vtable(){}
@@ -236,6 +336,8 @@ Windows: Yes, No, Cancel
 						Dismiss::value(call<Dismiss,Callback,IdType,has_dismiss()>::callback);
 						ConfirmNeg::value(call<ConfirmNeg,Callback,IdType,has_confirm_neg()>::callback);
 						ConfirmPos::value(call<ConfirmPos,Callback,IdType,has_confirm_pos()>::callback);
+						User1::value(call<User1,Callback,IdType,has_user_1()>::callback);
+						User2::value(call<User2,Callback,IdType,has_user_2()>::callback);
 						}
 
 					void dismiss(void* cb_obj,Dialog& dlg,int id)
@@ -246,6 +348,12 @@ Windows: Yes, No, Cancel
 
 					void confirm_positive(void* cb_obj,Dialog& dlg,int id)
 						{ConfirmPos::value()(cb_obj,dlg,id);}
+
+					void user_1(void* cb_obj,Dialog& dlg,int id)
+						{User1::value()(cb_obj,dlg,id);}
+
+					void user_2(void* cb_obj,Dialog& dlg,int id)
+						{User2::value()(cb_obj,dlg,id);}
 
 				private:
 					template<class Action,class Callback,class IdType,bool enable>
@@ -274,6 +382,20 @@ Windows: Yes, No, Cancel
 						{
 						static void callback(void* cb_obj,Dialog& self,int id)
 							{reinterpret_cast<Callback*>(cb_obj)->confirmPositive(self,static_cast<IdType>(id));}
+						};
+
+					template<class Callback,class IdType>
+					struct call<User1,Callback,IdType,true>
+						{
+						static void callback(void* cb_obj,Dialog& self,int id)
+							{reinterpret_cast<Callback*>(cb_obj)->user1(self,static_cast<IdType>(id));}
+						};
+
+					template<class Callback,class IdType>
+					struct call<User2,Callback,IdType,true>
+						{
+						static void callback(void* cb_obj,Dialog& self,int id)
+							{reinterpret_cast<Callback*>(cb_obj)->user2(self,static_cast<IdType>(id));}
 						};
 				};
 
