@@ -147,7 +147,6 @@
       <File Name="ui/message.hpp"/>
       <File Name="ui/message.cpp"/>
       <File Name="ui/keyboardview.hpp"/>
-      <File Name="ui/keyboardview.cpp"/>
       <File Name="ui/sourceview.cpp"/>
       <File Name="ui/sourceview.hpp"/>
       <File Name="ui/sessionpropertieseditor.hpp"/>
@@ -155,6 +154,7 @@
       <File Name="ui/application.hpp"/>
       <File Name="ui/application.cpp"/>
       <File Name="ui/aboutbox.hpp"/>
+      <File Name="ui/keyboardview.cpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>
@@ -165,6 +165,10 @@
     <File Name="projectinfo.py"/>
     <File Name="build.sh"/>
     <File Name="logo.py"/>
+    <VirtualDirectory Name="engine">
+      <File Name="engine.hpp"/>
+      <File Name="audioclient.hpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -292,4 +296,10 @@ I/usr/include/at-spi2-atk/2.0
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="midiconstants">
+    <File Name="midiconstants/status-codes.txt"/>
+    <File Name="midiconstants/gm-programs.txt"/>
+    <File Name="midiconstants/gm-drumkit.txt"/>
+    <File Name="midiconstants/control-codes.txt"/>
+  </VirtualDirectory>
 </CodeLite_Project>
