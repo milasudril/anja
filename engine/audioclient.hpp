@@ -27,10 +27,10 @@ namespace Anja
 				AudioClient(name,&cb
 				,Vtable
 					{
-					[](void* cb_obj,int index,PortInfo& info)
-						{return reinterpret_cast<Callback*>(cb_obj)->port(index,info);}
-					,[](void* cb_obj,AudioClient& self,int32_t n_frames)
+					 [](void* cb_obj,AudioClient& self,int32_t n_frames)
 						{reinterpret_cast<Callback*>(cb_obj)->process(self,n_frames);}
+					,[](void* cb_obj,int index,PortInfo& info)
+						{return reinterpret_cast<Callback*>(cb_obj)->port(index,info);}
 					})
 				{}
 
@@ -47,20 +47,17 @@ namespace Anja
 
 			AudioClient& midiInName(int index,const char* name);
 
-
 			AudioClient& midiOutName(int index,const char* name);
 
-
 			AudioClient& waveInName(int index,const char* name);
-
 
 			AudioClient& waveOutName(int index,const char* name);
 
 		private:
 			struct Vtable
 				{
-				bool (*port_callback)(void* cb,int index,PortInfo& info);
 				void (*process_callback)(void* cb_obj,AudioClient& self,int n_frames);
+				bool (*port_callback)(void* cb,int index,PortInfo& info);
 				};
 
 

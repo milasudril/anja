@@ -3,6 +3,7 @@
 #include "audioclient.hpp"
 #include "../common/error.hpp"
 #include <jack/jack.h>
+#include <vector>
 
 using namespace Anja;
 
@@ -12,10 +13,28 @@ class AudioClient::Impl:private AudioClient
 		Impl(const char* name,void* cb_obj,const Vtable& vt);
 		~Impl();
 
+
+		void midiInName(int index,const char* name)
+			{jack_port_rename(m_handle,m_midi_in[index],name);}
+
+		void midiOutName(int index,const char* name)
+			{jack_port_rename(m_handle,m_midi_out[index],name);}
+
+		void waveInName(int index,const char* name)
+			{jack_port_rename(m_handle,m_wave_in[index],name);}
+
+		void waveOutName(int index,const char* name)
+			{jack_port_rename(m_handle,m_wave_out[index],name);}
+
+
 	private:
 		void* r_cb_obj;
 		Vtable m_vt;
 		jack_client_t* m_handle;
+		std::vector<jack_port_t*> m_midi_in;
+		std::vector<jack_port_t*> m_midi_out;
+		std::vector<jack_port_t*> m_wave_in;
+		std::vector<jack_port_t*> m_wave_out;
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -25,6 +44,30 @@ AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
 
 AudioClient::~AudioClient()
 	{delete m_impl;}
+
+AudioClient& AudioClient::midiInName(int index,const char* name)
+	{
+	m_impl->midiInName(index,name);
+	return *this;
+	}
+
+AudioClient& AudioClient::midiOutName(int index,const char* name)
+	{
+	m_impl->midiOutName(index,name);
+	return *this;
+	}
+
+AudioClient& AudioClient::waveInName(int index,const char* name)
+	{
+	m_impl->waveInName(index,name);
+	return *this;
+	}
+
+AudioClient& AudioClient::waveOutName(int index,const char* name)
+	{
+	m_impl->waveOutName(index,name);
+	return *this;
+	}
 
 
 
@@ -50,16 +93,16 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 		switch(info.type)
 			{
 			case PortType::MIDI_IN:
-				jack_port_register(m_handle,info.name,JACK_DEFAULT_MIDI_TYPE,JackPortIsInput,0);
+				m_midi_in.push_back( jack_port_register(m_handle,info.name,JACK_DEFAULT_MIDI_TYPE,JackPortIsInput,0) );
 				break;
 			case PortType::MIDI_OUT:
-				jack_port_register(m_handle,info.name,JACK_DEFAULT_MIDI_TYPE,JackPortIsOutput,0);
+				m_midi_out.push_back( jack_port_register(m_handle,info.name,JACK_DEFAULT_MIDI_TYPE,JackPortIsOutput,0) );
 				break;
 			case PortType::WAVE_IN:
-				jack_port_register(m_handle,info.name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0);
+				m_wave_in.push_back( jack_port_register(m_handle,info.name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0) );
 				break;
 			case PortType::WAVE_OUT:
-			jack_port_register(m_handle,info.name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
+				m_wave_out.push_back( jack_port_register(m_handle,info.name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0) );
 				break;
 			}
 		++k;
