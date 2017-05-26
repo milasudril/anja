@@ -9,36 +9,43 @@ using namespace Anja;
 class AudioClient::Impl:private AudioClient
 	{
 	public:
-		Impl(const char* name,void* cb_obj,PortCallback cb);
+		Impl(const char* name,void* cb_obj,const Vtable& vt);
 		~Impl();
 
 	private:
 		void* r_cb_obj;
+		Vtable m_vt;
 		jack_client_t* m_handle;
 	};
 
-AudioClient::AudioClient(const char* name,void* cb_obj,PortCallback cb)
+AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
 	{
-	m_impl=new Impl(name,cb_obj,cb);
+	m_impl=new Impl(name,cb_obj,vt);
 	}
 
 AudioClient::~AudioClient()
 	{delete m_impl;}
 
-AudioClient::Impl::Impl(const char* name,void* cb_obj,PortCallback cb):AudioClient(*this)
-	,r_cb_obj(cb_obj)
+
+
+AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
+	,r_cb_obj(cb_obj),m_vt(vt)
 	{
 	jack_status_t status;
  	m_handle=jack_client_open(name,JackNoStartServer,&status);
 	if(m_handle==NULL)
 		{throw Error(name," failed to connect to JACK.");}
 
-	jack_set_process_callback(m_handle,[](jack_nframes_t nframes,void* arg)
-		{return 0;},cb_obj);
+	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)
+		{
+		auto self=reinterpret_cast<Impl*>(obj);
+		self->m_vt.process_callback(self->r_cb_obj,*self,n_frames);
+		return 0;
+		},this);
 
 	PortInfo info;
 	int k=0;
-	while(cb(cb_obj,k,info))
+	while(vt.port_callback(cb_obj,k,info))
 		{
 		switch(info.type)
 			{

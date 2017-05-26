@@ -7,6 +7,7 @@
 #define ANJA_AUDIOCLIENT_HPP
 
 #include <utility>
+#include <cstdint>
 
 namespace Anja
 	{
@@ -23,9 +24,13 @@ namespace Anja
 
 			template<class Callback>
 			explicit AudioClient(const char* name,Callback& cb):
-				AudioClient(name,&cb,[](void* cb,int index,PortInfo& info)
+				AudioClient(name,&cb
+				,Vtable
 					{
-					return reinterpret_cast<Callback*>(cb)->port(index,info);
+					[](void* cb_obj,int index,PortInfo& info)
+						{return reinterpret_cast<Callback*>(cb_obj)->port(index,info);}
+					,[](void* cb_obj,AudioClient& self,int32_t n_frames)
+						{reinterpret_cast<Callback*>(cb_obj)->process(self,n_frames);}
 					})
 				{}
 
@@ -52,13 +57,18 @@ namespace Anja
 			AudioClient& waveOutName(int index,const char* name);
 
 		private:
-			typedef bool (*PortCallback)(void* cb,int index,PortInfo& info);
+			struct Vtable
+				{
+				bool (*port_callback)(void* cb,int index,PortInfo& info);
+				void (*process_callback)(void* cb_obj,AudioClient& self,int n_frames);
+				};
+
 
 			class Impl;
 			Impl* m_impl;
 
 			explicit AudioClient(Impl& impl):m_impl(&impl){}
-			explicit AudioClient(const char* name,void* cb_obj,PortCallback cb);
+			explicit AudioClient(const char* name,void* cb_obj,const Vtable& cb);
 		};
 
 	}
