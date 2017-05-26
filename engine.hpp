@@ -8,15 +8,15 @@
 
 namespace Anja
 	{
-	union Message
-		{
-		uint32_t code;
-		uint8_t bytes[4];
-		};
-
 	class Engine
 		{
 		public:
+			union Message
+				{
+				uint32_t code;
+				uint8_t bytes[4];
+				};
+
 			template<class PortInfo>
 			Engine(const char* client_name,const PortInfo& ports):
 				AudioClient(client_name,ports.midiIn(),ports.midiOut(),ports.waveIn(),ports.waveOut())

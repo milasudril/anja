@@ -138,7 +138,7 @@ try:
 	target_dir=sys.argv[1]
 	in_dir=sys.argv[2]
 	substitutes=dict()
-	substitutes['srcfile']=in_dir + '/' + sys.argv[0]
+	substitutes['srcfile']=sys.argv[0]
 	substitutes['date']=time.strftime('%Y-%m-%d %H:%M %Z')
 
 	projinfo=load(in_dir + '/projectinfo.json')
