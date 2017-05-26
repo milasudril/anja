@@ -25,12 +25,12 @@ namespace Anja
 		constexpr std::pair<$FilenameNoExt,const char*> ${FILENAME_NO_EXT}_VALUE_NAME=
 			{
 			 {$value_name}
-			}
+			};
 
 		constexpr std::pair<const char*,$FilenameNoExt> ${FILENAME_NO_EXT}_NAME_VALUE=
 			{
 			 {$name_value}
-			}
+			};
 		}
 	}
 
