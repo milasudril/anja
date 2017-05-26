@@ -15,6 +15,7 @@
 #include "message.hpp"
 #include "aboutbox.hpp"
 #include "../sessiondata/session.hpp"
+#include "../engine/engine.hpp"
 #include <memory>
 
 namespace Anja
@@ -108,6 +109,7 @@ namespace Anja
 			void save_ask(ConfirmSaveDialogId id);
 
 			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
+			std::unique_ptr<Engine> m_engine;
 		};
 	}
 

@@ -1,26 +1,25 @@
-//@	{"targets":[{"name":"engine.hpp","type":"include"}]}
+//@	{
+//@	"targets":[{"name":"engine.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"engine.o","rel":"implementation"}]
+//@	}
 
 #ifndef ANJA_ENGINE_HPP
 #define ANJA_ENGINE_HPP
 
 #include "audioclient.hpp"
+#include "../sessiondata/session.hpp"
 #include <cstdint>
+#include <utility>
 
 namespace Anja
 	{
+	class Message;
 	class Engine
 		{
 		public:
-			union Message
-				{
-				uint32_t code;
-				uint8_t bytes[4];
-				};
+			Engine(Session&&)=delete;
 
-			template<class PortInfo>
-			Engine(const char* client_name,const PortInfo& ports):
-				AudioClient(client_name,ports.midiIn(),ports.midiOut(),ports.waveIn(),ports.waveOut())
-				{m_client.callback(*this);}
+			explicit Engine(const Session& session);
 
 			Engine& midiInName(int index,const char* name)
 				{
@@ -48,10 +47,12 @@ namespace Anja
 
 			void process(AudioClient& client,int32_t n_frames) noexcept;
 
-			Engine& messagePost();
+			Engine& messagePost(Message msg);
 
+			bool port(int index,AudioClient::PortInfo& info) const;
 
 		private:
+			const Session* r_session;
 			AudioClient m_client;
 		};
 

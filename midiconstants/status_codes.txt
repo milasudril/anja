@@ -2,7 +2,7 @@ INVALID;0;Invalid
 NOTE_OFF;0x80;Note off
 NOTE_ON;0x90;Note on
 NOTE_PRESSURE;0xA0;Note pressure
-CONTROLLER;0xB0;Controller
+CONTROL_CHANGE;0xB0;Controller
 PGM_CHANGE;0xC0;Program change
 CHANNEL_PRESSURE;0xD0;Channel pressure
 PITCH_BEND;0xE0;Pitch bend

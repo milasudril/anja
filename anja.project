@@ -166,9 +166,23 @@
     <File Name="build.sh"/>
     <File Name="logo.py"/>
     <VirtualDirectory Name="engine">
-      <File Name="engine.hpp"/>
-      <File Name="audioclient.hpp"/>
+      <File Name="engine/audioclient.hpp"/>
+      <File Name="engine/engine.hpp"/>
+      <File Name="engine/message.hpp"/>
+      <File Name="engine/engine.cpp"/>
+      <File Name="engine/audioclient.cpp"/>
     </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src/midiconstants">
+    <File Name="midiconstants/control_codes.py"/>
+    <File Name="midiconstants/control_codes.txt"/>
+    <File Name="midiconstants/compile.py"/>
+    <File Name="midiconstants/gm_drumkit.txt"/>
+    <File Name="midiconstants/gm_programs.txt"/>
+    <File Name="midiconstants/status_codes.txt"/>
+    <File Name="midiconstants/gm_drumkit.py"/>
+    <File Name="midiconstants/gm_programs.py"/>
+    <File Name="midiconstants/status_codes.py"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -215,7 +229,7 @@
       <Completion EnableCpp11="yes" EnableCpp14="yes">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
-        <ClangPP/>
+        <ClangPP>MAIKE_TARGET_DIRECTORY=__targets</ClangPP>
         <SearchPaths>/usr/include/gtk-3.0
 I/usr/include/at-spi2-atk/2.0
 /usr/include/at-spi-2.0
@@ -296,15 +310,4 @@ I/usr/include/at-spi2-atk/2.0
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="midiconstants">
-    <File Name="midiconstants/control_codes.py"/>
-    <File Name="midiconstants/control_codes.txt"/>
-    <File Name="midiconstants/compile.py"/>
-    <File Name="midiconstants/gm_drumkit.txt"/>
-    <File Name="midiconstants/gm_programs.txt"/>
-    <File Name="midiconstants/status_codes.txt"/>
-    <File Name="midiconstants/gm_drumkit.py"/>
-    <File Name="midiconstants/gm_programs.py"/>
-    <File Name="midiconstants/status_codes.py"/>
-  </VirtualDirectory>
 </CodeLite_Project>

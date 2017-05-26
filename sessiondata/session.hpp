@@ -78,6 +78,9 @@ namespace Anja
 			const String& descriptionGet() const noexcept
 				{return m_description;}
 
+
+			static constexpr unsigned int MULTIOUTPUT=0x1;
+
 			static const char* const* flagNames() noexcept;
 
 			unsigned int flagsGet() const noexcept
@@ -124,6 +127,12 @@ namespace Anja
 				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
 
 			ArraySimple<String> channelLabelsGet() const;
+
+			const String& channelLabelGet(int ch) const noexcept
+				{
+				assert(ch>=0 && ch<16);
+				return m_channel_data[ch].labelGet();
+				}
 
 			ArraySimple<ColorRGBA> channelColorsGet() const;
 
@@ -198,7 +207,6 @@ namespace Anja
 			String m_description;
 			ArrayDynamicShort<ColorRGBA> m_color_presets;
 
-			static constexpr unsigned int MULTIOUTPUT=0x1;
 			unsigned int m_flags;
 
 			static constexpr unsigned int SESSION_DIRTY=0x2;

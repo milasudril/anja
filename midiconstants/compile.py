@@ -13,6 +13,8 @@ Any changes to this file may be overwritten during compilation.
 #ifndef ANJA_${FILENAME_NO_EXT}_HPP
 #define ANJA_${FILENAME_NO_EXT}_HPP
 
+#include <utility>
+
 namespace Anja
 	{
 	namespace MIDI
@@ -22,12 +24,12 @@ namespace Anja
 			 $constants
 			};
 
-		constexpr std::pair<$FilenameNoExt,const char*> ${FILENAME_NO_EXT}_VALUE_NAME=
+		constexpr std::pair<$FilenameNoExt,const char*> ${FILENAME_NO_EXT}_VALUE_NAME[]=
 			{
 			 {$value_name}
 			};
 
-		constexpr std::pair<const char*,$FilenameNoExt> ${FILENAME_NO_EXT}_NAME_VALUE=
+		constexpr std::pair<const char*,$FilenameNoExt> ${FILENAME_NO_EXT}_NAME_VALUE[]=
 			{
 			 {$name_value}
 			};
@@ -38,8 +40,8 @@ namespace Anja
 ''')
 
 const_template=string.Template('''${IDENTIFIER}=$value    /**<$description*/''')
-name_template=string.Template('''${IDENTIFIER},"$description"''')
-name_inv_template=string.Template('''"$description",${IDENTIFIER}''')
+name_template=string.Template('''$FilenameNoExt::${IDENTIFIER},"$description"''')
+name_inv_template=string.Template('''"$description",$FilenameNoExt::${IDENTIFIER}''')
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -72,6 +74,7 @@ def compile(filename):
 			constants=list()
 			names=list()
 			constant=dict()
+			constant['FilenameNoExt']=substitutes['FilenameNoExt']
 			for row in sorted(table_parsed,key=operator.itemgetter(VALUE)):
 				constant['IDENTIFIER']=row[IDENTIFIER]
 				constant['value']=row[VALUE]

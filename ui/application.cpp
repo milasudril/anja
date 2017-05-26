@@ -174,10 +174,10 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 			sessionSaveAs();
 			break;
 		case 5:
-			//TODO: Engine (re)start
+			m_engine.reset(new Engine(m_session));
 			break;
 		case 6:
-			//TODO: Engine stop
+			m_engine.reset();
 			break;
 		case 7:
 			m_fullscreen=!m_fullscreen;
