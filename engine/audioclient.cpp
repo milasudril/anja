@@ -105,7 +105,7 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 			auto name=m_vt.port_callback(r_cb_obj,PortType::MIDI_OUT,k);
 			if(name==nullptr)
 				{break;}
-			m_midi_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_MIDI_TYPE,JackPortIsOutput,0) );
+			m_midi_out.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_MIDI_TYPE,JackPortIsOutput,0) );
 			++k;
 			}
 		}
@@ -116,7 +116,7 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 			auto name=m_vt.port_callback(r_cb_obj,PortType::WAVE_IN,k);
 			if(name==nullptr)
 				{break;}
-			m_midi_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0) );
+			m_wave_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0) );
 			++k;
 			}
 		}
@@ -127,7 +127,7 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 			auto name=m_vt.port_callback(r_cb_obj,PortType::WAVE_OUT,k);
 			if(name==nullptr)
 				{break;}
-			m_midi_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0) );
+			m_wave_out.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0) );
 			++k;
 			}
 		}
