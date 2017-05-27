@@ -56,6 +56,8 @@ void SessionEditor::nameChanged(ChannelStrip& strip,int id)
 	m_waveform.channelName(id,strip.name().begin());
 	if(id>=0 && id<12)
 		{m_keyboard.keyLabel(s_channel_scancodes[id],strip.name().begin()).redraw();}
+	if(r_cb_obj!=nullptr)
+		{m_channel_name_callback(r_cb_obj,strip,id);}
 	}
 
 void SessionEditor::colorChanged(ChannelStrip& strip,int id)
@@ -171,7 +173,8 @@ SessionEditor& SessionEditor::sessionUpdated()
 
 
 SessionEditor::SessionEditor(Container& cnt,Session& session)
-	:r_session(session)
+	:r_cb_obj(nullptr)
+	,r_session(session)
 	,m_hsplit(cnt,true)
 		,m_keyboard(m_hsplit.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}))
 		,m_tabs(m_hsplit)

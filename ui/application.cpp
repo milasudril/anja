@@ -229,6 +229,13 @@ Application& Application::sessionLoad(const char* filename)
 	return *this;
 	}
 
+void Application::nameChanged(ChannelStrip& strip,int id)
+	{
+	if(m_engine && m_session.flagsGet()&Session::MULTIOUTPUT)
+		{m_engine->waveOutName(id,strip.name().begin());}
+	}
+
+
 
 
 Application::Application():
@@ -244,7 +251,7 @@ Application::Application():
 		,"Exit","About Anja");
 	m_session_control.callback(*this,0);
 	m_mainwin.callback(*this,0);
-	m_session_editor.sessionChangedCallback(*this,0);
+	m_session_editor.callback(*this,0);
 	title_update(m_session,m_mainwin);
 	m_mainwin.show();
 	}

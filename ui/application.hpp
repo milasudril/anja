@@ -85,6 +85,7 @@ namespace Anja
 			void titleChanged(SessionPropertiesEditor& editor,int id);
 			void descriptionChanged(SessionPropertiesEditor& editor,int id);
 			void optionChanged(SessionPropertiesEditor& editor,int id,int option);
+			void nameChanged(ChannelStrip& strip,int id);
 
 			enum class ConfirmSaveDialogId:int{SESSION_NEW,SESSION_LOAD,SESSION_RELOAD,EXIT};
 

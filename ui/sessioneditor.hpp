@@ -42,13 +42,18 @@ namespace Anja
 			SessionEditor& sessionUpdated();
 
 			template<class Callback,class IdType>
-			SessionEditor& sessionChangedCallback(Callback& cb,IdType id)
+			SessionEditor& callback(Callback& cb,IdType id)
 				{
 				m_settings.callback(cb,id);
+				m_channel_name_callback=[](void* cb_obj,ChannelStrip& self,int id)
+					{reinterpret_cast<Callback*>(cb_obj)->nameChanged(self,id);};
+				r_cb_obj=&cb;
 				return *this;
 				}
 
 		private:
+			void (*m_channel_name_callback)(void* cb_obj,ChannelStrip& self,int id);
+			void* r_cb_obj;
 			Session& r_session;
 			Paned m_hsplit;
 				KeyboardView m_keyboard;
