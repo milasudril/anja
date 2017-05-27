@@ -130,5 +130,5 @@ bool WaveformView::fileLoaded(const char* filename) const
 		{return r_waveform_data->filenameGet()==filename;}
 	auto cmp=*r_dir_current;
 	cmp.append(filename);
-	return cmp==r_waveform_data->filenameGet();
+	return realpath(cmp.begin())==r_waveform_data->filenameGet();
 	}
