@@ -105,6 +105,7 @@ bool Application::sessionSaveAs()
 		,name,Anja::FilenameSelectMode::SAVE))
 		{
 		m_session.save(name.c_str());
+		m_session_editor.sessionUpdated();
 		return 1;
 		}
 	return 0;
