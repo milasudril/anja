@@ -6,6 +6,12 @@
 #include <cstdio>
 #include <time.h>
 
+extern "C"
+	{
+	void __cyg_profile_func_enter(void *this_fn,void *call_site)
+		{printf("%p\n",this_fn);}
+	}
+
 int main(int argc, char **argv)
 	{
 	try

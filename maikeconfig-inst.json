@@ -4,7 +4,7 @@
         "paths_reject":[
             "..",
             ".",
-			"__targets_dbg",
+            "__targets_dbg",
             "__targets_rel",
             "__targets_inst",
 			".git",
@@ -20,20 +20,17 @@
             "config":{
                 "appcompile":{
                     "args":[
-                        "-O3",
+                        "-g",
+                        "-fpic",
+						"-march=native",
+						"--fast-math",
                         "{cxxversion}",
                         "-Wall",
-						"-fno-stack-protector",
-						"-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"-fno-PIE",
-						"-march=native",
-						"--fast-math",
-						"-s",
                         "-o",
                         "{target}",
                         "{source}",
@@ -48,12 +45,12 @@
                 "cxxversion_min":201402,
                 "dllcompile":{
                     "args":[
-                        "-O3",
+                        "-g",
                         "-fpic",
-						"-fno-stack-protector",
+						"-march=native",
+						"--fast-math",
                         "{cxxversion}",
                         "-Wall",
-						"-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
@@ -90,12 +87,11 @@
                 "objcompile":{
                     "args":[
                         "-c",
-                        "-O3",
+                        "-g",
                         "-fpic",
 						"-march=native",
 						"--fast-math",
-						"-flto",
-						"-fno-stack-protector",
+						"-finstrument-functions",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -159,7 +155,7 @@
             "name":"targetpython_default",
             "plugin":"targetpython"
         },
-       {
+        {
             "config":{
                 "command":{
                     "args":[
@@ -224,6 +220,6 @@
     ],
     "targetinfo":{
         "project_root":"",
-        "target_directory":"__targets_rel"
+        "target_directory":"__targets_inst"
     }
 }

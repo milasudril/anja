@@ -56,7 +56,7 @@ class SourceView::Impl:private SourceView
 		GtkCssProvider* m_style;
 		mutable char* m_content;
 
-		static void changed_callback(GtkTextBuffer* buffer,gpointer user_data);
+		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
 
 SourceView::SourceView(Container& cnt)
@@ -118,8 +118,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	auto context=gtk_widget_get_style_context(widget);
 	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
 		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
-	g_signal_connect(buffer,"changed",G_CALLBACK(changed_callback),this);
+	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	g_object_ref_sink(m_handle);
 	gtk_container_add(GTK_CONTAINER(scroll),widget);
 	g_object_ref_sink(m_scroll);
@@ -161,11 +160,17 @@ void SourceView::Impl::highlight(const char* filename_pattern)
 	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer),lang);
 	}
 
-void SourceView::Impl::changed_callback(GtkTextBuffer* buffer,gpointer user_data)
+gboolean SourceView::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)
 	{
-	auto self=reinterpret_cast<Impl*>(user_data);
-	g_free(self->m_content);
-	self->m_content=nullptr;
+	auto self=reinterpret_cast<Impl*>(data);
 	if(self->r_cb!=nullptr)
-		{self->r_cb(self->r_cb_obj,*self);}
+		{
+		if(self->m_content!=nullptr)
+			{
+			g_free(self->m_content);
+			self->m_content=nullptr;
+			}
+		self->r_cb(self->r_cb_obj,*self);
+		}
+	return FALSE;
 	}

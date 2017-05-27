@@ -4,8 +4,9 @@
         "paths_reject":[
             "..",
             ".",
-            "__targets_dbg",
+			"__targets_dbg",
             "__targets_rel",
+            "__targets_inst",
 			".git",
 			"testbank"
         ],

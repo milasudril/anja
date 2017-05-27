@@ -172,6 +172,7 @@
       <File Name="engine/engine.cpp"/>
       <File Name="engine/audioclient.cpp"/>
     </VirtualDirectory>
+    <File Name="maikeconfig-inst.json"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src/midiconstants">
     <File Name="midiconstants/control_codes.py"/>
