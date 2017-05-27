@@ -16,12 +16,6 @@ namespace Anja
 		public:
 			enum class PortType:int{MIDI_IN,MIDI_OUT,WAVE_IN,WAVE_OUT};
 
-			struct PortInfo
-				{
-				const char* name;
-				PortType type;
-				};
-
 			template<class Callback>
 			explicit AudioClient(const char* name,Callback& cb):
 				AudioClient(name,&cb
@@ -29,8 +23,8 @@ namespace Anja
 					{
 					 [](void* cb_obj,AudioClient& self,int32_t n_frames)
 						{reinterpret_cast<Callback*>(cb_obj)->process(self,n_frames);}
-					,[](void* cb_obj,int index,PortInfo& info)
-						{return reinterpret_cast<Callback*>(cb_obj)->port(index,info);}
+					,[](void* cb_obj,PortType type,int index)
+						{return reinterpret_cast<Callback*>(cb_obj)->port(type,index);}
 					})
 				{}
 
@@ -57,7 +51,7 @@ namespace Anja
 			struct Vtable
 				{
 				void (*process_callback)(void* cb_obj,AudioClient& self,int n_frames);
-				bool (*port_callback)(void* cb,int index,PortInfo& info);
+				const char* (*port_callback)(void* cb,PortType type,int index);
 				};
 
 

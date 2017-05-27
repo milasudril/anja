@@ -19,40 +19,41 @@ Engine::Engine(const Session& session):r_session(&session)
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{}
 
-bool Engine::port(int index,AudioClient::PortInfo& info) const
+const char* Engine::port(AudioClient::PortType type,int index) const noexcept
 	{
-	switch(index)
+	switch(type)
 		{
-		case 0:
-			info={"MIDI in",AudioClient::PortType::MIDI_IN};
-			return 1;
-		case 1:
-			info={"MIDI out",AudioClient::PortType::MIDI_OUT};
-			return 1;
-		case 2:
-			info={"Wave in",AudioClient::PortType::WAVE_IN};
-			return 1;
-		case 3:
-			if(!(r_session->flagsGet()&Session::MULTIOUTPUT))
+		case AudioClient::PortType::MIDI_IN:
+			return index==0?"MIDI in":nullptr;
+		case AudioClient::PortType::MIDI_OUT:
+			return index==0?"MIDI out":nullptr;
+		case AudioClient::PortType::WAVE_IN:
+			return index==0?"Wave in":nullptr;
+		case AudioClient::PortType::WAVE_OUT:
+			if(r_session->flagsGet()&Session::MULTIOUTPUT)
 				{
-				info={"Master out",AudioClient::PortType::WAVE_OUT};
-				return 1;
+				if(index>=0 && index<16)
+					{return r_session->channelLabelGet(index).begin();}
+				if(index==16)
+					{return "Master out";}
+				if(index==17)
+					{return "Audition";}
+				return nullptr;
 				}
-		}
-	if(!(r_session->flagsGet()&Session::MULTIOUTPUT))
-		{return 0;}
+			else
+				{
+				switch(index)
+					{
+					case 0:
+						return "Master out";
+					case 1:
+						return "Audition";
+					default:
+						return nullptr;
+					}
+				}
+			break;
 
-	index-=3;
-	if(index>=0 && index<16)
-		{
-		info={r_session->channelLabelGet(index).begin(),AudioClient::PortType::WAVE_OUT};
-		return 1;
 		}
-	if(index==16)
-		{
-		info={"Master out",AudioClient::PortType::WAVE_OUT};
-		return 1;
-		}
-
-	return 0;
+	return nullptr;
 	}

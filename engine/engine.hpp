@@ -49,7 +49,7 @@ namespace Anja
 
 			Engine& messagePost(Message msg);
 
-			bool port(int index,AudioClient::PortInfo& info) const;
+			const char* port(AudioClient::PortType type,int index) const noexcept;
 
 		private:
 			const Session* r_session;
