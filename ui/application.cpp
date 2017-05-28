@@ -4,6 +4,7 @@
 //@		"name":"application.o","type":"object"
 //@		,"dependencies":[{"ref":"../logo.png","rel":"generated"}]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
+//@		,"include_targets":["../projectinfo.hpp"]
 //@		}]
 //@	}
 
@@ -11,7 +12,6 @@
 #include "filenameselect.hpp"
 #include "../common/blob.hpp"
 #include <maike/targetinclude.hpp>
-#include MAIKE_TARGET(../projectinfo.hpp)
 
 using namespace Anja;
 

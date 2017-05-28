@@ -1,4 +1,7 @@
-//@	{"targets":[{"name":"anja","type":"application"}]}
+//@	{
+//@	"targets":
+//@		[{"name":"anja","type":"application","include_targets":["projectinfo.hpp"]}]
+//@	}
 
 #include "ui/application.hpp"
 #include <maike/targetinclude.hpp>
