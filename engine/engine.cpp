@@ -1,8 +1,6 @@
 //@	{"targets":[{"name":"engine.o","type":"object"}]}
 
 #include "engine.hpp"
-#include <maike/targetinclude.hpp>
-#include MAIKE_TARGET(../midiconstants/message.hpp)
 
 using namespace Anja;
 
