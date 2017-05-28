@@ -235,9 +235,6 @@ void Application::nameChanged(ChannelStrip& strip,int id)
 		{m_engine->waveOutName(id,strip.name().begin());}
 	}
 
-
-
-
 Application::Application():
 	m_mainwin("New session--Anja")
 		,m_cols(m_mainwin,false)

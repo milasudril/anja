@@ -17,10 +17,11 @@ Engine::Engine(const Session& session):r_session(&session)
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{
-	auto midi_in=client.midiEvents(0,n_frames);
+	auto midi_in=client.midiIn(0,n_frames);
 	std::for_each(midi_in.first,midi_in.second,[](const AudioClient::MidiEvent& e)
 		{
-		printf("%d %x\n",e.time_offset,e.message.status());
+		printf("%d    %x %x %x\n",e.time_offset,e.message.status()
+			,e.message.value1(),e.message.value2());
 		});
 	}
 

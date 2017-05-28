@@ -83,7 +83,22 @@ namespace Anja
 					int k;
 				};
 
-			std::pair<MidiEventIterator,MidiEventIterator> midiEvents(int port,int n_frames) noexcept;
+			class MidiMessageWriter
+				{
+				public:
+					MidiMessageWriter& write(MIDI::Message msg,int frame) noexcept;
+
+				private:
+					friend class Impl;
+					explicit MidiMessageWriter(void* buffer):r_buffer(buffer){}
+					void* r_buffer;
+				};
+
+			std::pair<MidiEventIterator,MidiEventIterator> midiIn(int port,int n_frames) const noexcept;
+			MidiMessageWriter midiOut(int port,int n_frames) const noexcept;
+			const float* waveIn(int port,int n_frames) const noexcept;
+			float* waveOut(int port,int n_frames) const noexcept;
+
 
 		private:
 			struct Vtable

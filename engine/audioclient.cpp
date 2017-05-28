@@ -12,6 +12,8 @@ using namespace Anja;
 class AudioClient::Impl:private AudioClient
 	{
 	public:
+		typedef jack_default_audio_sample_t SampleType;
+
 		Impl(const char* name,void* cb_obj,const Vtable& vt);
 		~Impl();
 
@@ -28,7 +30,7 @@ class AudioClient::Impl:private AudioClient
 		void waveOutName(int index,const char* name)
 			{portName<PortType::WAVE_OUT>(index,name);}
 
-		auto midiEvents(int port,int n_frames) noexcept
+		auto midiIn(int port,int n_frames) const noexcept
 			{
 			void* buffer=jack_port_get_buffer(m_ports[portOffset<PortType::MIDI_IN>(port)]
 				,n_frames);
@@ -41,9 +43,23 @@ class AudioClient::Impl:private AudioClient
 			return ret;
 			}
 
+		MidiMessageWriter midiOut(int port,int n_frames) const noexcept
+			{
+			void* buffer=jack_port_get_buffer(m_ports[portOffset<PortType::MIDI_OUT>(port)],n_frames);
+			jack_midi_clear_buffer(buffer);
+			return MidiMessageWriter(buffer);
+			}
+
+		const float* waveIn(int port,int n_frames) const noexcept
+			{return reinterpret_cast<SampleType*>(jack_port_get_buffer(m_ports[portOffset<PortType::WAVE_IN>(port)],n_frames));}
+
+		float* waveOut(int port,int n_frames) const noexcept
+			{return reinterpret_cast<SampleType*>(jack_port_get_buffer(m_ports[portOffset<PortType::WAVE_OUT>(port)],n_frames));}
+
+
 	private:
 		template<PortType type>
-		int portOffset(int index) noexcept
+		int portOffset(int index) const noexcept
 			{return m_port_type_offsets[ static_cast<int>(type) ] + index;}
 
 		template<PortType type>
@@ -57,7 +73,6 @@ class AudioClient::Impl:private AudioClient
 		jack_client_t* m_handle;
 		uint8_t m_port_type_offsets[PORT_TYPE_COUNT];
 		std::vector<jack_port_t*> m_ports;
-		std::vector<void*> m_buffers;
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -93,8 +108,8 @@ AudioClient& AudioClient::waveOutName(int index,const char* name)
 	}
 
 std::pair<AudioClient::MidiEventIterator,AudioClient::MidiEventIterator>
-AudioClient::midiEvents(int port,int n_frames) noexcept
-	{return m_impl->midiEvents(port,n_frames);}
+AudioClient::midiIn(int port,int n_frames) const noexcept
+	{return m_impl->midiIn(port,n_frames);}
 
 AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcept
 	{
@@ -103,10 +118,38 @@ AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcep
 
 	MidiEvent ret;
 	ret.time_offset=e.time;
-	for(int k=0;k<std::min(4,static_cast<int>(e.size));++k)
-		{ret.message.bytes(k)=e.buffer[k];}
+	switch(e.size)
+		{
+		case 3:
+			ret.message=MIDI::Message(e.buffer[0],e.buffer[1],e.buffer[2]);
+			return ret;
+		case 2:
+			ret.message=MIDI::Message(e.buffer[0],e.buffer[1],0);
+			return ret;
+		case 1:
+			ret.message=MIDI::Message(e.buffer[0],0,0);
+			return ret;
+		}
 	return ret;
 	}
+
+
+AudioClient::MidiMessageWriter AudioClient::midiOut(int port,int n_frames) const noexcept
+	{return m_impl->midiOut(port,n_frames);}
+
+
+AudioClient::MidiMessageWriter& AudioClient::MidiMessageWriter::write(MIDI::Message msg,int frame) noexcept
+	{
+	jack_midi_data_t data[3]={msg.statusRaw(),msg.value1(),msg.value2()};
+	jack_midi_event_write(r_buffer,frame,data,3);
+	return *this;
+	}
+
+const float* AudioClient::waveIn(int port,int n_frames) const noexcept
+	{return m_impl->waveIn(port,n_frames);}
+
+float* AudioClient::waveOut(int port,int n_frames) const noexcept
+	{return m_impl->waveOut(port,n_frames);}
 
 
 
@@ -145,9 +188,6 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)
 		{
 		auto self=reinterpret_cast<Impl*>(obj);
-		std::transform(self->m_ports.begin(),self->m_ports.end(),self->m_buffers.begin()
-			,[n_frames](jack_port_t* port)
-				{return jack_port_get_buffer(port,n_frames);});
 		self->m_vt.process_callback(self->r_cb_obj,*self,n_frames);
 		return 0;
 		},this);
@@ -157,7 +197,6 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	m_port_type_offsets[2]=m_port_type_offsets[1] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::MIDI_OUT);
 	m_port_type_offsets[3]=m_port_type_offsets[2] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_IN);
 	ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_OUT);
-	m_buffers.resize(m_ports.size());
 
 	jack_activate(m_handle);
 	}
