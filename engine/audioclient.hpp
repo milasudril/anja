@@ -41,12 +41,17 @@ namespace Anja
 				{obj.m_impl=nullptr;}
 
 			AudioClient& midiInName(int index,const char* name);
-
 			AudioClient& midiOutName(int index,const char* name);
-
 			AudioClient& waveInName(int index,const char* name);
-
 			AudioClient& waveOutName(int index,const char* name);
+
+			struct MidiMessage
+				{
+				int32_t time_offset;
+				uint8_t bytes[4];
+				};
+
+			bool midiGet(int index,MidiMessage& msg);
 
 		private:
 			struct Vtable
