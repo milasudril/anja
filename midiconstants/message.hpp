@@ -1,13 +1,15 @@
-//@	{"targets":[{"name":"message.hpp","type":"include"}]}
+//@	{
+//@	"targets":
+//@		[{
+//@		 "name":"message.hpp","type":"include"
+//@		,"include_targets":["controlcodes.hpp","statuscodes.hpp"]
+//@		}]
+//@	}
 
 #ifndef ANJA_MESSAGE_HPP
 #define ANJA_MESSAGE_HPP
 
-#include <maike/targetinclude.hpp>
-#include MAIKE_TARGET(../midiconstants/statuscodes.hpp)
-#include MAIKE_TARGET(../midiconstants/controlcodes.hpp)
-#include MAIKE_TARGET(../midiconstants/gmdrumkit.hpp)
-#include MAIKE_TARGET(../midiconstants/gmprograms.hpp)
+#include <cstdint>
 
 namespace Anja
 	{

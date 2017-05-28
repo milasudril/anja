@@ -30,6 +30,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
+						"{includes_extra}",
 						"-fno-PIE",
 						"-march=native",
 						"--fast-math",
@@ -59,6 +60,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
+						"{includes_extra}",
                         "-shared",
                         "-o",
                         "{target}",
@@ -103,6 +105,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
+						"{includes_extra}",
                         "-o",
                         "{target}",
                         "{source}"

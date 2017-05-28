@@ -1,7 +1,6 @@
 //@	{"targets":[{"name":"engine.o","type":"object"}]}
 
 #include "engine.hpp"
-#include "message.hpp"
 
 using namespace Anja;
 

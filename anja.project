@@ -168,13 +168,12 @@
     <VirtualDirectory Name="engine">
       <File Name="engine/audioclient.hpp"/>
       <File Name="engine/engine.hpp"/>
-      <File Name="engine/message.hpp"/>
       <File Name="engine/engine.cpp"/>
       <File Name="engine/audioclient.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="src/midiconstants">
+  <VirtualDirectory Name="midiconstants">
     <File Name="midiconstants/control_codes.py"/>
     <File Name="midiconstants/control_codes.txt"/>
     <File Name="midiconstants/compile.py"/>
@@ -184,6 +183,7 @@
     <File Name="midiconstants/gm_drumkit.py"/>
     <File Name="midiconstants/gm_programs.py"/>
     <File Name="midiconstants/status_codes.py"/>
+    <File Name="midiconstants/message.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

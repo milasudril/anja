@@ -6,6 +6,7 @@
 #ifndef ANJA_AUDIOCLIENT_HPP
 #define ANJA_AUDIOCLIENT_HPP
 
+#include "../midiconstants/message.hpp"
 #include <utility>
 #include <cstdint>
 
