@@ -44,6 +44,7 @@
                 "cflags_format":"-^",
                 "cxxversion_max":-1,
                 "cxxversion_min":201402,
+				"include_format":"-include^",
                 "dllcompile":{
                     "args":[
                         "-g",

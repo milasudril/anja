@@ -43,6 +43,7 @@
                     ],
                     "name":"g++"
                 },
+				"include_format":"-include^",
                 "cflags_extra":[],
                 "cflags_format":"-^",
                 "cxxversion_max":-1,
