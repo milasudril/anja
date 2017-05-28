@@ -71,6 +71,16 @@ AudioClient& AudioClient::waveOutName(int index,const char* name)
 
 
 
+static constexpr auto port_direction(AudioClient::PortType type)
+	{
+	return (static_cast<int>(type)&1) ? JackPortIsOutput : JackPortIsInput;
+	}
+
+static constexpr auto port_type(AudioClient::PortType type)
+	{
+	return (static_cast<int>(type)&2) ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_AUDIO_TYPE;
+	}
+
 AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
 	,r_cb_obj(cb_obj),m_vt(vt)
 	{
