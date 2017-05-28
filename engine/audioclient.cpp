@@ -4,6 +4,7 @@
 #include "../common/error.hpp"
 #include <jack/jack.h>
 #include <vector>
+#include <algorithm>
 
 using namespace Anja;
 
@@ -15,26 +16,32 @@ class AudioClient::Impl:private AudioClient
 
 
 		void midiInName(int index,const char* name)
-			{jack_port_rename(m_handle,m_midi_in[index],name);}
+			{portName<PortType::MIDI_IN>(index,name);}
 
 		void midiOutName(int index,const char* name)
-			{jack_port_rename(m_handle,m_midi_out[index],name);}
+			{portName<PortType::MIDI_OUT>(index,name);}
 
 		void waveInName(int index,const char* name)
-			{jack_port_rename(m_handle,m_wave_in[index],name);}
+			{portName<PortType::WAVE_IN>(index,name);}
 
 		void waveOutName(int index,const char* name)
-			{jack_port_rename(m_handle,m_wave_out[index],name);}
+			{portName<PortType::WAVE_OUT>(index,name);}
 
 
 	private:
+		template<PortType type>
+		void portName(int index,const char* name)
+			{
+			jack_port_rename(m_handle
+				,m_ports[m_port_type_offsets[ static_cast<int>(type) ] + index]
+				,name);
+			}
+
 		void* r_cb_obj;
 		Vtable m_vt;
 		jack_client_t* m_handle;
-		std::vector<jack_port_t*> m_midi_in;
-		std::vector<jack_port_t*> m_midi_out;
-		std::vector<jack_port_t*> m_wave_in;
-		std::vector<jack_port_t*> m_wave_out;
+		uint8_t m_port_type_offsets[PORT_TYPE_COUNT];
+		std::vector<jack_port_t*> m_ports;
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -72,14 +79,27 @@ AudioClient& AudioClient::waveOutName(int index,const char* name)
 
 
 static constexpr auto port_direction(AudioClient::PortType type)
-	{
-	return (static_cast<int>(type)&1) ? JackPortIsOutput : JackPortIsInput;
-	}
+	{return (static_cast<int>(type)&1) ? JackPortIsOutput : JackPortIsInput;}
 
 static constexpr auto port_type(AudioClient::PortType type)
+	{return (static_cast<int>(type)&2) ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE;}
+
+template<class Vtable>
+static int ports_create(jack_client_t* client,const Vtable& vt,void* cb_obj
+	,std::vector<jack_port_t*>& ports,AudioClient::PortType type)
 	{
-	return (static_cast<int>(type)&2) ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_AUDIO_TYPE;
+	int k=0;
+	while(ports.size()!=256)
+		{
+		auto name=vt.port_callback(cb_obj,type,k);
+		if(name==nullptr)
+			{break;}
+		ports.push_back( jack_port_register(client,name,port_type(type),port_direction(type),0) );
+		++k;
+		}
+	return k;
 	}
+
 
 AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
 	,r_cb_obj(cb_obj),m_vt(vt)
@@ -96,56 +116,19 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 		return 0;
 		},this);
 
+	m_port_type_offsets[0]=0;
+	m_port_type_offsets[1]=m_port_type_offsets[0] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::MIDI_IN);
+	m_port_type_offsets[2]=m_port_type_offsets[1] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::MIDI_OUT);
+	m_port_type_offsets[3]=m_port_type_offsets[2] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_IN);
+	ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_OUT);
 
-		{
-		int k=0;
-		while(1)
-			{
-			auto name=m_vt.port_callback(r_cb_obj,PortType::MIDI_IN,k);
-			if(name==nullptr)
-				{break;}
-			m_midi_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_MIDI_TYPE,JackPortIsInput,0) );
-			++k;
-			}
-		}
-		{
-		int k=0;
-		while(1)
-			{
-			auto name=m_vt.port_callback(r_cb_obj,PortType::MIDI_OUT,k);
-			if(name==nullptr)
-				{break;}
-			m_midi_out.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_MIDI_TYPE,JackPortIsOutput,0) );
-			++k;
-			}
-		}
-		{
-		int k=0;
-		while(1)
-			{
-			auto name=m_vt.port_callback(r_cb_obj,PortType::WAVE_IN,k);
-			if(name==nullptr)
-				{break;}
-			m_wave_in.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0) );
-			++k;
-			}
-		}
-		{
-		int k=0;
-		while(1)
-			{
-			auto name=m_vt.port_callback(r_cb_obj,PortType::WAVE_OUT,k);
-			if(name==nullptr)
-				{break;}
-			m_wave_out.push_back( jack_port_register(m_handle,name,JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0) );
-			++k;
-			}
-		}
 	jack_activate(m_handle);
 	}
 
 AudioClient::Impl::~Impl()
 	{
+	std::for_each(m_ports.begin(),m_ports.end(),[this](jack_port_t* port)
+		{jack_port_unregister(m_handle,port);});
 	jack_deactivate(m_handle);
 	jack_client_close(m_handle);
 	m_impl=nullptr;

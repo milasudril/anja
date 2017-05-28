@@ -15,6 +15,7 @@ namespace Anja
 		{
 		public:
 			enum class PortType:int{MIDI_IN,MIDI_OUT,WAVE_IN,WAVE_OUT};
+			static constexpr int PORT_TYPE_COUNT=4;
 
 			template<class Callback>
 			explicit AudioClient(const char* name,Callback& cb):
