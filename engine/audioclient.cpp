@@ -3,6 +3,7 @@
 #include "audioclient.hpp"
 #include "../common/error.hpp"
 #include <jack/jack.h>
+#include <jack/midiport.h>
 #include <vector>
 #include <algorithm>
 
@@ -27,14 +28,28 @@ class AudioClient::Impl:private AudioClient
 		void waveOutName(int index,const char* name)
 			{portName<PortType::WAVE_OUT>(index,name);}
 
+		auto midiEvents(int port,int n_frames) noexcept
+			{
+			void* buffer=jack_port_get_buffer(m_ports[portOffset<PortType::MIDI_IN>(port)]
+				,n_frames);
+			auto n=jack_midi_get_event_count(buffer);
+			std::pair<MidiEventIterator,MidiEventIterator> ret
+				{
+				 MidiEventIterator{buffer,0}
+				,MidiEventIterator{buffer,static_cast<int>(n)}
+				};
+			return ret;
+			}
 
 	private:
 		template<PortType type>
+		int portOffset(int index) noexcept
+			{return m_port_type_offsets[ static_cast<int>(type) ] + index;}
+
+		template<PortType type>
 		void portName(int index,const char* name)
 			{
-			jack_port_rename(m_handle
-				,m_ports[m_port_type_offsets[ static_cast<int>(type) ] + index]
-				,name);
+			jack_port_rename(m_handle,m_ports[portOffset<type>(index)],name);
 			}
 
 		void* r_cb_obj;
@@ -42,6 +57,7 @@ class AudioClient::Impl:private AudioClient
 		jack_client_t* m_handle;
 		uint8_t m_port_type_offsets[PORT_TYPE_COUNT];
 		std::vector<jack_port_t*> m_ports;
+		std::vector<void*> m_buffers;
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -75,6 +91,23 @@ AudioClient& AudioClient::waveOutName(int index,const char* name)
 	m_impl->waveOutName(index,name);
 	return *this;
 	}
+
+std::pair<AudioClient::MidiEventIterator,AudioClient::MidiEventIterator>
+AudioClient::midiEvents(int port,int n_frames) noexcept
+	{return m_impl->midiEvents(port,n_frames);}
+
+AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcept
+	{
+	jack_midi_event_t e;
+	jack_midi_event_get(&e,r_buffer,k);
+
+	MidiEvent ret;
+	ret.time_offset=e.time;
+	for(int k=0;k<std::min(4,static_cast<int>(e.size));++k)
+		{ret.message.bytes(k)=e.buffer[k];}
+	return ret;
+	}
+
 
 
 
@@ -112,6 +145,9 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)
 		{
 		auto self=reinterpret_cast<Impl*>(obj);
+		std::transform(self->m_ports.begin(),self->m_ports.end(),self->m_buffers.begin()
+			,[n_frames](jack_port_t* port)
+				{return jack_port_get_buffer(port,n_frames);});
 		self->m_vt.process_callback(self->r_cb_obj,*self,n_frames);
 		return 0;
 		},this);
@@ -121,6 +157,7 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	m_port_type_offsets[2]=m_port_type_offsets[1] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::MIDI_OUT);
 	m_port_type_offsets[3]=m_port_type_offsets[2] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_IN);
 	ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_OUT);
+	m_buffers.resize(m_ports.size());
 
 	jack_activate(m_handle);
 	}

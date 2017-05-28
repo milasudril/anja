@@ -14,6 +14,8 @@ namespace Anja
 	{
 	class AudioClient
 		{
+		private:
+			class Impl;
 		public:
 			enum class PortType:int{MIDI_IN,MIDI_OUT,WAVE_IN,WAVE_OUT};
 			static constexpr int PORT_TYPE_COUNT=4;
@@ -46,13 +48,42 @@ namespace Anja
 			AudioClient& waveInName(int index,const char* name);
 			AudioClient& waveOutName(int index,const char* name);
 
-			struct MidiMessage
+			struct MidiEvent
 				{
 				int32_t time_offset;
-				uint8_t bytes[4];
+				MIDI::Message message;
 				};
 
-			bool midiGet(int index,MidiMessage& msg);
+			class MidiEventIterator
+				{
+				public:
+					MidiEvent operator*() noexcept
+						{return (*this)[k];}
+
+					MidiEventIterator& operator++() noexcept
+						{
+						++k;
+						return *this;
+						}
+
+					MidiEvent operator[](int k) noexcept;
+
+					bool operator==(const MidiEventIterator& i) const noexcept
+						{return i.r_buffer==r_buffer && i.k==k;}
+
+					bool operator!=(const MidiEventIterator& i) const noexcept
+						{return !(*this==i);}
+
+				private:
+					friend class Impl;
+					explicit MidiEventIterator(void* buffer,int init):r_buffer(buffer),k(init)
+						{}
+
+					void* r_buffer;
+					int k;
+				};
+
+			std::pair<MidiEventIterator,MidiEventIterator> midiEvents(int port,int n_frames) noexcept;
 
 		private:
 			struct Vtable
@@ -61,8 +92,6 @@ namespace Anja
 				const char* (*port_callback)(void* cb,PortType type,int index);
 				};
 
-
-			class Impl;
 			Impl* m_impl;
 
 			explicit AudioClient(Impl& impl):m_impl(&impl){}
