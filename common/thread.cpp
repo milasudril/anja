@@ -11,25 +11,19 @@
 
 using namespace Anja;
 
-static void* thread_entry(void* thread)
+void* Thread::thread_entry_system(void* thread)
 	{
-	reinterpret_cast<ThreadBase*>(thread)->run();
+	auto self=reinterpret_cast<Thread*>(thread);
+	self->m_cb(self->r_cb_obj,self->m_id);
 	return nullptr;
 	}
 
-ThreadBase::ThreadBase()
+void Thread::run()
 	{
 	static_assert(sizeof(m_handle)>=sizeof(pthread_t),"Handle type is too small");
-	}
-
-void ThreadBase::start()
-	{
 	pthread_create(reinterpret_cast<pthread_t*>(&m_handle)
-		,NULL,thread_entry,this);
+		,NULL,thread_entry_system,this);
 	}
 
-ThreadBase::~ThreadBase() noexcept
-	{}
-
-void ThreadBase::synchronize() noexcept
+Thread::~Thread()
 	{pthread_join(m_handle,NULL);}

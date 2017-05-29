@@ -11,40 +11,37 @@
 
 namespace Anja
 	{
-	class ThreadBase
+	class Thread
 		{
 		public:
-			ThreadBase(const ThreadBase&)=delete;
-			ThreadBase& operator=(const ThreadBase&)=delete;
+			Thread(const Thread&)=delete;
+			Thread& operator=(const Thread&)=delete;
 
-			virtual void run()=0;
+			template<class Callback,class TaskId>
+			explicit Thread(Callback& cb,TaskId id):m_cb(thread_entry<Callback,TaskId>)
+				,r_cb_obj(&cb),m_id(static_cast<int>(id))
+				{run();}
 
-		protected:
-			ThreadBase();
-			virtual ~ThreadBase();
-
-			void start();
-			void synchronize() noexcept;
+			~Thread();
 
 		private:
+			template<class Callback,class TaskId>
+			static void thread_entry(void* obj,int id)
+				{reinterpret_cast<Callback*>(obj)->run(static_cast<TaskId>(id));}
+
+		#ifdef _WIN32
+			static unsigned int __stdcall thread_entry_system(void* thread);
+		#else
+			static void* thread_entry_system(void* thread);
+		#endif
+
+			void run();
+
+			typedef void (*Callback)(void* cb_obj,int id);
+			Callback m_cb;
+			void* r_cb_obj;
+			int m_id;
 			intptr_t m_handle;
-		};
-
-	template<class Function>
-	class Thread final:private ThreadBase
-		{
-		public:
-			explicit Thread(Function&& entry):m_entry(std::move(entry))
-				{start();}
-
-			void run()
-				{m_entry();}
-
-			~Thread() noexcept
-				{synchronize();}
-
-		private:
-			Function m_entry;
 		};
 	}
 

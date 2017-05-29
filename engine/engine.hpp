@@ -8,6 +8,8 @@
 
 #include "audioclient.hpp"
 #include "../sessiondata/session.hpp"
+#include "../common/thread.hpp"
+
 #include <cstdint>
 #include <utility>
 
@@ -20,6 +22,8 @@ namespace Anja
 			Engine(Session&&)=delete;
 
 			explicit Engine(const Session& session);
+
+			~Engine();
 
 			Engine& midiInName(int index,const char* name)
 				{
@@ -46,14 +50,23 @@ namespace Anja
 				}
 
 			void process(AudioClient& client,int32_t n_frames) noexcept;
+			const char* port(AudioClient::PortType type,int index) const noexcept;
+
+
+			enum class TaskId:int{RECORD};
+			void run(TaskId id);
 
 			Engine& messagePost(Message msg);
 
-			const char* port(AudioClient::PortType type,int index) const noexcept;
+			bool running() const noexcept
+				{return m_running;}
+
 
 		private:
 			const Session* r_session;
+			volatile bool m_running;
 			AudioClient m_client;
+			Thread m_rec_thread;
 		};
 
 	}

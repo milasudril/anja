@@ -12,8 +12,13 @@ static String client_name(const String& str)
 	}
 
 Engine::Engine(const Session& session):r_session(&session)
+	,m_running(1)
 	,m_client(client_name(session.titleGet()).begin(),*this)
+	,m_rec_thread(*this,TaskId::RECORD)
 	{}
+
+Engine::~Engine()
+	{m_running=0;}
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{
@@ -23,6 +28,22 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 		printf("%d    %x %x %x\n",e.time_offset,e.message.status()
 			,e.message.value1(),e.message.value2());
 		});
+	}
+
+static void record(Engine& engine)
+	{
+	while(engine.running())
+		{}
+	}
+
+void Engine::run(TaskId id)
+	{
+	switch(id)
+		{
+		case TaskId::RECORD:
+			record(*this);
+			break;
+		}
 	}
 
 const char* Engine::port(AudioClient::PortType type,int index) const noexcept
