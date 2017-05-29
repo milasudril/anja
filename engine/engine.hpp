@@ -9,6 +9,7 @@
 #include "audioclient.hpp"
 #include "../sessiondata/session.hpp"
 #include "../common/thread.hpp"
+#include "../common/readysignal.hpp"
 
 #include <cstdint>
 #include <utility>
@@ -61,12 +62,16 @@ namespace Anja
 			bool running() const noexcept
 				{return m_running;}
 
+			void readyWait()
+				{m_ready.wait();}
 
 		private:
 			const Session* r_session;
 			volatile bool m_running;
 			AudioClient m_client;
 			Thread m_rec_thread;
+			ReadySignal m_ready;
+
 		};
 
 	}

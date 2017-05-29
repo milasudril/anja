@@ -72,6 +72,8 @@
       <File Name="common/syserror.hpp"/>
       <File Name="common/error.cpp"/>
       <File Name="common/syserror.cpp"/>
+      <File Name="common/readysignal.hpp"/>
+      <File Name="common/readysignal.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

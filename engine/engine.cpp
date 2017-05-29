@@ -18,7 +18,10 @@ Engine::Engine(const Session& session):r_session(&session)
 	{}
 
 Engine::~Engine()
-	{m_running=0;}
+	{
+	m_running=0;
+	m_ready.set();
+	}
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{
@@ -33,7 +36,9 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 static void record(Engine& engine)
 	{
 	while(engine.running())
-		{}
+		{
+		engine.readyWait();
+		}
 	}
 
 void Engine::run(TaskId id)
