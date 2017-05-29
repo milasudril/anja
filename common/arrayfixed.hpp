@@ -11,35 +11,35 @@ namespace Anja
 	class ArrayFixed
 		{
 		public:
-			constexpr const T& operator[](size_t i) const
+			constexpr const T& operator[](size_t i) const noexcept
 				{return data[i];}
 
-			constexpr T& operator[](size_t i)
+			constexpr T& operator[](size_t i) noexcept
 				{return data[i];}
 
-			constexpr const T* begin() const
+			constexpr const T* begin() const noexcept
 				{return data;}
 
-			constexpr const T* end() const
+			constexpr const T* end() const noexcept
 				{return data+N;}
 
-			T* begin()
+			constexpr T* begin() noexcept
 				{return data;}
 
-			T* end()
+			constexpr T* end() noexcept
 				{return data+N;}
 
-			static constexpr size_t length()
+			static constexpr size_t length() noexcept
 				{return N;}
 
-			static constexpr size_t sizeBytes()
+			static constexpr size_t sizeBytes() noexcept
 				{return N*sizeof(T);}
 
-			constexpr ArrayFixed() noexcept:data{}
+			constexpr ArrayFixed():data{}
 				{}
 
 			template<class ... Vals>
-			constexpr ArrayFixed(const T& x,Vals ... v) noexcept:data{x,v...}
+			constexpr ArrayFixed(const T& x,Vals ... v):data{x,v...}
 				{}
 
 		private:

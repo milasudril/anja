@@ -74,6 +74,7 @@
       <File Name="common/syserror.cpp"/>
       <File Name="common/readysignal.hpp"/>
       <File Name="common/readysignal.cpp"/>
+      <File Name="common/ringbuffer.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
