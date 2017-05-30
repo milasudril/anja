@@ -10,6 +10,8 @@
 #include "../sessiondata/session.hpp"
 #include "../common/thread.hpp"
 #include "../common/readysignal.hpp"
+#include "../common/ringbuffer.hpp"
+#include "../common/clock.hpp"
 
 #include <cstdint>
 #include <utility>
@@ -58,11 +60,18 @@ namespace Anja
 
 			template<TaskId id> void run();
 
-			Engine& messagePost(Message msg);
+			Engine& messagePost(MIDI::Message msg) noexcept
+				{
+				m_ui_events.push_back({static_cast<uint32_t>(now_ms() - m_time_init),msg});
+				return *this;
+				}
 
 		private:
 			const Session* r_session;
 			volatile bool m_running;
+			RingBuffer<AudioClient::MidiEvent> m_ui_events;
+			uint64_t m_time_init;
+			AudioClient::MidiEvent m_event_last;
 			AudioClient m_client;
 			Thread m_rec_thread;
 			ReadySignal m_ready;

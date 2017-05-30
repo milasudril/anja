@@ -81,7 +81,13 @@ namespace Anja
 					{return m_content.bytes[2];}
 
 				bool channelMessage() const noexcept
-					{return m_content.bytes[0]>=0xf0;}
+					{return m_content.bytes[0] < 0xf0;}
+
+				bool valid() const noexcept
+					{return m_content.data!=0;}
+
+				void clear() noexcept
+					{m_content.data=0;}
 
 
 			private:

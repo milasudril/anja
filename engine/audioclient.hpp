@@ -48,9 +48,14 @@ namespace Anja
 			AudioClient& waveInName(int index,const char* name);
 			AudioClient& waveOutName(int index,const char* name);
 
-			struct MidiEvent
+			int midiInCount() const noexcept;
+			int midiOutCount() const noexcept;
+			int waveInCount() const noexcept;
+			int waveOutCount() const noexcept;
+
+			struct alignas(8) MidiEvent
 				{
-				int32_t time_offset;
+				uint32_t time_offset;
 				MIDI::Message message;
 				};
 

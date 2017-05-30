@@ -14,10 +14,10 @@ namespace Anja
 			explicit RingBuffer(size_t N):
 				m_offset_read(0),m_offset_write(0),m_data(N)
 				{
-				static_assert(sizeof(T)<=sizeof(uint64_t));
+				static_assert(sizeof(T)<=sizeof(size_t),"Type not compatible");
 				}
 
-			void push_back(T x) const noexcept
+			void push_back(T x) noexcept
 				{
 				auto owr=m_offset_write;
 				m_data[owr]=x;
@@ -25,7 +25,7 @@ namespace Anja
 				m_offset_write=(owr+1)%N;
 				}
 
-			T pop_front() const noexcept
+			T pop_front() noexcept
 				{
 				auto ore=m_offset_read;
 				auto ret=m_data[ore];

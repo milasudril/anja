@@ -138,7 +138,10 @@ UiContext::RunStatus Application::idle(UiContext& ctx)
 
 void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
-	printf("%d down\n",scancode);
+	if(m_engine)
+		{
+		m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,scancode,127});
+		}
 	}
 
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)

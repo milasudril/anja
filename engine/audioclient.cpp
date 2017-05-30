@@ -56,6 +56,18 @@ class AudioClient::Impl:private AudioClient
 		float* waveOut(int port,int n_frames) const noexcept
 			{return reinterpret_cast<SampleType*>(jack_port_get_buffer(m_ports[portOffset<PortType::WAVE_OUT>(port)],n_frames));}
 
+		int midiInCount() const noexcept
+			{return portOffset<PortType::MIDI_OUT>(0);}
+
+		int midiOutCount() const noexcept
+			{return portOffset<PortType::WAVE_IN>(0) - portOffset<PortType::MIDI_OUT>(0);}
+
+		int waveInCount() const noexcept
+			{return portOffset<PortType::WAVE_OUT>(0) - portOffset<PortType::WAVE_IN>(0);}
+
+		int waveOutCount() const noexcept
+			{return m_ports.size() - portOffset<PortType::WAVE_OUT>(0);}
+
 
 	private:
 		template<PortType type>
@@ -150,6 +162,20 @@ const float* AudioClient::waveIn(int port,int n_frames) const noexcept
 
 float* AudioClient::waveOut(int port,int n_frames) const noexcept
 	{return m_impl->waveOut(port,n_frames);}
+
+int AudioClient::midiInCount() const noexcept
+	{return m_impl->midiInCount();}
+
+int AudioClient::midiOutCount() const noexcept
+	{return m_impl->midiOutCount();}
+
+
+int AudioClient::waveInCount() const noexcept
+	{return m_impl->waveInCount();}
+
+int AudioClient::waveOutCount() const noexcept
+	{return m_impl->waveOutCount();}
+
 
 
 

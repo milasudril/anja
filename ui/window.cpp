@@ -197,7 +197,7 @@ gboolean Window::Impl::key_down(GtkWidget* widget,GdkEvent* event,void* user_dat
 			}
 		return FALSE;
 		}
-	if(scancode==15)
+	if(scancode==15 && self->r_focus_old!=nullptr)
 		{
 		gtk_window_set_focus(GTK_WINDOW(widget),self->r_focus_old);
 		return TRUE;

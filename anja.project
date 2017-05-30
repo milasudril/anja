@@ -75,6 +75,8 @@
       <File Name="common/readysignal.hpp"/>
       <File Name="common/readysignal.cpp"/>
       <File Name="common/ringbuffer.hpp"/>
+      <File Name="common/clock.hpp"/>
+      <File Name="common/clock.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
