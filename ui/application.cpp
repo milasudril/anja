@@ -11,6 +11,7 @@
 #include "application.hpp"
 #include "filenameselect.hpp"
 #include "../common/blob.hpp"
+#include "../sessiondata/keymap.hpp"
 #include <maike/targetinclude.hpp>
 
 using namespace Anja;
@@ -140,7 +141,9 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 	{
 	if(m_engine)
 		{
-		m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,scancode,127});
+		auto note=scancodeToMIDI(scancode);
+		if(note!=0xff)
+			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,9,note,127});}
 		}
 	}
 
@@ -148,7 +151,9 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 	{
 	if(m_engine)
 		{
-		m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,scancode,127});
+		auto note=scancodeToMIDI(scancode);
+		if(note!=0xff)
+			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,9,note,127});}
 		}
 	}
 

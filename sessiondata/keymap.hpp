@@ -28,10 +28,19 @@ namespace Anja
 	uint8_t scancodeToSlot(uint8_t slot);
 
 	static constexpr uint8_t slotToMIDI(uint8_t slot)
-		{return (slot + 24)&0x7f;}
+		{return (slot + 36)&0x7f;}
 
 	static constexpr uint8_t midiToSlot(uint8_t midi)
-		{return (midi - 24)&0x7f;}
+		{return (midi - 36)&0x7f;}
+
+	inline uint8_t scancodeToMIDI(uint8_t scancode)
+		{
+		auto slot=scancodeToSlot(scancode);
+		if(slot==0xff)
+			{return slot;}
+
+		return slotToMIDI(slot);
+		}
 	}
 
 #endif
