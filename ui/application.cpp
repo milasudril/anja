@@ -144,6 +144,13 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
 			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note,127});}
+		else
+			{
+			if(scancode==57)
+				{
+			//Play audition...
+				}
+			}
 		}
 	m_keystate[scancode]=1;
 	}
