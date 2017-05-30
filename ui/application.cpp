@@ -146,7 +146,10 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
-	printf("%d up\n",scancode);
+	if(m_engine)
+		{
+		m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,scancode,127});
+		}
 	}
 
 

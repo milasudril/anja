@@ -42,6 +42,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	auto time_factor=48000.0/1000.0;
 	auto now=time_factor*now_ms();
 	auto midi_in=client.midiIn(0,n_frames);
+	auto midi_out=client.midiOut(0,n_frames);
 	auto event_current=m_event_last;
 	if(client.waveOutCount()==2) //Two outputs => single-channel output (Master + Audition)
 		{
@@ -55,6 +56,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 				printf("Fire %d %d %d\n",event_current.message.statusRaw()
 					,event_current.message.value1()
 					,event_current.message.value2());
+				midi_out.write(event_current.message,k);
 				event_current.message.clear();
 				}
 			while(!m_ui_events.empty())
@@ -62,6 +64,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 				event_current=m_ui_events.pop_front();
 				if(expired(event_current,time_factor,now + k))
 					{
+					midi_out.write(event_current.message,k);
 					printf("Fire %d %d %d\n",event_current.message.statusRaw()
 						,event_current.message.value1()
 						,event_current.message.value2());

@@ -35,6 +35,8 @@
       <File Name="sessiondata/channelview.hpp"/>
       <File Name="sessiondata/channelview.cpp"/>
       <File Name="sessiondata/waveformview.hpp"/>
+      <File Name="sessiondata/keymap.hpp"/>
+      <File Name="sessiondata/keymap.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
