@@ -14,7 +14,7 @@ namespace Anja
 
 	uint8_t channelToScancode(int channel);
 
-	static constexpr int scancodeToChannels(uint8_t scancode)
+	static constexpr int scancodeToChannel(uint8_t scancode)
 		{
 		if(scancode>=59 && scancode<69)
 			{return scancode - 59;}

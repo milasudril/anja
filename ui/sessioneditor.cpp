@@ -2,60 +2,15 @@
 
 #include "sessioneditor.hpp"
 #include "../sessiondata/session.hpp"
+#include "../sessiondata/keymap.hpp"
 
 using namespace Anja;
-
-static constexpr uint8_t s_channel_scancodes[]
-	{
-	 59,60,61,62
-	,63,64,65,66
-	,67,68,87,88
-	};
-
-static constexpr uint8_t scancode_channels(uint8_t scancode)
-	{
-	if(scancode>=59 && scancode<69)
-		{return scancode - 59;}
-	if(scancode>=87 && scancode<89)
-		{return 10 + (scancode - 87);}
-	return 0xff;
-	}
-
-constexpr uint8_t s_slot_scancodes[]=
-	{
-	 41,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,  12, 13, 14
-	,16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
-	,30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 43
-	,86, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
-	};
-
-static constexpr ArrayFixed<uint8_t,Wavetable::length()> gen_scancode_slots()
-	{
-	ArrayFixed<uint8_t,Wavetable::length()> ret;
-	for(decltype(ret.length()) k=0;k<ret.length();++k)
-		{
-		uint8_t index=0xff;
-		for(size_t l=0;l<sizeof(s_slot_scancodes);++l)
-			{
-			if(s_slot_scancodes[l]==k)
-				{
-				index=l;
-				break;
-				}
-			}
-		ret[k]=index;
-		}
-	return ret;
-	}
-
-static constexpr auto s_scancode_slots=gen_scancode_slots();
-
 
 void SessionEditor::nameChanged(ChannelStrip& strip,int id)
 	{
 	m_waveform.channelName(id,strip.name().begin());
 	if(id>=0 && id<12)
-		{m_keyboard.keyLabel(s_channel_scancodes[id],strip.name().begin()).redraw();}
+		{m_keyboard.keyLabel(channelToScancode(id),strip.name().begin()).redraw();}
 	if(r_cb_obj!=nullptr)
 		{m_channel_name_callback(r_cb_obj,strip,id);}
 	}
@@ -64,7 +19,7 @@ void SessionEditor::colorChanged(ChannelStrip& strip,int id)
 	{
 	if(id>=0 && id<12)
 		{
-		m_keyboard.keyColor(s_channel_scancodes[id],strip.color()).redraw();
+		m_keyboard.keyColor(channelToScancode(id),strip.color()).redraw();
 		}
 	}
 
@@ -72,20 +27,22 @@ void SessionEditor::colorChanged(ChannelStrip& strip,int id)
 void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();
-	if(slot>=0 && slot<sizeof(s_slot_scancodes));
+	auto scancode=slotToScancode(slot);
+	if(scancode!=0xff);
 		{
-		m_keyboard.keyLabel(s_slot_scancodes[slot]
-			,r_session.waveformViewGet(slot).keyLabelGet().begin()).redraw();
+		m_keyboard.keyLabel(scancode,r_session.waveformViewGet(slot).keyLabelGet().begin())
+			.redraw();
 		}
 	}
 
 void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();
-	if(slot>=0 && slot<sizeof(s_slot_scancodes));
+	auto scancode=slotToScancode(slot);
+	if(scancode!=0xff)
 		{
-		m_keyboard.keyColor(s_slot_scancodes[slot]
-			,r_session.waveformViewGet(slot).keyColorGet()).redraw();
+		m_keyboard.keyColor(scancode,r_session.waveformViewGet(slot).keyColorGet())
+			.redraw();
 		}
 	}
 
@@ -104,15 +61,15 @@ void SessionEditor::masterGainChanged(MixerConsole& mixer,MixerId id)
 void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	{
 	auto scancode=keyboard.selection();
-	auto index=scancode_channels(scancode);
-	if(index!=0xff)
+	auto index=scancodeToChannel(scancode);
+	if(index!=-1)
 		{
 		m_tabs.activate(1);
 		m_mixer.focus(index);
 		return;
 		}
 
-	index=s_scancode_slots[scancode];
+	index=scancodeToSlot(scancode);
 	if(index!=0xff)
 		{
 		m_tabs.activate(0);
@@ -121,8 +78,9 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 		}
 
 	auto slot=r_session.slotActiveGet();
-	if(slot>=0 && slot<sizeof(s_slot_scancodes));
-		{keyboard.selection(s_slot_scancodes[slot]);}
+	scancode=slotToScancode(slot);
+	if(scancode!=0xff);
+		{keyboard.selection(scancode);}
 	}
 
 SessionEditor& SessionEditor::sessionUpdated()
@@ -132,28 +90,31 @@ SessionEditor& SessionEditor::sessionUpdated()
 		auto N=std::min(r_session.channelsCountGet(),12);
 		for(decltype(N) k=0;k<N;++k)
 			{
-			auto key=s_channel_scancodes[k];
+			auto key=channelToScancode(k);
 			auto ch=r_session.channelViewGet(k);
 			m_keyboard.keyColor(key,ch.colorGet()).keyLabel(key,ch.labelGet().begin());
 			}
 		}
 
 		{
-		auto N=std::min(static_cast<int>(sizeof(s_slot_scancodes)),r_session.slotsCountGet());
+		auto N=r_session.slotsCountGet();
 		for(decltype(N) k=0;k<N;++k)
 			{
-			auto key=s_slot_scancodes[k];
+			auto scancode=slotToScancode(k);
+			if(scancode==0xff)
+				{break;}
 			auto wf=r_session.waveformViewGet(k);
-			m_keyboard.keyColor(key,wf.keyColorGet());
+			m_keyboard.keyColor(scancode,wf.keyColorGet());
 			if(wf.keyLabelGet().length()!=0)
-				{m_keyboard.keyLabel(key,wf.keyLabelGet().begin());}
+				{m_keyboard.keyLabel(scancode,wf.keyLabelGet().begin());}
 			}
 		}
 
 		{
 		auto slot=r_session.slotActiveGet();
-		if(slot>=0 && slot<sizeof(s_slot_scancodes));
-			{m_keyboard.selection(s_slot_scancodes[slot]);}
+		auto scancode=slotToScancode(slot);
+		if(scancode!=0xff)
+			{m_keyboard.selection(scancode);}
 		}
 	m_keyboard.redraw();
 
