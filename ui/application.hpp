@@ -17,6 +17,7 @@
 #include "../sessiondata/session.hpp"
 #include "../engine/engine.hpp"
 #include <memory>
+#include <bitset>
 
 namespace Anja
 	{
@@ -111,6 +112,7 @@ namespace Anja
 
 			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
 			std::unique_ptr<Engine> m_engine;
+			std::bitset<256> m_keystate;
 		};
 	}
 

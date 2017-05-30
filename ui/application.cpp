@@ -139,12 +139,13 @@ UiContext::RunStatus Application::idle(UiContext& ctx)
 
 void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
-	if(m_engine)
+	if(m_engine && !m_keystate[scancode])
 		{
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
-			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,9,note,127});}
+			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note,127});}
 		}
+	m_keystate[scancode]=1;
 	}
 
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
@@ -153,8 +154,9 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 		{
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
-			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,9,note,127});}
+			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});}
 		}
+	m_keystate[scancode]=0;
 	}
 
 
