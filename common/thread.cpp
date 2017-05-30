@@ -14,7 +14,7 @@ using namespace Anja;
 void* Thread::thread_entry_system(void* thread)
 	{
 	auto self=reinterpret_cast<Thread*>(thread);
-	self->m_cb(self->r_cb_obj,self->m_id);
+	self->m_cb(self->r_cb_obj);
 	return nullptr;
 	}
 

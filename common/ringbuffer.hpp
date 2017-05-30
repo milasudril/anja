@@ -13,9 +13,11 @@ namespace Anja
 		public:
 			explicit RingBuffer(size_t N):
 				m_offset_read(0),m_offset_write(0),m_data(N)
-				{}
+				{
+				static_assert(sizeof(T)<=sizeof(uint64_t));
+				}
 
-			void push_back(T x)
+			void push_back(T x) const noexcept
 				{
 				auto owr=m_offset_write;
 				m_data[owr]=x;
@@ -23,7 +25,7 @@ namespace Anja
 				m_offset_write=(owr+1)%N;
 				}
 
-			T pop_front()
+			T pop_front() const noexcept
 				{
 				auto ore=m_offset_read;
 				auto ret=m_data[ore];
@@ -32,10 +34,10 @@ namespace Anja
 				return ret;
 				}
 
-			bool full() const
+			bool full() const noexcept
 				{return m_offset_write < m_offset_read;}
 
-			bool empty() const
+			bool empty() const noexcept
 				{return m_offset_read==m_offset_write;}
 
 			uint32_t length() const noexcept

@@ -18,16 +18,16 @@ namespace Anja
 			Thread& operator=(const Thread&)=delete;
 
 			template<class Callback,class TaskId>
-			explicit Thread(Callback& cb,TaskId id):m_cb(thread_entry<Callback,TaskId>)
-				,r_cb_obj(&cb),m_id(static_cast<int>(id))
+			explicit Thread(Callback& cb,TaskId id_tag):m_cb(thread_entry<Callback,TaskId>)
+				,r_cb_obj(&cb)
 				{run();}
 
 			~Thread();
 
 		private:
 			template<class Callback,class TaskId>
-			static void thread_entry(void* obj,int id)
-				{reinterpret_cast<Callback*>(obj)->run(static_cast<TaskId>(id));}
+			static void thread_entry(void* obj)
+				{reinterpret_cast<Callback*>(obj)->template run<TaskId::value>();}
 
 		#ifdef _WIN32
 			static unsigned int __stdcall thread_entry_system(void* thread);
@@ -37,10 +37,9 @@ namespace Anja
 
 			void run();
 
-			typedef void (*Callback)(void* cb_obj,int id);
+			typedef void (*Callback)(void* cb_obj);
 			Callback m_cb;
 			void* r_cb_obj;
-			int m_id;
 			intptr_t m_handle;
 		};
 	}

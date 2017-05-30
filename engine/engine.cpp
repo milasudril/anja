@@ -11,10 +11,17 @@ static String client_name(const String& str)
 	return std::move(ret);
 	}
 
+namespace
+	{
+	template<Engine::TaskId x>
+	struct TaskType
+		{static constexpr Engine::TaskId value=x;};
+	}
+
 Engine::Engine(const Session& session):r_session(&session)
 	,m_running(1)
 	,m_client(client_name(session.titleGet()).begin(),*this)
-	,m_rec_thread(*this,TaskId::RECORD)
+	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{}
 
 Engine::~Engine()
@@ -33,21 +40,12 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 		});
 	}
 
-static void record(Engine& engine)
+template<>
+void Engine::run<Engine::TaskId::RECORD>()
 	{
-	while(engine.running())
+	while(m_running)
 		{
-		engine.readyWait();
-		}
-	}
-
-void Engine::run(TaskId id)
-	{
-	switch(id)
-		{
-		case TaskId::RECORD:
-			record(*this);
-			break;
+		m_ready.wait();
 		}
 	}
 

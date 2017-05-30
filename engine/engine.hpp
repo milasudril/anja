@@ -55,15 +55,10 @@ namespace Anja
 
 
 			enum class TaskId:int{RECORD};
-			void run(TaskId id);
+
+			template<TaskId id> void run();
 
 			Engine& messagePost(Message msg);
-
-			bool running() const noexcept
-				{return m_running;}
-
-			void readyWait()
-				{m_ready.wait();}
 
 		private:
 			const Session* r_session;
@@ -74,6 +69,8 @@ namespace Anja
 
 		};
 
+	template<>
+	void Engine::run<Engine::TaskId::RECORD>();
 	}
 
 #endif // ANJA_ENGINE_HPP
