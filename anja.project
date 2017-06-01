@@ -79,6 +79,8 @@
       <File Name="common/ringbuffer.hpp"/>
       <File Name="common/clock.hpp"/>
       <File Name="common/clock.cpp"/>
+      <File Name="common/idgenerator.hpp"/>
+      <File Name="common/nextpow2.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>

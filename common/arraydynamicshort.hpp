@@ -7,6 +7,7 @@
 #include "arrayinit.hpp"
 #include "memoryalloc.hpp"
 #include "error.hpp"
+#include "nextpow2.hpp"
 
 #include <limits>
 #include <cstdint>
@@ -156,19 +157,6 @@ namespace Anja
 					} data;
 				} m_content;
 
-
-#if ( _WIN32 && (__amd64 || __x86_64 || __x86_64__ || __amd64__) )
-			constexpr size_t nextpow2(size_t N)
-				{
-				return 1<<(8*sizeof(N) - 1 - __builtin_clzll(N) + 1);
-				}
-#else
-			constexpr size_t nextpow2(size_t N)
-				{
-				return 1<<(8*sizeof(N) - 1 - __builtin_clzl(N) + 1);
-				}
-#endif
-
 			void resize(size_t N);
 			uint32_t capacity() const noexcept
 				{return m_content.data.capacity;}
@@ -178,7 +166,7 @@ namespace Anja
 	template<class T>
 	void ArrayDynamicShort<T>::resize(size_t N)
 		{
-		auto N_2=nextpow2(N);
+		auto N_2=Nextpow2<size_t>(N);
 		if(N_2 > std::numeric_limits<uint32_t>::max())
 			{
 			throw Error("Data does not fit in the array.");

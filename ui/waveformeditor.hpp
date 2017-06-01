@@ -25,7 +25,7 @@ namespace Anja
 	{
 	class Session;
 
-	template<class T>
+	template<class T,class SizeType>
 	class ArraySimple;
 
 	class WaveformEditor

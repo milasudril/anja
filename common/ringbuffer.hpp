@@ -2,8 +2,7 @@
 #define ANJA_RINGBUFFER_HPP
 
 #include "arraysimple.hpp"
-
-#include <cstdint>
+#include "nextpow2.hpp"
 
 namespace Anja
 	{
@@ -11,26 +10,26 @@ namespace Anja
 	class RingBuffer
 		{
 		public:
+			typedef T value_type;
+
 			explicit RingBuffer(size_t N):
-				m_offset_read(0),m_offset_write(0),m_data(N)
-				{
-				static_assert(sizeof(T)<=sizeof(size_t),"Type not compatible");
-				}
+				m_offset_read(0),m_offset_write(0),m_data(Nextpow2<size_t>(N))
+				{static_assert(sizeof(T)<=sizeof(size_t),"Type not compatible");}
 
 			void push_back(T x) noexcept
 				{
+				assert(!full());
 				auto owr=m_offset_write;
-				m_data[owr]=x;
-				uint32_t N=length();
-				m_offset_write=(owr+1)%N;
+				m_data[owr%capacity()]=x;
+				++m_offset_write;
 				}
 
 			T pop_front() noexcept
 				{
+				assert(!empty());
 				auto ore=m_offset_read;
-				auto ret=m_data[ore];
-				uint32_t N=length();
-				m_offset_read=(ore+1)%N;
+				auto ret=m_data[ore%capacity()];
+				++m_offset_read;
 				return ret;
 				}
 
@@ -40,13 +39,13 @@ namespace Anja
 			bool empty() const noexcept
 				{return m_offset_read==m_offset_write;}
 
-			uint32_t length() const noexcept
+			Nextpow2<size_t> capacity() const noexcept
 				{return m_data.length();}
 
 		private:
 			volatile uint32_t m_offset_read;
 			volatile uint32_t m_offset_write;
-			ArraySimple<T> m_data;
+			ArraySimple< T,Nextpow2<size_t> > m_data;
 		};
 	}
 

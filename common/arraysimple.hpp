@@ -13,7 +13,7 @@
 
 namespace Anja
 	{
-	template<class T>
+	template<class T,class SizeType=size_t>
 	class ArraySimple
 		{
 		public:
@@ -24,10 +24,10 @@ namespace Anja
 
 			explicit ArraySimple(const T* begin,const T* end);
 
-			explicit ArraySimple(size_t n_elems);
+			explicit ArraySimple(SizeType n_elems);
 
 			template<class Initializer>
-			explicit ArraySimple(size_t n_elems,Initializer&& initializer);
+			explicit ArraySimple(SizeType n_elems,Initializer&& initializer);
 
 
 			ArraySimple(const ArraySimple& a);
@@ -67,7 +67,7 @@ namespace Anja
 				{return m_content.fields.data+m_content.fields.N;}
 
 
-			size_t length() const noexcept
+			SizeType length() const noexcept
 				{return m_content.fields.N;}
 
 			const T& operator[](size_t k) const noexcept
@@ -95,14 +95,14 @@ namespace Anja
 				struct
 					{
 					T* data;
-					size_t N;
+					SizeType N;
 					} fields;
 				} m_content;
 		};
 
 
-	template<class T>
-	ArraySimple<T>::ArraySimple(size_t n_elems)
+	template<class T,class SizeType>
+	ArraySimple<T,SizeType>::ArraySimple(SizeType n_elems)
 		{
 		assert(n_elems!=0);
 		auto data=reinterpret_cast<T*>(memoryAllocate(n_elems*sizeof(T)));
@@ -117,9 +117,9 @@ namespace Anja
 		m_content.fields.data=data;
 		}
 
-	template<class T>
+	template<class T,class SizeType>
 	template<class Initializer>
-	ArraySimple<T>::ArraySimple(size_t n_elems,Initializer&& init)
+	ArraySimple<T,SizeType>::ArraySimple(SizeType n_elems,Initializer&& init)
 		{
 		assert(n_elems!=0);
 		auto data=reinterpret_cast<T*>(memoryAllocate(n_elems*sizeof(T)));
@@ -134,16 +134,16 @@ namespace Anja
 		m_content.fields.data=data;
 		}
 
-	template<class T>
-	ArraySimple<T>::~ArraySimple()
+	template<class T,class SizeType>
+	ArraySimple<T,SizeType>::~ArraySimple()
 		{
 		ArrayInit::destroy(begin(),end());
 		memoryFree(m_content.fields.data);
 		}
 
 
-	template<class T>
-	ArraySimple<T>::ArraySimple(const ArraySimple& a)
+	template<class T,class SizeType>
+	ArraySimple<T,SizeType>::ArraySimple(const ArraySimple& a)
 		{
 		assert(a.begin()!=nullptr);
 		auto data=reinterpret_cast<T*>( memoryAllocate(a.length()*sizeof(T)) );
@@ -158,8 +158,8 @@ namespace Anja
 		m_content.fields.data=data;
 		}
 
-	template<class T>
-	ArraySimple<T>::ArraySimple(const T* b,const T* e)
+	template<class T,class SizeType>
+	ArraySimple<T,SizeType>::ArraySimple(const T* b,const T* e)
 		{
 		auto l=e - b;
 		auto data=reinterpret_cast<T*>( memoryAllocate(l*sizeof(T)) );
