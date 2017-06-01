@@ -221,9 +221,15 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 			}
 		}
 	catch(const Error& e)
-		{}
+		{
+		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error",e.message(),Message::Type::ERROR));
+		m_error->callback(*this,0);
+		}
 	btn.state(0);
 	}
+
+void Application::confirmPositive(Dialog<Message,DialogOk>& dlg,int id)
+	{m_error.reset();}
 
 void Application::confirmPositive(Dialog<AboutBox,AboutDialog>& dlg,int id)
 	{m_about.reset();}

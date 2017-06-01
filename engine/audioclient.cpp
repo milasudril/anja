@@ -211,7 +211,7 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	if(m_handle==NULL)
 		{
 		m_impl=nullptr;
-		throw Error(name," failed to connect to JACK.");
+		throw Error("The client \"",name,"\" failed to connect to JACK. Check if the server is running.");
 		}
 
 	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)

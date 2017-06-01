@@ -94,6 +94,7 @@ namespace Anja
 			void confirmPositive(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmPositive(Dialog<AboutBox,AboutDialog>& dlg,int id);
+			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 			void user1(Dialog<AboutBox,AboutDialog>& dlg,int id);
 			void user2(Dialog<AboutBox,AboutDialog>& dlg,int id);
 
@@ -111,6 +112,8 @@ namespace Anja
 			void save_ask(ConfirmSaveDialogId id);
 
 			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
+			std::unique_ptr<Dialog<Message,DialogOk> > m_error;
+
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;
 		};
