@@ -2,16 +2,28 @@
 
 #include "voice.hpp"
 #include "../common/units.hpp"
+#include "../sessiondata/waveform.hpp"
 
 using namespace Anja;
 
+Voice::Voice(const Waveform& waveform)
+	{
+	m_velocity=1.0f;
+	m_gain=dBToAmplitude( waveform.gainGet() );
+	m_gain_random=dBToAmplitude(waveform.gainRandomGet());
+
+	r_pos_current=waveform.begin();
+	r_loop_begin=r_pos_current; //For now;
+	r_loop_end=waveform.end(); //For now;
+	r_end=waveform.end();
+
+	}
+
 void Voice::generate(float* buffer_out,int n_frames)
 	{
-	auto g=dBToAmplitude(*r_gain);
-
 	while(n_frames!=0 && r_pos_current!=r_end)
 		{
-		*buffer_out+=g*(*r_pos_current);
+		*buffer_out+=m_gain*(*r_pos_current);
 		++r_pos_current;
 		if(r_pos_current==r_loop_end && (m_flags&LOOP))
 			{

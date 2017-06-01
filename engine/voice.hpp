@@ -8,22 +8,27 @@
 
 namespace Anja
 	{
+	class Waveform;
+
 	class Voice
 		{
 		public:
 			Voice()=default;
 
+			explicit Voice(Waveform&& waveform)=delete;
+			explicit Voice(const Waveform& waveform);
+
 			void generate(float* buffer_out,int n_frames);
 
 		private:
-			float velocity;
-			float* r_gain;
-			float* r_gain_random;
-			float* r_pos_current;
+			float m_velocity;
+			float m_gain;
+			float m_gain_random;
+			const float* r_pos_current;
 
-			float* r_loop_begin;
-			float* r_loop_end;
-			float* r_end;
+			const float* r_loop_begin;
+			const float* r_loop_end;
+			const float* r_end;
 
 			static constexpr int LOOP=1;
 			static constexpr int SET_GAIN_ON_LOOP=2;
