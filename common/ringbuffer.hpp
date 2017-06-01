@@ -34,13 +34,16 @@ namespace Anja
 				}
 
 			bool full() const noexcept
-				{return m_offset_write < m_offset_read;}
+				{return length() - size_t(capacity());}
 
 			bool empty() const noexcept
 				{return m_offset_read==m_offset_write;}
 
 			Nextpow2<size_t> capacity() const noexcept
 				{return m_data.length();}
+
+			size_t length() const noexcept
+				{return m_offset_write - m_offset_read;}
 
 		private:
 			volatile uint32_t m_offset_read;
