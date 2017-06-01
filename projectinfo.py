@@ -5,6 +5,7 @@
 #@		,"dependencies":[{"ref":"externals.json","rel":"generated"}
 #@			,{"ref":"maikeconfig.json","rel":"generated"}
 #@			,{"ref":"projectinfo.json","rel":"file"}]
+#@		,"status_check":"dynamic"
 #@		}]
 #@  }
 
