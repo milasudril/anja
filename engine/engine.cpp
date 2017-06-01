@@ -39,7 +39,7 @@ static bool expired(AudioClient::MidiEvent e,double time_factor
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{
-	auto time_factor=48000.0/1000.0;
+	auto time_factor=48000.0/1000.0; //TODO: Do not hard-code sample rate
 	auto now=time_factor*(now_ms() - m_time_init);
 	auto midi_in=client.midiIn(0,n_frames);
 	auto midi_out=client.midiOut(0,n_frames);

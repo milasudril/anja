@@ -209,7 +209,10 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	jack_status_t status;
  	m_handle=jack_client_open(name,JackNoStartServer,&status);
 	if(m_handle==NULL)
-		{throw Error(name," failed to connect to JACK.");}
+		{
+		m_impl=nullptr;
+		throw Error(name," failed to connect to JACK.");
+		}
 
 	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)
 		{
@@ -229,9 +232,9 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 
 AudioClient::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	std::for_each(m_ports.begin(),m_ports.end(),[this](jack_port_t* port)
 		{jack_port_unregister(m_handle,port);});
 	jack_deactivate(m_handle);
 	jack_client_close(m_handle);
-	m_impl=nullptr;
 	}

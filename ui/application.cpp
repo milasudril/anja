@@ -169,54 +169,59 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 
 void Application::clicked(ButtonList& buttons,int id,Button& btn)
 	{
-	switch(btn.id())
+	try
 		{
-		case 0:
-			if(m_session.dirtyIs())
-				{save_ask(ConfirmSaveDialogId::SESSION_NEW);}
-			else
-				{sessionNew();}
-			break;
-		case 1:
-			if(m_session.dirtyIs())
-				{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}			else
-				{sessionLoad();}
-			break;
-		case 2:
-			if(m_session.dirtyIs())
-				{save_ask(ConfirmSaveDialogId::SESSION_RELOAD);}
-			else
-				{sessionLoad(m_session.filenameGet().begin());}
-			break;
-		case 3:
-			sessionSave();
-			break;
-		case 4:
-			sessionSaveAs();
-			break;
-		case 5:
-			m_engine.reset(new Engine(m_session));
-			break;
-		case 6:
-			m_engine.reset();
-			break;
-		case 7:
-			m_fullscreen=!m_fullscreen;
-			m_mainwin.fullscreen(m_fullscreen);
-			btn.label(m_fullscreen?"Windowed":"Fullscreen");
-			break;
-		case 8:
-			if(m_session.dirtyIs())
-				{save_ask(ConfirmSaveDialogId::EXIT);}
-			else
-				{m_ctx.exit();}
-			break;
-		case 9:
-			m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
-			m_about->widget().logo(s_logo_begin,s_logo_end);
-			m_about->callback(*this,0);
-			break;
+		switch(btn.id())
+			{
+			case 0:
+				if(m_session.dirtyIs())
+					{save_ask(ConfirmSaveDialogId::SESSION_NEW);}
+				else
+					{sessionNew();}
+				break;
+			case 1:
+				if(m_session.dirtyIs())
+					{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}				else
+					{sessionLoad();}
+				break;
+			case 2:
+				if(m_session.dirtyIs())
+					{save_ask(ConfirmSaveDialogId::SESSION_RELOAD);}
+				else
+					{sessionLoad(m_session.filenameGet().begin());}
+				break;
+			case 3:
+				sessionSave();
+				break;
+			case 4:
+				sessionSaveAs();
+				break;
+			case 5:
+				m_engine.reset(new Engine(m_session));
+				break;
+			case 6:
+				m_engine.reset();
+				break;
+			case 7:
+				m_fullscreen=!m_fullscreen;
+				m_mainwin.fullscreen(m_fullscreen);
+				btn.label(m_fullscreen?"Windowed":"Fullscreen");
+				break;
+			case 8:
+				if(m_session.dirtyIs())
+					{save_ask(ConfirmSaveDialogId::EXIT);}
+				else
+					{m_ctx.exit();}
+				break;
+			case 9:
+				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
+				m_about->widget().logo(s_logo_begin,s_logo_end);
+				m_about->callback(*this,0);
+				break;
+			}
 		}
+	catch(const Error& e)
+		{}
 	btn.state(0);
 	}
 
