@@ -7,6 +7,7 @@
 #define ANJA_ENGINE_HPP
 
 #include "audioclient.hpp"
+#include "voice.hpp"
 #include "../sessiondata/session.hpp"
 #include "../common/thread.hpp"
 #include "../common/readysignal.hpp"

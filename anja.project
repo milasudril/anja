@@ -177,6 +177,8 @@
       <File Name="engine/engine.hpp"/>
       <File Name="engine/engine.cpp"/>
       <File Name="engine/audioclient.cpp"/>
+      <File Name="engine/voice.hpp"/>
+      <File Name="engine/voice.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
   </VirtualDirectory>
