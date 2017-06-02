@@ -56,7 +56,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 			{
 			if(expired(event_current,time_factor,now + k))
 				{
-				printf("Fire  %.15g  %d %d %d\n",client.sampleRate()
+				printf("Fire  %d %d %d\n"
 					,event_current.message.statusRaw()
 					,event_current.message.value1()
 					,event_current.message.value2());
@@ -69,9 +69,9 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 				if(expired(event_current,time_factor,now + k))
 					{
 					midi_out.write(event_current.message,k);
-				/*	printf("Fire %d %d %d\n",event_current.message.statusRaw()
+					printf("Fire %d %d %d\n",event_current.message.statusRaw()
 						,event_current.message.value1()
-						,event_current.message.value2());*/
+						,event_current.message.value2());
 					event_current.message.clear();
 					}
 				else
