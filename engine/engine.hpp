@@ -72,11 +72,11 @@ namespace Anja
 		private:
 			const Session* r_session;
 			volatile bool m_running;
-			RingBuffer<AudioClient::MidiEvent> m_ui_events;
+			RingBuffer<AudioClient::MidiEvent,volatile uint32_t> m_ui_events;
 			uint64_t m_time_init;
 			AudioClient::MidiEvent m_event_last;
 			ArraySimple<Voice> m_voices;
-			IdGenerator<RingBuffer<uint8_t>> m_voices_alloc;
+			IdGenerator<RingBuffer<uint8_t,uint32_t>> m_voices_alloc;
 
 			AudioClient m_client;
 			ReadySignal m_ready;

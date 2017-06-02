@@ -6,7 +6,7 @@
 
 namespace Anja
 	{
-	template<class T>
+	template<class T,class OffsetType>
 	class RingBuffer
 		{
 		public:
@@ -46,8 +46,8 @@ namespace Anja
 				{return m_offset_write - m_offset_read;}
 
 		private:
-			volatile uint32_t m_offset_read;
-			volatile uint32_t m_offset_write;
+			OffsetType m_offset_read;
+			OffsetType m_offset_write;
 			ArraySimple< T,Nextpow2<size_t> > m_data;
 		};
 	}
