@@ -64,7 +64,8 @@ namespace Anja
 
 			Engine& messagePost(MIDI::Message msg) noexcept
 				{
-				m_ui_events.push_back({static_cast<uint32_t>(now_ms() - m_time_init),msg});
+				if(!m_ui_events.full())
+					{m_ui_events.push_back({static_cast<uint32_t>(now_ms() - m_time_init),msg});}
 				return *this;
 				}
 
