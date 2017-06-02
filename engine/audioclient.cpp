@@ -68,6 +68,9 @@ class AudioClient::Impl:private AudioClient
 		int waveOutCount() const noexcept
 			{return m_ports.size() - portOffset<PortType::WAVE_OUT>(0);}
 
+		double sampleRate() const noexcept
+			{return m_sample_rate;}
+
 
 	private:
 		template<PortType type>
@@ -83,6 +86,7 @@ class AudioClient::Impl:private AudioClient
 		void* r_cb_obj;
 		Vtable m_vt;
 		jack_client_t* m_handle;
+		double m_sample_rate;
 		uint8_t m_port_type_offsets[PORT_TYPE_COUNT];
 		std::vector<jack_port_t*> m_ports;
 	};
@@ -176,6 +180,9 @@ int AudioClient::waveInCount() const noexcept
 int AudioClient::waveOutCount() const noexcept
 	{return m_impl->waveOutCount();}
 
+double AudioClient::sampleRate() const noexcept
+	{return m_impl->sampleRate();}
+
 
 
 
@@ -226,15 +233,16 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	m_port_type_offsets[2]=m_port_type_offsets[1] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::MIDI_OUT);
 	m_port_type_offsets[3]=m_port_type_offsets[2] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_IN);
 	ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_OUT);
-
+	m_sample_rate=jack_get_sample_rate(m_handle);
 	jack_activate(m_handle);
 	}
 
 AudioClient::Impl::~Impl()
 	{
+	jack_deactivate(m_handle);
+	jack_set_process_callback(m_handle,nullptr,nullptr);
 	m_impl=nullptr;
 	std::for_each(m_ports.begin(),m_ports.end(),[this](jack_port_t* port)
 		{jack_port_unregister(m_handle,port);});
-	jack_deactivate(m_handle);
 	jack_client_close(m_handle);
 	}

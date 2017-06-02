@@ -42,7 +42,7 @@ static bool expired(AudioClient::MidiEvent e,double time_factor
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 	{
-	auto time_factor=48000.0/1000.0; //TODO: Do not hard-code sample rate
+	auto time_factor=client.sampleRate()/1000.0; //TODO: Do not hard-code sample rate
 	auto now=time_factor*(now_ms() - m_time_init);
 	auto midi_in=client.midiIn(0,n_frames);
 	auto midi_out=client.midiOut(0,n_frames);
@@ -56,9 +56,10 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 			{
 			if(expired(event_current,time_factor,now + k))
 				{
-			/*	printf("Fire %d %d %d\n",event_current.message.statusRaw()
+				printf("Fire  %.15g  %d %d %d\n",client.sampleRate()
+					,event_current.message.statusRaw()
 					,event_current.message.value1()
-					,event_current.message.value2());*/
+					,event_current.message.value2());
 				midi_out.write(event_current.message,k);
 				event_current.message.clear();
 				}

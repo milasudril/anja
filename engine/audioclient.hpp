@@ -104,6 +104,7 @@ namespace Anja
 			const float* waveIn(int port,int n_frames) const noexcept;
 			float* waveOut(int port,int n_frames) const noexcept;
 
+			double sampleRate() const noexcept;
 
 		private:
 			struct Vtable
