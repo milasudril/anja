@@ -34,7 +34,7 @@ namespace Anja
 				}
 
 			bool full() const noexcept
-				{return length() - size_t(capacity());}
+				{return length()==size_t(capacity());}
 
 			bool empty() const noexcept
 				{return m_offset_read==m_offset_write;}

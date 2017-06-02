@@ -74,12 +74,12 @@ namespace Anja
 			RingBuffer<AudioClient::MidiEvent> m_ui_events;
 			uint64_t m_time_init;
 			AudioClient::MidiEvent m_event_last;
-			ArrayFixed<Voice,256> m_voices;
+			ArraySimple<Voice> m_voices;
 			IdGenerator<RingBuffer<uint8_t>> m_voices_alloc;
 
 			AudioClient m_client;
-			Thread m_rec_thread;
 			ReadySignal m_ready;
+			Thread m_rec_thread;
 
 		};
 

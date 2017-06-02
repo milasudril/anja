@@ -12,7 +12,9 @@ namespace Anja
 	class Nextpow2
 		{
 		public:
-			constexpr explicit Nextpow2(UnsignedType val):m_value(nextpow2(val))
+			constexpr Nextpow2()=default;
+
+			constexpr explicit Nextpow2(UnsignedType val) noexcept:m_value(nextpow2(val))
 				{}
 
 			constexpr operator UnsignedType() const noexcept

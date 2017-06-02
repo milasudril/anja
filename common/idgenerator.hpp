@@ -9,7 +9,8 @@ namespace Anja
 	class IdGenerator
 		{
 		public:
-			IdGenerator() noexcept:m_id_next(-1){}
+			template<class ... FreelistParams>
+			IdGenerator(FreelistParams ... x) noexcept:m_freelist(x...),m_id_next(-1){}
 
 			static constexpr typename Freelist::value_type id_null=Freelist::npos;
 

@@ -22,6 +22,8 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_running(1)
 	,m_ui_events(1024)
 	,m_time_init(now_ms())
+	,m_voices(256)
+	,m_voices_alloc(256)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{}
