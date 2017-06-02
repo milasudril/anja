@@ -16,11 +16,12 @@ Voice::Voice(const Waveform& waveform)
 	r_loop_begin=r_pos_current; //For now;
 	r_loop_end=waveform.end(); //For now;
 	r_end=waveform.end();
-
+	m_flags=0;
 	}
 
-void Voice::generate(float* buffer_out,int n_frames)
+void Voice::generate(float* buffer_out,int n_frames) noexcept
 	{
+	assert(n_frames==64);
 	while(n_frames!=0 && r_pos_current!=r_end)
 		{
 		*buffer_out+=m_gain*(*r_pos_current);
@@ -37,5 +38,4 @@ void Voice::generate(float* buffer_out,int n_frames)
 		++buffer_out;
 		--n_frames;
 		}
-
 	}

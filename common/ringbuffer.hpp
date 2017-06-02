@@ -42,6 +42,9 @@ namespace Anja
 			Nextpow2<size_t> capacity() const noexcept
 				{return m_data.length();}
 
+			Nextpow2<size_t> capacityMax() const noexcept
+				{return capacity();}
+
 			size_t length() const noexcept
 				{return m_offset_write - m_offset_read;}
 

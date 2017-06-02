@@ -66,6 +66,8 @@ namespace Anja
 				{
 				if(!m_ui_events.full())
 					{m_ui_events.push_back({static_cast<uint32_t>(now_ms() - m_time_init),msg});}
+				else
+					{printf("Queue is full\n");}
 				return *this;
 				}
 
@@ -76,11 +78,15 @@ namespace Anja
 			uint64_t m_time_init;
 			AudioClient::MidiEvent m_event_last;
 			ArraySimple<Voice> m_voices;
-			IdGenerator<RingBuffer<uint8_t,uint32_t>> m_voices_alloc;
+			typedef int VoiceIndex;
+			ArraySimple<VoiceIndex> m_key_to_voice_index;
+			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
 
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;
+
+			void process(MIDI::Message msg) noexcept;
 
 		};
 

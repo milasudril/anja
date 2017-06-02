@@ -13,12 +13,24 @@ namespace Anja
 	class Voice
 		{
 		public:
-			Voice()=default;
+			Voice() noexcept:r_pos_current(nullptr),r_end(nullptr){}
 
 			explicit Voice(Waveform&& waveform)=delete;
 			explicit Voice(const Waveform& waveform);
 
-			void generate(float* buffer_out,int n_frames);
+			void generate(float* buffer_out,int n_frames) noexcept;
+
+			bool done() const noexcept
+				{return r_pos_current==r_end;}
+
+			Voice& stop() noexcept
+				{
+				if(m_flags&SUSTAIN)
+					{m_flags&=~LOOP;}
+				else
+					{r_pos_current=r_end;}
+				return *this;
+				}
 
 		private:
 			float m_velocity;
@@ -32,6 +44,7 @@ namespace Anja
 
 			static constexpr int LOOP=1;
 			static constexpr int SET_GAIN_ON_LOOP=2;
+			static constexpr int SUSTAIN=4;
 			int m_flags;
 		};
 	}
