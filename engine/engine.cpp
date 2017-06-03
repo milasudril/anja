@@ -46,11 +46,11 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 		{
 		case MIDI::StatusCodes::NOTE_OFF:
 			{
-			auto i=m_key_to_voice_index[ msg.value1()&0x7f ];
+			auto i=m_key_to_voice_index[ msg.value1() ];
 			if(i!=m_voices_alloc.null())
 				{
 				m_voices[i].stop(offset);
-				m_key_to_voice_index[ msg.value1()&0x7f ]=m_voices_alloc.null();
+				m_key_to_voice_index[ msg.value1() ]=m_voices_alloc.null();
 				//TODO: This should not be done until the waveform has been played
 				m_voices_alloc.idRelease(i);
 				}

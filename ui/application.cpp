@@ -165,6 +165,16 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
 			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});}
+		else
+			{
+			if(scancode==AUDITION_KEY)
+				{
+				auto slot_current=m_session.slotActiveGet();
+				assert(slot_current>=0 && slot_current<128);
+				note=slotToMIDI(slot_current);
+				m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});
+				}
+			}
 		}
 	m_keystate[scancode]=0;
 	}
