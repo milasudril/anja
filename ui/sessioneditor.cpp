@@ -80,7 +80,10 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	auto slot=r_session.slotActiveGet();
 	scancode=slotToScancode(slot);
 	if(scancode!=0xff);
-		{keyboard.selection(scancode);}
+		{
+		keyboard.selection(scancode).keyLabel(AUDITION_KEY
+			,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabelGet()).begin());
+		}
 	}
 
 SessionEditor& SessionEditor::sessionUpdated()
