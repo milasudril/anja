@@ -47,7 +47,6 @@ void Engine::process(MIDI::Message msg) noexcept
 		case MIDI::StatusCodes::NOTE_OFF:
 			{
 			auto i=m_key_to_voice_index[msg.value1()];
-
 			if(i!=m_voices_alloc.null())
 				{
 				printf("Note off %u\n",i);
@@ -62,13 +61,17 @@ void Engine::process(MIDI::Message msg) noexcept
 		case MIDI::StatusCodes::NOTE_ON:
 			{
 			auto i=m_voices_alloc.idGet();
-			if(i!=m_voices_alloc.null())
+			if(i==m_voices_alloc.null())
 				{
-				printf("Note on %u\n",i);
-				m_key_to_voice_index[msg.value1()]=i;
-				//TODO: Time offset...
-				m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1())),msg.value2()/127.0);
+				m_voices_alloc.reset();
+				i=m_voices_alloc.idGet();
 				}
+
+			assert(i!=m_voices_alloc.null());
+			printf("Note on %u\n",i);
+			m_key_to_voice_index[msg.value1()]=i;
+			//TODO: Time offset...
+			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1())),msg.value2()/127.0);
 			}
 			break;
 

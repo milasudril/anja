@@ -48,6 +48,12 @@ namespace Anja
 			size_t length() const noexcept
 				{return m_offset_write - m_offset_read;}
 
+			void clear() noexcept
+				{
+				m_offset_read=0;
+				m_offset_write=0;
+				}
+
 		private:
 			OffsetType m_offset_read;
 			OffsetType m_offset_write;
