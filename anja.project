@@ -31,12 +31,12 @@
       <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
       <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
       <File Name="sessiondata/channel.cpp"/>
-      <File Name="sessiondata/waveformview.cpp"/>
-      <File Name="sessiondata/channelview.hpp"/>
-      <File Name="sessiondata/channelview.cpp"/>
-      <File Name="sessiondata/waveformview.hpp"/>
       <File Name="sessiondata/keymap.hpp"/>
       <File Name="sessiondata/keymap.cpp"/>
+      <File Name="sessiondata/channelproxy.hpp"/>
+      <File Name="sessiondata/channelproxy.cpp"/>
+      <File Name="sessiondata/waveformproxy.cpp"/>
+      <File Name="sessiondata/waveformproxy.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

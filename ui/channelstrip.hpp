@@ -15,7 +15,7 @@
 #include "dialog.hpp"
 #include "separator.hpp"
 #include "knob.hpp"
-#include "../sessiondata/channelview.hpp"
+#include "../sessiondata/channelproxy.hpp"
 
 #include <memory>
 
@@ -24,7 +24,7 @@ namespace Anja
 	class ChannelStrip
 		{
 		public:
-			explicit ChannelStrip(Container& cnt,const ChannelView& channel);
+			explicit ChannelStrip(Container& cnt,const ChannelProxy& channel);
 
 			enum class TextEntryId:int{LABEL,FADETIME,GAIN};
 			enum class ColorViewId:int{COLOR};
@@ -65,7 +65,7 @@ namespace Anja
 				return *this;
 				}
 
-			ChannelStrip& channel(const ChannelView& ch);
+			ChannelStrip& channel(const ChannelProxy& ch);
 
 
 		private:
@@ -94,7 +94,7 @@ namespace Anja
 			void* r_cb_obj;
 			Vtable m_vtable;
 
-			ChannelView m_channel;
+			ChannelProxy m_channel;
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
 			Box m_box;

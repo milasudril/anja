@@ -1,10 +1,10 @@
 //@	{
-//@	 "targets":[{"name":"waveformview.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"waveformview.o","rel":"implementation"}]
+//@	 "targets":[{"name":"waveformproxy.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"waveformproxy.o","rel":"implementation"}]
 //@	}
 
-#ifndef ANJA_WAVEFORMVIEW_HPP
-#define ANJA_WAVEFORMVIEW_HPP
+#ifndef ANJA_WAVEFORMPROXY_HPP
+#define ANJA_WAVEFORMPROXY_HPP
 
 #include "waveform.hpp"
 #include "waveformdata.hpp"
@@ -13,10 +13,10 @@ namespace Anja
 	{
 	class SessionFileRecord;
 
-	class WaveformView
+	class WaveformProxy
 		{
 		public:
-			explicit WaveformView(Waveform& wf,WaveformData& wd
+			explicit WaveformProxy(Waveform& wf,WaveformData& wd
 				,const String& dir_current,int index) noexcept:
 				r_waveform(&wf),r_waveform_data(&wd),r_dir_current(&dir_current),m_index(index)
 				{}

@@ -16,7 +16,7 @@ namespace Anja
 			Voice() noexcept:r_pos_current(nullptr),r_end(nullptr){}
 
 			explicit Voice(Waveform&& waveform)=delete;
-			explicit Voice(const Waveform& waveform);
+			explicit Voice(const Waveform& waveform,float velocity) noexcept;
 
 			void generate(float* buffer_out,int n_frames) noexcept;
 

@@ -1,20 +1,20 @@
 //@	{
-//@	 "targets":[{"name":"channelview.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"channelview.o","rel":"implementation"}]
+//@	 "targets":[{"name":"channelproxy.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"channelproxy.o","rel":"implementation"}]
 //@	}
 
-#ifndef ANJA_CHANNELVIEW_HPP
-#define ANJA_CHANNELVIEW_HPP
+#ifndef ANJA_CHANNELPROXY_HPP
+#define ANJA_CHANNELPROXY_HPP
 
 #include "channel.hpp"
 #include "channeldata.hpp"
 
 namespace Anja
 	{
-	class ChannelView
+	class ChannelProxy
 		{
 		public:
-			explicit ChannelView(Channel& ch,ChannelData& ch_data) noexcept:r_channel(&ch)
+			explicit ChannelProxy(Channel& ch,ChannelData& ch_data) noexcept:r_channel(&ch)
 				,r_channel_data(&ch_data)
 				{}
 

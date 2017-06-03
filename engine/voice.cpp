@@ -6,9 +6,9 @@
 
 using namespace Anja;
 
-Voice::Voice(const Waveform& waveform)
+Voice::Voice(const Waveform& waveform,float velocity) noexcept
 	{
-	m_velocity=1.0f;
+	m_velocity=velocity;
 	m_gain=dBToAmplitude( waveform.gainGet() );
 	m_gain_random=dBToAmplitude(waveform.gainRandomGet());
 
@@ -21,10 +21,10 @@ Voice::Voice(const Waveform& waveform)
 
 void Voice::generate(float* buffer_out,int n_frames) noexcept
 	{
-	assert(n_frames==64);
+	auto g=m_gain*m_velocity;
 	while(n_frames!=0 && r_pos_current!=r_end)
 		{
-		*buffer_out+=m_gain*(*r_pos_current);
+		*buffer_out+=g*(*r_pos_current);
 		++r_pos_current;
 		if(r_pos_current==r_loop_end && (m_flags&LOOP))
 			{

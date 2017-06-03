@@ -8,8 +8,8 @@
 
 #include "../common/arraydynamicshort.hpp"
 #include "../common/arraysimple.hpp"
-#include "waveformview.hpp"
-#include "channelview.hpp"
+#include "waveformproxy.hpp"
+#include "channelproxy.hpp"
 #include "wavetable.hpp"
 #include "channelmixer.hpp"
 
@@ -120,11 +120,11 @@ namespace Anja
 			const Waveform& waveformGet(uint8_t slot) const noexcept
 				{return m_waveforms[slot];}
 
-			WaveformView waveformViewGet(uint8_t slot) noexcept
-				{return WaveformView(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
+			WaveformProxy waveformViewGet(uint8_t slot) noexcept
+				{return WaveformProxy(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
 
-			ChannelView channelViewGet(int ch) noexcept
-				{return ChannelView(m_channels[ch],m_channel_data[ch]);}
+			ChannelProxy channelViewGet(int ch) noexcept
+				{return ChannelProxy(m_channels[ch],m_channel_data[ch]);}
 
 			ArraySimple<String> channelLabelsGet() const;
 

@@ -72,7 +72,7 @@ void Engine::process(MIDI::Message msg) noexcept
 				printf("Note on %u\n",i);
 				m_key_to_voice_index[msg.value1()]=i;
 				//TODO: Time offset...
-				m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1())));
+				m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1())),msg.value2()/127.0);
 				}
 			}
 			break;
@@ -80,6 +80,14 @@ void Engine::process(MIDI::Message msg) noexcept
 		default:
 			break;
 		}
+	}
+
+
+void sleep(double dt)
+	{
+	timespec spec{0,static_cast<long>(dt*1e9)};
+
+	nanosleep(&spec,NULL);
 	}
 
 void Engine::process(AudioClient& client,int32_t n_frames) noexcept
@@ -95,6 +103,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 		{
 		if(expired(event_current,time_factor,now + k))
 			{
+			printf("Offset %d\n",k);
 			process(event_current.message);
 			midi_out.write(event_current.message,k);
 			event_current.message.clear();
@@ -104,6 +113,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 			event_current=m_ui_events.pop_front();
 			if(expired(event_current,time_factor,now + k))
 				{
+				printf("Offset %d\n",k);
 				midi_out.write(event_current.message,k);
 				process(event_current.message);
 				event_current.message.clear();
@@ -111,6 +121,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 			else
 				{break;}
 			}
+		sleep(0.5e-3/n_frames);
 		}
 
 	m_event_last=event_current;
@@ -126,8 +137,6 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 				{v.generate(audition,n_frames);}
 			});
 		}
-
-
 	}
 
 template<>

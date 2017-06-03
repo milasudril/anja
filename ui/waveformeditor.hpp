@@ -18,7 +18,7 @@
 #include "dialog.hpp"
 #include "colorpicker.hpp"
 #include "message.hpp"
-#include "../sessiondata/waveformview.hpp"
+#include "../sessiondata/waveformproxy.hpp"
 #include "../common/arraysimple.hpp"
 
 namespace Anja
@@ -57,12 +57,12 @@ namespace Anja
 			WaveformEditor(WaveformEditor&&)=delete;
 
 			template<class StringRange>
-			WaveformEditor(Container& cnt,const WaveformView& waveform
+			WaveformEditor(Container& cnt,const WaveformProxy& waveform
 				,const StringRange& channel_names):
 				WaveformEditor(cnt,waveform,channel_names.begin(),channel_names.end())
 				{}
 
-			WaveformEditor(Container& cnt,const WaveformView& waveform
+			WaveformEditor(Container& cnt,const WaveformProxy& waveform
 				,const String* channel_names_begin
 				,const String* channel_names_end);
 
@@ -101,7 +101,7 @@ namespace Anja
 			void confirmPositive(Dialog<ColorPicker>& dlg,int id);
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
-			WaveformEditor& waveform(const WaveformView& waveform);
+			WaveformEditor& waveform(const WaveformProxy& waveform);
 			WaveformEditor& waveformUpdate();
 
 		private:
@@ -130,7 +130,7 @@ namespace Anja
 			void* r_cb_obj;
 			Vtable m_vtable;
 
-			WaveformView m_waveform;
+			WaveformProxy m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
 			std::unique_ptr<Dialog<Message,DialogOk>> m_err_dlg;

@@ -35,17 +35,17 @@ static double fade_time_map_inv(double x)
 
 
 
-static void label_update(const ChannelView& channel,TextEntry& e)
+static void label_update(const ChannelProxy& channel,TextEntry& e)
 	{
 	e.content(channel.labelGet().begin());
 	}
 
-static void color_update(const ChannelView& channel,ColorView& e)
+static void color_update(const ChannelProxy& channel,ColorView& e)
 	{
 	e.color(channel.colorGet());
 	}
 
-static void fade_time_update(const ChannelView& channel,Knob& k,TextEntry& e)
+static void fade_time_update(const ChannelProxy& channel,Knob& k,TextEntry& e)
 	{
 	auto t=channel.fadeTimeGet();
 	char buffer[16];
@@ -55,7 +55,7 @@ static void fade_time_update(const ChannelView& channel,Knob& k,TextEntry& e)
 	}
 
 
-static void gain_update(const ChannelView& channel,Slider& s,TextEntry& e)
+static void gain_update(const ChannelProxy& channel,Slider& s,TextEntry& e)
 	{
 	auto g=channel.gainGet();
 	char buffer[16];
@@ -159,7 +159,7 @@ void ChannelStrip::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 		}
 	}
 
-ChannelStrip& ChannelStrip::channel(const ChannelView& ch)
+ChannelStrip& ChannelStrip::channel(const ChannelProxy& ch)
 	{
 	m_channel=ch;
 	label_update(ch,m_name);
@@ -169,7 +169,7 @@ ChannelStrip& ChannelStrip::channel(const ChannelView& ch)
 	return *this;
 	}
 
-ChannelStrip::ChannelStrip(Container& cnt,const ChannelView& channel):
+ChannelStrip::ChannelStrip(Container& cnt,const ChannelProxy& channel):
 	 r_cb_obj(nullptr)
 	,m_channel(channel)
 	,m_box(cnt,true)

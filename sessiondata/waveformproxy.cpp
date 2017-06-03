@@ -1,8 +1,8 @@
 //@	{
-//@	 "targets":[{"name":"waveformview.o","type":"object"}]
+//@	 "targets":[{"name":"waveformproxy.o","type":"object"}]
 //@	}
 
-#include "waveformview.hpp"
+#include "waveformproxy.hpp"
 #include "sessionfilerecord.hpp"
 #include "../common/pathutils.hpp"
 #include <time.h>
@@ -49,7 +49,7 @@ static String filenameGenerate(const String& label)
 	return ret;
 	}
 
-void WaveformView::load(const SessionFileRecord& rec)
+void WaveformProxy::load(const SessionFileRecord& rec)
 	{
 	r_waveform_data->dataSet(rec);
 	if(r_waveform_data->filenameGet().length()==0)
@@ -70,12 +70,12 @@ static String filename_generate(const String& str,const String& in_dir)
 	return String(in_dir).append(str);
 	}
 
-String WaveformView::filenameGet() const
+String WaveformProxy::filenameGet() const
 	{
 	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	}
 
-void WaveformView::store(SessionFileRecord& rec)
+void WaveformProxy::store(SessionFileRecord& rec)
 	{
 	if(r_waveform->flagsGet()&Waveform::RECORDED)
 		{r_waveform->fileSave(r_waveform_data->filenameGet().begin());}
@@ -86,7 +86,7 @@ void WaveformView::store(SessionFileRecord& rec)
 	}
 
 
-void WaveformView::fileLoad(const char* filename)
+void WaveformProxy::fileLoad(const char* filename)
 	{
 	if(absoluteIs(filename))
 		{
@@ -101,7 +101,7 @@ void WaveformView::fileLoad(const char* filename)
 		}
 	}
 
-void WaveformView::fileSave(const char* filename) const
+void WaveformProxy::fileSave(const char* filename) const
 	{
 	if(absoluteIs(filename))
 		{
@@ -116,7 +116,7 @@ void WaveformView::fileSave(const char* filename) const
 		}
 	}
 
-bool WaveformView::loadPossible(const char* filename) const
+bool WaveformProxy::loadPossible(const char* filename) const
 	{
 	if(absoluteIs(filename))
 		{return r_waveform->loadPossible(filename);}
@@ -124,7 +124,7 @@ bool WaveformView::loadPossible(const char* filename) const
 	return r_waveform->loadPossible(filename);
 	}
 
-bool WaveformView::fileLoaded(const char* filename) const
+bool WaveformProxy::fileLoaded(const char* filename) const
 	{
 	if(absoluteIs(filename))
 		{return r_waveform_data->filenameGet()==filename;}

@@ -127,7 +127,7 @@ Session::Session(const char* filename):m_slot_active(0)
 				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
 			--slot_num;
 
-			WaveformView(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
+			WaveformProxy(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
 				,slot_num).load(record);
 			}
 		else
@@ -142,7 +142,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			if(ch<1 || ch>16)
 				{throw Error(filename," contains invalid data. Channel numbers must be between 1 to 16 inclusive.");}
 			--ch;
-			ChannelView(m_channels[ch],m_channel_data[ch]).load(record);
+			ChannelProxy(m_channels[ch],m_channel_data[ch]).load(record);
 			}
 		}
 	dirtyClear();
@@ -276,7 +276,7 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
 
-			WaveformView wv(m_waveforms[k],*waveform,dir,k);
+			WaveformProxy wv(m_waveforms[k],*waveform,dir,k);
 			wv.store(record_out);
 			writer.recordWrite(record_out);
 			wv.dirtyClear();
@@ -296,7 +296,7 @@ void Session::save(const char* filename)
 			record_out.sectionLevelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
 			record_out.sectionTitleSet(String(buffer));
-			ChannelView cv(m_channels[k],*channel);
+			ChannelProxy cv(m_channels[k],*channel);
 			cv.store(record_out);
 			writer.recordWrite(record_out);
 			cv.dirtyClear();

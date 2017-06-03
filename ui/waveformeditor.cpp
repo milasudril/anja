@@ -44,7 +44,7 @@ static double gain_random_map(double x)
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
 
-static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
+static void offset_begin_update(const WaveformProxy& waveform,TextEntry& e,XYPlot& plot)
 	{
 	auto val=static_cast<double>( waveform.offsetBeginGet() )
 		/static_cast<double>( waveform.sampleRateGet() );
@@ -54,7 +54,7 @@ static void offset_begin_update(const WaveformView& waveform,TextEntry& e,XYPlot
 	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
 	}
 
-static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& plot)
+static void offset_end_update(const WaveformProxy& waveform,TextEntry& e,XYPlot& plot)
 	{
 	auto val=static_cast<double>( waveform.offsetEndGet() )
 		/static_cast<double>( waveform.sampleRateGet() );
@@ -65,7 +65,7 @@ static void offset_end_update(const WaveformView& waveform,TextEntry& e,XYPlot& 
 	}
 
 static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
-	,WaveformView& waveform,TextEntry& entry)
+	,WaveformProxy& waveform,TextEntry& entry)
 	{
 	auto threshold=plot.cursorY(0).position;
 	auto i=std::find_if(wfdb.begin(),wfdb.end(),[threshold](float val)
@@ -76,7 +76,7 @@ static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	}
 
 static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
-	,WaveformView& waveform,TextEntry& entry)
+	,WaveformProxy& waveform,TextEntry& entry)
 	{
 	auto threshold=plot.cursorY(0).position;
 	auto i_begin=std::reverse_iterator<const float*>(wfdb.end());
@@ -101,7 +101,7 @@ void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 		}
 	}
 
-static void gain_update(const WaveformView& wf,TextEntry& e,Slider& s)
+static void gain_update(const WaveformProxy& wf,TextEntry& e,Slider& s)
 	{
 	auto g=wf.gainGet();
 	char buffer[16];
@@ -110,7 +110,7 @@ static void gain_update(const WaveformView& wf,TextEntry& e,Slider& s)
 	s.value(gain_map_inv(g));
 	}
 
-static void gain_random_update(const WaveformView& wf,TextEntry& e,Slider& s)
+static void gain_random_update(const WaveformProxy& wf,TextEntry& e,Slider& s)
 	{
 	auto g=wf.gainRandomGet();
 	char buffer[16];
@@ -169,7 +169,7 @@ void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 	plot.curve(points,0.66f);
 	}
 
-static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry& e
+static ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntry& e
 	,OptionList& options,XYPlot& plot)
 	{
 	e.content(waveform.filenameGet().begin());
@@ -196,12 +196,12 @@ static ArraySimple<float> filename_update(const WaveformView& waveform,TextEntry
 		}
 	}
 
-static void description_update(const WaveformView& waveform,TextEntry& e)
+static void description_update(const WaveformProxy& waveform,TextEntry& e)
 	{
 	e.content(waveform.descriptionGet().begin());
 	}
 
-static void color_update(const WaveformView& waveform,TextEntry& e)
+static void color_update(const WaveformProxy& waveform,TextEntry& e)
 	{
 	e.content(ColorString(waveform.keyColorGet()).begin());
 	}
@@ -435,7 +435,7 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 	m_color_dlg.reset();
 	}
 
-WaveformEditor& WaveformEditor::waveform(const WaveformView& waveform)
+WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 	{
 	m_waveform=waveform;
 	description_update(waveform,m_description_input);
@@ -473,7 +473,7 @@ WaveformEditor& WaveformEditor::channelNames(const String* names_begin,const Str
 	return *this;
 	}
 
-WaveformEditor::WaveformEditor(Container& cnt,const WaveformView& waveform
+WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 	,const String* channel_names_begin,const String* channel_names_end):
 	 r_cb_obj(nullptr)
 	,m_waveform(waveform)
