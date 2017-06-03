@@ -30,7 +30,7 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
 	m_voices_alloc.fill();
-	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.begin()
+	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
 		,m_voices_alloc.null());
 	}
 
@@ -47,12 +47,13 @@ void Engine::process(MIDI::Message msg) noexcept
 		case MIDI::StatusCodes::NOTE_OFF:
 			{
 			auto i=m_key_to_voice_index[msg.value1()];
+
 			if(i!=m_voices_alloc.null())
 				{
 				printf("Note off %u\n",i);
 				//TODO: Time offset...
 				m_voices[i].stop();
-
+				m_key_to_voice_index[msg.value1()]=m_voices_alloc.null();
 				//This should not be done until the waveform has been played
 			//	m_voices_alloc.idRelease(i);
 				}

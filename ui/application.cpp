@@ -139,7 +139,7 @@ UiContext::RunStatus Application::idle(UiContext& ctx)
 
 void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
-	if(m_engine /*&& !m_keystate[scancode]*/)
+	if(m_engine && !m_keystate[scancode])
 		{
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
