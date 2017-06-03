@@ -132,21 +132,20 @@ AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcep
 	jack_midi_event_t e;
 	jack_midi_event_get(&e,r_buffer,k);
 
-	MidiEvent ret;
-	ret.time_offset=e.time;
-	switch(e.size)
+	auto msg=[&e]()
 		{
-		case 3:
-			ret.message=MIDI::Message(e.buffer[0],e.buffer[1],e.buffer[2]);
-			return ret;
-		case 2:
-			ret.message=MIDI::Message(e.buffer[0],e.buffer[1],0);
-			return ret;
-		case 1:
-			ret.message=MIDI::Message(e.buffer[0],0,0);
-			return ret;
-		}
-	return ret;
+		switch(e.size)
+			{
+			case 3:
+				return MIDI::Message(e.buffer[0],e.buffer[1],e.buffer[2]);
+			case 2:
+				return MIDI::Message(e.buffer[0],e.buffer[1],0);
+			case 1:
+				return MIDI::Message(e.buffer[0],0,0);
+			}
+		}();
+
+	return MidiEvent(e.time,msg);
 	}
 
 

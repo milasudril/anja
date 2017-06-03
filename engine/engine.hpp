@@ -65,7 +65,7 @@ namespace Anja
 			Engine& messagePost(MIDI::Message msg) noexcept
 				{
 				if(!m_ui_events.full())
-					{m_ui_events.push_back({static_cast<uint32_t>(now_ms() - m_time_init),msg});}
+					{m_ui_events.push_back(AudioClient::MidiEvent{static_cast<uint32_t>((now_ms() + 1.0) - m_time_init),msg});}
 				else
 					{printf("Queue is full\n");}
 				return *this;

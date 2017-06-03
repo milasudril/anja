@@ -25,7 +25,7 @@ namespace Anja
 				{
 				if(m_freelist.empty())
 					{
-					if(static_cast<size_t>(m_id_next)==m_freelist.capacityMax() - 1)
+					if(static_cast<size_t>(m_id_next)==m_freelist.capacityMax())
 						{return id_null;}
 					auto ret=m_id_next;
 					++m_id_next;

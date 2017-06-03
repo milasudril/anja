@@ -53,10 +53,41 @@ namespace Anja
 			int waveInCount() const noexcept;
 			int waveOutCount() const noexcept;
 
-			struct alignas(8) MidiEvent
+			class alignas(8) MidiEvent
 				{
-				uint32_t time_offset;
-				MIDI::Message message;
+				public:
+					MidiEvent()=default;
+
+					MidiEvent(uint32_t time_offset,MIDI::Message msg) noexcept
+						{timeOffset(time_offset).message(msg);}
+
+					uint32_t timeOffset() const noexcept
+						{return m_time_offset;}
+
+					MidiEvent& timeOffset(uint32_t offset) noexcept
+						{
+						m_time_offset=offset;
+						return *this;
+						}
+
+					MIDI::Message message() const noexcept
+						{return m_message;}
+
+					MidiEvent& message(MIDI::Message msg) noexcept
+						{
+						m_message=msg;
+						return *this;
+						}
+
+					bool valid() const noexcept
+						{return m_message.valid();}
+
+					void clear() noexcept
+						{m_message.clear();}
+
+				private:
+					uint32_t m_time_offset;
+					MIDI::Message m_message;
 				};
 
 			class MidiEventIterator

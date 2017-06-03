@@ -6,7 +6,7 @@
 
 using namespace Anja;
 
-uint64_t Anja::now_ms()
+double Anja::now_ms()
 	{
 	timespec now;
 	clock_gettime(CLOCK_MONOTONIC_RAW,&now);

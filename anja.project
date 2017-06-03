@@ -177,10 +177,10 @@
     <VirtualDirectory Name="engine">
       <File Name="engine/audioclient.hpp"/>
       <File Name="engine/engine.hpp"/>
-      <File Name="engine/engine.cpp"/>
       <File Name="engine/audioclient.cpp"/>
       <File Name="engine/voice.hpp"/>
       <File Name="engine/voice.cpp"/>
+      <File Name="engine/engine.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
   </VirtualDirectory>

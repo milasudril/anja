@@ -10,7 +10,7 @@
 
 namespace Anja
 	{
-	uint64_t now_ms();
+	double now_ms();
 	}
 
 #endif
