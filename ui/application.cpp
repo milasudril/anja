@@ -148,7 +148,10 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			{
 			if(scancode==57)
 				{
-			//Play audition...
+				auto slot_current=m_session.slotActiveGet();
+				assert(slot_current>=0 && slot_current<128);
+				note=slotToMIDI(slot_current);
+				m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note|0x80,127});
 				}
 			}
 		}

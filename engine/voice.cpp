@@ -6,7 +6,7 @@
 
 using namespace Anja;
 
-Voice::Voice(const Waveform& waveform,float velocity,int start_offset) noexcept
+Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset) noexcept
 	{
 	m_velocity=velocity;
 	m_gain=dBToAmplitude( waveform.gainGet() );
@@ -19,6 +19,7 @@ Voice::Voice(const Waveform& waveform,float velocity,int start_offset) noexcept
 	m_pos_offset=start_offset;
 	m_state=State::BEGIN;
 	m_flags=waveform.flagsGet();
+	m_channel=channel;
 	}
 
 Voice& Voice::stop(int offset) noexcept

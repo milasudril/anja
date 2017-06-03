@@ -46,18 +46,17 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 		{
 		case MIDI::StatusCodes::NOTE_OFF:
 			{
-			auto i=m_key_to_voice_index[msg.value1()];
+			auto i=m_key_to_voice_index[ msg.value1()&0x7f ];
 			if(i!=m_voices_alloc.null())
 				{
-				printf("Note off %u\n",i);
-				//TODO: Time offset...
 				m_voices[i].stop(offset);
-				m_key_to_voice_index[msg.value1()]=m_voices_alloc.null();
+				m_key_to_voice_index[ msg.value1()&0x7f ]=m_voices_alloc.null();
 				//TODO: This should not be done until the waveform has been played
 				m_voices_alloc.idRelease(i);
 				}
 			}
 			break;
+
 		case MIDI::StatusCodes::NOTE_ON:
 			{
 			auto i=m_voices_alloc.idGet();
@@ -68,10 +67,9 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 				}
 
 			assert(i!=m_voices_alloc.null());
-			printf("Note on %u\n",i);
-			m_key_to_voice_index[msg.value1()]=i;
-			//TODO: Time offset...
-			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()))
+			m_key_to_voice_index[ msg.value1()&0x7f ]=i;
+			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()&0x7f))
+				,msg.value1()&0x80?17:msg.channel()
 				,msg.value2()/127.0,offset);
 			}
 			break;
@@ -79,6 +77,12 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 		default:
 			break;
 		}
+	}
+
+static void write(MIDI::Message msg,int offset,AudioClient::MidiMessageWriter& writer)
+	{
+	if(!(msg.value1()&0x80))
+		{writer.write(msg,offset);}
 	}
 
 void Engine::process(AudioClient& client,int n_frames) noexcept
@@ -97,9 +101,9 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		if(event_current.valid() && time_factor*event_current.timeOffset()<=t_samp)
 			{
 			auto offset=std::max(time_factor*event_current.timeOffset() - t_samp,0.0);
-			printf("(a) Offset %.15g (k=%d)\n", offset,k);
+		//	printf("(a) Offset %.15g (k=%d)\n", offset,k);
 			process(event_current.message(),static_cast<int>(offset));
-			midi_out.write(event_current.message(),static_cast<int>(offset));
+			write(event_current.message(),static_cast<int>(offset),midi_out);
 			event_current.clear();
 			}
 		while(!m_ui_events.empty())
@@ -108,8 +112,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			if(event_current.valid() && time_factor*event_current.timeOffset()<t_samp)
 				{
 				auto offset=n_frames + time_factor*event_current.timeOffset() - t_samp;
-				printf("(b) Offset %.15g (k=%d)\n",offset,k);
-				midi_out.write(event_current.message(),static_cast<int>(offset));
+			//	printf("(b) Offset %.15g (k=%d)\n",offset,k);
+				write(event_current.message(),static_cast<int>(offset),midi_out);
 				process(event_current.message(),static_cast<int>(offset));
 				event_current.clear();
 				}
@@ -127,8 +131,10 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		memset(audition,0,n_frames*sizeof(*audition));
 		std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
 			{
-			if(!v.done())
-				{v.generate(audition,n_frames);}
+			if(!v.done() && v.channel()==17)
+				{
+				v.generate(audition,n_frames);
+				}
 			});
 		}
 	if(n_frames>=1024)

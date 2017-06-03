@@ -6,7 +6,7 @@ CONTROL_CHANGE;0xB0;Controller
 PROGRAM_CHANGE;0xC0;Program change
 CHANNEL_PRESSURE;0xD0;Channel pressure
 PITCH_BEND;0xE0;Pitch bend
-SYSTEM_BEGIN;0xF0;Begin system exclusive message
+SYSEX_BEGIN;0xF0;Begin system exclusive message
 MTC_QUARTER;0xF1;MIDI time code
 SONG_POSITION;0xF2;Song position
 SONG_SELECT;0xF3;Song select
