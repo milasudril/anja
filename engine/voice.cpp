@@ -18,6 +18,19 @@ Voice::Voice(const Waveform& waveform,float velocity,int start_offset) noexcept
 	r_end=waveform.end();
 	m_pos_offset=start_offset;
 	m_state=State::BEGIN;
+	m_flags=waveform.flagsGet();
+	}
+
+Voice& Voice::stop(int offset) noexcept
+	{
+	if(m_flags&Waveform::SUSTAIN)
+		{m_flags&=~Waveform::LOOP;}
+	else
+		{
+		m_pos_offset=offset;
+		m_state=State::END;
+		}
+	return *this;
 	}
 
 void Voice::generate(float* buffer_out,int n_frames) noexcept
@@ -41,10 +54,10 @@ void Voice::generate(float* buffer_out,int n_frames) noexcept
 		{
 		*buffer_out+=g*(*r_pos_current);
 		++r_pos_current;
-		if(r_pos_current==r_loop_end && (m_flags&LOOP))
+		if(r_pos_current==r_loop_end && (m_flags&Waveform::LOOP))
 			{
 			r_pos_current=r_loop_begin;
-			if(m_flags&SET_GAIN_ON_LOOP)
+			if(m_flags&Waveform::GAIN_ONLOOP_SET)
 				{
 				//TODO set gain from random generator...
 				}
