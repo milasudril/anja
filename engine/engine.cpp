@@ -23,7 +23,7 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_running(1)
 	,m_ui_events(1024)
 	,m_time_init(now_ms())
-	,m_voices(8)
+	,m_voices(64)
 	,m_key_to_voice_index(128)
 	,m_voices_alloc(m_voices.length())
 	,m_client(client_name(session.titleGet()).begin(),*this)
@@ -54,7 +54,7 @@ void Engine::process(MIDI::Message msg) noexcept
 				m_voices[i].stop();
 				m_key_to_voice_index[msg.value1()]=m_voices_alloc.null();
 				//This should not be done until the waveform has been played
-			//	m_voices_alloc.idRelease(i);
+				m_voices_alloc.idRelease(i);
 				}
 			}
 			break;
