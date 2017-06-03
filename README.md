@@ -20,7 +20,7 @@ These libraries are required in order to run Anja
  * jack
  * sndfile
 
-###Tools
+### Tools
 These tools are required in order to compile Anja
 
  * blender -- 3D modelling and rendering package
