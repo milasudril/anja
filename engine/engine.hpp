@@ -54,7 +54,7 @@ namespace Anja
 				return *this;
 				}
 
-			void process(AudioClient& client,int32_t n_frames) noexcept;
+			void process(AudioClient& client,int n_frames) noexcept;
 			const char* port(AudioClient::PortType type,int index) const noexcept;
 
 
@@ -86,7 +86,7 @@ namespace Anja
 			ReadySignal m_ready;
 			Thread m_rec_thread;
 
-			void process(MIDI::Message msg) noexcept;
+			void process(MIDI::Message msg,int offset) noexcept;
 
 		};
 

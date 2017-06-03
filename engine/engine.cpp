@@ -40,7 +40,7 @@ Engine::~Engine()
 	m_ready.set();
 	}
 
-void Engine::process(MIDI::Message msg) noexcept
+void Engine::process(MIDI::Message msg,int offset) noexcept
 	{
 	switch(msg.status())
 		{
@@ -51,9 +51,9 @@ void Engine::process(MIDI::Message msg) noexcept
 				{
 				printf("Note off %u\n",i);
 				//TODO: Time offset...
-				m_voices[i].stop();
+				m_voices[i].stop(offset);
 				m_key_to_voice_index[msg.value1()]=m_voices_alloc.null();
-				//This should not be done until the waveform has been played
+				//TODO: This should not be done until the waveform has been played
 				m_voices_alloc.idRelease(i);
 				}
 			}
@@ -71,7 +71,8 @@ void Engine::process(MIDI::Message msg) noexcept
 			printf("Note on %u\n",i);
 			m_key_to_voice_index[msg.value1()]=i;
 			//TODO: Time offset...
-			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1())),msg.value2()/127.0);
+			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()))
+				,msg.value2()/127.0,offset);
 			}
 			break;
 
@@ -80,7 +81,7 @@ void Engine::process(MIDI::Message msg) noexcept
 		}
 	}
 
-void Engine::process(AudioClient& client,int32_t n_frames) noexcept
+void Engine::process(AudioClient& client,int n_frames) noexcept
 	{
 	auto time_factor=client.sampleRate()/1000.0;
 	auto now=time_factor*(now_ms() - m_time_init);
@@ -97,7 +98,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 			{
 			auto offset=std::max(time_factor*event_current.timeOffset() - t_samp,0.0);
 			printf("(a) Offset %.15g (k=%d)\n", offset,k);
-			process(event_current.message());
+			process(event_current.message(),static_cast<int>(offset));
 			midi_out.write(event_current.message(),static_cast<int>(offset));
 			event_current.clear();
 			}
@@ -109,7 +110,7 @@ void Engine::process(AudioClient& client,int32_t n_frames) noexcept
 				auto offset=n_frames + time_factor*event_current.timeOffset() - t_samp;
 				printf("(b) Offset %.15g (k=%d)\n",offset,k);
 				midi_out.write(event_current.message(),static_cast<int>(offset));
-				process(event_current.message());
+				process(event_current.message(),static_cast<int>(offset));
 				event_current.clear();
 				}
 			else

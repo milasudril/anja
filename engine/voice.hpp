@@ -6,6 +6,8 @@
 #ifndef ANJA_VOICE_HPP
 #define ANJA_VOICE_HPP
 
+#include <cstdint>
+
 namespace Anja
 	{
 	class Waveform;
@@ -16,19 +18,22 @@ namespace Anja
 			Voice() noexcept:r_pos_current(nullptr),r_end(nullptr){}
 
 			explicit Voice(Waveform&& waveform)=delete;
-			explicit Voice(const Waveform& waveform,float velocity) noexcept;
+			explicit Voice(const Waveform& waveform,float velocity,int start_offset) noexcept;
 
 			void generate(float* buffer_out,int n_frames) noexcept;
 
 			bool done() const noexcept
 				{return r_pos_current==r_end;}
 
-			Voice& stop() noexcept
+			Voice& stop(int offset) noexcept
 				{
 				if(m_flags&SUSTAIN)
 					{m_flags&=~LOOP;}
 				else
-					{r_pos_current=r_end;}
+					{
+					m_pos_offset=offset;
+					m_state=State::END;
+					}
 				return *this;
 				}
 
@@ -41,11 +46,14 @@ namespace Anja
 			const float* r_loop_begin;
 			const float* r_loop_end;
 			const float* r_end;
+			int m_pos_offset;
 
-			static constexpr int LOOP=1;
-			static constexpr int SET_GAIN_ON_LOOP=2;
-			static constexpr int SUSTAIN=4;
-			int m_flags;
+			static constexpr uint16_t LOOP=1;
+			static constexpr uint16_t SET_GAIN_ON_LOOP=2;
+			static constexpr uint16_t SUSTAIN=4;
+			uint16_t m_flags;
+			enum class State:uint16_t{BEGIN,RUNNING,END};
+			State m_state;
 		};
 	}
 
