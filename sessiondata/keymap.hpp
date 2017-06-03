@@ -41,6 +41,8 @@ namespace Anja
 
 		return slotToMIDI(slot);
 		}
+
+	static constexpr int AUDITION_KEY=57;
 	}
 
 #endif

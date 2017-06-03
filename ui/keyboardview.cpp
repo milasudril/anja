@@ -164,6 +164,15 @@ static constexpr auto x_positions(const ArrayFixed<KeyPolygon,N>& keys,size_t n_
 	return ret;
 	}
 
+template<size_t N>
+static constexpr auto key_widths(const ArrayFixed<KeyPolygon,N>& keys)
+	{
+	ArrayFixed<uint8_t,N> ret;
+	for(size_t k=0;k<N;++k)
+		{ret[k]=x_max(keys[k]);}
+	return ret;
+	}
+
 
 
 static constexpr uint8_t TYPING_AREA_COLS=15;
@@ -229,6 +238,8 @@ static constexpr uint8_t scancode_typing_area_keys(uint8_t scancode)
 
 static constexpr auto s_typing_area_x_pos=x_positions(s_typing_area,TYPING_AREA_COLS);
 
+static constexpr auto s_typing_area_width=key_widths(s_typing_area);
+
 constexpr ArrayFixed<const char*,TYPING_AREA_COLS*TYPING_AREA_ROWS> s_typing_area_labels_swe
 	{
 	 "§","1","2","3","4","5","6","7","8","9","0","+","`","⟵",""
@@ -267,6 +278,9 @@ static constexpr uint8_t scancode_function_keys(uint8_t scancode)
 	}
 
 static constexpr auto s_function_keys_x_pos=x_positions(s_function_keys,FUNCTION_KEYS_COLS);
+
+static constexpr auto s_function_keys_width=key_widths(s_function_keys);
+
 
 constexpr ArrayFixed<const char*,FUNCTION_KEYS_COLS> s_function_keys_labels
 	{
@@ -472,6 +486,7 @@ static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
 
 template<class DrawFunction>
 void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
+	,const uint8_t* key_sizes
 	,const uint8_t* key_index,const ColorRGBA* key_colors,const std::string* labels
 	,cairo_t* cr,Vec2 O,double key_width,DrawFunction&& fn)
 	{
@@ -494,7 +509,7 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 			Vec2 text_pos=O;
 			text_pos+=Vec2
 				{
-				 key_width*key_positions[k]/16.0 + 0.5*key_width - 0.5*extents.width
+				 key_width*key_positions[k]/16.0 + 0.5*key_width*key_sizes[k]/16.0 - 0.5*extents.width
 				,key_width*(static_cast<double>( k/TYPING_AREA_COLS ) + 0.5)
 					+ 0.5*extents.height
 				};
@@ -542,11 +557,15 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	cairo_set_line_width(cr,key_width/16);
 	cairo_set_font_size(cr,std::min(key_width/4,12.0));
 
-	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
+	draw_keys(s_function_keys.length(),s_function_keys.begin()
+		,s_function_keys_x_pos.begin()
+		,s_function_keys_width.begin()
 		,s_function_keys_scancodes,self->m_colors.begin(),self->m_labels.begin(),cr
 		,O+key_width*Vec2{1.5,0},key_width,&cairo_fill);
 
-	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
+	draw_keys(s_typing_area.length(),s_typing_area.begin()
+		,s_typing_area_x_pos.begin()
+		,s_typing_area_width.begin()
 		,s_typing_area_scancodes
 		,self->m_colors.begin(),self->m_labels.begin(),cr,O+key_width*Vec2{0,1.5}
 		,key_width,&cairo_fill);
