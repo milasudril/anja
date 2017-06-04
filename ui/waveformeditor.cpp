@@ -437,6 +437,7 @@ void WaveformEditor::confirmPositive(Dialog<ColorPicker>& dlg,int id)
 
 WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 	{
+	auto index_old=m_waveform.index();
 	m_waveform=waveform;
 	description_update(waveform,m_description_input);
 	color_update(waveform,m_color_input);
@@ -448,7 +449,7 @@ WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 
 		{
 		m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
-		if(waveform.index()!=m_waveform.index())
+		if(waveform.index()!=index_old)
 			{m_plot.showAll();}
 		m_filename_input.focus();
 		}
