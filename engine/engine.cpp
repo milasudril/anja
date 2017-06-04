@@ -131,17 +131,14 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	auto time_factor=client.sampleRate()/1000.0;
 	auto now=time_factor*(now_ms() - m_time_init);
 
-	auto midi_in=client.midiIn(0,n_frames);
 	auto midi_out=client.midiOut(0,n_frames);
-	auto event_current=m_event_last;
 
 //	Fetch events
-	for(int32_t k=0;k<n_frames;++k)
-		{
-		auto t_samp=now + k;
-		if(event_current.valid() && time_factor*event_current.timeOffset()<=t_samp)
+	auto midi_in=client.midiIn(0,n_frames);
+	auto event_current=m_event_last;
+		if(event_current.valid())
 			{
-			auto offset=std::max(time_factor*event_current.timeOffset() - t_samp,0.0);
+			auto offset=std::max(time_factor*event_current.timeOffset() - now,0.0);
 			process(event_current.message(),static_cast<int>(offset));
 			write(event_current.message(),static_cast<int>(offset),midi_out);
 			event_current.clear();
@@ -149,9 +146,9 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		while(!m_ui_events.empty())
 			{
 			event_current=m_ui_events.pop_front();
-			if(event_current.valid() && time_factor*event_current.timeOffset()<t_samp)
+			if(event_current.valid() && n_frames + time_factor*event_current.timeOffset() - now<n_frames)
 				{
-				auto offset=n_frames + time_factor*event_current.timeOffset() - t_samp;
+				auto offset=std::max(n_frames + time_factor*event_current.timeOffset() - now,0.0);
 				write(event_current.message(),static_cast<int>(offset),midi_out);
 				process(event_current.message(),static_cast<int>(offset));
 				event_current.clear();
@@ -159,9 +156,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			else
 				{break;}
 			}
-		}
-
 	m_event_last=event_current;
+
 //	Render and mix voices
 	memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));
 	auto audition=client.waveOut(indexAudition(client),n_frames);
@@ -217,7 +213,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	if(client.waveOutCount()>2)  //Individual channel output
 		{
 		auto ch_buffers=m_channel_buffers.begin();
-		for(int k=0;k<m_channel_gain.length();++k)
+		for(size_t k=0;k<m_channel_gain.length();++k)
 			{memcpy(client.waveOut(k,n_frames),ch_buffers + k*n_frames,n_frames*sizeof(float));}
 		}
 	}
