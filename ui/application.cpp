@@ -86,6 +86,10 @@ Application& Application::sessionNew()
 	m_session.clear();
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
+	try
+		{m_engine.reset( new Engine(m_session) );}
+	catch(...)
+		{}
 	return *this;
 	}
 
@@ -190,18 +194,27 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_NEW);}
 				else
-					{sessionNew();}
+					{
+					m_engine.reset();
+					sessionNew();
+					}
 				break;
 			case 1:
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}				else
-					{sessionLoad();}
+					{
+					m_engine.reset();
+					sessionLoad();
+					}
 				break;
 			case 2:
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_RELOAD);}
 				else
-					{sessionLoad(m_session.filenameGet().begin());}
+					{
+					m_engine.reset();
+					sessionLoad(m_session.filenameGet().begin());
+					}
 				break;
 			case 3:
 				sessionSave();
@@ -270,6 +283,10 @@ Application& Application::sessionLoad(const char* filename)
 	m_session.load(filename);
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
+	try
+		{m_engine.reset( new Engine(m_session) );}
+	catch(...)
+		{}
 	return *this;
 	}
 
@@ -302,4 +319,3 @@ Application::Application():
 	title_update(m_session,m_mainwin);
 	m_mainwin.show();
 	}
-
