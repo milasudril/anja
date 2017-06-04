@@ -55,7 +55,9 @@ namespace Anja
 				}
 
 			void process(AudioClient& client,int n_frames) noexcept;
+			void bufferSize(AudioClient& client,int n_frames) noexcept;
 			const char* port(AudioClient::PortType type,int index) const noexcept;
+			void portConnected(AudioClient& client,AudioClient::PortType type,int index) noexcept;
 
 
 			enum class TaskId:int{RECORD};
@@ -71,6 +73,12 @@ namespace Anja
 				return *this;
 				}
 
+			Engine& channelVolume(int channel,float value) noexcept
+				{
+				assert(channel>=0 && channel<16);
+				return messagePost(MIDI::Message(MIDI::ControlCodes::CHANNEL_VOLUME,channel,dB_to_MIDI_val(value)));
+				}
+
 		private:
 			const Session* r_session;
 			volatile bool m_running;
@@ -81,12 +89,20 @@ namespace Anja
 			typedef int VoiceIndex;
 			ArraySimple<VoiceIndex> m_key_to_voice_index;
 			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
+			ArraySimple<float> m_channel_buffers;
+			ArraySimple<float> m_channel_gain;
 
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;
 
 			void process(MIDI::Message msg,int offset) noexcept;
+
+			static float dB_to_MIDI_val(float val) noexcept
+				{return 127.0f*(val + 72.0f)/78.0f;}
+
+			static float MIDI_val_to_dB(float val) noexcept
+				{return 78.0f*val/127.0f - 72.0f;}
 
 		};
 

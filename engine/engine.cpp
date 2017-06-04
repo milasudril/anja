@@ -2,6 +2,7 @@
 
 #include "engine.hpp"
 #include "../sessiondata/keymap.hpp"
+#include "../common/units.hpp"
 
 using namespace Anja;
 
@@ -26,18 +27,41 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_voices(64)
 	,m_key_to_voice_index(128)
 	,m_voices_alloc(m_voices.length())
+	,m_channel_buffers(16*64)
+	,m_channel_gain(16)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
 	m_voices_alloc.fill();
 	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
 		,m_voices_alloc.null());
+
+	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
+	}
+
+void Engine::bufferSize(AudioClient& client,int n_frames) noexcept
+	{
+	m_channel_buffers=ArraySimple<float>(n_frames*m_channel_gain.length());
 	}
 
 Engine::~Engine()
 	{
 	m_running=0;
 	m_ready.set();
+	}
+
+void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index) noexcept
+	{
+	printf("%d %d\n",type,index);
+
+	if(type==AudioClient::PortType::MIDI_OUT)
+		{
+		for(int k=0;k<16;++k)
+			{
+			messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
+			channelVolume(k,r_session->channelGet(k).gainGet());
+			}
+		}
 	}
 
 void Engine::process(MIDI::Message msg,int offset) noexcept
@@ -74,6 +98,17 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 			}
 			break;
 
+		case MIDI::StatusCodes::CONTROL_CHANGE:
+			switch(msg.ctrlCode())
+				{
+				case MIDI::ControlCodes::CHANNEL_VOLUME:
+					m_channel_gain[msg.channel()]=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
+					break;
+				default:
+					break;
+				}
+			break;
+
 		default:
 			break;
 		}
@@ -94,14 +129,13 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	auto midi_out=client.midiOut(0,n_frames);
 	auto event_current=m_event_last;
 
-
+//	Fetch events
 	for(int32_t k=0;k<n_frames;++k)
 		{
 		auto t_samp=now + k;
 		if(event_current.valid() && time_factor*event_current.timeOffset()<=t_samp)
 			{
 			auto offset=std::max(time_factor*event_current.timeOffset() - t_samp,0.0);
-		//	printf("(a) Offset %.15g (k=%d)\n", offset,k);
 			process(event_current.message(),static_cast<int>(offset));
 			write(event_current.message(),static_cast<int>(offset),midi_out);
 			event_current.clear();
@@ -112,7 +146,6 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			if(event_current.valid() && time_factor*event_current.timeOffset()<t_samp)
 				{
 				auto offset=n_frames + time_factor*event_current.timeOffset() - t_samp;
-			//	printf("(b) Offset %.15g (k=%d)\n",offset,k);
 				write(event_current.message(),static_cast<int>(offset),midi_out);
 				process(event_current.message(),static_cast<int>(offset));
 				event_current.clear();
@@ -124,21 +157,52 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 
 	m_event_last=event_current;
 
-	if(client.waveOutCount()==2) //Two outputs => single-channel output (Master + Audition)
+//	Render and mix voices
+	memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));
+	auto audition=client.waveOut(1,n_frames);
+	memset(audition,0,n_frames*sizeof(*audition));
+	std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
 		{
-		auto master=client.waveOut(0,n_frames);
-		auto audition=client.waveOut(1,n_frames);
-		memset(audition,0,n_frames*sizeof(*audition));
-		std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
+		if( !v.done() )
 			{
-			if(!v.done() && v.channel()==17)
-				{
-				v.generate(audition,n_frames);
-				}
-			});
+			if(v.channel()==17)
+				{v.generate(audition,n_frames);}
+			else
+				{v.generate(m_channel_buffers.begin() + n_frames*v.channel(),n_frames);}
+			}
+		});
+
+//	Apply channel gain
+	assert(n_frames%4==0);
+	for(size_t k=0;k<m_channel_gain.length();++k)
+		{
+		auto gain=m_channel_gain[k];
+		vec4_t<float> g_vec={gain,gain,gain,gain};
+		vec4_t<float>* begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
+		auto end=begin + n_frames/4;
+		while(begin!=end)
+			{
+			*begin=g_vec*(*begin);
+			++begin;
+			}
 		}
-	if(n_frames>=1024)
-		{puts("=");}
+
+//	Mix channels
+	auto master=client.waveOut(0,n_frames);
+	memset(master,0,n_frames*sizeof(*master));
+	for(size_t k=0;k<m_channel_gain.length();++k)
+		{
+		vec4_t<const float>* begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
+		vec4_t<float>* ptr_out=reinterpret_cast<vec4_t<float>*>(master);
+		auto end=begin + n_frames/4;
+		while(begin!=end)
+			{
+			*ptr_out+=*begin;
+			++begin;
+			++ptr_out;
+			}
+		}
+
 	}
 
 template<>

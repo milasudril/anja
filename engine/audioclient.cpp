@@ -6,6 +6,7 @@
 #include <jack/midiport.h>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 using namespace Anja;
 
@@ -70,6 +71,27 @@ class AudioClient::Impl:private AudioClient
 
 		double sampleRate() const noexcept
 			{return m_sample_rate;}
+
+		int portIndex(jack_port_t* port,PortType type) const noexcept
+			{
+			auto i=std::find_if(m_ports.begin(),m_ports.end(),[port](jack_port_t* p)
+				{return port==p;});
+			if(i==m_ports.end())
+				{return -1;}
+			auto ret=i-m_ports.begin();
+			switch(type)
+				{
+				case PortType::MIDI_IN:
+					return ret - portOffset<PortType::MIDI_IN>(0);
+				case PortType::MIDI_OUT:
+					return ret - portOffset<PortType::MIDI_OUT>(0);
+				case PortType::WAVE_IN:
+					return ret - portOffset<PortType::WAVE_IN>(0);
+				case PortType::WAVE_OUT:
+					return ret - portOffset<PortType::WAVE_OUT>(0);
+				}
+			return -1;
+			}
 
 
 	private:
@@ -142,6 +164,8 @@ AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcep
 				return MIDI::Message(e.buffer[0],e.buffer[1],0);
 			case 1:
 				return MIDI::Message(e.buffer[0],0,0);
+			default:
+				return MIDI::Message(0,0,0);
 			}
 		}();
 
@@ -209,6 +233,17 @@ static int ports_create(jack_client_t* client,const Vtable& vt,void* cb_obj
 	}
 
 
+static AudioClient::PortType port_type(jack_port_t* port) noexcept
+	{
+	auto type_name=jack_port_type(port);
+	auto output=jack_port_flags(port)&JackPortIsOutput;
+	if(strcmp(type_name,JACK_DEFAULT_MIDI_TYPE)==0)
+		{return output?AudioClient::PortType::MIDI_OUT : AudioClient::PortType::MIDI_IN;}
+	else
+		{return output?AudioClient::PortType::WAVE_OUT : AudioClient::PortType::WAVE_IN;}
+	}
+
+
 AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
 	,r_cb_obj(cb_obj),m_vt(vt)
 	{
@@ -220,11 +255,41 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 		throw Error("The client \"",name,"\" failed to connect to JACK. Check if the server is running.");
 		}
 
-	jack_set_process_callback(m_handle,[](uint32_t n_frames,void* obj)
+	jack_set_process_callback(m_handle,[](jack_nframes_t n_frames,void* obj)
 		{
 		auto self=reinterpret_cast<Impl*>(obj);
 		self->m_vt.process_callback(self->r_cb_obj,*self,n_frames);
 		return 0;
+		},this);
+
+	jack_set_buffer_size_callback(m_handle,[](jack_nframes_t n_frames,void* obj)
+		{
+		auto self=reinterpret_cast<Impl*>(obj);
+		self->m_vt.buffersize_callback(self->r_cb_obj,*self,n_frames);
+		return 0;
+		},this);
+
+	jack_set_port_connect_callback(m_handle,[](jack_port_id_t a,jack_port_id_t b,int connect,void* obj)
+		{
+		if(connect)
+			{
+			auto self=reinterpret_cast<Impl*>(obj);
+			auto port_a=jack_port_by_id(self->m_handle,a);
+			if(jack_port_is_mine(self->m_handle,port_a))
+				{
+				auto type=port_type(port_a);
+				auto i=self->portIndex(port_a,type);
+				self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_a),i);
+				}
+
+			auto port_b=jack_port_by_id(self->m_handle,b);
+			if(jack_port_is_mine(self->m_handle,port_b))
+				{
+				auto type=port_type(port_b);
+				auto i=self->portIndex(port_b,type);
+				self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_b),i);
+				}
+			}
 		},this);
 
 	m_port_type_offsets[0]=0;

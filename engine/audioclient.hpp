@@ -27,8 +27,12 @@ namespace Anja
 					{
 					 [](void* cb_obj,AudioClient& self,int32_t n_frames)
 						{reinterpret_cast<Callback*>(cb_obj)->process(self,n_frames);}
+					,[](void* cb_obj,AudioClient& self,int32_t n_frames)
+						{reinterpret_cast<Callback*>(cb_obj)->bufferSize(self,n_frames);}
 					,[](void* cb_obj,PortType type,int index)
 						{return reinterpret_cast<Callback*>(cb_obj)->port(type,index);}
+					,[](void* cb_obj,AudioClient& self,PortType type,int index)
+						{return reinterpret_cast<Callback*>(cb_obj)->portConnected(self,type,index);}
 					})
 				{}
 
@@ -141,7 +145,9 @@ namespace Anja
 			struct Vtable
 				{
 				void (*process_callback)(void* cb_obj,AudioClient& self,int n_frames);
+				void (*buffersize_callback)(void* cb_obj,AudioClient& self,int n_frames);
 				const char* (*port_callback)(void* cb,PortType type,int index);
+				void (*port_connected)(void* cb,AudioClient& self,PortType type,int index);
 				};
 
 			Impl* m_impl;

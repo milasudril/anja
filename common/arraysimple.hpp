@@ -19,9 +19,6 @@ namespace Anja
 		public:
 			~ArraySimple();
 
-			ArraySimple() noexcept:m_content{0,0}
-				{}
-
 			explicit ArraySimple(const T* begin,const T* end);
 
 			explicit ArraySimple(SizeType n_elems);
