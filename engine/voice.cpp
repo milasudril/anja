@@ -45,7 +45,10 @@ void Voice::generate(float* buffer_out,int n_frames) noexcept
 			break;
 		case State::END:
 			n_frames=std::min(m_pos_offset,n_frames);
+			m_state=State::DONE;
 			break;
+		case State::DONE:
+			return;
 		default:
 			break;
 		}

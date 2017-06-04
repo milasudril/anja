@@ -24,7 +24,7 @@ namespace Anja
 			void generate(float* buffer_out,int n_frames) noexcept;
 
 			bool done() const noexcept
-				{return r_pos_current==r_end;}
+				{return r_pos_current==r_end || m_state==State::DONE;}
 
 			Voice& stop(int offset) noexcept;
 
@@ -44,7 +44,7 @@ namespace Anja
 			int m_channel;
 
 			uint16_t m_flags;
-			enum class State:uint16_t{BEGIN,RUNNING,END};
+			enum class State:uint16_t{BEGIN,RUNNING,END,DONE};
 			State m_state;
 		};
 	}
