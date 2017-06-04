@@ -52,8 +52,6 @@ Engine::~Engine()
 
 void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index) noexcept
 	{
-	printf("%d %d\n",type,index);
-
 	if(type==AudioClient::PortType::MIDI_OUT)
 		{
 		for(int k=0;k<16;++k)
@@ -188,12 +186,12 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		}
 
 //	Mix channels
-	auto master=client.waveOut(0,n_frames);
-	memset(master,0,n_frames*sizeof(*master));
+	auto master=reinterpret_cast<vec4_t<float>*>( client.waveOut(0,n_frames) );
+	memset(master,0,n_frames*sizeof(float));
 	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
 		vec4_t<const float>* begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
-		vec4_t<float>* ptr_out=reinterpret_cast<vec4_t<float>*>(master);
+		auto ptr_out=master;
 		auto end=begin + n_frames/4;
 		while(begin!=end)
 			{
@@ -202,6 +200,11 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			++ptr_out;
 			}
 		}
+
+	auto g=dBToAmplitude( r_session->gainGet() );
+	auto g_vec=vec4_t<float>{g,g,g,g};
+	std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
+		{vec*=g_vec;});
 
 	}
 
