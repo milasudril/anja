@@ -118,6 +118,14 @@ static void write(MIDI::Message msg,int offset,AudioClient::MidiMessageWriter& w
 		{writer.write(msg,offset);}
 	}
 
+int Engine::indexAudition(const AudioClient& client) const noexcept
+	{return indexMaster(client) + 1;}
+
+int Engine::indexMaster(const AudioClient& client) const noexcept
+	{
+	return client.waveOutCount()>2?16:0;
+	}
+
 void Engine::process(AudioClient& client,int n_frames) noexcept
 	{
 	auto time_factor=client.sampleRate()/1000.0;
@@ -154,10 +162,9 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		}
 
 	m_event_last=event_current;
-
 //	Render and mix voices
 	memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));
-	auto audition=client.waveOut(1,n_frames);
+	auto audition=client.waveOut(indexAudition(client),n_frames);
 	memset(audition,0,n_frames*sizeof(*audition));
 	std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
 		{
@@ -186,7 +193,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		}
 
 //	Mix channels
-	auto master=reinterpret_cast<vec4_t<float>*>( client.waveOut(0,n_frames) );
+	auto master=reinterpret_cast<vec4_t<float>*>( client.waveOut(indexMaster(client),n_frames) );
 	memset(master,0,n_frames*sizeof(float));
 	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
@@ -206,6 +213,13 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
 		{vec*=g_vec;});
 
+
+	if(client.waveOutCount()>2)  //Individual channel output
+		{
+		auto ch_buffers=m_channel_buffers.begin();
+		for(int k=0;k<m_channel_gain.length();++k)
+			{memcpy(client.waveOut(k,n_frames),ch_buffers + k*n_frames,n_frames*sizeof(float));}
+		}
 	}
 
 template<>

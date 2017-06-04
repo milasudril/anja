@@ -104,6 +104,9 @@ namespace Anja
 			static float MIDI_val_to_dB(float val) noexcept
 				{return 78.0f*val/127.0f - 72.0f;}
 
+			int indexAudition(const AudioClient& client) const noexcept;
+			int indexMaster(const AudioClient& client) const noexcept;
+
 		};
 
 	template<>
