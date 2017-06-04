@@ -30,6 +30,7 @@ namespace Anja
 
 			void nameChanged(ChannelStrip& strip,int id);
 			void colorChanged(ChannelStrip& strip,int id);
+			void gainChanged(ChannelStrip& strip,int id);
 			void colorPresetsChanged(ColorPicker& picker);
 
 			void masterGainChanged(MixerConsole& mixer,MixerId id);
@@ -47,12 +48,16 @@ namespace Anja
 				m_settings.callback(cb,id);
 				m_channel_name_callback=[](void* cb_obj,ChannelStrip& self,int id)
 					{reinterpret_cast<Callback*>(cb_obj)->nameChanged(self,id);};
+				m_channel_gain_callback=[](void* cb_obj,ChannelStrip& self,int id)
+					{reinterpret_cast<Callback*>(cb_obj)->gainChanged(self,id);};
 				r_cb_obj=&cb;
 				return *this;
 				}
 
 		private:
 			void (*m_channel_name_callback)(void* cb_obj,ChannelStrip& self,int id);
+			void (*m_channel_gain_callback)(void* cb_obj,ChannelStrip& self,int id);
+
 			void* r_cb_obj;
 			Session& r_session;
 			Paned m_hsplit;

@@ -73,7 +73,7 @@ namespace Anja
 				return *this;
 				}
 
-			Engine& channelVolume(int channel,float value) noexcept
+			Engine& channelGain(int channel,float value) noexcept
 				{
 				assert(channel>=0 && channel<16);
 				return messagePost(MIDI::Message(MIDI::ControlCodes::CHANNEL_VOLUME,channel,dB_to_MIDI_val(value)));

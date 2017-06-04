@@ -89,8 +89,12 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{m_channel.gainSet(val_new);}
+				{
+				m_channel.gainSet(val_new);
+				}
 			gain_update(m_channel,m_gain_slider,entry);
+			if(r_cb_obj!=nullptr)
+				{m_vtable.gain_changed(r_cb_obj,*this,m_id);}
 			}
 			break;
 		}
@@ -116,6 +120,8 @@ void ChannelStrip::changed(Slider& slider,SliderId id)
 		case SliderId::GAIN:
 			m_channel.gainSet( gain_map(slider.value()) );
 			gain_update(m_channel,slider,m_gain_input);
+			if(r_cb_obj!=nullptr)
+				{m_vtable.gain_changed(r_cb_obj,*this,m_id);}
 			break;
 		}
 	}

@@ -43,6 +43,9 @@ namespace Anja
 			const ColorRGBA& color() const noexcept
 				{return m_channel.colorGet();}
 
+			float gain() const noexcept
+				{return m_channel.gainGet();}
+
 			template<class Callback,class IdType>
 			ChannelStrip& callback(Callback& cb,IdType id) noexcept
 				{
@@ -77,6 +80,8 @@ namespace Anja
 				template<class Callback,class IdType>
 				Vtable(Callback& cb_obj,IdType id)
 					{
+					gain_changed=[](void* cb_obj,ChannelStrip& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->gainChanged(self,static_cast<IdType>(id));};
 					name_changed=[](void* cb_obj,ChannelStrip& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->nameChanged(self,static_cast<IdType>(id));};
 					color_changed=[](void* cb_obj,ChannelStrip& self,int id)
@@ -85,6 +90,7 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
 					}
 
+				void (*gain_changed)(void* cb_obj,ChannelStrip& self,int id);
 				void (*name_changed)(void* cb_obj,ChannelStrip& self,int id);
 				void (*color_changed)(void* cb_obj,ChannelStrip& self,int id);
 				void (*color_presets_changed)(void* cb_obj,ColorPicker& self);

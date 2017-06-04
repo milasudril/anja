@@ -24,6 +24,13 @@ void SessionEditor::colorChanged(ChannelStrip& strip,int id)
 	}
 
 
+void SessionEditor::gainChanged(ChannelStrip& strip,int id)
+	{
+	if(r_cb_obj!=nullptr)
+		{m_channel_gain_callback(r_cb_obj,strip,id);}
+	}
+
+
 void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();

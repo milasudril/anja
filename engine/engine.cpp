@@ -57,7 +57,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 		for(int k=0;k<16;++k)
 			{
 			messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
-			channelVolume(k,r_session->channelGet(k).gainGet());
+			channelGain(k,r_session->channelGet(k).gainGet());
 			}
 		}
 	}
@@ -176,7 +176,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		{
 		auto gain=m_channel_gain[k];
 		vec4_t<float> g_vec={gain,gain,gain,gain};
-		vec4_t<float>* begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
+		auto begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
 		auto end=begin + n_frames/4;
 		while(begin!=end)
 			{
@@ -190,7 +190,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	memset(master,0,n_frames*sizeof(float));
 	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
-		vec4_t<const float>* begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
+		auto begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
 		auto ptr_out=master;
 		auto end=begin + n_frames/4;
 		while(begin!=end)
