@@ -37,6 +37,7 @@
       <File Name="sessiondata/channelproxy.cpp"/>
       <File Name="sessiondata/waveformproxy.cpp"/>
       <File Name="sessiondata/waveformproxy.hpp"/>
+      <File Name="sessiondata/parser.dot"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

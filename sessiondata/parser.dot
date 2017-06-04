@@ -1,0 +1,64 @@
+digraph G
+{
+	"State::HEADER"->"State::HEADER_WHITESPACE"[label="{whitespace}\\'\\n'"]
+	"State::HEADER"->"State::HEADER_SEPARATOR"[label="case '\\n'"]
+    "State::HEADER"->"State::HEADER_ESCAPE"[label="case '\\\\'"]
+    "State::HEADER"->"State::HEADER"[label="default"]
+	"State::HEADER_WHITESPACE"->"State::HEADER_WHITESPACE"[label="{whitespace}\\'\\n'"]
+	"State::HEADER_WHITESPACE"->"State::HEADER_SEPARATOR"[label="case '\\n'"]
+	"State::HEADER_WHITESPACE"->"State::HEADER"[label="default"]
+    "State::HEADER_ESCAPE"->"State::HEADER"[label="default"]
+
+    "State::HEADER_SEPARATOR"->"State::LEVEL0_SEPARATOR"[label="case '='"]
+    "State::HEADER_SEPARATOR"->"State::LEVEL1_SEPARATOR"[label="case '-'"]
+    "State::HEADER_SEPARATOR"->"State::ERROR"[label="default"]
+
+    "State::LEVEL0_SEPARATOR"->"State::LEVEL0_SEPARATOR"[label="case '='"]
+    "State::LEVEL0_SEPARATOR"->"State::ERROR"[label="default"]
+    "State::LEVEL0_SEPARATOR"->"State::RECORD"[label="case '\\n'"]
+
+    "State::LEVEL1_SEPARATOR"->"State::LEVEL1_SEPARATOR"[label="case '-'"]
+    "State::LEVEL1_SEPARATOR"->"State::ERROR"[label="default"]
+    "State::LEVEL1_SEPARATOR"->"State::RECORD"[label="case '\\n'"]
+
+	"State::RECORD"->"State::RECORD"[label="{whitespace}"]
+    "State::RECORD"->"State::KEY_PRE"[label="case '*'"]
+	"State::RECORD"->"State::VALUE_ESCAPE"[label="case '\\'"]
+    "State::RECORD"->"State::VALUE"[label="default"]
+
+	"State::KEY_PRE"->"State::KEY"[label="case '*'"]
+	"State::KEY_PRE"->"State::VALUE"[label="default"]
+
+    "State::KEY"->"State::KEY_WHITESPACE"[label="{whitespace}"]
+    "State::KEY"->"State::KEY_ESCAPE"[label="case '\\'"]
+    "State::KEY"->"State::VALUE_PRE_0"[label="case ':'"]
+    "State::KEY"->"State::KEY"[label="default"]
+	"State::KEY_WHITESPACE"->"State::KEY_WHITESPACE"[label="{whitespace}"]
+	"State::KEY_WHITESPACE"->"State::KEY"[label="default"]
+    "State::KEY_ESCAPE"->"State::KEY"[label="default"]
+
+    "State::VALUE_PRE_0"->"State::VALUE_PRE_1"[label="case '*'"]
+    "State::VALUE_PRE_0"->"State::ERROR"[label="default"]
+
+	"State::VALUE_PRE_1"->"State::VALUE"[label="case '*'"]
+    "State::VALUE_PRE_1"->"State::ERROR"[label="default"]
+
+    "State::VALUE"->"State::VALUE_WHITESPACE"[label="{whitespace}\\'\\n'"]
+	"State::VALUE"->"State::VALUE_ESCAPE"[label="case '\\'"]
+    "State::VALUE"->"State::KEY_POSSIBLE_0"[label="case '\\n'"]
+    "State::VALUE"->"State::VALUE"[label="default"]
+	"State::VALUE_WHITESPACE"->"State::VALUE_WHITESPACE"[label="{whitespace}\\'\\n'"]
+	"State::VALUE_WHITESPACE"->"State::KEY_POSSIBLE_0"[label="case '\\n'"]
+	"State::VALUE_WHITESPACE"->"State::VALUE"[label="default"]
+	"State::VALUE_ESCAPE"->"State::VALUE"[label="default"]
+
+
+    "State::KEY_POSSIBLE_0"->"State::KEY_POSSIBLE_0"[label="{whitespace}\\'\\n'"]
+    "State::KEY_POSSIBLE_0"->"State::KEY_POSSIBLE_1"[label="case '\\n'"]
+    "State::KEY_POSSIBLE_0"->"State::VALUE"[label="default"]
+
+    "State::KEY_POSSIBLE_1"->"State::KEY_POSSIBLE_1"[label="{whitespace}\\'\\n'"]
+	"State::KEY_POSSIBLE_1"->"State::HEADER"[label="case '\\n'"]
+    "State::KEY_POSSIBLE_1"->"State::KEY_PRE"[label="case '*'"]
+    "State::KEY_POSSIBLE_1"->"State::VALUE"[label="default"]
+}
