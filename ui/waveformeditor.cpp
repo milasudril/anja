@@ -284,7 +284,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			double val_new;
 			if(convert(entry.content(),val_new))
 				{m_waveform.offsetEndSet(val_new);}
-			offset_begin_update(m_waveform,entry,m_plot);
+			offset_end_update(m_waveform,entry,m_plot);
 			}
 			break;
 		}
