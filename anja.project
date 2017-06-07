@@ -38,6 +38,7 @@
       <File Name="sessiondata/waveformproxy.cpp"/>
       <File Name="sessiondata/waveformproxy.hpp"/>
       <File Name="sessiondata/parser.dot"/>
+      <File Name="sessiondata/sessionfilereader-stdio-new.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>
@@ -185,6 +186,7 @@
     </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
     <File Name="README.md"/>
+    <File Name="test.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="midiconstants">
     <File Name="midiconstants/control_codes.py"/>

@@ -38,7 +38,7 @@ void SessionFileRecordImpl::propertyReplace(const String& name
 	m_props[name]=value;
 	}
 
-bool SessionFileRecordImpl::propertiesEnum(PropertyEnumeratorFunc enumerator,void* cb_obj) const
+bool SessionFileRecordImpl::propertiesEnumImpl(PropertyEnumeratorFunc enumerator,void* cb_obj) const
 	{
 	auto i=m_props.begin();
 	auto i_end=m_props.end();

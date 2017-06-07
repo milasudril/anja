@@ -21,16 +21,16 @@ namespace Anja
 
 			void clear();
 
-			void sectionTitleSet(const String& title)
+			void titleSet(const String& title)
 				{m_title=title;}
 
 			const String& titleGet() const
 				{return m_title;}
 
-			void sectionLevelSet(uint32_t level)
+			void levelSet(uint32_t level)
 				{m_level=std::min(level,1u);}
 
-			uint32_t sectionLevelGet() const
+			uint32_t levelGet() const
 				{return m_level;}
 
 			const String* propertyGet(const String& name) const;
@@ -41,13 +41,13 @@ namespace Anja
 			void propertyReplace(const String& name
 				,const String& value);
 
-			bool propertiesEnum(PropertyEnumeratorFunc enumerator,void* cb_obj) const;
-
 		private:
 			String m_title;
 			uint32_t m_level;
 			std::map<String,String
 				,decltype(&compareLexicographical< String >)> m_props;
+
+			bool propertiesEnumImpl(PropertyEnumeratorFunc enumerator,void* cb_obj) const;
 		};
 	}
 #endif

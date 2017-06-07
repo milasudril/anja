@@ -99,13 +99,13 @@ bool SessionFileReader::Impl::recordNextGet(SessionFileRecord& record)
 		switch(m_tok.type)
 			{
 			case TokenType::SECTION_TITLE_0:
-				record.sectionTitleSet(m_tok.buffer);
-				record.sectionLevelSet(0);
+				record.titleSet(m_tok.buffer);
+				record.levelSet(0);
 				break;
 
 			case TokenType::SECTION_TITLE_1:
-				record.sectionTitleSet(m_tok.buffer);
-				record.sectionLevelSet(1);
+				record.titleSet(m_tok.buffer);
+				record.levelSet(1);
 				break;
 
 			case TokenType::KEY:

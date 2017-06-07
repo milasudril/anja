@@ -48,7 +48,7 @@ void SessionFileWriter::recordWrite(const SessionFileRecord& record)
 void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 	{
 	char marker;
-	switch(record.sectionLevelGet())
+	switch(record.levelGet())
 		{
 		case 0:
 			marker='=';

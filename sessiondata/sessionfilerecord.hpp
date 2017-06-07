@@ -14,13 +14,13 @@ namespace Anja
 		public:
 			virtual void clear()=0;
 
-			virtual void sectionTitleSet(const String& title)=0;
+			virtual void titleSet(const String& title)=0;
 
 			virtual const String& titleGet() const=0;
 
-			virtual void sectionLevelSet(uint32_t level)=0;
+			virtual void levelSet(uint32_t level)=0;
 
-			virtual uint32_t sectionLevelGet() const=0;
+			virtual uint32_t levelGet() const=0;
 
 			virtual const String* propertyGet(const String& name) const=0;
 
@@ -40,16 +40,17 @@ namespace Anja
 					auto obj=reinterpret_cast<PropertyEnumerator*>(cb_obj);
 					return (*obj)(name,value);
 					};
-				return propertiesEnum(cb_func,&cb);
+				return propertiesEnumImpl(cb_func,&cb);
 				}
 
 		protected:
 			typedef bool (*PropertyEnumeratorFunc)(void* cb_obj
 				,const String& name
 				,const String& value);
-
-			virtual bool propertiesEnum(PropertyEnumeratorFunc enumerator,void* cb_obj) const=0;
 			~SessionFileRecord()=default;
+
+		private:
+			virtual bool propertiesEnumImpl(PropertyEnumeratorFunc enumerator,void* cb_obj) const=0;
 		};
 	}
 

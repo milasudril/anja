@@ -68,7 +68,7 @@ Session::Session(const char* filename):m_slot_active(0)
 	if(!reader.recordNextGet(record))
 		{throw Error(filename," is not a valid session file.");}
 
-	if(record.sectionLevelGet()!=0)
+	if(record.levelGet()!=0)
 		{throw Error(filename," is not a valid session file.");}
 
 //	Get data from file header
@@ -111,7 +111,7 @@ Session::Session(const char* filename):m_slot_active(0)
 //	Read records
 	while(reader.recordNextGet(record))
 		{
-		if(record.sectionLevelGet()==0)
+		if(record.levelGet()==0)
 			{break;}
 
 		auto title_ptr=record.titleGet().begin();
@@ -240,8 +240,8 @@ void Session::save(const char* filename)
 	char buffer[32];
 	SessionFileRecordImpl record_out;
 	auto dir=parentDirectory(realpath(filename));
-	record_out.sectionLevelSet(0);
-	record_out.sectionTitleSet(m_title);
+	record_out.levelSet(0);
+	record_out.titleSet(m_title);
 	sprintf(buffer,"%u",m_slot_active + 1);
 	record_out.propertySet(String("Active slot")
 		,String(buffer));
@@ -272,9 +272,9 @@ void Session::save(const char* filename)
 		while(waveform!=waveforms_end)
 			{
 			record_out.clear();
-			record_out.sectionLevelSet(1);
+			record_out.levelSet(1);
 			sprintf(buffer,"Slot %u",k+1);
-			record_out.sectionTitleSet(String(buffer));
+			record_out.titleSet(String(buffer));
 
 			WaveformProxy wv(m_waveforms[k],*waveform,dir,k);
 			wv.store(record_out);
@@ -293,9 +293,9 @@ void Session::save(const char* filename)
 		while(channel!=channels_end)
 			{
 			record_out.clear();
-			record_out.sectionLevelSet(1);
+			record_out.levelSet(1);
 			sprintf(buffer,"Channel %u",k+1);
-			record_out.sectionTitleSet(String(buffer));
+			record_out.titleSet(String(buffer));
 			ChannelProxy cv(m_channels[k],*channel);
 			cv.store(record_out);
 			writer.recordWrite(record_out);
