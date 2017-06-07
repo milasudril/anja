@@ -1,6 +1,6 @@
 //@	{
 //@	"targets":[{"name":"sessionfilereader.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"sessionfilereader-new.o","rel":"implementation"}]
+//@	,"dependencies_extra":[{"ref":"sessionfilereader.o","rel":"implementation"}]
 //@	}
 
 #ifndef ANJA_SESSIONFILEREADER_HPP

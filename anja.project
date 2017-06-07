@@ -38,7 +38,6 @@
       <File Name="sessiondata/waveformproxy.cpp"/>
       <File Name="sessiondata/waveformproxy.hpp"/>
       <File Name="sessiondata/parser.dot"/>
-      <File Name="sessiondata/sessionfilereader-stdio-new.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

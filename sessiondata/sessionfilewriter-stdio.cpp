@@ -50,44 +50,88 @@ static constexpr bool whitespace(char ch)
 
 static void titleWrite(const char* str,FILE* output)
 	{
-	auto whitespace_prev=true;
+	enum class State:int{INIT,NORMAL,SPACE};
+	auto state_current=State::INIT;
 	while(1)
 		{
 		auto ch_in=*str;
 		++str;
 		if(ch_in=='\r')
 			{continue;}
-		switch(ch_in)
+		if(ch_in=='\0')
+			{return;}
+
+		switch(state_current)
 			{
-			case '\0':
-				return;
-			case '\n':
-			case '\\':
-				putc('\\',output);
-				putc(ch_in,output);
-				break;
-			default:
-				if(whitespace(ch_in))
+			case State::INIT:
+				switch(ch_in)
 					{
-					if(ch_in==' ')
-						{
-						if(whitespace_prev)
-							{
-							putc('\\',output);
-							whitespace_prev=false;
-							}
-						else
-							{whitespace_prev=true;}
-						putc(' ',output);
-						}
-					else
-						{
+					case '\n':
+					case '\\':
 						putc('\\',output);
 						putc(ch_in,output);
-						}
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{putc('\\',output);}
+						putc(ch_in,output);
+						state_current=State::NORMAL;
 					}
-				else
-					{putc(ch_in,output);}
+				break;
+
+			case State::NORMAL:
+				switch(ch_in)
+					{
+					case '\n':
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							if(ch_in==' ')
+								{
+								putc(ch_in,output);
+								state_current=State::SPACE;
+								}
+							else
+								{
+								putc('\\',output);
+								putc(ch_in,output);
+								}
+							}
+						else
+							{putc(ch_in,output);}
+					}
+				break;
+
+
+			case State::SPACE:
+				switch(ch_in)
+					{
+					case '\n':
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							putc('\\',output);
+							putc(ch_in,output);
+							}
+						else
+							{putc(ch_in,output);}
+						state_current=State::NORMAL;
+					}
+				break;
 
 			}
 		}
@@ -95,46 +139,91 @@ static void titleWrite(const char* str,FILE* output)
 
 static void keyWrite(const char* str,FILE* output)
 	{
-	auto whitespace_prev=true;
+	enum class State:int{INIT,NORMAL,SPACE};
+	auto state_current=State::INIT;
 	while(1)
 		{
 		auto ch_in=*str;
 		++str;
 		if(ch_in=='\r')
 			{continue;}
+		if(ch_in=='\0')
+			{return;}
 
-		switch(ch_in)
+		switch(state_current)
 			{
-			case '\0':
-				return;
-			case ':':
-			case '\n':
-			case '\\':
-				putc('\\',output);
-				putc(ch_in,output);
-				break;
-			default:
-				if(whitespace(ch_in))
+			case State::INIT:
+				switch(ch_in)
 					{
-					if(ch_in==' ')
-						{
-						if(whitespace_prev)
-							{
-							putc('\\',output);
-							whitespace_prev=false;
-							}
-						else
-							{whitespace_prev=true;}
-						putc(' ',output);
-						}
-					else
-						{
+					case ':':
+					case '\n':
+					case '\\':
 						putc('\\',output);
 						putc(ch_in,output);
-						}
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{putc('\\',output);}
+						putc(ch_in,output);
+						state_current=State::NORMAL;
 					}
-				else
-					{putc(ch_in,output);}
+				break;
+
+			case State::NORMAL:
+				switch(ch_in)
+					{
+					case ':':
+					case '\n':
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							if(ch_in==' ')
+								{
+								putc(ch_in,output);
+								state_current=State::SPACE;
+								}
+							else
+								{
+								putc('\\',output);
+								putc(ch_in,output);
+								}
+							}
+						else
+							{putc(ch_in,output);}
+					}
+				break;
+
+
+			case State::SPACE:
+				switch(ch_in)
+					{
+					case ':':
+					case '\n':
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							putc('\\',output);
+							putc(ch_in,output);
+							}
+						else
+							{putc(ch_in,output);}
+						state_current=State::NORMAL;
+					}
+				break;
 
 			}
 		}
@@ -226,7 +315,6 @@ static void valueWrite(const char* str,FILE* output)
 							{
 							putc('\\',output);
 							putc(ch_in,output);
-
 							}
 						else
 							{putc(ch_in,output);}

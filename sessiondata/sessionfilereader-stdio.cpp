@@ -26,23 +26,13 @@ class SessionFileReader::Impl
 
 		enum class State:uint8_t
 			{
-			  INIT,SECTION_TITLE_BEFORE,SECTION_TITLE,SECTION_TITLE_AFTER
-			 ,KEY,VALUE,NEWLINE,WHITESPACE
+			 ESCAPE,INIT,SECTION_BEGIN,SECTION_TITLE,SECTION_TITLE_WHITESPACE
+			,RECORD,KEY,VALUE,KEY_WHITESPACE,VALUE_WHITESPACE,VALUE_NEWLINE
 			};
 
-		enum class TokenType:uint8_t{SECTION_TITLE_0,SECTION_TITLE_1,KEY,VALUE,INVALID};
-
-		struct Token
-			{
-			String buffer;
-			TokenType type;
-			};
-
-		TokenType m_token_type;
 		State m_state;
 		State m_state_old;
-		Token m_tok;
-		bool tokenGet(Token& tok);
+		bool recordGet(SessionFileRecord& tok);
 	};
 
 SessionFileReader::SessionFileReader(const char* filename)
@@ -52,17 +42,14 @@ SessionFileReader::~SessionFileReader()
 	{}
 
 SessionFileReader::Impl::Impl(const char* filename):
-	m_source{fopen(filename,"rb"),fclose},m_token_type{TokenType::INVALID}
+	m_source{fopen(filename,"rb"),fclose}
 	,m_state{State::INIT},m_state_old{State::INIT}
 	{
 	if(m_source.get()==NULL)
 		{
 		throw Error("It was not possible to open the file ",filename,". ",SysError(errno));
 		}
-	if(!tokenGet(m_tok))
-		{throw Error(filename," is not a valid session file.");}
-	if(m_tok.type!=TokenType::SECTION_TITLE_0)
-		{throw Error(filename," is not a valid session file.");}
+
 	}
 
 SessionFileReader::Impl::~Impl()
@@ -91,204 +78,362 @@ bool SessionFileReader::recordNextGet(SessionFileRecord& record)
 
 bool SessionFileReader::Impl::recordNextGet(SessionFileRecord& record)
 	{
-	record.clear();
-	String key_temp;
-
-	do
-		{
-		switch(m_tok.type)
-			{
-			case TokenType::SECTION_TITLE_0:
-				record.titleSet(m_tok.buffer);
-				record.levelSet(0);
-				break;
-
-			case TokenType::SECTION_TITLE_1:
-				record.titleSet(m_tok.buffer);
-				record.levelSet(1);
-				break;
-
-			case TokenType::KEY:
-				key_temp=m_tok.buffer;
-				break;
-
-			case TokenType::VALUE:
-				record.propertyReplace(key_temp,m_tok.buffer);
-				break;
-
-			default:
-				return 0;
-			}
-		if(!tokenGet(m_tok))
-			{return 1;}
-		}
-	while(m_tok.type!=TokenType::SECTION_TITLE_1
-			&& m_tok.type!=TokenType::INVALID);
-	return 1;
+	return recordGet(record);
 	}
 
-bool SessionFileReader::Impl::tokenGet(Token& tok)
+static constexpr bool whitespace(char ch_in) noexcept
 	{
+	return (ch_in>=0 && ch_in<=' ');
+	}
+
+bool SessionFileReader::Impl::recordGet(SessionFileRecord& record)
+	{
+	record.clear();
 	auto fptr=m_source.get();
 	if(feof(fptr))
-		{
-		tok.type=TokenType::INVALID;
-		return 0;
-		}
+		{return 0;}
 
-	int ch_in;
-	int ch_trigg=0;
 	auto state_current=m_state;
-	auto state_prev=State::INIT;
-	tok.type=TokenType::INVALID;
-	tok.buffer.clear();
-	while( (ch_in=getc(fptr)) != EOF)
+	auto state_next=State::INIT;
+	String buffer;
+	String key;
+	int ch_in=0;
+	auto level_count=0;
+	auto nlcount=0;
+
+	while(true)
 		{
+		ch_in=getc(fptr);
+
 		if(ch_in=='\r')
 			{continue;}
 
 		switch(state_current)
 			{
+		//	Generic escape state
+			case State::ESCAPE:
+				if(ch_in==EOF)
+					{throw Error("Lonely escape symbol");}
+				state_current=state_next;
+				buffer.append(ch_in);
+				break;
+
+		//	Initial state
 			case State::INIT:
-				if(ch_in=='=' || ch_in=='-')
+				switch(ch_in)
 					{
-					ch_trigg=ch_in;
-					state_current=State::SECTION_TITLE_BEFORE;
-					}
-				else
-				if(!(ch_in>='\0' && ch_in<=' '))
-					{
-					tok.buffer.append(ch_in);
-					state_current=State::KEY;
+					case '#':
+						state_current=State::SECTION_BEGIN;
+						break;
+
+					default:
+						if(!whitespace(ch_in))
+							{throw Error("Invalid session file");}
 					}
 				break;
 
-			case State::WHITESPACE:
-				if(ch_in=='\n')
+		//	States for reading section title
+			case State::SECTION_BEGIN:
+				switch(ch_in)
 					{
-					state_current=State::NEWLINE;
-					}
-				else
-				if(!(ch_in>='\0' && ch_in<=' '))
-					{
-					state_current=state_prev;
-					if(tok.buffer.length()>0)
-						{tok.buffer.append(' ');}
-					tok.buffer.append(ch_in);
+					case '#':
+						++level_count;
+						break;
+
+					case '\\':
+						state_next=State::SECTION_TITLE;
+						state_current=State::ESCAPE;
+						break;
+
+					case EOF:
+					case '\n':
+						throw Error("Section titles must not be empty");
+
+					default:
+						if(whitespace(ch_in))
+							{state_current=State::SECTION_TITLE_WHITESPACE;}
+						else
+							{
+							buffer.append(ch_in);
+							state_current=State::SECTION_TITLE;
+							}
 					}
 				break;
 
-			case State::SECTION_TITLE_BEFORE:
-				if(ch_in>='\0' && ch_in<=' ')
-					{throw Error("Parse error: Whitespace not allowed before section title.");}
-
-				if(ch_in!=ch_trigg)
+			case State::SECTION_TITLE_WHITESPACE:
+				switch(ch_in)
 					{
-					tok.buffer.append(ch_in);
-					state_current=State::SECTION_TITLE;
+					case '\\':
+						state_next=State::SECTION_TITLE;
+						state_current=State::ESCAPE;
+						break;
+
+					case '\n':
+						if(buffer.length()==0)
+							{throw Error("Section titles must not be empty");}
+						record.titleSet(buffer);
+						record.levelSet(level_count);
+						level_count=0;
+						buffer.clear();
+						state_current=State::RECORD;
+						break;
+
+					case EOF:
+						if(buffer.length()==0)
+							{throw Error("Section titles must not be empty");}
+						record.titleSet(buffer);
+						record.levelSet(level_count);
+						return 1;
+
+					default:
+						if(!whitespace(ch_in))
+							{
+							buffer.append(ch_in);
+							state_current=State::SECTION_TITLE;
+							}
 					}
 				break;
 
 			case State::SECTION_TITLE:
-				if(ch_in=='\n')
+				switch(ch_in)
 					{
-					state_prev=state_current;
-					state_current=State::NEWLINE;
+					case '\\':
+						state_next=State::SECTION_TITLE;
+						state_current=State::ESCAPE;
+						break;
+
+					case '\n':
+						if(buffer.length()==0)
+							{throw Error("Section titles must not be empty");}
+						record.titleSet(buffer);
+						record.levelSet(level_count);
+						level_count=0;
+						buffer.clear();
+						state_current=State::RECORD;
+						break;
+
+					case EOF:
+						if(buffer.length()==0)
+							{throw Error("Section titles must not be empty");}
+						record.titleSet(buffer);
+						record.levelSet(level_count);
+						return 1;
+
+					default:
+						buffer.append(ch_in);
+						if(whitespace(ch_in))
+							{state_current=State::SECTION_TITLE_WHITESPACE;}
 					}
-				else
-				if(ch_in>='\0' && ch_in<=' ')
-					{
-					state_prev=state_current;
-					state_current=State::WHITESPACE;
-					}
-				else
-				if(ch_in==ch_trigg)
-					{
-					state_current=State::SECTION_TITLE_AFTER;
-					}
-				else
-					{tok.buffer.append(ch_in);}
 				break;
 
-			case State::SECTION_TITLE_AFTER:
-				if(ch_in=='\n')
-					{
-					m_state=State::INIT;
-					tok.type=(ch_trigg=='=')?
-						TokenType::SECTION_TITLE_0:TokenType::SECTION_TITLE_1;
-					return 1;
-					}
 
-				if(!(ch_in==ch_trigg || ch_in=='\n'))
-					{throw Error("Parse error: Invalid character after section title.");}
+		//	Record state
+			case State::RECORD:
+				switch(ch_in)
+					{
+					case EOF:
+					case '#':
+						if(buffer.length()==0)
+							{
+							if(key.length()!=0)
+								{record.propertySet(key,buffer);}
+							}
+						else
+							{record.propertySet(key.length()?key:String("Description"),buffer);}
+						buffer.clear();
+						m_state=State::SECTION_BEGIN;
+						return 1;
+
+					case '~':
+						if(buffer.length()==0)
+							{
+							if(key.length()!=0)
+								{record.propertySet(key,buffer);}
+							}
+						else
+							{record.propertySet(key.length()?key:String("Description"),buffer);}
+						buffer.clear();
+						state_current=State::KEY;
+						break;
+
+					case '\\':
+						state_current=State::ESCAPE;
+						state_next=State::VALUE;
+						break;
+
+					default:
+						if(!whitespace(ch_in))
+							{
+							state_current=State::VALUE;
+							buffer.append(ch_in);
+							}
+					}
 				break;
 
+		//	States reading keys
 			case State::KEY:
-				if(ch_in==':')
+				switch(ch_in)
 					{
-					m_state=State::VALUE;
-					tok.type=TokenType::KEY;
-					return 1;
-					}
+					case '\\':
+						state_current=State::ESCAPE;
+						state_next=State::KEY;
+						break;
 
-				if(ch_in=='\n')
-					{
-					state_prev=state_current;
-					state_current=State::NEWLINE;
+					case ':':
+					case '\n':
+						key=buffer;
+						buffer.clear();
+						state_current=State::RECORD;
+						break;
+
+					case EOF:
+						record.propertySet(buffer,String(""));
+						return 1;
+
+					default:
+						buffer.append(ch_in);
+						if(whitespace(ch_in))
+							{state_current=State::KEY_WHITESPACE;}
 					}
-				else
-				if(ch_in>='\0' && ch_in<=' ')
-					{
-					state_prev=state_current;
-					state_current=State::WHITESPACE;
-					}
-				else
-					{tok.buffer.append(ch_in);}
 				break;
+
+			case State::KEY_WHITESPACE:
+				switch(ch_in)
+					{
+					case '\\':
+						state_current=State::ESCAPE;
+						state_next=State::KEY;
+						break;
+
+					case ':':
+					case '\n':
+						key=buffer;
+						buffer.clear();
+						state_current=State::RECORD;
+						break;
+
+					case EOF:
+						record.propertySet(buffer,String(""));
+						return 1;
+
+					default:
+						if(!whitespace(ch_in))
+							{
+							buffer.append(ch_in);
+							state_current=State::KEY;
+							}
+
+					}
+				break;
+
+
+		//	States reading values
 
 			case State::VALUE:
-				if(ch_in=='\n')
+				switch(ch_in)
 					{
-					state_prev=state_current;
-					state_current=State::NEWLINE;
+					case '\\':
+						state_current=State::ESCAPE;
+						state_next=State::VALUE;
+						break;
+
+					case '\n':
+						state_current=State::VALUE_NEWLINE;
+						nlcount=1;
+						break;
+
+					case EOF:
+						record.propertySet(key,buffer);
+						return 1;
+
+					default:
+						if(whitespace(ch_in)) //We do not know yet if we should use this whitespace or not
+							{state_current=State::VALUE_WHITESPACE;}
+						else
+							{buffer.append(ch_in);}
 					}
-				else
-				if(ch_in>='\0' && ch_in<=' ')
-					{
-					state_prev=state_current;
-					state_current=State::WHITESPACE;
-					}
-				else
-					{tok.buffer.append(ch_in);}
 				break;
 
-			case State::NEWLINE:
-				if(ch_in=='\n')
+			case State::VALUE_WHITESPACE:
+				switch(ch_in)
 					{
-					if(state_prev!=State::VALUE)
-						{throw Error("Parse error: Section title or key cannot end with newline.");}
-					tok.type=TokenType::VALUE;
-					m_state=State::INIT;
-					return 1;
+					case '\\':
+						if(buffer.length()!=0)
+							{buffer.append(' ');} //Append *one* space
+						state_current=State::ESCAPE;
+						state_next=State::VALUE;
+						break;
+
+					case '\n':
+						state_current=State::VALUE_NEWLINE;
+						nlcount=1;
+						break;
+
+					case EOF:
+						record.propertySet(key.length()?key:String("Description"),buffer);
+						return 1;
+
+					default:
+						if(!whitespace(ch_in))
+							{
+							if(buffer.length()!=0)
+								{buffer.append(' ');} //Append *one* space
+							buffer.append(ch_in);
+							state_current=State::VALUE;
+							}
 					}
-				else
-				if(!(ch_in>='\0' && ch_in<=' '))
+				break;
+
+			case State::VALUE_NEWLINE:
+				switch(ch_in)
 					{
-					tok.buffer.append(' ').append(ch_in);
-					state_current=state_prev;
+					case '\\':
+						if(buffer.length()!=0)
+							{
+							if(nlcount>=2)
+								{buffer.append("\n\n");}
+							else
+								{buffer.append(' ');}
+							}
+						state_current=State::ESCAPE;
+						state_next=State::VALUE;
+						break;
+
+					case '\n':
+						++nlcount;
+						break;
+
+					case '#':
+						record.propertySet(key.length()?key:String("Description"),buffer);
+						buffer.clear();
+						m_state=State::SECTION_BEGIN;
+						return 1;
+
+					case EOF:
+						record.propertySet(key.length()?key:String("Description"),buffer);
+						return 1;
+
+					case '~':
+						state_current=State::KEY;
+						record.propertySet(key.length()?key:String("Description"),buffer);
+						buffer.clear();
+						break;
+
+					default:
+						if(!whitespace(ch_in))
+							{
+							if(buffer.length()!=0)
+								{
+								if(nlcount>=2)
+									{buffer.append("\n\n");}
+								else
+									{buffer.append(' ');}
+								}
+							buffer.append(ch_in);
+							state_current=State::VALUE;
+							}
 					}
 				break;
 			}
 		}
-
-	if(state_current==State::VALUE || state_prev==State::VALUE)
-		{
-		tok.type=TokenType::VALUE;
-		return 1;
-		}
-
-	if(state_current!=State::INIT)
-		{throw Error("Parse error: Incomplete record.");}
-
-	return 0;
 	}
