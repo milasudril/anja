@@ -1,7 +1,16 @@
 #Anja testbank
 
-This is a test file that demonstrates how Anja works. Pdsounds.org claims that
-files on this site is in public domain.
+This is \  \ a test file that demonstrates how Anja works. Pdsounds.org claims that files on this site is in public domain. ~No escape needed here.\
+But here (single newline character).\
+~This should not need any escape char, because we did not switch to newline state (we came from escape state) \
+ ~Neither should this\
+ \ ~This needs, due to two whitespaces
+
+Two newlines are written as is.\
+ \ \
+ \ Newlines interleaved other whitespace
+
+\~This must be escaped. Otherwise, this would be a key header.
 
 ~Master gain/dB: -7
 ~Color presets: 1; 1; 0|0; 1; 0

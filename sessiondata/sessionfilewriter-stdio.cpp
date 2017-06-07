@@ -45,27 +45,313 @@ void SessionFileWriter::recordWrite(const SessionFileRecord& record)
 	m_impl->recordWrite(record);
 	}
 
+static constexpr bool whitespace(char ch)
+	{return ch>=0 && ch<=' ';}
+
+static void titleWrite(const char* str,FILE* output)
+	{
+	auto whitespace_prev=true;
+	while(1)
+		{
+		auto ch_in=*str;
+		++str;
+		if(ch_in=='\r')
+			{continue;}
+		switch(ch_in)
+			{
+			case '\0':
+				return;
+			case '\n':
+			case '\\':
+				putc('\\',output);
+				putc(ch_in,output);
+				break;
+			default:
+				if(whitespace(ch_in))
+					{
+					if(ch_in==' ')
+						{
+						if(whitespace_prev)
+							{
+							putc('\\',output);
+							whitespace_prev=false;
+							}
+						else
+							{whitespace_prev=true;}
+						putc(' ',output);
+						}
+					else
+						{
+						putc('\\',output);
+						putc(ch_in,output);
+						}
+					}
+				else
+					{putc(ch_in,output);}
+
+			}
+		}
+	}
+
+static void keyWrite(const char* str,FILE* output)
+	{
+	auto whitespace_prev=true;
+	while(1)
+		{
+		auto ch_in=*str;
+		++str;
+		if(ch_in=='\r')
+			{continue;}
+
+		switch(ch_in)
+			{
+			case '\0':
+				return;
+			case ':':
+			case '\n':
+			case '\\':
+				putc('\\',output);
+				putc(ch_in,output);
+				break;
+			default:
+				if(whitespace(ch_in))
+					{
+					if(ch_in==' ')
+						{
+						if(whitespace_prev)
+							{
+							putc('\\',output);
+							whitespace_prev=false;
+							}
+						else
+							{whitespace_prev=true;}
+						putc(' ',output);
+						}
+					else
+						{
+						putc('\\',output);
+						putc(ch_in,output);
+						}
+					}
+				else
+					{putc(ch_in,output);}
+
+			}
+		}
+	}
+
+static void valueWrite(const char* str,FILE* output)
+	{
+	enum class State:int{INIT,NORMAL,SPACE,NEWLINE};
+	auto state_current=State::INIT;
+	auto nlcount=0;
+
+	while(1)
+		{
+		auto ch_in=*str;
+		++str;
+		if(ch_in=='\r')
+			{continue;}
+
+		if(ch_in=='\0')
+			{return;}
+
+		switch(state_current)
+			{
+			case State::INIT:
+				switch(ch_in)
+					{
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{putc('\\',output);}
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+					}
+				break;
+
+			case State::NORMAL:
+				switch(ch_in)
+					{
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						break;
+
+					case '\n':
+						state_current=State::NEWLINE;
+						++nlcount;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							if(ch_in==' ')
+								{
+								putc(ch_in,output);
+								state_current=State::SPACE;
+								}
+							else
+								{
+								putc('\\',output);
+								putc(ch_in,output);
+								}
+							}
+						else
+							{putc(ch_in,output);}
+					}
+				break;
+
+			case State::SPACE:
+				switch(ch_in)
+					{
+					case '\\':
+						putc('\\',output);
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						break;
+
+					case '\n':
+						state_current=State::NEWLINE;
+						++nlcount;
+						break;
+
+					default:
+						if(whitespace(ch_in))
+							{
+							putc('\\',output);
+							putc(ch_in,output);
+
+							}
+						else
+							{putc(ch_in,output);}
+						state_current=State::NORMAL;
+					}
+				break;
+
+			case State::NEWLINE:
+				switch(ch_in)
+					{
+					case '~':
+					case '#':
+					case '\\':
+						assert(nlcount>0 && nlcount<3);
+						switch(nlcount)
+							{
+							case 1:
+								fputs("\\\n",output);
+								break;
+							case 2:
+								fputs("\n\n\\",output);
+								break;
+							}
+						putc(ch_in,output);
+						state_current=State::NORMAL;
+						nlcount=0;
+						break;
+
+					case '\n':
+						++nlcount;
+						if(nlcount>=3)
+							{
+							fputs("\n\n\\\n",output);
+							state_current=State::NORMAL;
+							}
+						break;
+
+					default:
+						assert(nlcount>0 && nlcount<3);
+						switch(nlcount)
+							{
+							case 1:
+								fputs("\\\n",output);
+								break;
+							case 2:
+								fputs("\n\n",output);
+								break;
+							}
+						if(whitespace(ch_in))
+							{
+							if(nlcount==2)
+								{putc('\\',output);}
+							putc(ch_in,output);
+							state_current=State::SPACE;
+							}
+						else
+							{
+							putc(ch_in,output);
+							state_current=State::NORMAL;
+							}
+						nlcount=0;
+					}
+				break;
+
+
+			}
+		}
+	}
+
+static bool multipar(const char* str)
+	{
+	auto nlcount=0;
+	while(1)
+		{
+		auto ch_in=*str;
+		switch(ch_in)
+			{
+			case '\0':
+				return 0;
+			case '\n':
+				if(nlcount>=2)
+					{return 1;}
+				++nlcount;
+				break;
+			default:
+				nlcount=0;
+			}
+		++str;
+		}
+	}
+
 void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 	{
-	char marker;
-	switch(record.levelGet())
+	//Write title
 		{
-		case 0:
-			marker='=';
-			break;
-		case 1:
-			marker='-';
-			break;
-		default:
-			throw Error("Internal error: Invalid section level.");
+		auto k=record.levelGet() + 1;
+		while(k!=0)
+			{
+			--k;
+			putc('#',m_sink.get());
+			}
+		titleWrite(record.titleGet().begin(),m_sink.get());
+		putc('\n',m_sink.get());
 		}
 
-	fprintf(m_sink.get(),"%c%s%c\n",marker,record.titleGet().begin(),marker);
+	auto desc=record.propertyGet(String("Description"));
+	if(desc!=nullptr)
+		{valueWrite(desc->begin(),m_sink.get());}
+	fputs("\n\n",m_sink.get());
 
-	record.propertiesEnum([this](const String& name
-		,const String& value)
+	record.propertiesEnum([this](const String& name,const String& value)
+		{
+		if(name!="Description")
 			{
-			fprintf(m_sink.get(),"%s: %s\n\n",name.begin(),value.begin());
-			return true;
-			});
+			keyWrite(name.begin(),m_sink.get());
+			auto key_end=multipar(value.begin())?"\n":": ";
+			fputs(key_end,m_sink.get());
+			valueWrite(value.begin(),m_sink.get());
+		//	fprintf(m_sink.get(),"%s: %s\n\n",name.begin(),value.begin());
+
+			if(*key_end=='\n')
+				{putc('\n',m_sink.get());}
+			putc('\n',m_sink.get());
+			}
+		return true;
+		});
+	putc('\n',m_sink.get());
 	}
