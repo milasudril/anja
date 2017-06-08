@@ -94,9 +94,15 @@ void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 		{
 		case OptionListId::OPTIONS:
 			if(opt.state())
-				{m_waveform.flagSet(opt.id());}
+				{
+				printf("%x\n",opt.id());
+				m_waveform.flagSet(opt.id());
+				}
 			else
-				{m_waveform.flagsUnset(opt.id());}
+				{
+				printf("%x\n",opt.id());
+				m_waveform.flagUnset(opt.id());
+				}
 			break;
 		}
 	}
