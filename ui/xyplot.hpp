@@ -88,14 +88,20 @@ namespace Anja
 				template<class Callback,class IdType>
 				explicit Vtable(Callback& cb,IdType) noexcept
 					{
-					cursor_x=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
-						{reinterpret_cast<Callback*>(cb_obj)->cursorX(source,static_cast<IdType>(source.id()),index,keymask);};
-					cursor_y=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
-						{reinterpret_cast<Callback*>(cb_obj)->cursorY(source,static_cast<IdType>(source.id()),index,keymask);};
+					cursor_x_move=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
+						{reinterpret_cast<Callback*>(cb_obj)->cursorXMove(source,static_cast<IdType>(source.id()),index,keymask);};
+					cursor_y_move=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
+						{reinterpret_cast<Callback*>(cb_obj)->cursorYMove(source,static_cast<IdType>(source.id()),index,keymask);};
+					cursor_x_rightclick=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
+						{reinterpret_cast<Callback*>(cb_obj)->cursorXRightclick(source,static_cast<IdType>(source.id()),index,keymask);};
+					cursor_y_rightclick=[](void* cb_obj,XYPlot& source,int index,keymask_t keymask)
+						{reinterpret_cast<Callback*>(cb_obj)->cursorYRightclick(source,static_cast<IdType>(source.id()),index,keymask);};
 					}
 
-				void (*cursor_x)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
-				void (*cursor_y)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
+				void (*cursor_x_move)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
+				void (*cursor_y_move)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
+				void (*cursor_x_rightclick)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
+				void (*cursor_y_rightclick)(void* cb_obj,XYPlot& source,int index,keymask_t keymask);
 				};
 
 			XYPlot& callback(const Vtable& vt,void* cb_obj,int id) noexcept;

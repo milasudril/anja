@@ -341,7 +341,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 				gtk_widget_queue_draw(widget);
 				if(self->r_cb_obj!=nullptr)
 					{
-					self->m_vt.cursor_x(self->r_cb_obj,*self,self->m_cursor_grabbed
+					self->m_vt.cursor_x_move(self->r_cb_obj,*self,self->m_cursor_grabbed
 						,keymaskFromSystem(event->state));
 					}
 				break;
@@ -350,7 +350,7 @@ gboolean XYPlot::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* 
 				gtk_widget_queue_draw(widget);
 				if(self->r_cb_obj!=nullptr)
 					{
-					self->m_vt.cursor_y(self->r_cb_obj,*self,self->m_cursor_grabbed
+					self->m_vt.cursor_y_move(self->r_cb_obj,*self,self->m_cursor_grabbed
 						,keymaskFromSystem(event->state));
 					}
 				break;
@@ -436,7 +436,28 @@ gboolean XYPlot::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* ob
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(event->button==3)
-		{self->showAll();}
+		{
+		if(self->m_cursor_current==NORMAL || self->m_cursor_current==PAN)
+			{self->showAll();}
+		else
+		if(self->m_cursor_current==CURSOR_X_MOVE)
+			{
+			if(self->r_cb_obj!=nullptr)
+				{
+				self->m_vt.cursor_x_rightclick(self->r_cb_obj,*self,self->m_cursor_grabbed
+						,keymaskFromSystem(event->state));
+				}
+			}
+		else
+		if(self->m_cursor_current==CURSOR_Y_MOVE)
+			{
+			if(self->r_cb_obj!=nullptr)
+				{
+				self->m_vt.cursor_y_rightclick(self->r_cb_obj,*self,self->m_cursor_grabbed
+					,keymaskFromSystem(event->state));
+				}
+			}
+		}
 	if(event->button==1)
 		{self->m_grabbed=0;}
 	return TRUE;

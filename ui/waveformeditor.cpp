@@ -387,7 +387,7 @@ void WaveformEditor::changed(Listbox& lb,ListboxId id)
 		}
 	}
 
-void WaveformEditor::cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+void WaveformEditor::cursorXMove(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
 	switch(id)
 		{
@@ -420,7 +420,7 @@ void WaveformEditor::cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 		}
 	}
 
-void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+void WaveformEditor::cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
 	switch(id)
 		{
@@ -433,6 +433,14 @@ void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 			break;
 		}
 	}
+
+void WaveformEditor::cursorXRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+	{
+	printf("Hello X %d\n",index);
+	}
+
+void WaveformEditor::cursorYRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask)
+	{}
 
 void WaveformEditor::dismiss(Dialog<ColorPicker>& win,int id)
 	{

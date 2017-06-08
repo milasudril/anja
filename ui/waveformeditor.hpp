@@ -91,8 +91,10 @@ namespace Anja
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
 			void changed(Listbox& lb,ListboxId id);
-			void cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask);
-			void cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask);
+			void cursorXMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
+			void cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
+			void cursorXRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask);
+			void cursorYRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 
 			void dismiss(Dialog<ColorPicker>& dlg,int id);
 			void confirmPositive(Dialog<ColorPicker>& dlg,int id);
