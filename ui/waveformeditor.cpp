@@ -51,7 +51,7 @@ static void offset_begin_update(const WaveformProxy& waveform,TextEntry& e,XYPlo
 	char buffer[32];
 	sprintf(buffer,"%.5f",val);
 	e.content(buffer);
-	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f},0);
+	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,0},0);
 	}
 
 static void offset_end_update(const WaveformProxy& waveform,TextEntry& e,XYPlot& plot)
@@ -94,15 +94,9 @@ void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 		{
 		case OptionListId::OPTIONS:
 			if(opt.state())
-				{
-				printf("%x\n",opt.id());
-				m_waveform.flagSet(opt.id());
-				}
+				{m_waveform.flagSet(opt.id());}
 			else
-				{
-				printf("%x\n",opt.id());
-				m_waveform.flagUnset(opt.id());
-				}
+				{m_waveform.flagUnset(opt.id());}
 			break;
 		}
 	}

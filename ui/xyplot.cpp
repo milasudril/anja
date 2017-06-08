@@ -757,10 +757,16 @@ void XYPlot::Impl::draw_cursor_x(cairo_t* cr,const Cursor& c,const Domain& dom_w
 		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	if(c.dashed)
+		{
+		auto dash=8.0;
+		cairo_set_dash(cr,&dash,1,0.0);
+		}
 	cairo_move_to(cr,point_out.x(),point_out.y());
 	point_out=to_window_coords(Point{c.position,m_dom.max.y()},dom_window);
 	cairo_line_to(cr,point_out.x(),point_out.y());
 	cairo_stroke(cr);
+	cairo_set_dash(cr,nullptr,0,0.0);
 	}
 
 void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_window,int dark) const
@@ -770,10 +776,16 @@ void XYPlot::Impl::draw_cursor_y(cairo_t* cr,const Cursor& c,const Domain& dom_w
 		{return;}
 	ColorRGBA color(ColorHSLA::fromHueAndLuma(c.hue,dark?0.7:0.4));
 	cairo_set_source_rgba(cr,color.red,color.green,color.blue,color.alpha);
+	if(c.dashed)
+		{
+		auto dash=8.0;
+		cairo_set_dash(cr,&dash,1,0.0);
+		}
 	cairo_move_to(cr,point_out.x(),point_out.y());
 	point_out=to_window_coords(Point{m_dom.max.x(),c.position},dom_window);
 	cairo_line_to(cr,point_out.x(),point_out.y());
 	cairo_stroke(cr);
+	cairo_set_dash(cr,nullptr,0,0.0);
 	}
 
 static inline int dark_check(GtkWidget* widget)

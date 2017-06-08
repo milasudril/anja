@@ -63,6 +63,7 @@ namespace Anja
 				{
 				double position;
 				float hue;
+				bool dashed;
 				};
 
 			XYPlot& cursorX(const Cursor& c);
