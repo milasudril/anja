@@ -545,16 +545,16 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
 					,m_cursor_end_loop(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_end_loop_entry(m_cursor_end_loop.insertMode({2,Box::EXPAND|Box::FILL}))
-						,m_cursor_end_loop_label(m_cursor_end_loop,"↩")
+						,m_cursor_end_loop_label(m_cursor_end_loop.insertMode({0,0}),"↩")
 					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_end_entry(m_cursor_end.insertMode({2,Box::EXPAND|Box::FILL}))
-						,m_cursor_end_label(m_cursor_end,"⇥")
+						,m_cursor_end_label(m_cursor_end.insertMode({0,0}),"⇥")
 	{
 	m_gain_input_text.width(7).small(true).alignment(1.0f);
 	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
 	m_cursor_begin_entry.width(7);
 	m_cursor_begin_loop_entry.width(7);
-	m_cursor_end_loop_entry.width(7);
+	m_cursor_end_loop_entry.width(7).alignment(1.0f);
 	m_cursor_end_entry.width(7).alignment(1.0f);
 	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
 	m_options_input.append(waveform.flagNames());
