@@ -58,14 +58,16 @@ namespace Anja
 
 			bool fileLoaded(const char* filename) const;
 
-			const float* begin() const noexcept
-				{return r_waveform->begin();}
+			template<Waveform::Cursor c>
+			const float* pointer() const noexcept
+				{return r_waveform->pointer<c>();}
+
+			template<Waveform::Cursor c>
+			float* pointer() noexcept
+				{return r_waveform->pointer<c>();}
 
 			const float* beginFull() const noexcept
 				{return r_waveform->beginFull();}
-
-			const float* end() const noexcept
-				{return r_waveform->end();}
 
 			const float* endFull() const noexcept
 				{return r_waveform->endFull();}
@@ -76,27 +78,17 @@ namespace Anja
 			void sampleRateSet(float fs) noexcept
 				{r_waveform->sampleRateSet(fs);}
 
-			int32_t offsetBeginGet() const noexcept
-				{return r_waveform->offsetBeginGet();}
+			template<Waveform::Cursor c>
+			int32_t offset() const noexcept
+				{return r_waveform->offset<c>();}
 
-			void offsetBeginSet(int32_t value_new) noexcept
-				{r_waveform->offsetBeginSet(value_new);}
+			template<Waveform::Cursor c>
+			void offset(int32_t val_new) const noexcept
+				{r_waveform->offset<c>(val_new);}
 
-			void offsetBeginSet(double value_new) noexcept
-				{
-				r_waveform->offsetBeginSet(static_cast<int32_t>(value_new*r_waveform->sampleRateGet()));
-				}
-
-			int32_t offsetEndGet() const noexcept
-				{return r_waveform->offsetEndGet();}
-
-			void offsetEndSet(int32_t value_new) noexcept
-				{r_waveform->offsetEndSet(value_new);}
-
-			void offsetEndSet(double value_new) noexcept
-				{
-				r_waveform->offsetEndSet(static_cast<int32_t>(value_new*r_waveform->sampleRateGet()));
-				}
+			template<Waveform::Cursor c>
+			void offset(double val_new) const noexcept
+				{r_waveform->offset<c>(val_new);}
 
 			void offsetsReset() noexcept
 				{r_waveform->offsetsReset();}
@@ -110,8 +102,8 @@ namespace Anja
 			uint32_t lengthFull() const noexcept
 				{return r_waveform->lengthFull();}
 
-			bool reversedIs() const noexcept
-				{return r_waveform->reversedIs();}
+			int direction() const noexcept
+				{return r_waveform->direction();}
 
 			uint32_t channelGet() const noexcept
 				{return r_waveform->channelGet();}

@@ -32,10 +32,7 @@ namespace Anja
 		{
 		public:
 			enum class ButtonId:int
-				{
-				 FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSOR_BEGIN_AUTO
-				,CURSORS_SWAP,CURSOR_END_AUTO
-				};
+				{FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
 
 			enum class ListboxId:int
 				{CHANNEL};
@@ -130,6 +127,8 @@ namespace Anja
 			void* r_cb_obj;
 			Vtable m_vtable;
 
+			void offsets_update();
+
 			WaveformProxy m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
@@ -173,12 +172,16 @@ namespace Anja
 							Box m_cursor_begin;
 								Label m_cursor_begin_label;
 								TextEntry m_cursor_begin_entry;
-								Button m_cursor_begin_auto;
+							Box m_cursor_begin_loop;
+								Label m_cursor_begin_loop_label;
+								TextEntry m_cursor_begin_loop_entry;
 							Button m_swap;
+							Box m_cursor_end_loop;
+								TextEntry m_cursor_end_loop_entry;
+								Label m_cursor_end_loop_label;
 							Box m_cursor_end;
-								Label m_cursor_end_label;
 								TextEntry m_cursor_end_entry;
-								Button m_cursor_end_auto;
+								Label m_cursor_end_label;
 		};
 
 	}

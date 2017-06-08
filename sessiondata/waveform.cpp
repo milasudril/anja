@@ -24,11 +24,11 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	{
 	clear();
 	fileLoad(filename);
-	auto value=record.propertyGet(String("Playback gain/dB"));
+	auto value=record.propertyGet(String("Gain/dB"));
 	if(value!=nullptr)
 		{gainSet(convert(value->begin()));}
 
-	value=record.propertyGet(String("Playback gain random level/dB"));
+	value=record.propertyGet(String("Gain random level/dB"));
 	if(value!=nullptr)
 		{gainRandomSet(convert(value->begin()));}
 
@@ -37,7 +37,7 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	if(value!=nullptr)
 		{flagsSet(optionsFromString(value->begin(),FLAG_NAMES));}
 
-	value=record.propertyGet(String("Playback channel"));
+	value=record.propertyGet(String("Channel"));
 	if(value!=nullptr)
 		{
 		long ch;
@@ -46,29 +46,50 @@ Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 			ch=atol(value->begin());
 			}
 		if(ch<1 || ch>16)
-			{throw "A sound effect must be mapped to a channel number between 1 to 16 inclusive";}
+			{throw Error("A sound effect must be mapped to a channel number between 1 to 16 inclusive");}
 		channelSet(ch-1);
 		}
 
-	value=record.propertyGet(String("Playback begin position/frames"));
+	value=record.propertyGet(String("Begin position/frames"));
 	if(value==nullptr)
-		{offsetBeginSet(0);}
+		{offset<Cursor::BEGIN>(0);}
 	else
 		{
 		LocaleGuard locale("C");
 		auto pos=atol(value->begin());
-		offsetBeginSet(pos);
+		offset<Cursor::BEGIN>(static_cast<int32_t>( pos) );
 		}
 
-	value=record.propertyGet(String("Playback end position/frames"));
+	value=record.propertyGet(String("End position/frames"));
 	if(value==nullptr)
-		{offsetEndSet(m_data.length());}
+		{offset<Cursor::END>(static_cast<int32_t>(m_data.length()-1) );}
 	else
 		{
 		LocaleGuard locale("C");
 		auto pos=atol(value->begin());
-		offsetEndSet(pos);
+		offset<Cursor::END>( static_cast<int32_t>(pos) );
 		}
+
+	value=record.propertyGet(String("Loop begin position/frames"));
+	if(value==nullptr)
+		{offset<Cursor::BEGIN_LOOP>(offset<Cursor::BEGIN>());}
+	else
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		offset<Cursor::BEGIN_LOOP>( static_cast<int32_t>(pos) );
+		}
+
+	value=record.propertyGet(String("Loop end position/frames"));
+	if(value==nullptr)
+		{offset<Cursor::END_LOOP>(offset<Cursor::END>());}
+	else
+		{
+		LocaleGuard locale("C");
+		auto pos=atol(value->begin());
+		offset<Cursor::END_LOOP>( static_cast<int32_t>(pos) );
+		}
+
 
 	dirtyClear();
 	}
@@ -83,19 +104,19 @@ void Waveform::dataGet(SessionFileRecord& record) const
 	{
 	char buffer[32];
 	sprintf(buffer,"%u",channelGet() + 1);
-	record.propertySet(String("Playback channel")
+	record.propertySet(String("Channel")
 		,String(buffer));
 	sprintf(buffer,"%.7g",gainGet());
-	record.propertySet(String("Playback gain/dB")
+	record.propertySet(String("Gain/dB")
 		,String(buffer));
 	sprintf(buffer,"%.7g",gainRandomGet());
-	record.propertySet(String("Playback gain random level/dB")
+	record.propertySet(String("Gain random level/dB")
 		,String(buffer));
-	sprintf(buffer,"%u",offsetBeginGet());
-	record.propertySet(String("Playback starting position/frames")
+	sprintf(buffer,"%u",offset<Cursor::BEGIN>());
+	record.propertySet(String("Begin position/frames")
 		,String(buffer));
-	sprintf(buffer,"%u",offsetEndGet());
-	record.propertySet(String("Playback end position/frames")
+	sprintf(buffer,"%u",offset<Cursor::END>());
+	record.propertySet(String("End position/frames")
 		,String(buffer));
 	record.propertySet(String("Options")
 		,stringFromOptions(flagsGet(),FLAG_NAMES));
@@ -134,7 +155,7 @@ void Waveform::fileLoad(const char* filename)
 		append(buffer_tmp.begin(),n_read);
 		}
 	while(n_read==BUFFER_SIZE);
-	offsetsAdjust();
+	offsetsReset();
 
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
 	flagsSet(Waveform::READONLY|Waveform::DIRTY);

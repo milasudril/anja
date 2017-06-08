@@ -43,27 +43,7 @@ static double gain_random_map(double x)
 
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
-
-static void offset_begin_update(const WaveformProxy& waveform,TextEntry& e,XYPlot& plot)
-	{
-	auto val=static_cast<double>( waveform.offsetBeginGet() )
-		/static_cast<double>( waveform.sampleRateGet() );
-	char buffer[32];
-	sprintf(buffer,"%.5f",val);
-	e.content(buffer);
-	plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,0},0);
-	}
-
-static void offset_end_update(const WaveformProxy& waveform,TextEntry& e,XYPlot& plot)
-	{
-	auto val=static_cast<double>( waveform.offsetEndGet() )
-		/static_cast<double>( waveform.sampleRateGet() );
-	char buffer[32];
-	sprintf(buffer,"%.5f",val);
-	e.content(buffer);
-	plot.cursorX(XYPlot::Cursor{val,0.0f},1);
-	}
-
+/*
 static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	,WaveformProxy& waveform,TextEntry& entry)
 	{
@@ -86,6 +66,40 @@ static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
 	auto t=static_cast<double>(i.base() - wfdb.begin())*0.5e-3;
 	waveform.offsetEndSet(t);
 	offset_end_update(waveform,entry,plot);
+	}*/
+
+
+
+void WaveformEditor::offsets_update()
+	{
+	auto val=0.0;
+	char buffer[32];
+
+	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::BEGIN>() )
+		/static_cast<double>( m_waveform.sampleRateGet() );
+	sprintf(buffer,"%.5f",val);
+	m_cursor_begin_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,0},0);
+
+	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::END>() )
+		/static_cast<double>( m_waveform.sampleRateGet() );
+	sprintf(buffer,"%.5f",val);
+	m_cursor_end_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f,0},1);
+
+	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::BEGIN_LOOP>() )
+		/static_cast<double>( m_waveform.sampleRateGet() );
+	sprintf(buffer,"%.5f",val);
+	m_cursor_begin_loop_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,1},2);
+
+	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::END_LOOP>() )
+		/static_cast<double>( m_waveform.sampleRateGet() );
+	sprintf(buffer,"%.5f",val);
+	m_cursor_end_loop_entry.content(buffer);
+	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f,1},3);
+
+	m_swap.state(m_waveform.direction()<0);
 	}
 
 void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
@@ -131,6 +145,7 @@ void WaveformEditor::changed(Slider& slider,SliderId id)
 		case SliderId::GAIN_RANDOM:
 			m_waveform.gainRandomSet( gain_random_map(slider.value()) );
 			gain_random_update(m_waveform,m_gain_random_input_text,slider);
+			break;
 		}
 	}
 
@@ -218,8 +233,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 					{
 					m_waveform.fileLoad(entry.content());
 					m_waveform_db=filename_update(m_waveform,entry,m_options_input,m_plot);
-					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+				//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
 				catch(const Error& err)
@@ -274,8 +289,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{m_waveform.offsetBeginSet(val_new);}
-			offset_begin_update(m_waveform,entry,m_plot);
+				{m_waveform.offset<Waveform::Cursor::BEGIN>(val_new);}
+			offsets_update();
 			}
 			break;
 
@@ -283,8 +298,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{m_waveform.offsetEndSet(val_new);}
-			offset_end_update(m_waveform,entry,m_plot);
+				{m_waveform.offset<Waveform::Cursor::END>(val_new);}
+			offsets_update();
 			}
 			break;
 		}
@@ -302,22 +317,10 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 		{
 		case ButtonId::CURSORS_SWAP:
 			{
-			auto end=m_waveform.offsetBeginGet();
-			auto begin=m_waveform.offsetEndGet();
-			m_waveform.offsetBeginSet(begin);
-			m_waveform.offsetEndSet(end);
-			offset_begin_update(m_waveform,m_cursor_begin_entry,m_plot);
-			offset_end_update(m_waveform,m_cursor_end_entry,m_plot);
+			m_waveform.reverse();
+			offsets_update();
 			}
-			break;
-
-		case ButtonId::CURSOR_BEGIN_AUTO:
-			cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-			break;
-
-		case ButtonId::CURSOR_END_AUTO:
-			cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
-			break;
+			return;
 
 		case ButtonId::FILENAME_BROWSE:
 			{
@@ -333,8 +336,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 					m_waveform.flagsSet(flags);
 					m_waveform.dirtyClear();
 					m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-					cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-					cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+				//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 					m_plot.showAll();
 					}
 				catch(const Error& err)
@@ -352,8 +355,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				{
 				m_waveform.fileLoad(m_waveform.filenameGet().begin());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+			//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+			//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 				m_plot.showAll();
 				}
 			catch(const Error& err)
@@ -392,13 +395,26 @@ void WaveformEditor::cursorX(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 			switch(index)
 				{
 				case 0:
-					m_waveform.offsetBeginSet(plot.cursorX(0).position);
-					offset_begin_update(m_waveform,m_cursor_begin_entry,plot);
+					m_waveform.offset<Waveform::Cursor::BEGIN>(plot.cursorX(0).position);
+					offsets_update();
 					break;
+
 				case 1:
-					m_waveform.offsetEndSet(plot.cursorX(1).position);
-					offset_end_update(m_waveform,m_cursor_end_entry,plot);
+					m_waveform.offset<Waveform::Cursor::END>(plot.cursorX(1).position);
+					offsets_update();
 					break;
+
+				case 2:
+					m_waveform.offset<Waveform::Cursor::BEGIN_LOOP>(plot.cursorX(2).position);
+					offsets_update();
+					break;
+
+				case 3:
+					m_waveform.offset<Waveform::Cursor::END_LOOP>(plot.cursorX(3).position);
+					offsets_update();
+					break;
+
+
 				}
 			break;
 		}
@@ -411,8 +427,8 @@ void WaveformEditor::cursorY(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 		case PlotId::WAVEFORM:
 			if(keymask&KEYMASK_KEY_SHIFT && index==0)
 				{
-				cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-				cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+			//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
+			//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
 				}
 			break;
 		}
@@ -453,8 +469,7 @@ WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 			{m_plot.showAll();}
 		m_filename_input.focus();
 		}
-	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
-	offset_end_update(waveform,m_cursor_end_entry,m_plot);
+	offsets_update();
 
 	return *this;
 	}
@@ -514,18 +529,24 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
 				,m_trim_panel(m_details_right.insertMode({0,0}),false)
 					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_cursor_begin_label(m_cursor_begin,"Begin:")
+						,m_cursor_begin_label(m_cursor_begin,"↦")
 						,m_cursor_begin_entry(m_cursor_begin.insertMode({2,Box::EXPAND|Box::FILL}))
-						,m_cursor_begin_auto(m_cursor_begin.insertMode({0,0}),"Auto")
+					,m_cursor_begin_loop(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_begin_loop_label(m_cursor_begin_loop,"↪")
+						,m_cursor_begin_loop_entry(m_cursor_begin_loop.insertMode({2,Box::EXPAND|Box::FILL}))
 					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
+					,m_cursor_end_loop(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
+						,m_cursor_end_loop_entry(m_cursor_end_loop.insertMode({2,Box::EXPAND|Box::FILL}))
+						,m_cursor_end_loop_label(m_cursor_end_loop,"↩")
 					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_cursor_end_label(m_cursor_end,"End:")
 						,m_cursor_end_entry(m_cursor_end.insertMode({2,Box::EXPAND|Box::FILL}))
-						,m_cursor_end_auto(m_cursor_end.insertMode({0,0}),"Auto")
+						,m_cursor_end_label(m_cursor_end,"⇥")
 	{
 	m_gain_input_text.width(7).small(true).alignment(1.0f);
 	m_gain_random_input_text.width(6).small(true).alignment(1.0f);
 	m_cursor_begin_entry.width(7);
+	m_cursor_begin_loop_entry.width(7);
+	m_cursor_end_loop_entry.width(7);
 	m_cursor_end_entry.width(7).alignment(1.0f);
 	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
 	m_options_input.append(waveform.flagNames());
@@ -544,9 +565,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 	m_options_input.callback(*this,OptionListId::OPTIONS);
 	m_plot.callback(*this,PlotId::WAVEFORM);
 	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
-	m_cursor_begin_auto.callback(*this,ButtonId::CURSOR_BEGIN_AUTO);
 	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
-	m_cursor_end_auto.callback(*this,ButtonId::CURSOR_END_AUTO);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
 //	Session changed...
@@ -563,6 +582,5 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 	m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
 	m_plot.showAll();
 	m_filename_input.focus();
-	offset_begin_update(waveform,m_cursor_begin_entry,m_plot);
-	offset_end_update(waveform,m_cursor_end_entry,m_plot);
+	offsets_update();
 	}

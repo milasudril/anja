@@ -18,14 +18,16 @@ namespace Anja
 	class Waveform
 		{
 		public:
-			Waveform() noexcept:m_offset_begin(0),m_offset_end(0),m_channel(0)
+			Waveform() noexcept:m_channel(0)
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
 				{}
 
 			explicit Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
-				 m_offset_begin(0),m_offset_end(buffer_size)
-				,m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
-				{m_data.append(buffer,buffer_size);}
+				m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
+				{
+				m_data.append(buffer,buffer_size);
+				offsetsReset();
+				}
 
 			explicit Waveform(const SessionFileRecord& record,const char* filename=nullptr);
 
@@ -43,20 +45,58 @@ namespace Anja
 			void dataSet(const SessionFileRecord& rec,const char* filename)
 				{*this=Waveform(rec,filename);}
 
-			const float* begin() const noexcept
-				{return m_data.begin() + m_offset_begin;}
+			enum class Cursor:int32_t{BEGIN,BEGIN_LOOP,END_LOOP,END};
+
+			template<Cursor c>
+			int32_t offset() const noexcept
+				{
+				static_assert(static_cast<int>(c)>=0 && static_cast<int>(c)<4,"");
+				return m_offsets[ static_cast<int32_t>(c) ];
+				}
+
+			template<Cursor c>
+			Waveform& offset(int32_t value_new) noexcept
+				{
+				static_assert(static_cast<int32_t>(c)>=0 && static_cast<int32_t>(c)<4,"");
+
+				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
+				m_flags|=(temp!=m_offsets[ static_cast<int32_t>(c) ]? DIRTY : 0);
+				m_offsets[ static_cast<int32_t>(c) ]=temp;
+
+				m_offsets[ 1 ]=clamp(m_offsets[0],m_offsets[3],m_offsets[1]);
+				m_offsets[ 2 ]=clamp(m_offsets[0],m_offsets[3],m_offsets[2]);
+				switch(c)
+					{
+					case Cursor::BEGIN_LOOP:
+						m_offsets[ 2 ]=clamp(m_offsets[1],m_offsets[3],m_offsets[2]);
+						break;
+					case Cursor::END_LOOP:
+						m_offsets[ 1 ]=clamp(m_offsets[0],m_offsets[2],m_offsets[1]);
+						break;
+					default:
+						break;
+					}
+				return *this;
+				}
+
+			template<Waveform::Cursor c>
+			Waveform& offset(double val_new) noexcept
+				{return offset<c>(static_cast<int32_t>(val_new*m_fs));}
+
+			template<Cursor c>
+			const float* pointer() const noexcept
+				{return m_data.begin() + offset<c>();}
+
+			template<Cursor c>
+			float* pointer() noexcept
+				{return m_data.begin() + offset<c>();}
+
 
 			const float* beginFull() const noexcept
 				{return m_data.begin();}
 
-			const float* end() const noexcept
-				{return m_data.begin() + m_offset_end;}
-
 			const float* endFull() const noexcept
 				{return m_data.end();}
-
-			uint32_t offsetBeginGet() const noexcept
-				{return m_offset_begin;}
 
 			float sampleRateGet() const noexcept
 				{return m_fs;}
@@ -67,49 +107,32 @@ namespace Anja
 				m_fs=fs;
 				}
 
-			void offsetBeginSet(int32_t value_new) noexcept
-				{
-				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
-				m_flags|=(temp!=m_offset_begin? DIRTY : 0);
-				m_offset_begin=temp;
-				}
-
-			uint32_t offsetEndGet() const noexcept
-				{return m_offset_end;}
-
-			void offsetEndSet(int32_t value_new) noexcept
-				{
-				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
-				m_flags|=(temp!=m_offset_end? DIRTY : 0);
-				m_offset_end=temp;
-				}
-
 			void offsetsReset() noexcept
 				{
-				m_offset_end=m_data.length();
-				m_offset_begin=0;
+				m_offsets[0]=0;
+				m_offsets[1]=0;
+				m_offsets[2]=m_data.length();
+				m_offsets[3]=m_data.length();
 				m_flags|=DIRTY;
 				}
 
 			void reverse() noexcept
 				{
-				std::swap(m_offset_end,m_offset_begin);
+				std::swap(m_offsets[0],m_offsets[3]);
+				std::swap(m_offsets[1],m_offsets[2]);
 				m_flags|=DIRTY;
 				}
 
 
 
 			uint32_t length() const noexcept
-				{
-				return reversedIs()?
-					m_offset_begin-m_offset_end:m_offset_end-m_offset_begin;
-				}
+				{return std::abs(offset<Cursor::END>() - offset<Cursor::BEGIN>());}
 
 			uint32_t lengthFull() const noexcept
 				{return m_data.length();}
 
-			bool reversedIs() const noexcept
-				{return m_offset_begin > m_offset_end;}
+			int direction() const noexcept
+				{return offset<Cursor::END>() > offset<Cursor::BEGIN>()?1:-1;}
 
 
 
@@ -202,10 +225,9 @@ namespace Anja
 				m_gain_random=0.0f;
 				m_channel=0;
 				m_flags=0.0f;
-				m_offset_begin=0;
 				m_fs=1000.0f;
 				m_data.clear();
-				m_offset_end=m_data.length();
+				offsetsReset();
 				m_flags=0;
 				}
 
@@ -228,18 +250,19 @@ namespace Anja
 			static constexpr uint32_t MASK_CHANGE_IGNORE=DIRTY|RECORD_RUNNING|PLAYBACK_RUNNING;
 
 			ArrayDynamicShort<float> m_data;
-			int32_t m_offset_begin;
-			int32_t m_offset_end;
+			ArrayFixed<int32_t,4> m_offsets;
 			int32_t m_channel;
 			float m_gain;
 			float m_gain_random;
 			float m_fs;
 			uint32_t m_flags;
 
-			void offsetsAdjust() noexcept
+			template<class T>
+			static inline T clamp(T a,T b,T x) noexcept
 				{
-				m_offset_begin=std::max(0,std::min(m_offset_begin,static_cast<int32_t>(m_data.length())));
-				m_offset_end=std::max(0,std::min(m_offset_end,static_cast<int32_t>(m_data.length())));
+				if(a<=b)
+					{return std::max(a,std::min(x,b));}
+				return clamp(b,a,x);
 				}
 		};
 	}
