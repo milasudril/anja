@@ -130,6 +130,8 @@ namespace Anja
 			Vtable m_vtable;
 
 			void offsets_update();
+			void cursor_begin_auto() noexcept;
+			void cursor_end_auto() noexcept;
 
 			WaveformProxy m_waveform;
 			ArraySimple<float> m_waveform_db;

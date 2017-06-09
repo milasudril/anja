@@ -43,32 +43,6 @@ static double gain_random_map(double x)
 
 static double gain_random_map_inv(double x)
 	{return x/12.0;}
-/*
-static void cursor_begin_auto(XYPlot& plot,const ArraySimple<float>& wfdb
-	,WaveformProxy& waveform,TextEntry& entry)
-	{
-	auto threshold=plot.cursorY(0).position;
-	auto i=std::find_if(wfdb.begin(),wfdb.end(),[threshold](float val)
-		{return val>threshold;});
-	auto t=static_cast<double>(i - wfdb.begin())*0.5e-3;
-	waveform.offsetBeginSet(t);
-	offset_begin_update(waveform,entry,plot);
-	}
-
-static void cursor_end_auto(XYPlot& plot,const ArraySimple<float>& wfdb
-	,WaveformProxy& waveform,TextEntry& entry)
-	{
-	auto threshold=plot.cursorY(0).position;
-	auto i_begin=std::reverse_iterator<const float*>(wfdb.end());
-	auto i_end=std::reverse_iterator<const float*>(wfdb.begin());
-	auto i=std::find_if(i_begin,i_end,[threshold](float val)
-		{return val>threshold;});
-	auto t=static_cast<double>(i.base() - wfdb.begin())*0.5e-3;
-	waveform.offsetEndSet(t);
-	offset_end_update(waveform,entry,plot);
-	}*/
-
-
 
 void WaveformEditor::offsets_update()
 	{
@@ -101,6 +75,29 @@ void WaveformEditor::offsets_update()
 
 	m_swap.state(m_waveform.direction()<0);
 	}
+
+void WaveformEditor::cursor_begin_auto() noexcept
+	{
+	auto threshold=m_plot.cursorY(0).position;
+	auto i=std::find_if(m_waveform_db.begin(),m_waveform_db.end(),[threshold](float val)
+		{return val>threshold;});
+	auto t=static_cast<double>(i - m_waveform_db.begin())*0.5e-3;
+	m_waveform.offset<Waveform::Cursor::BEGIN>(t);
+	offsets_update();
+	}
+
+void WaveformEditor::cursor_end_auto() noexcept
+	{
+	auto threshold=m_plot.cursorY(0).position;
+	auto i_begin=std::reverse_iterator<const float*>(m_waveform_db.end());
+	auto i_end=std::reverse_iterator<const float*>(m_waveform_db.begin());
+	auto i=std::find_if(i_begin,i_end,[threshold](float val)
+		{return val>threshold;});
+	auto t=static_cast<double>(i.base() - m_waveform_db.begin())*0.5e-3;
+	m_waveform.offset<Waveform::Cursor::END>(t);
+	offsets_update();
+	}
+
 
 void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 	{
@@ -427,8 +424,8 @@ void WaveformEditor::cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keym
 		case PlotId::WAVEFORM:
 			if(keymask&KEYMASK_KEY_SHIFT && index==0)
 				{
-			//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-			//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_begin_auto();
+				cursor_end_auto();
 				}
 			break;
 		}
@@ -436,7 +433,19 @@ void WaveformEditor::cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keym
 
 void WaveformEditor::cursorXRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask)
 	{
-	printf("Hello X %d\n",index);
+	switch(id)
+		{
+		case PlotId::WAVEFORM:
+			switch(index)
+				{
+				case 0:
+					cursor_begin_auto();
+					break;
+				case 1:
+					cursor_end_auto();
+					break;
+				}
+		}
 	}
 
 void WaveformEditor::cursorYRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask)
