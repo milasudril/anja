@@ -106,7 +106,10 @@ namespace Anja
 			Window m_mainwin;
 				Box m_cols;
 					Anja::ButtonList m_session_control;
-					Anja::SessionEditor m_session_editor;
+					Box m_rows;
+						Message m_status;
+						Separator m_sep;
+						Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
 
 			std::unique_ptr<Dialog<Message,ConfirmSaveDialog> > m_confirm;
@@ -117,6 +120,9 @@ namespace Anja
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;
+
+			void engine_stop();
+			void engine_start();
 		};
 	}
 

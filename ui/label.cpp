@@ -21,8 +21,16 @@ class Label::Impl:private Label
 		void wordwrap(bool status)
 			{
 			gtk_label_set_line_wrap(m_handle,status);
-			gtk_label_set_max_width_chars(m_handle,60);
-			gtk_widget_set_size_request(GTK_WIDGET(m_handle),500,1);
+			if(status)
+				{
+				gtk_label_set_max_width_chars(m_handle,60);
+				gtk_widget_set_size_request(GTK_WIDGET(m_handle),500,1);
+				}
+			else
+				{
+				gtk_label_set_max_width_chars(m_handle,-1);
+				gtk_widget_set_size_request(GTK_WIDGET(m_handle),-1,-1);
+				}
 			}
 
 	private:

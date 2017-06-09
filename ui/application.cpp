@@ -18,6 +18,13 @@ using namespace Anja;
 
 ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo.png));
 
+static constexpr const char* ANJA_OFFLINE="Anja is currently offline. Click "
+	"`Start engine` in the action panel to connect to the default JACK server.";
+static constexpr const char* ANJA_ONLINE="Anja is connected to the default JACK "
+	"server. Use a JACK patchbay tool such as Catia to route signals to/from Anja.";
+static constexpr const char* ANJA_RESTART_NEEDED="The engine needs to be restarted. "
+	"Notice that doing so requires rerouting signals, and will stop all playback.";
+
 static void title_update(const Session& session,Window& win)
 	{
 	String title(session.titleGet());
@@ -81,13 +88,26 @@ void Application::confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,Confirm
 		}
 	}
 
+void Application::engine_start()
+	{
+	m_engine.reset( new Engine(m_session) );
+	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
+	}
+
+void Application::engine_stop()
+	{
+	m_engine.reset();
+	m_status.message(ANJA_OFFLINE).type(Message::Type::STOP);
+	}
+
 Application& Application::sessionNew()
 	{
+	engine_stop();
 	m_session.clear();
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
 	try
-		{m_engine.reset( new Engine(m_session) );}
+		{engine_start();}
 	catch(...)
 		{}
 	return *this;
@@ -118,6 +138,7 @@ bool Application::sessionSaveAs()
 
 Application& Application::sessionLoad()
 	{
+	engine_stop();
 	auto name=std::string(m_session.filenameGet().begin());
 	if(filenameSelect(m_mainwin,m_session.directoryGet().begin()
 		,name,Anja::FilenameSelectMode::OPEN,[this](const char* name)
@@ -203,27 +224,18 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_NEW);}
 				else
-					{
-					m_engine.reset();
-					sessionNew();
-					}
+					{sessionNew();}
 				break;
 			case 1:
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}				else
-					{
-					m_engine.reset();
-					sessionLoad();
-					}
+					{sessionLoad();}
 				break;
 			case 2:
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::SESSION_RELOAD);}
 				else
-					{
-					m_engine.reset();
-					sessionLoad(m_session.filenameGet().begin());
-					}
+					{sessionLoad(m_session.filenameGet().begin());}
 				break;
 			case 3:
 				sessionSave();
@@ -232,10 +244,10 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				sessionSaveAs();
 				break;
 			case 5:
-				m_engine.reset(new Engine(m_session));
+				engine_start();
 				break;
 			case 6:
-				m_engine.reset();
+				engine_stop();
 				break;
 			case 7:
 				m_fullscreen=!m_fullscreen;
@@ -284,16 +296,20 @@ void Application::descriptionChanged(SessionPropertiesEditor& editor,int id)
 	{}
 
 void Application::optionChanged(SessionPropertiesEditor& editor,int id,int option)
-	{}
+	{
+	if(id==0 && option==0)
+		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
+	}
 
 
 Application& Application::sessionLoad(const char* filename)
 	{
+	engine_stop();
 	m_session.load(filename);
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
 	try
-		{m_engine.reset( new Engine(m_session) );}
+		{engine_start();}
 	catch(...)
 		{}
 	return *this;
@@ -315,7 +331,10 @@ Application::Application():
 	m_mainwin("New session--Anja")
 		,m_cols(m_mainwin,false)
 			,m_session_control(m_cols,true)
-			,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
+			,m_rows(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),true)
+				,m_status(m_rows,ANJA_OFFLINE,Message::Type::STOP,0)
+				,m_sep(m_rows.insertMode({2,0}),false)
+				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
 	,m_fullscreen(0)
 	{
 	m_ctx.dark(1);

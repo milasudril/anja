@@ -16,9 +16,13 @@ namespace Anja
 	class Message
 		{
 		public:
-			enum class Type:int{INFORMATION,WARNING,ERROR};
+			enum class Type:int{INFORMATION,WARNING,ERROR,READY,WAIT,STOP};
 
 			Message(Container& cnt,const char* message,Type type,bool wordwrap=true);
+
+			Message& type(Type t);
+
+			Message& message(const char* msg);
 
 		private:
 			Box m_cols;
