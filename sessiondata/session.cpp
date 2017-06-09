@@ -320,7 +320,7 @@ bool Session::dirtyIs() const noexcept
 		int k=0;
 		while(ptr_wfd!=ptr_end)
 			{
-			if(ptr_wfd->dirtyIs() || m_waveforms[k].dirtyIs())
+			if(ptr_wfd->dirty() || m_waveforms[k].dirty())
 				{return 1;}
 			++ptr_wfd;
 			++k;

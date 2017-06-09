@@ -9,8 +9,8 @@ using namespace Anja;
 Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset) noexcept
 	{
 	m_velocity=velocity;
-	m_gain=dBToAmplitude( waveform.gainGet() );
-	m_gain_random=dBToAmplitude(waveform.gainRandomGet());
+	m_gain=dBToAmplitude( waveform.gain() );
+	m_gain_random=dBToAmplitude(waveform.gainRandom());
 
 	r_pos_current=waveform.pointer<Waveform::Cursor::BEGIN>();
 	r_loop_begin=waveform.pointer<Waveform::Cursor::BEGIN_LOOP>();
@@ -18,7 +18,7 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	r_end=waveform.pointer<Waveform::Cursor::END>();
 	m_pos_offset=start_offset;
 	m_state=State::BEGIN;
-	m_flags=waveform.flagsGet();
+	m_flags=waveform.flags();
 	m_channel=channel;
 	}
 

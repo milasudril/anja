@@ -50,25 +50,25 @@ void WaveformEditor::offsets_update()
 	char buffer[32];
 
 	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::BEGIN>() )
-		/static_cast<double>( m_waveform.sampleRateGet() );
+		/static_cast<double>( m_waveform.sampleRate() );
 	sprintf(buffer,"%.5f",val);
 	m_cursor_begin_entry.content(buffer);
 	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,0},0);
 
 	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::END>() )
-		/static_cast<double>( m_waveform.sampleRateGet() );
+		/static_cast<double>( m_waveform.sampleRate() );
 	sprintf(buffer,"%.5f",val);
 	m_cursor_end_entry.content(buffer);
 	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f,0},1);
 
 	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::BEGIN_LOOP>() )
-		/static_cast<double>( m_waveform.sampleRateGet() );
+		/static_cast<double>( m_waveform.sampleRate() );
 	sprintf(buffer,"%.5f",val);
 	m_cursor_begin_loop_entry.content(buffer);
 	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.33f,1},2);
 
 	val=static_cast<double>( m_waveform.offset<Waveform::Cursor::END_LOOP>() )
-		/static_cast<double>( m_waveform.sampleRateGet() );
+		/static_cast<double>( m_waveform.sampleRate() );
 	sprintf(buffer,"%.5f",val);
 	m_cursor_end_loop_entry.content(buffer);
 	m_plot.cursorX(XYPlot::Cursor{static_cast<double>(val),0.0f,1},3);
@@ -114,7 +114,7 @@ void WaveformEditor::clicked(OptionList& src,OptionListId id,Checkbox& opt)
 
 static void gain_update(const WaveformProxy& wf,TextEntry& e,Slider& s)
 	{
-	auto g=wf.gainGet();
+	auto g=wf.gain();
 	char buffer[16];
 	sprintf(buffer,"%.3f",g);
 	e.content(buffer);
@@ -123,7 +123,7 @@ static void gain_update(const WaveformProxy& wf,TextEntry& e,Slider& s)
 
 static void gain_random_update(const WaveformProxy& wf,TextEntry& e,Slider& s)
 	{
-	auto g=wf.gainRandomGet();
+	auto g=wf.gainRandom();
 	char buffer[16];
 	sprintf(buffer,"%.3f",g);
 	e.content(buffer);
@@ -184,11 +184,11 @@ void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 static ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntry& e
 	,OptionList& options,XYPlot& plot)
 	{
-	e.content(waveform.filenameGet().begin());
-	options.selected(waveform.flagsGet());
+	e.content(waveform.filename().begin());
+	options.selected(waveform.flags());
 	if(waveform.lengthFull()!=0)
 		{
-		auto fs=static_cast<double>(waveform.sampleRateGet());
+		auto fs=static_cast<double>(waveform.sampleRate());
 		auto ms=decimate(mean_square(waveform.beginFull(),waveform.endFull()
 			,fs/1000.0),0.5e-3*fs);
 
@@ -210,12 +210,12 @@ static ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntr
 
 static void description_update(const WaveformProxy& waveform,TextEntry& e)
 	{
-	e.content(waveform.descriptionGet().begin());
+	e.content(waveform.description().begin());
 	}
 
 static void color_update(const WaveformProxy& waveform,TextEntry& e)
 	{
-	e.content(ColorString(waveform.keyColorGet()).begin());
+	e.content(ColorString(waveform.keyColor()).begin());
 	}
 
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
@@ -224,11 +224,11 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		{
 		case TextEntryId::FILENAME:
 			if(*entry.content()!='\0'
-				&& !m_waveform.fileLoaded(entry.content()))
+				&& !m_waveform.waveformLoaded(entry.content()))
 				{
 				try
 					{
-					m_waveform.fileLoad(entry.content());
+					m_waveform.waveformLoad(entry.content());
 					m_waveform_db=filename_update(m_waveform,entry,m_options_input,m_plot);
 				//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
 				//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
@@ -239,13 +239,13 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
 						,err.message(),Message::Type::ERROR));
 					m_err_dlg->callback(*this,0);
-					entry.content(m_waveform.filenameGet().begin());
+					entry.content(m_waveform.filename().begin());
 					}
 				}
 			break;
 
 		case TextEntryId::DESCRIPTION:
-			m_waveform.descriptionSet(String(entry.content()));
+			m_waveform.description(String(entry.content()));
 			if(r_cb_obj!=nullptr)
 				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
 			description_update(m_waveform,entry);
@@ -321,15 +321,15 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 
 		case ButtonId::FILENAME_BROWSE:
 			{
-			std::string temp(m_waveform.filenameGet().begin());
-			if(filenameSelect(m_filename,m_waveform.directoryGet().begin(),temp
+			std::string temp(m_waveform.filename().begin());
+			if(filenameSelect(m_filename,m_waveform.directory().begin(),temp
 				,FilenameSelectMode::OPEN,[this](const char* path)
 					{return m_waveform.loadPossible(path);},"Wave Audio files"))
 				{
 				try
 					{
-					auto flags=m_waveform.flagsGet();
-					m_waveform.fileLoad(temp.c_str());
+					auto flags=m_waveform.flags();
+					m_waveform.waveformLoad(temp.c_str());
 					m_waveform.flagsSet(flags);
 					m_waveform.dirtyClear();
 					m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
@@ -350,7 +350,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 		case ButtonId::FILENAME_RELOAD:
 			try
 				{
-				m_waveform.fileLoad(m_waveform.filenameGet().begin());
+				m_waveform.waveformLoad(m_waveform.filename().begin());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
 			//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
 			//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
@@ -367,7 +367,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 		case ButtonId::COLOR_PICK:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,0).widget()
-				.color(m_waveform.keyColorGet())
+				.color(m_waveform.keyColor())
 				.presets(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
@@ -379,7 +379,7 @@ void WaveformEditor::changed(Listbox& lb,ListboxId id)
 	switch(id)
 		{
 		case ListboxId::CHANNEL:
-			m_waveform.channelSet(lb.selected());
+			m_waveform.channel(lb.selected());
 			break;
 		}
 	}
@@ -477,8 +477,8 @@ WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
 	gain_random_update(waveform,m_gain_random_input_text,m_gain_random_input_slider);
 
-	m_channel_input.selected(m_waveform.channelGet());
-	m_options_input.selected(waveform.flagsGet());
+	m_channel_input.selected(m_waveform.channel());
+	m_options_input.selected(waveform.flags());
 
 		{
 		m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
@@ -594,8 +594,8 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 	gain_update(waveform,m_gain_input_text,m_gain_input_slider);
 	gain_random_update(waveform,m_gain_random_input_text,m_gain_random_input_slider);
 
-	m_channel_input.selected(m_waveform.channelGet());
-	m_options_input.selected(waveform.flagsGet());
+	m_channel_input.selected(m_waveform.channel());
+	m_options_input.selected(waveform.flags());
 	m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
 	m_plot.showAll();
 	m_filename_input.focus();

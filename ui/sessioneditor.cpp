@@ -37,7 +37,7 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	auto scancode=slotToScancode(slot);
 	if(scancode!=0xff);
 		{
-		m_keyboard.keyLabel(scancode,r_session.waveformViewGet(slot).keyLabelGet().begin())
+		m_keyboard.keyLabel(scancode,r_session.waveformViewGet(slot).keyLabel().begin())
 			.redraw();
 		}
 	}
@@ -48,7 +48,7 @@ void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	auto scancode=slotToScancode(slot);
 	if(scancode!=0xff)
 		{
-		m_keyboard.keyColor(scancode,r_session.waveformViewGet(slot).keyColorGet())
+		m_keyboard.keyColor(scancode,r_session.waveformViewGet(slot).keyColor())
 			.redraw();
 		}
 	}
@@ -89,7 +89,7 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	if(scancode!=0xff);
 		{
 		keyboard.selection(scancode).keyLabel(AUDITION_KEY
-			,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabelGet()).begin());
+			,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
 		}
 	}
 
@@ -114,9 +114,9 @@ SessionEditor& SessionEditor::sessionUpdated()
 			if(scancode==0xff)
 				{break;}
 			auto wf=r_session.waveformViewGet(k);
-			m_keyboard.keyColor(scancode,wf.keyColorGet());
-			if(wf.keyLabelGet().length()!=0)
-				{m_keyboard.keyLabel(scancode,wf.keyLabelGet().begin());}
+			m_keyboard.keyColor(scancode,wf.keyColor());
+			if(wf.keyLabel().length()!=0)
+				{m_keyboard.keyLabel(scancode,wf.keyLabel().begin());}
 			}
 		}
 
@@ -126,7 +126,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 		if(scancode!=0xff)
 			{
 			m_keyboard.selection(scancode).keyLabel(AUDITION_KEY
-				,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabelGet()).begin());
+				,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
 			}
 		}
 	m_keyboard.redraw();

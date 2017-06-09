@@ -16,11 +16,11 @@ WaveformData::WaveformData(const SessionFileRecord& record):m_filename(""),m_des
 	{
 	auto value=record.propertyGet(String("Description"));
 	if(value!=nullptr)
-		{descriptionSet(value->begin());}
+		{description(value->begin());}
 
 	value=record.propertyGet(String("Color"));
 	if(value!=nullptr)
-		{keyColorSet(colorFromString(value->begin()));}
+		{keyColor(colorFromString(value->begin()));}
 
 
 	value=record.propertyGet(String("Filename"));
@@ -30,21 +30,23 @@ WaveformData::WaveformData(const SessionFileRecord& record):m_filename(""),m_des
 	dirtyClear();
 	}
 
-void WaveformData::clear()
+WaveformData& WaveformData::clear()
 	{
 	m_filename.clear();
 	m_description.clear();
 	m_key_label.clear();
-	m_color=COLORS[ColorID::BLACK];
+	m_color=COLORS[ColorID::CYAN_GRAY_DARK];
 	m_stateflags=0;
+	return *this;
 	}
 
-void WaveformData::dataGet(SessionFileRecord& record) const
+const WaveformData& WaveformData::store(SessionFileRecord& record) const
 	{
 	record.propertySet(String("Description"),m_description);
 	record.propertySet(String("Color"),String(ColorString(m_color).begin()));
 
 //	TODO Save other data not interpreted by Anja
+	return *this;
 	}
 
 void WaveformData::key_label_update()
@@ -84,7 +86,7 @@ void WaveformData::key_label_update()
 	m_stateflags|=DIRTY;
 	}
 
-void WaveformData::keyColorSet(const ColorRGBA& color)
+WaveformData& WaveformData::keyColor(const ColorRGBA& color)
 	{
 	if(std::abs(color.red - m_color.red) > 1e-3f
 		|| std::abs(color.green - m_color.green) > 1e-3f
@@ -94,4 +96,5 @@ void WaveformData::keyColorSet(const ColorRGBA& color)
 		m_color=color;
 		m_stateflags|=DIRTY;
 		}
+	return *this;
 	}

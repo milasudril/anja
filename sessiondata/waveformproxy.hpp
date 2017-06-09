@@ -21,42 +21,51 @@ namespace Anja
 				r_waveform(&wf),r_waveform_data(&wd),r_dir_current(&dir_current),m_index(index)
 				{}
 
-			void load(const SessionFileRecord& rec);
+			WaveformProxy& load(const SessionFileRecord& rec);
 
-			void store(SessionFileRecord& rec);
+			const WaveformProxy& store(SessionFileRecord& rec) const;
 
-			String filenameGet() const;
+			String filename() const;
 
-			const String& directoryGet() const noexcept
+			const String& directory() const noexcept
 				{return *r_dir_current;}
 
-			void filenameSet(const String& filename);
+			WaveformProxy& filename(const String& filename);
 
-			const String& descriptionGet() const noexcept
-				{return r_waveform_data->descriptionGet();}
+			const String& description() const noexcept
+				{return r_waveform_data->description();}
 
-			void descriptionSet(const char* description)
-				{r_waveform_data->descriptionSet(description);}
+			WaveformProxy& description(const char* description)
+				{
+				r_waveform_data->description(description);
+				return *this;
+				}
 
-			void descriptionSet(String&& description)
-				{r_waveform_data->descriptionSet(std::move(description));}
+			WaveformProxy& description(String&& description)
+				{
+				r_waveform_data->description(std::move(description));
+				return *this;
+				}
 
-			const String& keyLabelGet() const noexcept
-				{return r_waveform_data->keyLabelGet();;}
+			const String& keyLabel() const noexcept
+				{return r_waveform_data->keyLabel();;}
 
-			const ColorRGBA& keyColorGet() const noexcept
-				{return r_waveform_data->keyColorGet();;}
+			const ColorRGBA& keyColor() const noexcept
+				{return r_waveform_data->keyColor();;}
 
-			void keyColorSet(const ColorRGBA& color_new)
-				{r_waveform_data->keyColorSet(color_new);}
+			WaveformProxy& keyColorSet(const ColorRGBA& color_new)
+				{
+				r_waveform_data->keyColor(color_new);
+				return *this;
+				}
 
-			void fileLoad(const char* filename);
+			WaveformProxy& waveformLoad(const char* filename);
 
-			void fileSave(const char* filename) const;
+			const WaveformProxy& waveformSave(const char* filename) const;
 
 			bool loadPossible(const char* filename) const;
 
-			bool fileLoaded(const char* filename) const;
+			bool waveformLoaded(const char* filename) const;
 
 			template<Waveform::Cursor c>
 			const float* pointer() const noexcept
@@ -72,29 +81,44 @@ namespace Anja
 			const float* endFull() const noexcept
 				{return r_waveform->endFull();}
 
-			float sampleRateGet() const noexcept
-				{return r_waveform->sampleRateGet();}
+			float sampleRate() const noexcept
+				{return r_waveform->sampleRate();}
 
-			void sampleRateSet(float fs) noexcept
-				{r_waveform->sampleRateSet(fs);}
+			WaveformProxy& sampleRate(float fs) noexcept
+				{
+				r_waveform->sampleRate(fs);
+				return *this;
+				}
 
 			template<Waveform::Cursor c>
 			int32_t offset() const noexcept
 				{return r_waveform->offset<c>();}
 
 			template<Waveform::Cursor c>
-			void offset(int32_t val_new) const noexcept
-				{r_waveform->offset<c>(val_new);}
+			WaveformProxy& offset(int32_t val_new) noexcept
+				{
+				r_waveform->offset<c>(val_new);
+				return *this;
+				}
 
 			template<Waveform::Cursor c>
-			void offset(double val_new) const noexcept
-				{r_waveform->offset<c>(val_new);}
+			WaveformProxy& offset(double val_new) noexcept
+				{
+				r_waveform->offset<c>(val_new);
+				return *this;
+				}
 
-			void offsetsReset() noexcept
-				{r_waveform->offsetsReset();}
+			WaveformProxy& offsetsReset() noexcept
+				{
+				r_waveform->offsetsReset();
+				return *this;
+				}
 
-			void reverse() noexcept
-				{r_waveform->reverse();}
+			WaveformProxy& reverse() noexcept
+				{
+				r_waveform->reverse();
+				return *this;
+				}
 
 			uint32_t length() const noexcept
 				{return r_waveform->length();}
@@ -105,59 +129,84 @@ namespace Anja
 			int direction() const noexcept
 				{return r_waveform->direction();}
 
-			uint32_t channelGet() const noexcept
-				{return r_waveform->channelGet();}
+			uint32_t channel() const noexcept
+				{return r_waveform->channel();}
 
-			void channelSet(int32_t x) noexcept
-				{r_waveform->channelSet(x);}
+			WaveformProxy& channel(int32_t x) noexcept
+				{
+				r_waveform->channel(x);
+				return *this;
+				}
 
 
 
-			float gainGet() const noexcept
-				{return r_waveform->gainGet();}
+			float gain() const noexcept
+				{return r_waveform->gain();}
 
-			void gainSet(float gain) noexcept
-				{return r_waveform->gainSet(gain);}
+			WaveformProxy& gainSet(float gain) noexcept
+				{
+				r_waveform->gain(gain);
+				return *this;
+				}
 
-			float gainRandomGet() const noexcept
-				{return r_waveform->gainRandomGet();}
+			float gainRandom() const noexcept
+				{return r_waveform->gainRandom();}
 
 			void gainRandomSet(float value) noexcept
-				{r_waveform->gainRandomSet(value);}
+				{r_waveform->gainRandom(value);}
 
-			uint32_t flagsGet() const noexcept
-				{return r_waveform->flagsGet();}
+			uint32_t flags() const noexcept
+				{return r_waveform->flags();}
 
-			uint32_t flagGet(uint32_t flag_index) const noexcept
-				{return r_waveform->flagGet(flag_index);}
+			uint32_t flag(uint32_t flag_index) const noexcept
+				{return r_waveform->flag(flag_index);}
 
-			void flagsSet(uint32_t flags) noexcept
-				{r_waveform->flagsSet(flags);}
+			WaveformProxy& flagsSet(uint32_t flags) noexcept
+				{
+				r_waveform->flagsSet(flags);
+				return *this;
+				}
 
-			void flagSet(uint32_t flag_index) noexcept
-				{r_waveform->flagSet(flag_index);}
+			WaveformProxy& flagSet(uint32_t flag_index) noexcept
+				{
+				r_waveform->flagSet(flag_index);
+				return *this;
+				}
 
-			void flagUnset(uint32_t flag_index) noexcept
-				{r_waveform->flagUnset(flag_index);}
+			WaveformProxy& flagUnset(uint32_t flag_index) noexcept
+				{
+				r_waveform->flagUnset(flag_index);
+				return *this;
+				}
 
-			void flagsUnset(uint32_t flags) noexcept
-				{r_waveform->flagsUnset(flags);}
+			WaveformProxy& flagsUnset(uint32_t flags) noexcept
+				{
+				r_waveform->flagsUnset(flags);
+				return *this;
+				}
 
-			void append(const float* x,uint32_t n)
-				{r_waveform->append(x,n);}
+			WaveformProxy& append(const float* x,uint32_t n)
+				{
+				r_waveform->append(x,n);
+				return *this;
+				}
 
-			void capacitySet(uint32_t capacity_new)
-				{r_waveform->capacitySet(capacity_new);}
+			WaveformProxy& capacitySet(uint32_t capacity_new)
+				{
+				r_waveform->capacity(capacity_new);
+				return *this;
+				}
 
 
 
-			bool dirtyIs() const noexcept
-				{return r_waveform_data->dirtyIs() || r_waveform->dirtyIs();}
+			bool dirty() const noexcept
+				{return r_waveform_data->dirty() || r_waveform->dirty();}
 
-			void dirtyClear()
+			WaveformProxy& dirtyClear()
 				{
 				r_waveform_data->dirtyClear();
 				r_waveform->dirtyClear();
+				return *this;
 				}
 
 			static const char* const* flagNames() noexcept

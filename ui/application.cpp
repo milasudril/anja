@@ -152,7 +152,7 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			m_engine->messagePost(MIDI::Message
 				{
 				 MIDI::StatusCodes::NOTE_ON
-				,static_cast<int>(m_session.waveformGet(slot).channelGet())
+				,static_cast<int>(m_session.waveformGet(slot).channel())
 				,note
 				,127
 				});

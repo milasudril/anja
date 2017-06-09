@@ -23,37 +23,41 @@ namespace Anja
 
 			explicit WaveformData(const SessionFileRecord& record);
 
-			void clear();
+			WaveformData& clear();
 
-			void dataSet(const SessionFileRecord& rec)
-				{*this=WaveformData(rec);}
-
+			WaveformData& load(const SessionFileRecord& rec)
+				{
+				*this=WaveformData(rec);
+				return *this;
+				}
 
 			const String& filenameGet() const noexcept
 				{return m_filename;}
 
-			void filenameSet(const char* filename)
+			WaveformData& filename(const char* filename)
 				{
 				if(m_filename!=filename)
 					{
 					m_filename=String(filename);
 					m_stateflags|=DIRTY;
 					}
+				return *this;
 				}
 
-			void filenameSet(String&& filename) noexcept
+			WaveformData& filename(String&& filename) noexcept
 				{
 				if(m_filename!=filename)
 					{
 					m_filename=std::move(filename);
 					m_stateflags|=DIRTY;
 					}
+				return *this;
 				}
 
-			const String& descriptionGet() const noexcept
+			const String& description() const noexcept
 				{return m_description;}
 
-			void descriptionSet(String&& description)
+			WaveformData& description(String&& description) noexcept
 				{
 				if(m_description!=description)
 					{
@@ -61,9 +65,10 @@ namespace Anja
 					m_stateflags|=DIRTY;
 					key_label_update();
 					}
+				return *this;
 				}
 
-			void descriptionSet(const char* desc)
+			WaveformData& description(const char* desc)
 				{
 				if(m_description!=desc)
 					{
@@ -71,25 +76,29 @@ namespace Anja
 					m_stateflags|=DIRTY;
 					key_label_update();
 					}
+				return *this;
 				}
 
-			const String& keyLabelGet() const noexcept
+			const String& keyLabel() const noexcept
 				{return m_key_label;}
 
 
 
-			const ColorRGBA& keyColorGet() const noexcept
+			const ColorRGBA& keyColor() const noexcept
 				{return m_color;}
 
-			void keyColorSet(const ColorRGBA& color_new);
+			WaveformData& keyColor(const ColorRGBA& color_new);
 
-			void dataGet(SessionFileRecord& record) const;
+			const WaveformData& store(SessionFileRecord& record) const;
 
-			bool dirtyIs() const noexcept
+			bool dirty() const noexcept
 				{return m_stateflags&DIRTY;}
 
-			void dirtyClear()
-				{m_stateflags&=~DIRTY;}
+			WaveformData& dirtyClear() noexcept
+				{
+				m_stateflags&=~DIRTY;
+				return *this;
+				}
 
 		private:
 			String m_filename;

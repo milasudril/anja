@@ -49,18 +49,19 @@ static String filenameGenerate(const String& label)
 	return ret;
 	}
 
-void WaveformProxy::load(const SessionFileRecord& rec)
+WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec)
 	{
-	r_waveform_data->dataSet(rec);
+	r_waveform_data->load(rec);
 	if(r_waveform_data->filenameGet().length()==0)
-		{r_waveform->dataSet(rec);}
+		{r_waveform->load(rec);}
 	else
 		{
 		auto f=::filename_get(r_waveform_data->filenameGet().begin(),*r_dir_current);
-		r_waveform->dataSet(rec,f.begin());
-		r_waveform_data->filenameSet(f.begin());
+		r_waveform->load(rec,f.begin());
+		r_waveform_data->filename(f.begin());
 		r_waveform_data->dirtyClear();
 		}
+	return *this;
 	}
 
 static String filename_generate(const String& str,const String& in_dir)
@@ -70,50 +71,53 @@ static String filename_generate(const String& str,const String& in_dir)
 	return String(in_dir).append(str);
 	}
 
-String WaveformProxy::filenameGet() const
+String WaveformProxy::filename() const
 	{
 	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	}
 
-void WaveformProxy::store(SessionFileRecord& rec)
+const WaveformProxy& WaveformProxy::store(SessionFileRecord& rec) const
 	{
-	if(r_waveform->flagsGet()&Waveform::RECORDED)
-		{r_waveform->fileSave(r_waveform_data->filenameGet().begin());}
+	if(r_waveform->flags()&Waveform::RECORDED)
+		{r_waveform->waveformSave(r_waveform_data->filenameGet().begin());}
 
-	rec.propertySet(String("Filename"),filenameGet());
-	r_waveform->dataGet(rec);
-	r_waveform_data->dataGet(rec);
+	rec.propertySet(String("Filename"),filename());
+	r_waveform->store(rec);
+	r_waveform_data->store(rec);
+	return *this;
 	}
 
 
-void WaveformProxy::fileLoad(const char* filename)
+WaveformProxy& WaveformProxy::waveformLoad(const char* filename)
 	{
 	if(absoluteIs(filename))
 		{
-		r_waveform->fileLoad(filename);
-		r_waveform_data->filenameSet(filename);
+		r_waveform->waveformLoad(filename);
+		r_waveform_data->filename(filename);
 		}
 	else
 		{
 		auto fullpath=::filename_get(filename,*r_dir_current);
-		r_waveform->fileLoad(fullpath.begin());
-		r_waveform_data->filenameSet(std::move(fullpath));
+		r_waveform->waveformLoad(fullpath.begin());
+		r_waveform_data->filename(std::move(fullpath));
 		}
+	return *this;
 	}
 
-void WaveformProxy::fileSave(const char* filename) const
+const WaveformProxy& WaveformProxy::waveformSave(const char* filename) const
 	{
 	if(absoluteIs(filename))
 		{
-		r_waveform->fileSave(filename);
-		r_waveform_data->filenameSet(makeRelativeTo(filename,r_dir_current->begin()).begin());
+		r_waveform->waveformSave(filename);
+		r_waveform_data->filename(makeRelativeTo(filename,r_dir_current->begin()).begin());
 		}
 	else
 		{
 		auto fullpath=::filename_get(filename,*r_dir_current);
-		r_waveform->fileSave(fullpath.begin());
-		r_waveform_data->filenameSet(std::move(fullpath));
+		r_waveform->waveformSave(fullpath.begin());
+		r_waveform_data->filename(std::move(fullpath));
 		}
+	return *this;
 	}
 
 bool WaveformProxy::loadPossible(const char* filename) const
@@ -124,7 +128,7 @@ bool WaveformProxy::loadPossible(const char* filename) const
 	return r_waveform->loadPossible(filename);
 	}
 
-bool WaveformProxy::fileLoaded(const char* filename) const
+bool WaveformProxy::waveformLoaded(const char* filename) const
 	{
 	if(absoluteIs(filename))
 		{return r_waveform_data->filenameGet()==filename;}
