@@ -38,13 +38,13 @@ namespace Anja
 			ChannelStrip& colorPresets(const ColorRGBA* colors_begin,const ColorRGBA* colors_end);
 
 			const String& name() const noexcept
-				{return m_channel.labelGet();}
+				{return m_channel.label();}
 
 			const ColorRGBA& color() const noexcept
-				{return m_channel.colorGet();}
+				{return m_channel.color();}
 
 			float gain() const noexcept
-				{return m_channel.gainGet();}
+				{return m_channel.gain();}
 
 			template<class Callback,class IdType>
 			ChannelStrip& callback(Callback& cb,IdType id) noexcept

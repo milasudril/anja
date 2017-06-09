@@ -57,7 +57,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 		for(int k=0;k<16;++k)
 			{
 			messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
-			channelGain(k,r_session->channelGet(k).gainGet());
+			channelGain(k,r_session->channel(k).gain());
 			}
 		}
 	}

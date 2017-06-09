@@ -131,7 +131,7 @@ namespace Anja
 			const String& channelLabelGet(int ch) const noexcept
 				{
 				assert(ch>=0 && ch<16);
-				return m_channel_data[ch].labelGet();
+				return m_channel_data[ch].label();
 				}
 
 			ArraySimple<ColorRGBA> channelColorsGet() const;
@@ -139,10 +139,10 @@ namespace Anja
 			int channelsCountGet() noexcept
 				{return m_channel_data.length();}
 
-			const Channel& channelGet(unsigned int index) const noexcept
+			const Channel& channel(unsigned int index) const noexcept
 				{return m_channels[index];}
 
-			Channel& channelGet(unsigned int index) noexcept
+			Channel& channel(unsigned int index) noexcept
 				{return m_channels[index];}
 
 

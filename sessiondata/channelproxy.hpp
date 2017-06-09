@@ -18,47 +18,63 @@ namespace Anja
 				,r_channel_data(&ch_data)
 				{}
 
-			void load(const SessionFileRecord& rec);
-			void store(SessionFileRecord& rec);
+			ChannelProxy& load(const SessionFileRecord& rec);
+			const ChannelProxy& store(SessionFileRecord& rec) const;
 
-			const String& labelGet() const noexcept
-				{return r_channel_data->labelGet();}
+			const String& label() const noexcept
+				{return r_channel_data->label();}
 
-			void labelSet(String&& label)
-				{r_channel_data->labelSet(std::move(label));}
+			ChannelProxy& label(String&& label)
+				{
+				r_channel_data->label(std::move(label));
+				return *this;
+				}
 
-			void labelSet(const char* label)
-				{r_channel_data->labelSet(label);}
+			ChannelProxy& label(const char* label)
+				{
+				r_channel_data->label(label);
+				return *this;
+				}
 
-			const ColorRGBA& colorGet() const noexcept
-				{return r_channel_data->colorGet();}
+			const ColorRGBA& color() const noexcept
+				{return r_channel_data->color();}
 
-			void colorSet(const ColorRGBA& color) noexcept
-				{r_channel_data->colorSet(color);}
-
-
-
-			float gainGet() const noexcept
-				{return r_channel->gainGet();}
-
-			void gainSet(float gain) noexcept
-				{r_channel->gainSet(gain);}
-
-			float fadeTimeGet() const noexcept
-				{return r_channel->fadeTimeGet();}
-
-			void fadeTimeSet(float time) noexcept
-				{return r_channel->fadeTimeSet(time);}
+			ChannelProxy& color(const ColorRGBA& color) noexcept
+				{
+				r_channel_data->color(color);
+				return *this;
+				}
 
 
 
-			bool dirtyIs() const noexcept
-				{return r_channel->dirtyIs() || r_channel_data->dirtyIs();}
+			float gain() const noexcept
+				{return r_channel->gain();}
 
-			void dirtyClear() noexcept
+			ChannelProxy& gain(float gain) noexcept
+				{
+				r_channel->gain(gain);
+				return *this;
+				}
+
+			float fadeTime() const noexcept
+				{return r_channel->fadeTime();}
+
+			ChannelProxy& fadeTime(float time) noexcept
+				{
+				r_channel->fadeTime(time);
+				return *this;
+				}
+
+
+
+			bool dirty() const noexcept
+				{return r_channel->dirty() || r_channel_data->dirty();}
+
+			ChannelProxy& dirtyClear() noexcept
 				{
 				r_channel->dirtyClear();
 				r_channel_data->dirtyClear();
+				return *this;
 				}
 
 		private:

@@ -165,7 +165,7 @@ ArraySimple<String> Session::channelLabelsGet() const
 	auto k=0;
 	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&ret,&k](const auto& x)
 		{
-		ret[k]=x.labelGet();
+		ret[k]=x.label();
 		++k;
 		});
 	return std::move(ret);
@@ -177,7 +177,7 @@ ArraySimple<ColorRGBA> Session::channelColorsGet() const
 	auto k=0;
 	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&ret,&k](const auto& x)
 		{
-		ret[k]=x.colorGet();
+		ret[k]=x.color();
 		++k;
 		});
 	return std::move(ret);
@@ -189,20 +189,14 @@ void Session::channelsClear()
 	auto k=0;
 	std::for_each(m_channel_data.begin(),m_channel_data.end(),[&k](auto& x)
 		{
-		x.clear();
 		char buffer[16];
 		sprintf(buffer,"Ch %d",k);
-		x.labelSet(String(buffer));
-		x.dirtyClear();
+		x.clear().label(String(buffer)).dirtyClear();
 		++k;
 		});
 
 	std::for_each(m_channels.begin(),m_channels.end(),[](auto& x)
-		{
-		x.gainSet(0.0f);
-		x.fadeTimeSet(1e-3f);
-		x.dirtyClear();
-		});
+		{x.gain(0.0f).fadeTime(1e-3f).dirtyClear();});
 	}
 
 Session& Session::colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end)
@@ -334,7 +328,7 @@ bool Session::dirtyIs() const noexcept
 		int k=0;
 		while(ptr_channel!=ptr_end)
 			{
-			if(ptr_channel->dirtyIs() ||  m_channels[k].dirtyIs())
+			if(ptr_channel->dirty() ||  m_channels[k].dirty())
 				{return 1;}
 			++ptr_channel;
 			++k;

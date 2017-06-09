@@ -6,14 +6,16 @@
 
 using namespace Anja;
 
-void ChannelProxy::load(const SessionFileRecord& rec)
+ChannelProxy& ChannelProxy::load(const SessionFileRecord& rec)
 	{
 	*r_channel=Channel(rec);
 	*r_channel_data=ChannelData(rec);
+	return *this;
 	}
 
-void ChannelProxy::store(SessionFileRecord& rec)
+const ChannelProxy& ChannelProxy::store(SessionFileRecord& rec) const
 	{
-	r_channel->dataGet(rec);
-	r_channel_data->dataGet(rec);
+	r_channel->store(rec);
+	r_channel_data->store(rec);
+	return *this;
 	}

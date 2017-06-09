@@ -9,11 +9,12 @@
 
 using namespace Anja;
 
-void ChannelData::clear()
+ChannelData& ChannelData::clear()
 	{
 	m_label.clear();
 	m_color=COLORS[ColorID::BLACK];
 	m_state_flags=0;
+	return *this;
 	}
 
 ChannelData::ChannelData(const SessionFileRecord& record):
@@ -32,16 +33,18 @@ ChannelData::ChannelData(const SessionFileRecord& record):
 //	TODO Store other data not interpreted by Anja
 	}
 
-void ChannelData::dataGet(SessionFileRecord& record) const
+const ChannelData& ChannelData::store(SessionFileRecord& record) const
 	{
 	record.propertySet(String("Label"),m_label);
 
 	record.propertySet(String("Color")
 		,String((ColorString(m_color).begin())));
 //	TODO Save other data not interpreted by Anja
+
+	return *this;
 	}
 
-void ChannelData::colorSet(const ColorRGBA& color) noexcept
+ChannelData& ChannelData::color(const ColorRGBA& color) noexcept
 	{
 	if(std::abs(color.red - m_color.red) > 1e-3f
 		|| std::abs(color.green - m_color.green) > 1e-3f
@@ -51,5 +54,6 @@ void ChannelData::colorSet(const ColorRGBA& color) noexcept
 		m_color=color;
 		m_state_flags|=DIRTY;
 		}
+	return *this;
 	}
 

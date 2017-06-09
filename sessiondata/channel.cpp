@@ -13,19 +13,21 @@ Channel::Channel(const SessionFileRecord& record)
 
 	auto value=record.propertyGet(String("Gain/dB"));
 	if(value!=nullptr)
-		{gainSet(convert(value->begin()));}
+		{gain(convert(value->begin()));}
 
 	value=record.propertyGet(String("Fade time/s"));
 	if(value!=nullptr)
-		{fadeTimeSet(convert(value->begin()));}
+		{fadeTime(convert(value->begin()));}
 	dirtyClear();
 	}
 
-void Channel::dataGet(SessionFileRecord& record) const
+const Channel& Channel::store(SessionFileRecord& record) const
 	{
 	char buffer[32];
-	sprintf(buffer,"%.7g",gainGet());
+	sprintf(buffer,"%.7g",gain());
 	record.propertySet(String("Gain/dB"),String(buffer));
-	sprintf(buffer,"%.7g",fadeTimeGet());
+	sprintf(buffer,"%.7g",fadeTime());
 	record.propertySet(String("Fade time/s"),String(buffer));
+
+	return *this;
 	}

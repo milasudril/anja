@@ -22,40 +22,45 @@ namespace Anja
 
 			explicit Channel(const SessionFileRecord& record);
 
-			void dataGet(SessionFileRecord& record) const;
+			const Channel& store(SessionFileRecord& record) const;
 
-			void valuesInit() noexcept
+			Channel& valuesInit() noexcept
 				{
 				m_gain=0.0f;
 				m_fade_time=1.0f;
 				m_state_flags=0;
-				dirtyClear();
+				return dirtyClear();
 				}
 
-			float gainGet() const noexcept
+			float gain() const noexcept
 				{return m_gain;}
 
-			void gainSet(float gain) noexcept
+			Channel& gain(float gain) noexcept
 				{
 				m_state_flags|=(std::abs(gain-m_gain)>1e-4? DIRTY : 0);
 				m_gain=gain;
+				return *this;
 				}
 
-			float fadeTimeGet() const noexcept
+			float fadeTime() const noexcept
 				{return m_fade_time;}
 
-			void fadeTimeSet(float time) noexcept
+			Channel& fadeTime(float time) noexcept
 				{
 				auto temp=std::max(time,1e-3f);
 				m_state_flags|=(std::abs(temp - m_fade_time)>1e-6? DIRTY : 0);
 				m_fade_time=temp;
+				return *this;
 				}
 
-			bool dirtyIs() const noexcept
+			bool dirty() const noexcept
 				{return m_state_flags&DIRTY;}
 
-			void dirtyClear() noexcept
-				{m_state_flags&=~DIRTY;}
+			Channel& dirtyClear() noexcept
+				{
+				m_state_flags&=~DIRTY;
+				return *this;
+				}
 
 		private:
 			float m_gain;

@@ -102,7 +102,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 			{
 			auto key=channelToScancode(k);
 			auto ch=r_session.channelViewGet(k);
-			m_keyboard.keyColor(key,ch.colorGet()).keyLabel(key,ch.labelGet().begin());
+			m_keyboard.keyColor(key,ch.color()).keyLabel(key,ch.label().begin());
 			}
 		}
 

@@ -37,17 +37,17 @@ static double fade_time_map_inv(double x)
 
 static void label_update(const ChannelProxy& channel,TextEntry& e)
 	{
-	e.content(channel.labelGet().begin());
+	e.content(channel.label().begin());
 	}
 
 static void color_update(const ChannelProxy& channel,ColorView& e)
 	{
-	e.color(channel.colorGet());
+	e.color(channel.color());
 	}
 
 static void fade_time_update(const ChannelProxy& channel,Knob& k,TextEntry& e)
 	{
-	auto t=channel.fadeTimeGet();
+	auto t=channel.fadeTime();
 	char buffer[16];
 	sprintf(buffer,"%.2e",t);
 	e.content(buffer);
@@ -57,7 +57,7 @@ static void fade_time_update(const ChannelProxy& channel,Knob& k,TextEntry& e)
 
 static void gain_update(const ChannelProxy& channel,Slider& s,TextEntry& e)
 	{
-	auto g=channel.gainGet();
+	auto g=channel.gain();
 	char buffer[16];
 	sprintf(buffer,"%.3f",g);
 	e.content(buffer);
@@ -70,7 +70,7 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 	switch(id)
 		{
 		case TextEntryId::LABEL:
-			m_channel.labelSet(Anja::String(entry.content()));
+			m_channel.label(Anja::String(entry.content()));
 			if(r_cb_obj!=nullptr)
 				{m_vtable.name_changed(r_cb_obj,*this,m_id);}
 			label_update(m_channel,entry);
@@ -80,7 +80,7 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{m_channel.fadeTimeSet(val_new);}
+				{m_channel.fadeTime(val_new);}
 			fade_time_update(m_channel,m_ft_knob,entry);
 			}
 			break;
@@ -89,9 +89,7 @@ void ChannelStrip::changed(TextEntry& entry,TextEntryId id)
 			{
 			double val_new;
 			if(convert(entry.content(),val_new))
-				{
-				m_channel.gainSet(val_new);
-				}
+				{m_channel.gain(val_new);}
 			gain_update(m_channel,m_gain_slider,entry);
 			if(r_cb_obj!=nullptr)
 				{m_vtable.gain_changed(r_cb_obj,*this,m_id);}
@@ -107,7 +105,7 @@ void ChannelStrip::clicked(ColorView& entry,ColorViewId id)
 		case ColorViewId::COLOR:
 			m_color_dlg.reset(new Dialog<ColorPicker>(m_box,"Choose a color"));
 			m_color_dlg->callback(*this,PopupId::COLOR_SELECT).widget()
-				.color(m_channel.colorGet())
+				.color(m_channel.color())
 				.presets(r_color_presets_begin,r_color_presets_end);
 			break;
 		}
@@ -118,7 +116,7 @@ void ChannelStrip::changed(Slider& slider,SliderId id)
 	switch(id)
 		{
 		case SliderId::GAIN:
-			m_channel.gainSet( gain_map(slider.value()) );
+			m_channel.gain( gain_map(slider.value()) );
 			gain_update(m_channel,slider,m_gain_input);
 			if(r_cb_obj!=nullptr)
 				{m_vtable.gain_changed(r_cb_obj,*this,m_id);}
@@ -131,7 +129,7 @@ void ChannelStrip::changed(Knob& knob,KnobId id)
 	switch(id)
 		{
 		case KnobId::FADETIME:
-			m_channel.fadeTimeSet(fade_time_map(knob.value()));
+			m_channel.fadeTime(fade_time_map(knob.value()));
 			fade_time_update(m_channel,knob,m_ft_input);
 			break;
 		}
@@ -153,7 +151,7 @@ void ChannelStrip::confirmPositive(Dialog<ColorPicker>& dlg,PopupId id)
 	switch(id)
 		{
 		case PopupId::COLOR_SELECT:
-			m_channel.colorSet(dlg.widget().color());
+			m_channel.color(dlg.widget().color());
 			if(r_cb_obj!=nullptr)
 				{
 				m_vtable.color_changed(r_cb_obj,*this,m_id);

@@ -18,39 +18,41 @@ namespace Anja
 			ChannelData()
 				{clear();}
 
-			void clear();
+			ChannelData& clear();
 
 			explicit ChannelData(const SessionFileRecord& record);
 
-			const String& labelGet() const noexcept
+			const String& label() const noexcept
 				{return m_label;}
 
-			void labelSet(const char* label)
+			ChannelData& label(const char* label)
 				{
 				if(m_label!=label)
 					{
 					m_label=String(label);
 					m_state_flags|=DIRTY;
 					}
+				return *this;
 				}
 
-			void labelSet(String&& label)
+			ChannelData& label(String&& label) noexcept
 				{
 				if(m_label!=label)
 					{
 					m_label=std::move(label);
 					m_state_flags|=DIRTY;
 					}
+				return *this;
 				}
 
-			const ColorRGBA& colorGet() const noexcept
+			const ColorRGBA& color() const noexcept
 				{return m_color;}
 
-			void colorSet(const ColorRGBA& color) noexcept;
+			ChannelData& color(const ColorRGBA& color) noexcept;
 
-			void dataGet(SessionFileRecord& record) const;
+			const ChannelData& store(SessionFileRecord& record) const;
 
-			bool dirtyIs() const noexcept
+			bool dirty() const noexcept
 				{return m_state_flags&DIRTY;}
 
 			void dirtyClear() noexcept
