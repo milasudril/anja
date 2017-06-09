@@ -22,12 +22,12 @@ ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(message_warning.png));
 
 using namespace Anja;
 
-Message::Message(Container& cnt,const char* message,Type type):
+Message::Message(Container& cnt,const char* message,Type type,bool wordwrap):
 	m_cols(cnt,false)
 		,m_icon(m_cols.insertMode({2,0}))
 		,m_text(m_cols.insertMode({2,Box::EXPAND|Box::FILL}),message)
 	{
-	m_text.wordwrap(1);
+	m_text.wordwrap(wordwrap);
 	switch(type)
 		{
 		case Type::ERROR:

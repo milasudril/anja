@@ -18,6 +18,7 @@
 #include "dialog.hpp"
 #include "colorpicker.hpp"
 #include "message.hpp"
+#include "separator.hpp"
 #include "../sessiondata/waveformproxy.hpp"
 #include "../common/arraysimple.hpp"
 
@@ -176,13 +177,17 @@ namespace Anja
 							Box m_cursor_begin;
 								Label m_cursor_begin_label;
 								TextEntry m_cursor_begin_entry;
+							Separator m_trim_sep_a;
 							Box m_cursor_begin_loop;
 								Label m_cursor_begin_loop_label;
 								TextEntry m_cursor_begin_loop_entry;
+							Separator m_trim_sep_b;
 							Button m_swap;
+							Separator m_trim_sep_c;
 							Box m_cursor_end_loop;
 								TextEntry m_cursor_end_loop_entry;
 								Label m_cursor_end_loop_label;
+							Separator m_trim_sep_d;
 							Box m_cursor_end;
 								TextEntry m_cursor_end_entry;
 								Label m_cursor_end_label;

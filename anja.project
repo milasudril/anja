@@ -166,6 +166,7 @@
       <File Name="ui/aboutbox.hpp"/>
       <File Name="ui/keyboardview.cpp"/>
       <File Name="ui/led_sprites.blend"/>
+      <File Name="ui/led_sprites.py"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>

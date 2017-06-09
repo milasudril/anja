@@ -230,8 +230,8 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 					{
 					m_waveform.waveformLoad(entry.content());
 					m_waveform_db=filename_update(m_waveform,entry,m_options_input,m_plot);
-				//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-				//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_begin_auto();
+					cursor_end_auto();
 					m_plot.showAll();
 					}
 				catch(const Error& err)
@@ -333,8 +333,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 					m_waveform.flagsSet(flags);
 					m_waveform.dirtyClear();
 					m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-				//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-				//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+					cursor_begin_auto();
+					cursor_end_auto();
 					m_plot.showAll();
 					}
 				catch(const Error& err)
@@ -352,8 +352,8 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				{
 				m_waveform.waveformLoad(m_waveform.filename().begin());
 				m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-			//	cursor_begin_auto(m_plot,m_waveform_db,m_waveform,m_cursor_begin_entry);
-			//	cursor_end_auto(m_plot,m_waveform_db,m_waveform,m_cursor_end_entry);
+				cursor_begin_auto();
+				cursor_end_auto();
 				m_plot.showAll();
 				}
 			catch(const Error& err)
@@ -547,16 +547,20 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 				,m_trim_panel(m_details_right.insertMode({0,0}),false)
 					,m_cursor_begin(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_begin_label(m_cursor_begin,"↦")
-						,m_cursor_begin_entry(m_cursor_begin.insertMode({2,Box::EXPAND|Box::FILL}))
+						,m_cursor_begin_entry(m_cursor_begin.insertMode({0,Box::EXPAND|Box::FILL}))
+					,m_trim_sep_a(m_trim_panel.insertMode({2,0}),true)
 					,m_cursor_begin_loop(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_begin_loop_label(m_cursor_begin_loop,"↪")
 						,m_cursor_begin_loop_entry(m_cursor_begin_loop.insertMode({2,Box::EXPAND|Box::FILL}))
-					,m_swap(m_trim_panel.insertMode({2,Box::EXPAND}),"⇌")
+					,m_trim_sep_b(m_trim_panel.insertMode({2,0}),true)
+					,m_swap(m_trim_panel.insertMode({4,Box::EXPAND|Box::FILL}),"⇌")
+					,m_trim_sep_c(m_trim_panel.insertMode({2,0}),true)
 					,m_cursor_end_loop(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_end_loop_entry(m_cursor_end_loop.insertMode({2,Box::EXPAND|Box::FILL}))
 						,m_cursor_end_loop_label(m_cursor_end_loop.insertMode({0,0}),"↩")
+					,m_trim_sep_d(m_trim_panel.insertMode({2,0}),true)
 					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_cursor_end_entry(m_cursor_end.insertMode({2,Box::EXPAND|Box::FILL}))
+						,m_cursor_end_entry(m_cursor_end.insertMode({0,Box::EXPAND|Box::FILL}))
 						,m_cursor_end_label(m_cursor_end.insertMode({0,0}),"⇥")
 	{
 	m_gain_input_text.width(7).small(true).alignment(1.0f);
