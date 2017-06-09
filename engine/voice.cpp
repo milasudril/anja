@@ -20,6 +20,7 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	m_state=State::BEGIN;
 	m_flags=waveform.flags();
 	m_channel=channel;
+	m_dir=waveform.direction();
 	}
 
 Voice& Voice::stop(int offset) noexcept
@@ -57,7 +58,7 @@ void Voice::generate(float* buffer_out,int n_frames) noexcept
 	while(n_frames!=0 && r_pos_current!=r_end)
 		{
 		*buffer_out+=g*(*r_pos_current);
-		++r_pos_current;
+		r_pos_current+=m_dir;
 		if(r_pos_current==r_loop_end && (m_flags&Waveform::LOOP))
 			{
 			r_pos_current=r_loop_begin;

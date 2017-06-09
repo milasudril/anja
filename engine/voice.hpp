@@ -40,6 +40,7 @@ namespace Anja
 			const float* r_loop_begin;
 			const float* r_loop_end;
 			const float* r_end;
+			int m_dir;
 			int m_pos_offset;
 			int m_channel;
 
