@@ -14,6 +14,7 @@
 #include "../common/ringbuffer.hpp"
 #include "../common/clock.hpp"
 #include "../common/idgenerator.hpp"
+#include "../pcg-cpp/include/pcg_random.hpp"
 
 #include <cstdint>
 #include <utility>
@@ -91,6 +92,7 @@ namespace Anja
 			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
 			ArraySimple<float> m_channel_buffers;
 			ArraySimple<float> m_channel_gain;
+			pcg32 m_rng;
 
 			AudioClient m_client;
 			ReadySignal m_ready;
