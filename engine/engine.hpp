@@ -80,7 +80,24 @@ namespace Anja
 				return messagePost(MIDI::Message(MIDI::ControlCodes::CHANNEL_VOLUME,channel,dB_to_MIDI_val(value)));
 				}
 
+			Engine& fadeOut(int channel,float time) noexcept
+				{
+				assert(channel>=0 && channel<16);
+				return messagePost(MIDI::Message(FADE_OUT,channel,sec_to_MIDI_val(time)));
+				}
+
+
+			Engine& fadeIn(int channel,float time) noexcept
+				{
+				assert(channel>=0 && channel<16);
+				return messagePost(MIDI::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
+				}
+
+
 		private:
+			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
+			static constexpr auto FADE_IN=MIDI::ControlCodes::GENERAL_PURPOSE_2;
+
 			const Session* r_session;
 			volatile bool m_running;
 			RingBuffer<AudioClient::MidiEvent,volatile uint32_t> m_ui_events;
@@ -105,6 +122,18 @@ namespace Anja
 
 			static float MIDI_val_to_dB(float val) noexcept
 				{return 78.0f*val/127.0f - 72.0f;}
+
+			static float sec_to_MIDI_val(float time) noexcept
+				{return 127.0f*std::log10(1.0e3f*time)/4.0f;}
+
+			static float MIDI_val_to_sec(float val) noexcept
+				{return 1e-3f*std::pow(10.0f,4.0f*val/127.0f);}
+
+			static float sec_to_decay_factor(float time,float fs) noexcept
+				{
+				return std::sqrt(10.0f)*std::pow(10.0f,-5.0f/(2.0f*time*fs));
+				}
+
 
 			int indexAudition(const AudioClient& client) const noexcept;
 			int indexMaster(const AudioClient& client) const noexcept;

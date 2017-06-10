@@ -42,7 +42,14 @@ namespace Anja
 		return slotToMIDI(slot);
 		}
 
-	static constexpr int AUDITION_KEY=57;
+	namespace Keys
+		{
+		static constexpr int AUDITION=57;
+		static constexpr int FADE_IN=103;
+		static constexpr int FADE_OUT=108;
+		static constexpr int FADE_IN_FAST=106;
+		static constexpr int FADE_OUT_FAST=105;
+		}
 	}
 
 #endif

@@ -88,14 +88,14 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	scancode=slotToScancode(slot);
 	if(scancode!=0xff);
 		{
-		keyboard.selection(scancode).keyLabel(AUDITION_KEY
+		keyboard.selection(scancode).keyLabel(Keys::AUDITION
 			,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
 		}
 	}
 
 SessionEditor& SessionEditor::sessionUpdated()
 	{
-	m_keyboard.reset().keyLabel(AUDITION_KEY,"Audition");
+	m_keyboard.reset().keyLabel(Keys::AUDITION,"Audition");
 		{
 		auto N=std::min(r_session.channelsCountGet(),12);
 		for(decltype(N) k=0;k<N;++k)
@@ -125,7 +125,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 		auto scancode=slotToScancode(slot);
 		if(scancode!=0xff)
 			{
-			m_keyboard.selection(scancode).keyLabel(AUDITION_KEY
+			m_keyboard.selection(scancode).keyLabel(Keys::AUDITION
 				,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
 			}
 		}

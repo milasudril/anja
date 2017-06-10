@@ -180,12 +180,34 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			}
 		else
 			{
-			if(scancode==AUDITION_KEY)
+			auto ch=scancodeToChannel(scancode);
+			if(ch>=0 && ch<16)
 				{
-				auto slot_current=m_session.slotActiveGet();
-				assert(slot_current>=0 && slot_current<128);
-				note=slotToMIDI(slot_current);
-				m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note|0x80,127});
+				if(m_keystate[Keys::FADE_IN])
+					{m_engine->fadeIn(ch,m_session.channel(ch).fadeTime());}
+				else
+				if(m_keystate[Keys::FADE_OUT])
+					{m_engine->fadeOut(ch,m_session.channel(ch).fadeTime());}
+				else
+				if(m_keystate[Keys::FADE_IN_FAST])
+					{m_engine->fadeIn(ch,1e-3f);}
+				else
+				if(m_keystate[Keys::FADE_OUT_FAST])
+					{m_engine->fadeOut(ch,1e-3f);}
+				}
+			else
+				{
+				switch(scancode)
+					{
+					case Keys::AUDITION:
+						{
+						auto slot_current=m_session.slotActiveGet();
+						assert(slot_current>=0 && slot_current<128);
+						note=slotToMIDI(slot_current);
+						m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note|0x80,127});
+						}
+						break;
+					}
 				}
 			}
 		}
@@ -201,7 +223,7 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});}
 		else
 			{
-			if(scancode==AUDITION_KEY)
+			if(scancode==Keys::AUDITION)
 				{
 				auto slot_current=m_session.slotActiveGet();
 				assert(slot_current>=0 && slot_current<128);

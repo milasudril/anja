@@ -103,6 +103,17 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 				case MIDI::ControlCodes::CHANNEL_VOLUME:
 					m_channel_gain[msg.channel()]=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
 					break;
+				case FADE_IN:
+					{
+					printf("DEBUG: received FADE_IN %.7g\n",MIDI_val_to_sec(msg.value2()));
+					}
+					break;
+
+				case FADE_OUT:
+					{
+					printf("DEBUG: received FADE_OUT %.7g\n",MIDI_val_to_sec(msg.value2()));
+					}
+					break;
 				default:
 					break;
 				}
