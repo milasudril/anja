@@ -23,20 +23,24 @@ class Listbox::Impl:private Listbox
 		void replace(int index,const char* option)
 			{
 			auto i=selected();
+			auto cb=r_cb;
+			r_cb=nullptr;
 			gtk_combo_box_text_remove(m_handle,index);
 			gtk_combo_box_text_insert(m_handle,index,NULL,option);
 			selected(i);
+			r_cb=cb;
 			}
 
 		void selected(int index) noexcept
 			{
+			auto cb=r_cb;
+			r_cb=nullptr;
 			gtk_combo_box_set_active(GTK_COMBO_BOX(m_handle),index);
+			r_cb=cb;
 			}
 
 		int selected() const noexcept
-			{
-			return gtk_combo_box_get_active(GTK_COMBO_BOX(m_handle));
-			}
+			{return gtk_combo_box_get_active(GTK_COMBO_BOX(m_handle));}
 
 		void clear() noexcept
 			{
