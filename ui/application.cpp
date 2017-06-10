@@ -359,7 +359,7 @@ Application::Application():
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
 	,m_fullscreen(0)
 	{
-	m_ctx.dark(1);
+	m_ctx.dark(0);
 	m_session_control.append("New session","Load session","Reload session","Save session"
 		,"Save session as","","Start engine","Stop engine","","Fullscreen"
 		,"Exit","About Anja");
