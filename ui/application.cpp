@@ -297,7 +297,7 @@ void Application::descriptionChanged(SessionPropertiesEditor& editor,int id)
 
 void Application::optionChanged(SessionPropertiesEditor& editor,int id,int option)
 	{
-	if(id==0 && option==0)
+	if(id==0 && (1<<option)==Session::MULTIOUTPUT)
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
