@@ -37,7 +37,7 @@ void SessionPropertiesEditor::clicked(OptionList& options,OptionListId id,Checkb
 			if(option.state())
 				{r_session->flagSet(option.id());}
 			else
-				{r_session->flagsUnset(option.id());}
+				{r_session->flagUnset(option.id());}
 			if(r_cb_obj!=nullptr)
 				{m_vtable.options_changed(r_cb_obj,*this,m_id,option.id());}
 			break;
