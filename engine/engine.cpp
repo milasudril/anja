@@ -80,20 +80,21 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 			break;
 
 		case MIDI::StatusCodes::NOTE_ON:
-			{
-			auto i=m_voices_alloc.idGet();
-			if(i==m_voices_alloc.null())
+			if(m_key_to_voice_index[msg.value1()]==m_voices_alloc.null())
 				{
-				m_voices_alloc.reset();
-				i=m_voices_alloc.idGet();
-				}
+				auto i=m_voices_alloc.idGet();
+				if(i==m_voices_alloc.null())
+					{
+					m_voices_alloc.reset();
+					i=m_voices_alloc.idGet();
+					}
 
-			assert(i!=m_voices_alloc.null());
-			m_key_to_voice_index[ msg.value1()&0x7f ]=i;
-			m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()&0x7f))
-				,msg.value1()&0x80?17:msg.channel()
-				,msg.value2()/127.0,offset);
-			}
+				assert(i!=m_voices_alloc.null());
+				m_key_to_voice_index[ msg.value1()&0x7f ]=i;
+				m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()&0x7f))
+					,msg.value1()&0x80?17:msg.channel()
+					,msg.value2()/127.0,offset);
+				}
 			break;
 
 		case MIDI::StatusCodes::CONTROL_CHANGE:
@@ -134,29 +135,38 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	auto midi_out=client.midiOut(0,n_frames);
 
 //	Fetch events
-	auto midi_in=client.midiIn(0,n_frames);
-	auto event_current=m_event_last;
-		if(event_current.valid())
-			{
-			auto offset=std::max(time_factor*event_current.timeOffset() - now,0.0);
-			process(event_current.message(),static_cast<int>(offset));
-			write(event_current.message(),static_cast<int>(offset),midi_out);
-			event_current.clear();
-			}
-		while(!m_ui_events.empty())
-			{
-			event_current=m_ui_events.pop_front();
-			if(event_current.valid() && n_frames + time_factor*event_current.timeOffset() - now<n_frames)
+		{
+	//	From UI input queue
+		auto event_current=m_event_last;
+			if(event_current.valid())
 				{
-				auto offset=std::max(n_frames + time_factor*event_current.timeOffset() - now,0.0);
-				write(event_current.message(),static_cast<int>(offset),midi_out);
+				auto offset=std::max(time_factor*event_current.timeOffset() - now,0.0);
 				process(event_current.message(),static_cast<int>(offset));
+				write(event_current.message(),static_cast<int>(offset),midi_out);
 				event_current.clear();
 				}
-			else
-				{break;}
-			}
-	m_event_last=event_current;
+			while(!m_ui_events.empty())
+				{
+				event_current=m_ui_events.pop_front();
+				if(event_current.valid() && n_frames + time_factor*event_current.timeOffset() - now<n_frames)
+					{
+					auto offset=std::max(n_frames + time_factor*event_current.timeOffset() - now,0.0);
+					write(event_current.message(),static_cast<int>(offset),midi_out);
+					process(event_current.message(),static_cast<int>(offset));
+					event_current.clear();
+					}
+				else
+					{break;}
+				}
+		m_event_last=event_current;
+		}
+		{
+	//	From MIDI in port
+		auto midi_in=client.midiIn(0,n_frames);
+		std::for_each(midi_in.first,midi_in.second,[this](AudioClient::MidiEvent e)
+			{process(e.message(),e.timeOffset());});
+
+		}
 
 //	Render and mix voices
 	memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));

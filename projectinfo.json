@@ -6,9 +6,10 @@
 ,"description":"A live sampler for use with JACK"
 ,"acknowledgement":
 	[
-	 "The GTK+ team"
+	 "Melissa O'Neill—for the PCG32 random number generator"
 	,"Mega-Nerd—for libsndfile"
 	,"Paul Davis et.al.—for JACK"
 	,"Stefan Buller—for valuable feedback on the user interface"
+	,"The GTK+ team"
 	]
 }

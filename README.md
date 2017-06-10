@@ -20,6 +20,9 @@ These libraries are required in order to run Anja
  * jack
  * sndfile
 
+ In addition to these libraries, Anja uses the PCG32 generator from Melisssa O'Neill.
+ Currently, her repository is kept as a git submodule.
+
 ### Tools
 These tools are required in order to compile Anja
 
