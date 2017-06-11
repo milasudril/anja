@@ -144,9 +144,12 @@ SourceView::Impl::~Impl()
 		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
 		gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_style));
 		}
-	--s_style_refcount;
-	if(s_style_refcount==0)
-		{g_object_unref(s_style);}
+	else
+		{
+		--s_style_refcount;
+		if(s_style_refcount==0)
+			{g_object_unref(s_style);}
+		}
 
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	gtk_widget_destroy(GTK_WIDGET(m_scroll));

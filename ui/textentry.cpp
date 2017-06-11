@@ -142,9 +142,12 @@ TextEntry::Impl::~Impl()
 		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
 		gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));
 		}
-	--s_style_refcount;
-	if(s_style_refcount==0)
-		{g_object_unref(s_smallstyle);}
+	else
+		{
+		--s_style_refcount;
+		if(s_style_refcount==0)
+			{g_object_unref(s_smallstyle);}
+		}
 
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
