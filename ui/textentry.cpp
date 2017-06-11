@@ -32,7 +32,16 @@ class TextEntry::Impl:private TextEntry
 			}
 
 		void small(bool status)
-			{gtk_entry_set_has_frame(m_handle,!status);}
+			{
+			auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+			if(status)
+				{
+				gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
+					GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+				}
+			else
+				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));}
+			}
 
 		void alignment(float x)
 			{gtk_entry_set_alignment(m_handle,x);}
@@ -48,6 +57,7 @@ class TextEntry::Impl:private TextEntry
 		Callback r_cb;
 		void* r_cb_obj;
 		GtkEntry* m_handle;
+		GtkCssProvider* m_style;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
@@ -109,6 +119,10 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
 	g_object_ref_sink(widget);
+
+	m_style=gtk_css_provider_new();
+	gtk_css_provider_load_from_data(m_style,"*{font-size:0.8em;padding:1px}",-1,NULL);
+
 	cnt.add(widget);
 	}
 
@@ -116,6 +130,10 @@ TextEntry::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	r_cb=nullptr;
+	auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+	gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));
+	g_object_unref(m_style);
+
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
