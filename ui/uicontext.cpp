@@ -7,6 +7,12 @@
 
 using namespace Anja;
 
+static const char* STYLESHEET=R"EOF(
+GtkEntry,GtkButton{padding-top:2px;padding-bottom:2px;padding-left:4px}
+GtkButton{padding-right:4px}
+GtkComboBox > *{padding-top:0px;padding-bottom:0px}
+* tab {font-weight:normal})EOF";
+
 class UiContext::Impl:public UiContext
 	{
 	public:
@@ -14,6 +20,11 @@ class UiContext::Impl:public UiContext
 			{
 			gtk_disable_setlocale();
 			gtk_init(NULL,NULL);
+			auto provider=gtk_css_provider_get_default();
+			gtk_css_provider_load_from_data(provider,STYLESHEET,-1,NULL);
+			gtk_style_context_add_provider_for_screen(gdk_screen_get_default()
+				,GTK_STYLE_PROVIDER(provider)
+				,GTK_STYLE_PROVIDER_PRIORITY_USER);
 			}
 
 		~Impl();

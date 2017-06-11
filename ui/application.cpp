@@ -356,6 +356,7 @@ Application::Application():
 			,m_rows(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),true)
 				,m_status(m_rows,ANJA_OFFLINE,Message::Type::STOP,0)
 				,m_sep(m_rows.insertMode({2,0}),false)
+				,m_ch_status(m_rows,"",Message::Type::READY,0)
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
 	,m_fullscreen(0)
 	{
