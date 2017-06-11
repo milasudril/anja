@@ -6,6 +6,9 @@
 
 using namespace Anja;
 
+static GtkCssProvider* s_smallstyle=nullptr;
+static size_t s_style_refcount=0;
+
 class TextEntry::Impl:private TextEntry
 	{
 	public:
@@ -36,11 +39,11 @@ class TextEntry::Impl:private TextEntry
 			auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
 			if(status)
 				{
-				gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
+				gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_smallstyle),
 					GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 				}
 			else
-				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));}
+				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
 			}
 
 		void alignment(float x)
@@ -57,7 +60,6 @@ class TextEntry::Impl:private TextEntry
 		Callback r_cb;
 		void* r_cb_obj;
 		GtkEntry* m_handle;
-		GtkCssProvider* m_style;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
@@ -118,10 +120,15 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	auto widget=gtk_entry_new();
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
+
 	g_object_ref_sink(widget);
 
-	m_style=gtk_css_provider_new();
-	gtk_css_provider_load_from_data(m_style,"*{font-size:0.8em;padding:1px}",-1,NULL);
+	if(s_style_refcount==0)
+		{
+		s_smallstyle=gtk_css_provider_new();
+		gtk_css_provider_load_from_data(s_smallstyle,"*{font-size:0.8em;padding:1px}",-1,NULL);
+		++s_style_refcount;
+		}
 
 	cnt.add(widget);
 	}
@@ -131,8 +138,11 @@ TextEntry::Impl::~Impl()
 	m_impl=nullptr;
 	r_cb=nullptr;
 	auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
-	gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));
-	g_object_unref(m_style);
+	if(s_style_refcount!=0)
+		{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
+	--s_style_refcount;
+	if(s_style_refcount==0)
+		{g_object_unref(s_smallstyle);}
 
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
