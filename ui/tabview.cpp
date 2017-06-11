@@ -98,6 +98,7 @@ TabView::Impl::Impl(Container& cnt):TabView(*this)
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_NOTEBOOK(widget);
+	gtk_notebook_set_show_border(m_handle,FALSE);
 	}
 
 TabView::Impl::~Impl()
