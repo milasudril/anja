@@ -19,7 +19,7 @@ GtkNotebook > *
 
 GtkNotebook
 	{
-	background-color:rgba(255,255,255,0.125);
+	background-color:shade(@theme_bg_color,1.2);
 	}
 
 GtkNotebook > tab
