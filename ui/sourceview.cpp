@@ -53,7 +53,6 @@ class SourceView::Impl:private SourceView
 		int m_id;
 		GtkSourceView* m_handle;
 		GtkScrolledWindow* m_scroll;
-		GtkCssProvider* m_style;
 		mutable char* m_content;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
@@ -101,6 +100,8 @@ SourceView& SourceView::wordwrap(bool status)
 	return *this;
 	}
 
+static GtkCssProvider* s_style=nullptr;
+static size_t s_style_refcount=0;
 
 
 SourceView::Impl::Impl(Container& cnt):SourceView(*this)
@@ -113,10 +114,15 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scroll),GTK_SHADOW_IN);
 	gtk_source_view_set_tab_width(m_handle,4);
 
-	m_style=gtk_css_provider_new();
-	gtk_css_provider_load_from_data(m_style,"*{font-size:9pt;font-family:\"Inconsolata\",monospace}",-1,NULL);
+	if(s_style_refcount==0)
+		{
+		s_style=gtk_css_provider_new();
+		gtk_css_provider_load_from_data(s_style,"*{font-size:9pt;font-family:\"Inconsolata\",monospace}",-1,NULL);
+		++s_style_refcount;
+		}
+
 	auto context=gtk_widget_get_style_context(widget);
-	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
+	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_style),
 		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	g_object_ref_sink(m_handle);
@@ -132,9 +138,16 @@ SourceView::Impl::~Impl()
 	m_impl=nullptr;
 	if(m_content!=nullptr)
 		{g_free(m_content);}
-	auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
-	gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));
-	g_object_unref(m_style);
+
+	if(s_style_refcount!=0)
+		{
+		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+		gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_style));
+		}
+	--s_style_refcount;
+	if(s_style_refcount==0)
+		{g_object_unref(s_style);}
+
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	gtk_widget_destroy(GTK_WIDGET(m_scroll));
 	}

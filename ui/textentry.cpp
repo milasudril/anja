@@ -137,9 +137,11 @@ TextEntry::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	r_cb=nullptr;
-	auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
 	if(s_style_refcount!=0)
-		{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
+		{
+		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+		gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));
+		}
 	--s_style_refcount;
 	if(s_style_refcount==0)
 		{g_object_unref(s_smallstyle);}
