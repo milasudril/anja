@@ -36,6 +36,8 @@ namespace Anja
 
 			ImageView& minWidth(int w);
 
+			ImageView& minSize(int w,int h);
+
 			template<class Callback,class IdType>
 			ImageView& callback(Callback& cb_obj,IdType id)
 				{

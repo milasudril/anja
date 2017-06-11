@@ -171,6 +171,8 @@
       <File Name="ui/imagerepository.cpp"/>
       <File Name="ui/statusicons.hpp"/>
       <File Name="ui/statusicons.cpp"/>
+      <File Name="ui/imagelist.hpp"/>
+      <File Name="ui/imagelist.cpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>

@@ -38,6 +38,12 @@ class ImageView::Impl:private ImageView
 		void minWidth(int w)
 			{gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,-1);}
 
+
+		void minSize(int w,int h)
+			{
+			gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,h);
+			}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
@@ -80,6 +86,12 @@ ImageView& ImageView::minHeight(int h)
 ImageView& ImageView::minWidth(int w)
 	{
 	m_impl->minWidth(w);
+	return *this;
+	}
+
+ImageView& ImageView::minSize(int w,int h)
+	{
+	m_impl->minSize(w,h);
 	return *this;
 	}
 

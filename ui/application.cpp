@@ -358,7 +358,12 @@ Application::Application():
 			,m_cols_sep(m_cols.insertMode({2,0}),true)
 			,m_rows(m_cols.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}),true)
 				,m_status(m_rows,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
-				,m_sep(m_rows.insertMode({2,0}),false)
+				,m_sep_a(m_rows.insertMode({2,0}),false)
+				,m_ch_status(m_rows.insertMode({0,0}),false)
+					,m_ch_status_left(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
+					,m_ch_status_img(m_ch_status.insertMode({0,0}),false)
+					,m_ch_status_right(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
+				,m_sep_b(m_rows.insertMode({2,0}),false)
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
 	{
@@ -370,5 +375,11 @@ Application::Application():
 	m_mainwin.callback(*this,0);
 	m_session_editor.callback(*this,0);
 	title_update(m_session,m_mainwin);
+	m_ch_status_img.append<ChannelMixer::length()>();
+	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
+		{
+		v.minHeight(20)
+			.showPng(m_images,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
+		});
 	m_mainwin.show();
 	}

@@ -14,6 +14,7 @@
 #include "dialog.hpp"
 #include "message.hpp"
 #include "aboutbox.hpp"
+#include "imagelist.hpp"
 #include "../sessiondata/session.hpp"
 #include "../engine/engine.hpp"
 #include <memory>
@@ -110,7 +111,12 @@ namespace Anja
 					Separator m_cols_sep;
 					Box m_rows;
 						Message m_status;
-						Separator m_sep;
+						Separator m_sep_a;
+						Box m_ch_status;
+							Filler m_ch_status_left;
+							ImageList m_ch_status_img;
+							Filler m_ch_status_right;
+						Separator m_sep_b;
 						Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
 
