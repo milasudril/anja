@@ -106,6 +106,7 @@ namespace Anja
 			Window m_mainwin;
 				Box m_cols;
 					Anja::ButtonList m_session_control;
+					Separator m_cols_sep;
 					Box m_rows;
 						Message m_status;
 						Separator m_sep;

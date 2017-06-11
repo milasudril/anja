@@ -118,8 +118,8 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 		{
 		s_style=gtk_css_provider_new();
 		gtk_css_provider_load_from_data(s_style,"*{font-size:1em; font-family:\"Inconsolata\",monospace}",-1,NULL);
-		++s_style_refcount;
 		}
+	++s_style_refcount;
 
 	auto context=gtk_widget_get_style_context(widget);
 	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_style),

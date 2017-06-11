@@ -38,7 +38,7 @@ Message::Message(Container& cnt,const char* message,Type t,bool wordwrap):
 	{
 	m_text.wordwrap(wordwrap);
 	if(!wordwrap)
-		{m_icon.minHeight(20);}
+		{m_icon.minHeight(18);}
 	type(t);
 	}
 

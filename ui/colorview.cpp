@@ -79,7 +79,7 @@ ColorView::Impl::Impl(Container& cnt):ColorView(*this),r_cb_obj(nullptr)
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(mouse_up),this);
-	gtk_widget_set_size_request(widget,32,32);
+	gtk_widget_set_size_request(widget,24,24);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);

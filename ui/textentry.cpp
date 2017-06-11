@@ -127,8 +127,8 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 		{
 		s_smallstyle=gtk_css_provider_new();
 		gtk_css_provider_load_from_data(s_smallstyle,"*{font-size:0.8em;padding:1px}",-1,NULL);
-		++s_style_refcount;
 		}
+	++s_style_refcount;
 
 	cnt.add(widget);
 	}
