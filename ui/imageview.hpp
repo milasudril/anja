@@ -6,6 +6,7 @@
 #ifndef ANJA_IMAGEVIEW_HPP
 #define ANJA_IMAGEVIEW_HPP
 
+#include "imagerepository.hpp"
 #include <utility>
 #include <cstdint>
 
@@ -28,7 +29,8 @@ namespace Anja
 			ImageView(ImageView&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-			ImageView& showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end);
+			ImageView& showPng(const ImageRepository& repo,ImageRepository::IdType id
+				,const std::pair<const uint8_t*,const uint8_t*>& data);
 
 			ImageView& minHeight(int h);
 

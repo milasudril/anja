@@ -18,7 +18,11 @@ namespace Anja
 		public:
 			enum class Type:int{INFORMATION,WARNING,ERROR,READY,WAIT,STOP};
 
-			Message(Container& cnt,const char* message,Type type,bool wordwrap=true);
+			Message(Container& cnt,ImageRepository&& images,const char* message
+				,Type type,bool wordwrap=true)=delete;
+
+			Message(Container& cnt,const ImageRepository& images,const char* message
+				,Type type,bool wordwrap=true);
 
 			Message& type(Type t);
 
@@ -28,6 +32,7 @@ namespace Anja
 			Box m_cols;
 				ImageView m_icon;
 				Label m_text;
+			const ImageRepository& r_images;
 		};
 	}
 

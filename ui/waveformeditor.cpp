@@ -237,7 +237,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				catch(const Error& err)
 					{
 					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-						,err.message(),Message::Type::ERROR));
+						,r_images,err.message(),Message::Type::ERROR));
 					m_err_dlg->callback(*this,0);
 					entry.content(m_waveform.filename().begin());
 					}
@@ -340,7 +340,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				catch(const Error& err)
 					{
 					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-						,err.message(),Message::Type::ERROR));
+						,r_images,err.message(),Message::Type::ERROR));
 					m_err_dlg->callback(*this,0);
 					}
 				}
@@ -359,7 +359,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			catch(const Error& err)
 				{
 				m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-					,err.message(),Message::Type::ERROR));
+					,r_images,err.message(),Message::Type::ERROR));
 				m_err_dlg->callback(*this,0);
 				}
 			break;
@@ -506,7 +506,7 @@ WaveformEditor& WaveformEditor::channelNames(const String* names_begin,const Str
 	return *this;
 	}
 
-WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
+WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,const WaveformProxy& waveform
 	,const String* channel_names_begin,const String* channel_names_end):
 	 r_cb_obj(nullptr)
 	,m_waveform(waveform)
@@ -562,6 +562,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const WaveformProxy& waveform
 					,m_cursor_end(m_trim_panel.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_cursor_end_entry(m_cursor_end.insertMode({0,Box::EXPAND|Box::FILL}))
 						,m_cursor_end_label(m_cursor_end.insertMode({0,0}),"⇥")
+	,r_images(images)
 	{
 	m_gain_input_text.width(7).small(true).alignment(1.0f);
 	m_gain_random_input_text.width(6).small(true).alignment(1.0f);

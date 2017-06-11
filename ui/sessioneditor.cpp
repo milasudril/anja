@@ -146,13 +146,13 @@ SessionEditor& SessionEditor::sessionUpdated()
 	}
 
 
-SessionEditor::SessionEditor(Container& cnt,Session& session)
+SessionEditor::SessionEditor(Container& cnt,const ImageRepository& images,Session& session)
 	:r_cb_obj(nullptr)
 	,r_session(session)
 	,m_hsplit(cnt,true)
 		,m_keyboard(m_hsplit.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}))
 		,m_tabs(m_hsplit)
-			,m_waveform(m_tabs.tabTitle("Waveform")
+			,m_waveform(m_tabs.tabTitle("Waveform"),images
 				,session.waveformViewGet(session.slotActiveGet())
 				,session.channelLabelsGet())
 			,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)

@@ -55,12 +55,16 @@ namespace Anja
 			WaveformEditor(WaveformEditor&&)=delete;
 
 			template<class StringRange>
-			WaveformEditor(Container& cnt,const WaveformProxy& waveform
+			WaveformEditor(Container& cnt,const ImageRepository& images,const WaveformProxy& waveform
 				,const StringRange& channel_names):
-				WaveformEditor(cnt,waveform,channel_names.begin(),channel_names.end())
+				WaveformEditor(cnt,images,waveform,channel_names.begin(),channel_names.end())
 				{}
 
-			WaveformEditor(Container& cnt,const WaveformProxy& waveform
+			WaveformEditor(Container& cnt,ImageRepository&& images,const WaveformProxy& waveform
+				,const String* channel_names_begin
+				,const String* channel_names_end)=delete;
+
+			WaveformEditor(Container& cnt,const ImageRepository& images,const WaveformProxy& waveform
 				,const String* channel_names_begin
 				,const String* channel_names_end);
 
@@ -191,6 +195,7 @@ namespace Anja
 							Box m_cursor_end;
 								TextEntry m_cursor_end_entry;
 								Label m_cursor_end_label;
+			const ImageRepository& r_images;
 		};
 
 	}

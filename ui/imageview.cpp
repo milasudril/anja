@@ -16,7 +16,8 @@ class ImageView::Impl:private ImageView
 		Impl(Container& cnt);
 		~Impl();
 
-		void showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end);
+		void showPng(const ImageRepository& repo,ImageRepository::IdType id
+			,const std::pair<const uint8_t*,const uint8_t*>& data);
 
 		int id() const noexcept
 			{return m_id;}
@@ -41,7 +42,7 @@ class ImageView::Impl:private ImageView
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
-		cairo_surface_t* m_img;
+		const cairo_surface_t* r_img;
 		GtkDrawingArea* m_handle;
 		int m_height_request;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
@@ -54,9 +55,10 @@ ImageView::ImageView(Container& cnt)
 ImageView::~ImageView()
 	{delete m_impl;}
 
-ImageView& ImageView::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end)
+ImageView& ImageView::showPng(const ImageRepository& repo,ImageRepository::IdType id
+	,const std::pair<const uint8_t*,const uint8_t*>& data)
 	{
-	m_impl->showPng(bytes_begin,bytes_end);
+	m_impl->showPng(repo,id,data);
 	return *this;
 	}
 
@@ -85,7 +87,7 @@ ImageView& ImageView::minWidth(int w)
 
 
 ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
-	,m_img(nullptr)
+	,r_img(nullptr)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK);
@@ -101,15 +103,13 @@ ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
 ImageView::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	if(m_img!=nullptr)
-		{cairo_surface_destroy(m_img);}
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
 gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	auto img=self->m_img;
+	auto img=self->r_img;
 	if(img!=nullptr)
 		{
 		auto w_out=static_cast<double>( gtk_widget_get_allocated_width(widget) );
@@ -117,8 +117,8 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		auto w_win=w_out;
 		auto h_win=h_out;
 
-		auto w_in=static_cast<double>( cairo_image_surface_get_width(img) );
-		auto h_in=static_cast<double>( cairo_image_surface_get_height(img) );
+		auto w_in=static_cast<double>( cairo_image_surface_get_width(const_cast<cairo_surface_t*>(img)) );
+		auto h_in=static_cast<double>( cairo_image_surface_get_height(const_cast<cairo_surface_t*>(img)) );
 
 		auto scale=[w_in,&w_out,h_in,&h_out]()
 			{
@@ -135,36 +135,19 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 		cairo_translate(cr,0.5*(w_win - w_out),0.5*(h_win - h_out));
 		cairo_scale(cr,scale,scale);
-		cairo_set_source_surface(cr,img,0,0);
+		cairo_set_source_surface(cr,const_cast<cairo_surface_t*>(img),0,0);
 		cairo_paint(cr);
 		}
 	return TRUE;
 	}
 
-void ImageView::Impl::showPng(const uint8_t* bytes_begin,const uint8_t* bytes_end)
+void ImageView::Impl::showPng(const ImageRepository& repo,ImageRepository::IdType id
+	,const std::pair<const uint8_t*,const uint8_t*>& data)
 	{
-	typedef std::pair<const uint8_t*,const uint8_t*> ReadPair;
-	ReadPair read_pair{bytes_begin,bytes_end};
-	auto temp=cairo_image_surface_create_from_png_stream([]
-		(void* cb_obj,unsigned char *data,unsigned int length)
+	r_img=reinterpret_cast<const cairo_surface_t*>(repo.getFromPng(id,data));
 		{
-		auto rp=reinterpret_cast<ReadPair*>(cb_obj);
-		auto n=std::min(static_cast<unsigned int>(rp->second - rp->first),length);
-		memcpy(data,rp->first,n);
-		rp->first+=n;
-		return CAIRO_STATUS_SUCCESS;
-		},&read_pair);
-	if(cairo_surface_status(temp)!=CAIRO_STATUS_SUCCESS)
-		{
-		cairo_surface_destroy(temp);
-		return;
-		}
-	if(m_img!=nullptr)
-		{cairo_surface_destroy(m_img);}
-	m_img=temp;
-		{
-		auto w_in=static_cast<double>( cairo_image_surface_get_width(m_img) );
-		auto h_in=static_cast<double>( cairo_image_surface_get_height(m_img) );
+		auto w_in=static_cast<double>( cairo_image_surface_get_width(const_cast<cairo_surface_t*>(r_img)) );
+		auto h_in=static_cast<double>( cairo_image_surface_get_height(const_cast<cairo_surface_t*>(r_img)) );
 		auto w=m_height_request*w_in/h_in;
 		gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,m_height_request);
 		}

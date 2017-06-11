@@ -87,7 +87,7 @@ namespace Anja
 			Dialog(Dialog&&)=delete;
 
 			template<class ... WidgetParams>
-			Dialog(Container& owner,const char* title,WidgetParams... params):m_window(title,&owner)
+			Dialog(Container& owner,const char* title,const WidgetParams&... params):m_window(title,&owner)
 				,m_content(m_window,true)
 					,m_widget(m_content.insertMode({2,Box::FILL|Box::EXPAND}),params...)
 						,m_buttons_outer(m_content.insertMode(Box::InsertMode{0,0}),false)

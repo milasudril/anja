@@ -12,6 +12,7 @@
 #include "filenameselect.hpp"
 #include "../common/blob.hpp"
 #include "../sessiondata/keymap.hpp"
+#include "statusicons.hpp"
 #include <maike/targetinclude.hpp>
 
 using namespace Anja;
@@ -52,8 +53,8 @@ void Application::save_ask(ConfirmSaveDialogId id)
 		}
 	String msg("Do you want to save changes to ");
 	msg.append(m_session.titleGet()).append("?");
-	m_confirm.reset(new Dialog<Message,ConfirmSaveDialog>(m_mainwin,title,msg.begin()
-		,Message::Type::WARNING));
+	m_confirm.reset(new Dialog<Message,ConfirmSaveDialog>(m_mainwin,title,m_images
+		,msg.begin(),Message::Type::WARNING));
 	m_confirm->callback(*this,id);
 	}
 
@@ -284,14 +285,15 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				break;
 			case 9:
 				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
-				m_about->widget().logo(s_logo_begin,s_logo_end);
+				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end});
 				m_about->callback(*this,0);
 				break;
 			}
 		}
 	catch(const Error& e)
 		{
-		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error",e.message(),Message::Type::ERROR));
+		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error",m_images
+			,e.message(),Message::Type::ERROR));
 		m_error->callback(*this,0);
 		}
 	btn.state(0);
@@ -353,12 +355,11 @@ Application::Application():
 	m_mainwin("New session--Anja")
 		,m_cols(m_mainwin,false)
 			,m_session_control(m_cols,true)
-			,m_cols_sep(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),true)
-			,m_rows(m_cols,true)
-				,m_status(m_rows,ANJA_OFFLINE,Message::Type::STOP,0)
+			,m_cols_sep(m_cols.insertMode({2,0}),true)
+			,m_rows(m_cols.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}),true)
+				,m_status(m_rows,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
 				,m_sep(m_rows.insertMode({2,0}),false)
-				,m_ch_status(m_rows,"",Message::Type::READY,0)
-				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_session)
+				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
 	{
 	m_ctx.dark(0);

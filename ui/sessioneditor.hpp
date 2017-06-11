@@ -21,8 +21,9 @@ namespace Anja
 		public:
 			SessionEditor& operator=(SessionEditor&&)=delete;
 			SessionEditor(SessionEditor&&)=delete;
+			SessionEditor(Container& cnt,ImageRepository&& images,Session& session)=delete;
 
-			SessionEditor(Container& cnt,Session& session);
+			SessionEditor(Container& cnt,const ImageRepository& images,Session& session);
 
 			enum class MixerId:int{CHANNEL_MIXER};
 			enum class WaveformEditId:int{WAVEFORM_CURRENT};

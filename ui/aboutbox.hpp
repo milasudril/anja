@@ -67,8 +67,11 @@ namespace Anja
 					}
 				}
 
-			void logo(const uint8_t* png_bytes_begin,const uint8_t* png_bytes_end)
-				{m_logo.minHeight(144).showPng(png_bytes_begin,png_bytes_end);}
+			void logo(const ImageRepository& images,ImageRepository::IdType id
+				,const std::pair<const uint8_t*,const uint8_t*>& data)
+				{
+				m_logo.minHeight(144).showPng(images,id,data);
+				}
 
 		private:
 			const char* r_legal_brief;

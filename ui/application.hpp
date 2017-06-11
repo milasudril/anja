@@ -101,6 +101,7 @@ namespace Anja
 
 
 		private:
+			ImageRepository m_images;
 			UiContext m_ctx;
 			Session m_session;
 			Window m_mainwin;
@@ -110,7 +111,6 @@ namespace Anja
 					Box m_rows;
 						Message m_status;
 						Separator m_sep;
-						Message m_ch_status;
 						Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
 
