@@ -117,7 +117,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	if(s_style_refcount==0)
 		{
 		s_style=gtk_css_provider_new();
-		gtk_css_provider_load_from_data(s_style,"*{font-size:9pt;font-family:\"Inconsolata\",monospace}",-1,NULL);
+		gtk_css_provider_load_from_data(s_style,"*{font-size:1em; font-family:\"Inconsolata\",monospace}",-1,NULL);
 		++s_style_refcount;
 		}
 
