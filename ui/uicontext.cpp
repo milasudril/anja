@@ -3,6 +3,10 @@
 //@	}
 
 #include "uicontext.hpp"
+#include "../common/thread.hpp"
+#include "../common/readysignal.hpp"
+#include "../common/mutex.hpp"
+#include "../common/ringbuffer.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
@@ -46,7 +50,7 @@ GtkNotebook > tab:active
 class UiContext::Impl:public UiContext
 	{
 	public:
-		Impl():UiContext(*this),m_stop(0)
+		Impl():UiContext(*this),m_stop(0),m_messages(1024)
 			{
 			gtk_disable_setlocale();
 			gtk_init(NULL,NULL);
@@ -60,14 +64,88 @@ class UiContext::Impl:public UiContext
 		~Impl();
 
 		void exit()
-			{m_stop=1;}
+			{
+			m_stop=1;
+			m_ready.set();
+			m_processed.set();
+			}
 
-		void run(IdleCallbackImpl cb,void* cb_obj);
+		void run(const Vtable& vt,void* cb_obj)
+			{
+			m_vt=vt;
+			r_cb_obj=cb_obj;
+			m_stop=0;
+			Thread idle_loop(*this,std::integral_constant<int,0>{});
+			while(!m_stop)
+				{gtk_main_iteration_do(m_vt.idle(cb_obj,*this)==RunStatus::WAIT);}
+			}
 
-		void dark(bool status);
+		template<int id>
+		void run()
+			{
+			while(!m_stop)
+				{
+				while(m_messages.empty() && !m_stop)
+					{m_ready.wait();}
+				if(!m_stop)
+					{
+					m_message_current=m_messages.pop_front();
+					g_idle_add([](void* impl)
+						{
+						auto self=reinterpret_cast<Impl*>(impl);
+						auto msg=self->m_message_current;
+						self->m_processed.set();
+						self->m_vt.process(self->r_cb_obj,*self
+							,static_cast<int32_t>(msg>>32llu),msg&(~0xffffffff00000000));
+						return G_SOURCE_REMOVE;
+						},this);
+					m_processed.wait();
+					}
+				}
+			}
+
+		void dark(bool status)
+			{
+			g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
+				,status,NULL);
+			}
+
+		bool messagePostTry(int32_t id,int32_t param) noexcept
+			{
+			if(!m_mtx.lockTry())
+				{return 0;}
+			if(m_messages.full())
+				{
+				m_mtx.unlock();
+				return 0;
+				}
+			m_messages.push_back((uint64_t(id)<<32llu)|param);
+			m_mtx.unlock();
+			m_ready.set();
+			return 1;
+			}
+
+		void messagePost(int32_t id,int32_t param)
+			{
+			Mutex::LockGuard g(m_mtx);
+			while(m_messages.full())
+				{
+				m_ready.set();
+				sched_yield();
+				}
+			m_messages.push_back((uint64_t(id)<<32llu)|param);
+			m_ready.set();
+			}
 
 	private:
 		volatile bool m_stop;
+		RingBuffer<uint64_t,volatile uint32_t> m_messages;
+		uint64_t m_message_current;
+		Vtable m_vt;
+		void* r_cb_obj;
+		ReadySignal m_ready;
+		ReadySignal m_processed;
+		Mutex m_mtx;
 	};
 
 UiContext::UiContext()
@@ -79,8 +157,8 @@ UiContext::~UiContext()
 void UiContext::exit()
 	{m_impl->exit();}
 
-void UiContext::run(IdleCallbackImpl cb,void* cb_obj)
-	{m_impl->run(cb,cb_obj);}
+void UiContext::run(const Vtable& vt,void* cb_obj)
+	{m_impl->run(vt,cb_obj);}
 
 UiContext& UiContext::dark(bool status)
 	{
@@ -91,15 +169,15 @@ UiContext& UiContext::dark(bool status)
 UiContext::Impl::~Impl()
 	{m_impl=nullptr;}
 
-void UiContext::Impl::run(IdleCallbackImpl cb,void* cb_obj)
+
+bool UiContext::messagePostTry(int32_t id,int32_t param) noexcept
 	{
-	m_stop=0;
-	while(!m_stop)
-		{g_main_context_iteration(NULL,cb(cb_obj,*this)==RunStatus::WAIT);}
+	return m_impl->messagePostTry(id,param);
 	}
 
-void UiContext::Impl::dark(bool status)
+UiContext& UiContext::messagePost(int32_t id,int32_t param)
 	{
-	g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
-		,status,NULL);
+	m_impl->messagePost(id,param);
+	return *this;
 	}
+

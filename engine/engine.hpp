@@ -93,6 +93,17 @@ namespace Anja
 				return messagePost(MIDI::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
 				}
 
+			template<class Callback>
+			Engine& callback(Callback& cb) noexcept
+				{
+				m_vt.muted=[](void* cb_obj,Engine& engine,int channel)
+					{
+					reinterpret_cast<Callback*>(cb_obj)->muted(engine,channel);
+					};
+				r_cb_obj=&cb;
+				return *this;
+				}
+
 
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
@@ -130,14 +141,17 @@ namespace Anja
 				{return 1e-3f*std::pow(10.0f,4.0f*val/127.0f);}
 
 			static float sec_to_decay_factor(float time,float fs) noexcept
-				{
-				return std::sqrt(10.0f)*std::pow(10.0f,-5.0f/(2.0f*time*fs));
-				}
+				{return std::sqrt(10.0f)*std::pow(10.0f,-5.0f/(2.0f*time*fs));}
 
 
 			int indexAudition(const AudioClient& client) const noexcept;
 			int indexMaster(const AudioClient& client) const noexcept;
 
+			struct Vtable
+				{
+				void (*muted)(void* cb_obj,Engine& engine,int channel);
+				} m_vt;
+			void* r_cb_obj;
 		};
 
 	template<>

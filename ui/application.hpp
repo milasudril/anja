@@ -100,6 +100,13 @@ namespace Anja
 			void user1(Dialog<AboutBox,AboutDialog>& dlg,int id);
 			void user2(Dialog<AboutBox,AboutDialog>& dlg,int id);
 
+			void muted(Engine& engine,int channel) noexcept;
+
+			enum MessageId:int32_t{CHANNEL_MUTED};
+			typedef int32_t MessageParam;
+
+			void process(UiContext& ctx,MessageId id,MessageParam param);
+
 
 		private:
 			ImageRepository m_images;

@@ -89,9 +89,20 @@ void Application::confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,Confirm
 		}
 	}
 
+void Application::muted(Engine& engine,int channel) noexcept
+	{
+	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_MUTED),channel);
+	}
+
+void Application::process(UiContext& ctx,MessageId id,MessageParam param)
+	{
+	printf("Hello %d\n",param);
+	}
+
 void Application::engine_start()
 	{
 	m_engine.reset( new Engine(m_session) );
+	m_engine->callback(*this);
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 

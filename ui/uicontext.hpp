@@ -6,6 +6,8 @@
 #ifndef ANJA_UICONTEXT_HPP
 #define ANJA_UICONTEXT_HPP
 
+#include <cstdint>
+
 namespace Anja
 	{
 	class UiContext
@@ -20,25 +22,43 @@ namespace Anja
 
 			enum class RunStatus:int{CONTINUE,WAIT};
 
-			template<class IdleCallback>
-			void run(IdleCallback& t)
+			template<class Callback>
+			void run(Callback& cb)
 				{
-				auto cb_wrapper=[](void* cb_obj,UiContext& self)
+				Vtable vt
 					{
-					auto cb=reinterpret_cast<IdleCallback*>(cb_obj);
-					return cb->idle(self);
+					[](void* cb_obj,UiContext& self)
+						{
+						auto cb=reinterpret_cast<Callback*>(cb_obj);
+						return cb->idle(self);
+						}
+					,[](void* cb_obj,UiContext& self,int32_t id,int32_t param)
+						{
+						auto cb=reinterpret_cast<Callback*>(cb_obj);
+						cb->process(self,static_cast<typename Callback::MessageId>(id)
+							,static_cast<typename Callback::MessageParam>(param));
+						}
 					};
-				run(cb_wrapper,&t);
+				run(vt,&cb);
 				}
 
 			UiContext& dark(bool status);
 
+			bool messagePostTry(int32_t id,int32_t param) noexcept;
+
+			UiContext& messagePost(int32_t id,int32_t param);
+
 		private:
 			class Impl;
 			Impl* m_impl;
+			struct Vtable
+				{
+				RunStatus (*idle)(void* cb_obj,UiContext& self);
+				void (*process)(void* cb_obj,UiContext& self,int32_t id,int32_t param);
+				};
+
 			UiContext(Impl& impl):m_impl(&impl){}
-			typedef RunStatus (*IdleCallbackImpl)(void* cb_obj,UiContext& self);
-			void run(IdleCallbackImpl cb,void* cb_obj);
+			void run(const Vtable& vt,void* cb_obj);
 		};
 	}
 

@@ -154,6 +154,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 				auto offset=std::max(time_factor*event_current.timeOffset() - now,0.0);
 				process(event_current.message(),static_cast<int>(offset));
 				write(event_current.message(),static_cast<int>(offset),midi_out);
+				if(r_cb_obj!=nullptr)
+					{m_vt.muted(r_cb_obj,*this,0);}
 				event_current.clear();
 				}
 			while(!m_ui_events.empty())
@@ -164,6 +166,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 					auto offset=std::max(n_frames + time_factor*event_current.timeOffset() - now,0.0);
 					write(event_current.message(),static_cast<int>(offset),midi_out);
 					process(event_current.message(),static_cast<int>(offset));
+					if(r_cb_obj!=nullptr)
+						{m_vt.muted(r_cb_obj,*this,0);}
 					event_current.clear();
 					}
 				else
