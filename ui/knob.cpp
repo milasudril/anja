@@ -74,7 +74,7 @@ class Knob::Impl:public Knob
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
 		static gboolean mousewheel(GtkWidget* widget,GdkEvent* event,void* obj);
 
-		void value_update(Vec2 position);
+		void value_update(Vec2<double> position);
 	};
 
 Knob::Knob(Container& cnt)
@@ -201,17 +201,17 @@ static double angle_to_value(double angle)
 	return (angle - (-pi/6.0))/(7.0*pi/6.0 - (-pi/6.0));
 	}
 
-static Vec2 angle_to_pos(double r,double angle,Vec2 O)
-	{return r*Vec2{cos(angle),sin(angle)} + O;}
+static Vec2<double> angle_to_pos(double r,double angle,Vec2<double> O)
+	{return r*Vec2<double>{cos(angle),sin(angle)} + O;}
 
-static double pos_to_angle(Vec2 pos,Vec2 O)
+static double pos_to_angle(Vec2<double> pos,Vec2<double> O)
 	{
 	pos-=O;
 	return atan2(-pos.x(),pos.y()) + 0.5*pi;
 	}
 
-static Vec2 flip_y(Vec2 v,double h)
-	{return Vec2{v.x(),h-v.y()};}
+static Vec2<double> flip_y(Vec2<double> v,double h)
+	{return Vec2<double>{v.x(),h-v.y()};}
 
 gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
@@ -255,7 +255,7 @@ gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	gtk_style_context_get_color(context,GTK_STATE_FLAG_NORMAL,&c);
 	cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
 	auto r0=std::min(w,h);
-	auto o=flip_y(angle_to_pos(0.28*r0,value_to_angle(1.0 - self->m_value),0.5*Vec2{w,h}),h);
+	auto o=flip_y(angle_to_pos(0.28*r0,value_to_angle(1.0 - self->m_value),0.5*Vec2<double>{w,h}),h);
 	cairo_arc(cr,o.x(),o.y(),0.04*r0,0,2.0*pi);
 	cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
 	cairo_fill(cr);
@@ -270,12 +270,12 @@ gboolean Knob::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	return TRUE;
 	}
 
-void Knob::Impl::value_update(Vec2 pos)
+void Knob::Impl::value_update(Vec2<double> pos)
 	{
 	auto w=static_cast<double>(gtk_widget_get_allocated_width(GTK_WIDGET(m_handle)));
 	auto h=static_cast<double>(gtk_widget_get_allocated_height(GTK_WIDGET(m_handle)));
 	pos=flip_y(pos,h);
-	auto angle=pos_to_angle(pos,0.5*Vec2{w,h});
+	auto angle=pos_to_angle(pos,0.5*Vec2<double>{w,h});
 	m_value=1.0 - std::max(0.0,std::min(angle_to_value(angle),1.0));
 	gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 	if(r_cb_obj!=nullptr)
@@ -286,7 +286,7 @@ gboolean Knob::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* ob
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 	self->m_grabbed=1;
-	self->value_update(Vec2{event->x,event->y});
+	self->value_update(Vec2<double>{event->x,event->y});
 	return TRUE;
 	}
 
@@ -295,7 +295,7 @@ gboolean Knob::Impl::mouse_move(GtkWidget* widget,GdkEventMotion* event,void* ob
 	auto self=reinterpret_cast<Impl*>(obj);
 	if(self->m_grabbed)
 		{
-		self->value_update(Vec2{event->x,event->y});
+		self->value_update(Vec2<double>{event->x,event->y});
 		return TRUE;
 		}
 	return FALSE;

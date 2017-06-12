@@ -25,8 +25,8 @@ namespace
 		uint8_t x;
 		uint8_t y;
 
-		Vec2 normalize() const noexcept
-			{return Vec2{static_cast<double>(x)/16.0,static_cast<double>(y)/16.0};}
+		Vec2<double> normalize() const noexcept
+			{return Vec2<double>{static_cast<double>(x)/16.0,static_cast<double>(y)/16.0};}
 		};
 
 	class KeyPolygon
@@ -468,7 +468,7 @@ void KeyboardView::Impl::reset()
 	}
 
 static void key_make_path(const KeyPolygon& p,cairo_t* cr,const ColorRGBA& color
-	,double w,Vec2 O)
+	,double w,Vec2<double> O)
 	{
 	if(p.size()!=0)
 		{
@@ -488,14 +488,14 @@ template<class DrawFunction>
 void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 	,const uint8_t* key_sizes
 	,const uint8_t* key_index,const ColorRGBA* key_colors,const std::string* labels
-	,cairo_t* cr,Vec2 O,double key_width,DrawFunction&& fn)
+	,cairo_t* cr,Vec2<double> O,double key_width,DrawFunction&& fn)
 	{
 	for(decltype(N_keys) k=0;k<N_keys;++k)
 		{
 		auto key=key_index[k];
 		auto color=key_colors[key];
 		key_make_path(keys[k],cr,color,key_width
-			,O + key_width*Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
+			,O + key_width*Vec2<double>{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 		fn(cr);
 
 		if(labels[key].length()!=0 && keys[k].size()!=0)
@@ -506,8 +506,8 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 				{cairo_set_source_rgba(cr,1,1,1,1);}
 			cairo_text_extents_t extents;
 			cairo_text_extents(cr,labels[key].c_str(),&extents);
-			Vec2 text_pos=O;
-			text_pos+=Vec2
+			Vec2<double> text_pos=O;
+			text_pos+=Vec2<double>
 				{
 				 key_width*key_positions[k]/16.0 + 0.5*key_width*key_sizes[k]/16.0 - 0.5*extents.width
 				,key_width*(static_cast<double>( k/TYPING_AREA_COLS ) + 0.5)
@@ -522,12 +522,12 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 template<class DrawFunction>
 void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 	,const ColorRGBA& color
-	,cairo_t* cr,Vec2 O,double key_width,DrawFunction&& fn)
+	,cairo_t* cr,Vec2<double> O,double key_width,DrawFunction&& fn)
 	{
 	for(decltype(N_keys) k=0;k<N_keys;++k)
 		{
 		key_make_path(keys[k],cr,color,key_width
-			,O + key_width*Vec2{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
+			,O + key_width*Vec2<double>{key_positions[k]/16.0,static_cast<double>( k/TYPING_AREA_COLS ) } );
 		fn(cr);
 		}
 	}
@@ -535,14 +535,14 @@ void draw_keys(size_t N_keys,const KeyPolygon* keys,const uint8_t* key_positions
 gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
-	Vec2 size_out
+	Vec2<double> size_out
 		{
 		 static_cast<double>( gtk_widget_get_allocated_width(object) )
 		,static_cast<double>( gtk_widget_get_allocated_height(object) )
 		};
 	auto ratio_out=size_out.x()/size_out.y();
 
-	Vec2 size_in
+	Vec2<double> size_in
 		{
 		 static_cast<double>(TYPING_AREA_COLS)
 		,static_cast<double>(TYPING_AREA_ROWS) + 1.5
@@ -550,7 +550,7 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 	auto ratio_in=size_in.x()/size_in.y();
 	auto key_width=ratio_in>ratio_out?
 		size_out.x()/size_in.x() : size_out.y()/size_in.y();
-	auto keyboard_size=Vec2{key_width,key_width}.componentsMul(size_in);
+	auto keyboard_size=Vec2<double>{key_width,key_width}.componentsMul(size_in);
 
 	auto O=0.5*(size_out - keyboard_size);
 
@@ -561,22 +561,22 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 		,s_function_keys_x_pos.begin()
 		,s_function_keys_width.begin()
 		,s_function_keys_scancodes,self->m_colors.begin(),self->m_labels.begin(),cr
-		,O+key_width*Vec2{1.5,0},key_width,&cairo_fill);
+		,O+key_width*Vec2<double>{1.5,0},key_width,&cairo_fill);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin()
 		,s_typing_area_x_pos.begin()
 		,s_typing_area_width.begin()
 		,s_typing_area_scancodes
-		,self->m_colors.begin(),self->m_labels.begin(),cr,O+key_width*Vec2{0,1.5}
+		,self->m_colors.begin(),self->m_labels.begin(),cr,O+key_width*Vec2<double>{0,1.5}
 		,key_width,&cairo_fill);
 
 
 	draw_keys(s_function_keys.length(),s_function_keys.begin(),s_function_keys_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2{1.5,0}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2<double>{1.5,0}
 		,key_width,&cairo_stroke);
 
 	draw_keys(s_typing_area.length(),s_typing_area.begin(),s_typing_area_x_pos.begin()
-		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2{0,1.5}
+		,ColorRGBA{0.5f,0.5f,0.5f,1.0f},cr,O+key_width*Vec2<double>{0,1.5}
 		,key_width,&cairo_stroke);
 
 
@@ -590,8 +590,8 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_function_keys[selection.second],cr,color,key_width
-				,O + key_width*(Vec2{1.5,0}
-				+ Vec2{s_function_keys_x_pos[selection.second]/16.0,0}) );
+				,O + key_width*(Vec2<double>{1.5,0}
+				+ Vec2<double>{s_function_keys_x_pos[selection.second]/16.0,0}) );
 			cairo_stroke(cr);
 			}
 			break;
@@ -602,8 +602,8 @@ gboolean KeyboardView::Impl::draw(GtkWidget* object,cairo_t* cr,void* obj)
 			color.green=1.0f-color.green;
 			color.blue=1.0f-color.blue;
 			key_make_path(s_typing_area[selection.second],cr,color,key_width
-				,O + key_width*(Vec2{0,1.5}
-				+ Vec2
+				,O + key_width*(Vec2<double>{0,1.5}
+				+ Vec2<double>
 					{
 					 s_typing_area_x_pos[selection.second]/16.0
 					,static_cast<double>(selection.second/TYPING_AREA_COLS)
@@ -628,7 +628,7 @@ static constexpr uint8_t s_typing_area_keymap[]=
 static constexpr uint8_t s_ncols_keymap=17;
 
 
-static uint8_t scancode_typing_area(Vec2 pos)
+static uint8_t scancode_typing_area(Vec2<double> pos)
 	{
 	auto row=uint8_t(pos.y());
 	auto col=uint8_t(pos.x()-0.4f*row+2);
@@ -639,16 +639,16 @@ static uint8_t scancode_typing_area(Vec2 pos)
 
 gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* obj)
 	{
-	Vec2 pos{event->x,event->y};
+	Vec2<double> pos{event->x,event->y};
 	auto self=reinterpret_cast<Impl*>(obj);
-	Vec2 size_out
+	Vec2<double> size_out
 		{
 		 static_cast<double>( gtk_widget_get_allocated_width(object) )
 		,static_cast<double>( gtk_widget_get_allocated_height(object) )
 		};
 	auto ratio_out=size_out.x()/size_out.y();
 
-	Vec2 size_in
+	Vec2<double> size_in
 		{
 		 static_cast<double>(TYPING_AREA_COLS)
 		,static_cast<double>(TYPING_AREA_ROWS) + 1.5
@@ -656,7 +656,7 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 	auto ratio_in=size_in.x()/size_in.y();
 	auto key_width=ratio_in>ratio_out?
 		size_out.x()/size_in.x() : size_out.y()/size_in.y();
-	auto keyboard_size=Vec2{key_width,key_width}.componentsMul(size_in);
+	auto keyboard_size=Vec2<double>{key_width,key_width}.componentsMul(size_in);
 
 	auto O=0.5*(size_out - keyboard_size);
 
@@ -674,7 +674,7 @@ gboolean KeyboardView::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,vo
 
 	if(pos.y()>=1.5 && pos.y()<size_in.y() && pos.x()>=0.0 && pos.x()<size_in.x())
 		{
-		auto scancode=scancode_typing_area(pos - Vec2{0.0,1.5});
+		auto scancode=scancode_typing_area(pos - Vec2<double>{0.0,1.5});
 		self->selection(scancode);
 		if(self->r_cb_obj!=nullptr)
 			{self->m_cb(self->r_cb_obj,*self);}

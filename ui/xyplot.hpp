@@ -35,7 +35,7 @@ namespace Anja
 			XYPlot& callback(Callback& cb,IdType id) noexcept
 				{return callback(Vtable(cb,id),&cb,static_cast<int>(id));}
 
-			typedef Vec2 Point;
+			typedef Vec2<double> Point;
 
 			template<class PointRange>
 			XYPlot& curve(const PointRange& points,float hue)

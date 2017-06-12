@@ -7,6 +7,7 @@
 
 namespace Anja
 	{
+	template<class T>
 	class Vec2
 		{
 		public:
@@ -79,34 +80,43 @@ namespace Anja
 
 
 		private:
-			vec2_t<double> m_data;
+			vec2_t<T> m_data;
 		};
 
-	inline Vec2 operator-(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> operator-(Vec2<T> a,Vec2<T> b)
 		{return a-=b;}
 
-	inline Vec2 operator+(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> operator+(Vec2<T> a,Vec2<T> b)
 		{return a+=b;}
 
-	inline Vec2 componentsDiv(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> componentsDiv(Vec2<T> a,Vec2<T> b)
 		{return a.componentsDiv(b);}
 
-	inline Vec2 componentsMul(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> componentsMul(Vec2<T> a,Vec2<T> b)
 		{return a.componentsMul(b);}
 
-	inline Vec2 componentsMax(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> componentsMax(Vec2<T> a,Vec2<T> b)
 		{return a.componentsMax(b);}
 
-	inline Vec2 componentsMin(Vec2 a,Vec2 b)
+	template<class T>
+	inline Vec2<T> componentsMin(Vec2<T> a,Vec2<T> b)
 		{return a.componentsMin(b);}
 
-	inline double dot(Vec2 a,Vec2 b)
+	template<class T>
+	inline double dot(Vec2<T> a,Vec2<T> b)
 		{return a.x()*b.x() + b.y()*b.y();}
 
-	inline Vec2 operator*(double x,Vec2 a)
+	template<class T>
+	inline Vec2<T> operator*(double x,Vec2<T> a)
 		{return a*=x;}
 
-	inline Vec2 operator/(Vec2 a,double x)
+	template<class T>
+	inline Vec2<T> operator/(Vec2<T> a,double x)
 		{return a/=x;}
 	}
 
