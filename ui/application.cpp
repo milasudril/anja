@@ -94,15 +94,32 @@ void Application::muted(Engine& engine,int channel) noexcept
 	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_MUTED),channel);
 	}
 
+void Application::unmuted(Engine& engine,int channel) noexcept
+	{
+	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_UNMUTED),channel);
+	}
+
+
 void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 	{
-	printf("Hello %d\n",param);
+	switch(id)
+		{
+		case MessageId::CHANNEL_MUTED:
+			assert(param>=0 && param<16);
+			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+				,statusIcon(StatusIcon::STOP));
+			break;
+		case MessageId::CHANNEL_UNMUTED:
+			assert(param>=0 && param<16);
+			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+				,statusIcon(StatusIcon::READY));
+			break;
+		}
 	}
 
 void Application::engine_start()
 	{
-	m_engine.reset( new Engine(m_session) );
-	m_engine->callback(*this);
+	m_engine.reset( new Engine(m_session,*this) );
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
@@ -232,7 +249,16 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 		{
 		auto note=scancodeToMIDI(scancode);
 		if(note!=0xff)
-			{m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});}
+			{
+			auto slot=scancodeToSlot(scancode);
+			m_engine->messagePost(MIDI::Message
+				{
+				 MIDI::StatusCodes::NOTE_OFF
+				,static_cast<int>(m_session.waveformGet(slot).channel())
+				,note
+				,127
+				});
+			}
 		else
 			{
 			if(scancode==Keys::AUDITION)

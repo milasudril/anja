@@ -30,15 +30,23 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_channel_buffers(16*64)
 	,m_channel_gain(16)
 	,m_channel_gain_factor(16)
+	,m_ch_state(0xffff)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
 	m_voices_alloc.fill();
 	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
 		,m_voices_alloc.null());
-	std::fill(m_channel_gain_factor.begin(),m_channel_gain_factor.end(),1.0);
+	std::fill(m_channel_gain_factor.begin(),m_channel_gain_factor.end()
+		,std::pair<Vec4d,Vec4d>{Vec4d{1.0,1.0,1.0,1.0},Vec4d{1.0,1.0,1.0,1.0}});
 
 	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
+	}
+
+void Engine::init_notify()
+	{
+	for(int k=0;k<16;++k)
+		{m_vt.unmuted(r_cb_obj,*this,k);}
 	}
 
 void Engine::bufferSize(AudioClient& client,int n_frames) noexcept
@@ -70,6 +78,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 		{
 		case MIDI::StatusCodes::NOTE_OFF:
 			{
+			//TODO: Same note different channels should be OK?
 			auto i=m_key_to_voice_index[ msg.value1() ];
 			if(i!=m_voices_alloc.null())
 				{
@@ -82,7 +91,8 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			break;
 
 		case MIDI::StatusCodes::NOTE_ON:
-			if(m_key_to_voice_index[msg.value1()]==m_voices_alloc.null())
+			//TODO: Same note different channels OK?
+			if(m_key_to_voice_index[ msg.value1()&0x7f ]==m_voices_alloc.null())
 				{
 				auto i=m_voices_alloc.idGet();
 				if(i==m_voices_alloc.null())
@@ -105,11 +115,29 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				case MIDI::ControlCodes::CHANNEL_VOLUME:
 					m_channel_gain[msg.channel()]=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
 					break;
+
+				case MIDI::ControlCodes::SOUND_OFF:
+					std::for_each(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
+						,[this,msg,offset](VoiceIndex& i)
+							{
+							if(i!=m_voices_alloc.null() && m_voices[i].channel()==msg.channel())
+								{
+								m_voices[i].stop(offset);
+								i=m_voices_alloc.null();
+								m_voices_alloc.idRelease(i);
+								}
+							});
+					break;
+
 				case FADE_IN:
 					{
 					auto t=MIDI_val_to_sec(msg.value2());
-					auto f=sec_to_decay_factor(t,fs);
-					printf("DEBUG: received FADE_IN on %d %.7g %.15g\n",msg.channel(),t,f);
+					auto f=1.0/sec_to_decay_factor(t,fs);
+					auto f2=f*f;
+					auto f4=f2*f2;
+					m_channel_gain_factor[msg.channel()].first=Vec4d{1.0,f,f2,f2*f};
+					m_channel_gain_factor[msg.channel()].first*=Vec4d{1.0e-4,1.0e-4,1.0e-4,1.0e-4};
+					m_channel_gain_factor[msg.channel()].second=Vec4d{f4,f4,f4,f4};
 					}
 					break;
 
@@ -117,7 +145,10 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					{
 					auto t=MIDI_val_to_sec(msg.value2());
 					auto f=sec_to_decay_factor(t,fs);
-					printf("DEBUG: received FADE_OUT on %d %.7g %.15g\n",msg.channel(),t,f);
+					auto f2=f*f;
+					auto f4=f2*f2;
+					m_channel_gain_factor[msg.channel()].first=Vec4d{1.0,f,f2,f2*f};
+					m_channel_gain_factor[msg.channel()].second=Vec4d{f4,f4,f4,f4};
 					}
 					break;
 				default:
@@ -183,7 +214,6 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		auto midi_in=client.midiIn(0,n_frames);
 		std::for_each(midi_in.first,midi_in.second,[this,fs](AudioClient::MidiEvent e)
 			{process(e.message(),e.timeOffset(),fs);});
-
 		}
 
 //	Render and mix voices
@@ -206,14 +236,34 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
 		auto gain=m_channel_gain[k];
+		auto f=m_channel_gain_factor[k];
 		vec4_t<float> g_vec={gain,gain,gain,gain};
 		auto begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
 		auto end=begin + n_frames/4;
+		constexpr auto clamp_a=Vec4d{0.0,0.0,0.0,0.0};
+		constexpr auto clamp_b=Vec4d{1.0,1.0,1.0,1.0};
 		while(begin!=end)
 			{
-			*begin=g_vec*(*begin);
+			*begin=static_cast<vec4_t<float>>(f.first)*g_vec*(*begin);
+			f.first*=f.second;
+			f.first=clamp(clamp_a,clamp_b,f.first);
 			++begin;
 			}
+		if(f.first[3] < 1.0e-4 && m_ch_state&(1<<k))
+			{
+			m_ch_state&=~(1<<k);
+			m_vt.muted(r_cb_obj,*this,k);
+			auto msg=MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0};
+			process(msg,n_frames-1,fs);
+			write(msg,n_frames-1,midi_out);
+			}
+		else
+		if(f.first[3] >= 1.0e-4 && !(m_ch_state&(1<<k)))
+			{
+			m_ch_state|=(1<<k);
+			m_vt.unmuted(r_cb_obj,*this,k);
+			}
+		m_channel_gain_factor[k].first=f.first;
 		}
 
 //	Mix channels

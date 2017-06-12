@@ -101,8 +101,9 @@ namespace Anja
 			void user2(Dialog<AboutBox,AboutDialog>& dlg,int id);
 
 			void muted(Engine& engine,int channel) noexcept;
+			void unmuted(Engine& engine,int channel) noexcept;
 
-			enum MessageId:int32_t{CHANNEL_MUTED};
+			enum MessageId:int32_t{CHANNEL_MUTED,CHANNEL_UNMUTED};
 			typedef int32_t MessageParam;
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);

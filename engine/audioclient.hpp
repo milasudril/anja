@@ -38,6 +38,8 @@ namespace Anja
 
 			~AudioClient();
 
+			AudioClient& activate();
+
 			AudioClient& operator=(AudioClient&& obj) noexcept
 				{
 				std::swap(obj.m_impl,m_impl);

@@ -19,6 +19,9 @@ class AudioClient::Impl:private AudioClient
 		~Impl();
 
 
+		void activate()
+			{jack_activate(m_handle);}
+
 		void midiInName(int index,const char* name)
 			{portName<PortType::MIDI_IN>(index,name);}
 
@@ -120,6 +123,12 @@ AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
 
 AudioClient::~AudioClient()
 	{delete m_impl;}
+
+AudioClient& AudioClient::activate()
+	{
+	m_impl->activate();
+	return *this;
+	}
 
 AudioClient& AudioClient::midiInName(int index,const char* name)
 	{
@@ -298,7 +307,6 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 	m_port_type_offsets[3]=m_port_type_offsets[2] + ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_IN);
 	ports_create(m_handle,vt,cb_obj,m_ports,PortType::WAVE_OUT);
 	m_sample_rate=jack_get_sample_rate(m_handle);
-	jack_activate(m_handle);
 	}
 
 AudioClient::Impl::~Impl()

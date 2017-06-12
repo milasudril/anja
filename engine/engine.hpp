@@ -14,6 +14,7 @@
 #include "../common/ringbuffer.hpp"
 #include "../common/clock.hpp"
 #include "../common/idgenerator.hpp"
+#include "../common/vec4d.hpp"
 #include "../pcg-cpp/include/pcg_random.hpp"
 
 #include <cstdint>
@@ -27,7 +28,13 @@ namespace Anja
 		public:
 			Engine(Session&&)=delete;
 
-			explicit Engine(const Session& session);
+			template<class Callback>
+			explicit Engine(const Session& session,Callback& cb):Engine(session)
+				{
+				callback(cb);
+				m_client.activate();
+				init_notify();
+				}
 
 			~Engine();
 
@@ -93,17 +100,6 @@ namespace Anja
 				return messagePost(MIDI::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
 				}
 
-			template<class Callback>
-			Engine& callback(Callback& cb) noexcept
-				{
-				m_vt.muted=[](void* cb_obj,Engine& engine,int channel)
-					{
-					reinterpret_cast<Callback*>(cb_obj)->muted(engine,channel);
-					};
-				r_cb_obj=&cb;
-				return *this;
-				}
-
 
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
@@ -120,7 +116,14 @@ namespace Anja
 			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
 			ArraySimple<float> m_channel_buffers;
 			ArraySimple<float> m_channel_gain;
-			ArraySimple<double> m_channel_gain_factor;
+
+#ifdef __AVX__
+			typedef Vec4dAVX Vec4d;
+#else
+			typedef Vec4dSSE2 Vec4d;
+#endif
+			ArraySimple<std::pair<Vec4d,Vec4d>> m_channel_gain_factor;
+			uint16_t m_ch_state;
 			pcg32 m_rng;
 
 			AudioClient m_client;
@@ -142,7 +145,7 @@ namespace Anja
 				{return 1e-3f*std::pow(10.0f,4.0f*val/127.0f);}
 
 			static double sec_to_decay_factor(double time,double fs) noexcept
-				{return std::pow(10.0,-5.0/(2.0*time*fs));}
+				{return std::pow(10.0,-4.0/(2.0*time*fs));}
 
 
 			int indexAudition(const AudioClient& client) const noexcept;
@@ -151,8 +154,24 @@ namespace Anja
 			struct Vtable
 				{
 				void (*muted)(void* cb_obj,Engine& engine,int channel);
+				void (*unmuted)(void* cb_obj,Engine& engine,int channel);
 				} m_vt;
 			void* r_cb_obj;
+
+			explicit Engine(const Session& session);
+
+			template<class Callback>
+			Engine& callback(Callback& cb) noexcept
+				{
+				m_vt.muted=[](void* cb_obj,Engine& engine,int channel)
+					{reinterpret_cast<Callback*>(cb_obj)->muted(engine,channel);};
+				m_vt.unmuted=[](void* cb_obj,Engine& engine,int channel)
+					{reinterpret_cast<Callback*>(cb_obj)->unmuted(engine,channel);};
+				r_cb_obj=&cb;
+				return *this;
+				}
+
+			void init_notify();
 		};
 
 	template<>
