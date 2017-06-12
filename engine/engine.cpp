@@ -29,12 +29,14 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_voices_alloc(m_voices.length())
 	,m_channel_buffers(16*64)
 	,m_channel_gain(16)
+	,m_channel_gain_factor(16)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
 	m_voices_alloc.fill();
 	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
 		,m_voices_alloc.null());
+	std::fill(m_channel_gain_factor.begin(),m_channel_gain_factor.end(),1.0);
 
 	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
 	}
@@ -62,7 +64,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 		}
 	}
 
-void Engine::process(MIDI::Message msg,int offset) noexcept
+void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 	{
 	switch(msg.status())
 		{
@@ -105,13 +107,17 @@ void Engine::process(MIDI::Message msg,int offset) noexcept
 					break;
 				case FADE_IN:
 					{
-					printf("DEBUG: received FADE_IN %.7g\n",MIDI_val_to_sec(msg.value2()));
+					auto t=MIDI_val_to_sec(msg.value2());
+					auto f=sec_to_decay_factor(t,fs);
+					printf("DEBUG: received FADE_IN on %d %.7g %.15g\n",msg.channel(),t,f);
 					}
 					break;
 
 				case FADE_OUT:
 					{
-					printf("DEBUG: received FADE_OUT %.7g\n",MIDI_val_to_sec(msg.value2()));
+					auto t=MIDI_val_to_sec(msg.value2());
+					auto f=sec_to_decay_factor(t,fs);
+					printf("DEBUG: received FADE_OUT on %d %.7g %.15g\n",msg.channel(),t,f);
 					}
 					break;
 				default:
@@ -140,7 +146,8 @@ int Engine::indexMaster(const AudioClient& client) const noexcept
 
 void Engine::process(AudioClient& client,int n_frames) noexcept
 	{
-	auto time_factor=client.sampleRate()/1000.0;
+	auto fs=client.sampleRate();
+	auto time_factor=fs/1000.0;
 	auto now=time_factor*(now_ms() - m_time_init);
 
 	auto midi_out=client.midiOut(0,n_frames);
@@ -152,10 +159,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			if(event_current.valid())
 				{
 				auto offset=std::max(time_factor*event_current.timeOffset() - now,0.0);
-				process(event_current.message(),static_cast<int>(offset));
+				process(event_current.message(),static_cast<int>(offset),fs);
 				write(event_current.message(),static_cast<int>(offset),midi_out);
-				if(r_cb_obj!=nullptr)
-					{m_vt.muted(r_cb_obj,*this,0);}
 				event_current.clear();
 				}
 			while(!m_ui_events.empty())
@@ -165,9 +170,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 					{
 					auto offset=std::max(n_frames + time_factor*event_current.timeOffset() - now,0.0);
 					write(event_current.message(),static_cast<int>(offset),midi_out);
-					process(event_current.message(),static_cast<int>(offset));
-					if(r_cb_obj!=nullptr)
-						{m_vt.muted(r_cb_obj,*this,0);}
+					process(event_current.message(),static_cast<int>(offset),fs);
 					event_current.clear();
 					}
 				else
@@ -178,8 +181,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		{
 	//	From MIDI in port
 		auto midi_in=client.midiIn(0,n_frames);
-		std::for_each(midi_in.first,midi_in.second,[this](AudioClient::MidiEvent e)
-			{process(e.message(),e.timeOffset());});
+		std::for_each(midi_in.first,midi_in.second,[this,fs](AudioClient::MidiEvent e)
+			{process(e.message(),e.timeOffset(),fs);});
 
 		}
 

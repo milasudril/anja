@@ -120,13 +120,14 @@ namespace Anja
 			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
 			ArraySimple<float> m_channel_buffers;
 			ArraySimple<float> m_channel_gain;
+			ArraySimple<double> m_channel_gain_factor;
 			pcg32 m_rng;
 
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;
 
-			void process(MIDI::Message msg,int offset) noexcept;
+			void process(MIDI::Message msg,int offset,double fs8) noexcept;
 
 			static float dB_to_MIDI_val(float val) noexcept
 				{return 127.0f*(val + 72.0f)/78.0f;}
@@ -140,8 +141,8 @@ namespace Anja
 			static float MIDI_val_to_sec(float val) noexcept
 				{return 1e-3f*std::pow(10.0f,4.0f*val/127.0f);}
 
-			static float sec_to_decay_factor(float time,float fs) noexcept
-				{return std::sqrt(10.0f)*std::pow(10.0f,-5.0f/(2.0f*time*fs));}
+			static double sec_to_decay_factor(double time,double fs) noexcept
+				{return std::pow(10.0,-5.0/(2.0*time*fs));}
 
 
 			int indexAudition(const AudioClient& client) const noexcept;
