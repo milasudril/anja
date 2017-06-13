@@ -47,10 +47,10 @@ GtkNotebook > tab:active
 
 )EOF";
 
-class UiContext::Impl:public UiContext
+class UiContext::Impl:private UiContext
 	{
 	public:
-		Impl():UiContext(*this),m_stop(0),m_messages(1024)
+		Impl():UiContext(*this),m_stop(0),m_messages(1024),m_dark(0)
 			{
 			gtk_disable_setlocale();
 			gtk_init(NULL,NULL);
@@ -108,6 +108,12 @@ class UiContext::Impl:public UiContext
 			{
 			g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme"
 				,status,NULL);
+			m_dark=status;
+			}
+
+		bool dark() const noexcept
+			{
+			return m_dark;
 			}
 
 		bool messagePostTry(int32_t id,int32_t param) noexcept
@@ -146,6 +152,7 @@ class UiContext::Impl:public UiContext
 		ReadySignal m_ready;
 		ReadySignal m_processed;
 		Mutex m_mtx;
+		bool m_dark;
 	};
 
 UiContext::UiContext()
@@ -165,6 +172,9 @@ UiContext& UiContext::dark(bool status)
 	m_impl->dark(status);
 	return *this;
 	}
+
+bool UiContext::dark() const noexcept
+	{return m_impl->dark();}
 
 UiContext::Impl::~Impl()
 	{m_impl=nullptr;}

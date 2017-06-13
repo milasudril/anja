@@ -315,12 +315,18 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				btn.label(m_fullscreen?"Windowed":"Fullscreen");
 				break;
 			case 8:
+				m_ctx.dark(!m_ctx.dark());
+				btn.label(m_ctx.dark()?"Light UI":"Dark UI");
+				break;
+
+			case 9:
 				if(m_session.dirtyIs())
 					{save_ask(ConfirmSaveDialogId::EXIT);}
 				else
 					{m_ctx.exit();}
 				break;
-			case 9:
+
+			case 10:
 				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
 				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end});
 				m_about->callback(*this,0);
@@ -404,9 +410,8 @@ Application::Application():
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
 	{
-	m_ctx.dark(0);
 	m_session_control.append("New session","Load session","Reload session","Save session"
-		,"Save session as","","Start engine","Stop engine","","Fullscreen"
+		,"Save session as","","Start engine","Stop engine","","Fullscreen","Dark UI",""
 		,"Exit","About Anja");
 	m_session_control.callback(*this,0);
 	m_mainwin.callback(*this,0);

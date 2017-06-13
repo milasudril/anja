@@ -44,6 +44,8 @@ namespace Anja
 
 			UiContext& dark(bool status);
 
+			bool dark() const noexcept;
+
 			bool messagePostTry(int32_t id,int32_t param) noexcept;
 
 			UiContext& messagePost(int32_t id,int32_t param);
