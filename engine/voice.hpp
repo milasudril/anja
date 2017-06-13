@@ -7,7 +7,10 @@
 #define ANJA_VOICE_HPP
 
 #include "../sessiondata/waveform.hpp"
+#include "../common/units.hpp"
+
 #include <cstdint>
+#include <random>
 
 namespace Anja
 	{
@@ -20,12 +23,12 @@ namespace Anja
 
 			template<class Callback>
 			explicit Voice(Waveform&& waveform,int channel,float velocity
-				,int start_offset,Callback&)=delete;
+				,int start_offset,Callback&,int id)=delete;
 
 			template<class Callback>
 			explicit Voice(const Waveform& waveform,int channel,float velocity
-				,int start_offset,Callback& cb):Voice(waveform,channel,velocity
-				,start_offset)
+				,int start_offset,Callback& cb,int id):Voice(waveform,channel,velocity
+				,start_offset,id)
 				{
 				r_cb_obj=&cb;
 				m_vt.loop=[](void* cb_obj,Voice& self,int event_offset)
@@ -75,18 +78,20 @@ namespace Anja
 				return *this;
 				}
 
-			float gainRandom() const noexcept
-				{return m_gain_random;}
-
-			Voice& gain(float gain) noexcept
+			template<class Rng>
+			Voice& gainRandomize(Rng& r) noexcept
 				{
-				m_gain=gain;
+				auto U=std::uniform_real_distribution<float>(-m_gain_random,m_gain_random);
+				m_gain=dBToAmplitude(U(r) + m_gain_init);
 				return *this;
 				}
 
+			int id() const noexcept
+				{return m_id;}
+
 		private:
 			explicit Voice(const Waveform& waveform,int channel,float velocity
-				,int start_offset) noexcept;
+				,int start_offset,int id) noexcept;
 
 			float m_velocity;
 			float m_gain;
@@ -110,6 +115,8 @@ namespace Anja
 				void (*loop)(void* cb,Voice& src,int event_offset);
 				void (*playback_done)(void* cb,Voice& src,int event_offset);
 				} m_vt;
+			int m_id;
+			float m_gain_init;
 		};
 	}
 

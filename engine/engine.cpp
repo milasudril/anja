@@ -74,13 +74,17 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept
 	{
-	printf("Hello\n");
+	m_voices_alloc.idRelease(voice.id());
 	}
 
 void Engine::loop(Voice& voice,int event_offset) noexcept
 	{
 	if(voice.flags()&Waveform::LOOP)
-		{voice.playFromLoopBegin();}
+		{
+		if(voice.flags()&Waveform::GAIN_ONLOOP_SET)
+			{voice.gainRandomize(m_rng);}
+		voice.playFromLoopBegin();
+		}
 	}
 
 void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
@@ -95,8 +99,6 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				{
 				m_voices[i].stop(offset);
 				m_key_to_voice_index[ msg.value1() ]=m_voices_alloc.null();
-				//TODO: This should not be done until the waveform has been played
-				m_voices_alloc.idRelease(i);
 				}
 			}
 			break;
@@ -121,7 +123,8 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 						:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
 							 msg.channel()
 							:waveform.channel()
-					,msg.value2()/127.0,offset,*this);
+					,msg.value2()/127.0,offset,*this,i);
+				m_voices[i].gainRandomize(m_rng);
 				}
 			break;
 
@@ -140,7 +143,6 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 								{
 								m_voices[i].flagsUnset(Waveform::SUSTAIN).stop(offset);
 								i=m_voices_alloc.null();
-								m_voices_alloc.idRelease(i);
 								}
 							});
 					break;

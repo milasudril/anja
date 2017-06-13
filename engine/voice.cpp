@@ -1,15 +1,15 @@
 //@	{"targets":[{"name":"voice.o","type":"object"}]}
 
 #include "voice.hpp"
-#include "../common/units.hpp"
 
 using namespace Anja;
 
-Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset) noexcept
+Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset,int id) noexcept
 	{
 	m_velocity=velocity;
-	m_gain=dBToAmplitude( waveform.gain() );
-	m_gain_random=dBToAmplitude(waveform.gainRandom());
+	m_gain=dBToAmplitude( m_gain );
+	m_gain_random=waveform.gainRandom();
+	m_gain_init=m_gain;
 
 	r_pos_current=waveform.pointer<Waveform::Cursor::BEGIN>();
 	r_loop_begin=waveform.pointer<Waveform::Cursor::BEGIN_LOOP>();
@@ -20,6 +20,7 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	m_flags=waveform.flags();
 	m_channel=channel;
 	m_dir=waveform.direction();
+	m_id=id;
 	}
 
 void Voice::generate(float* buffer_out,int n_frames) noexcept

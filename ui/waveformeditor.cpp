@@ -39,10 +39,10 @@ static double gain_map_inv(double x)
 	{return (x + 72)/(72 + 6);}
 
 static double gain_random_map(double x)
-	{return 12.0*x;}
+	{return 6.0*x;}
 
 static double gain_random_map_inv(double x)
-	{return x/12.0;}
+	{return x/6.0;}
 
 void WaveformEditor::offsets_update()
 	{
