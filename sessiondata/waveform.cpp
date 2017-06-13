@@ -125,15 +125,7 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 
 Waveform& Waveform::waveformLoad(const char* filename)
 	{
-//	Stop loading new data into this slot if it is already in use by an audio
-//	thread. TODO: This requires a mutex, since we will recieve input from the
-//	audio loop as well (MIDI).
-	if(flags() & (PLAYBACK_RUNNING|RECORD_RUNNING) )
-		{
-		throw "The waveform loaded in the current slot is currently in use. "
-			"Please wait for the waveform to be unlocked, or choose another "
-			"slot.";
-		}
+	Mutex::LockGuardNonblocking lock(m_mtx);
 
 //	If filename is empty or nullptr, clear the slot
 	if(filename==nullptr || *filename=='\0')
@@ -166,11 +158,7 @@ Waveform& Waveform::waveformLoad(const char* filename)
 
 const Waveform& Waveform::waveformSave(const char* filename) const
 	{
-	if(flags() & (PLAYBACK_RUNNING|RECORD_RUNNING))
-		{
-		throw "The waveform loaded in the current slot is currently in use. "
-			"Please wait for the waveform to be unlocked.";
-		}
+	Mutex::LockGuardNonblocking lock(m_mtx);
 
 	WavefileInfo info{lengthFull(),sampleRate(),1};
 

@@ -42,12 +42,14 @@ namespace Anja
 
 			Waveform& load(const SessionFileRecord& rec)
 				{
+				Mutex::LockGuardNonblocking lock(m_mtx);
 				*this=Waveform(rec);
 				return *this;
 				}
 
 			Waveform& load(const SessionFileRecord& rec,const char* filename)
 				{
+				Mutex::LockGuardNonblocking lock(m_mtx);
 				*this=Waveform(rec,filename);
 				return *this;
 				}
@@ -238,6 +240,7 @@ namespace Anja
 
 			Waveform& clear() noexcept
 				{
+				Mutex::LockGuardNonblocking lock(m_mtx);
 				m_gain=0.0f;
 				m_gain_random=0.0f;
 				m_channel=0;

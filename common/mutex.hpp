@@ -6,6 +6,7 @@
 #ifndef ANJA_MUTEX_HPP
 #define ANJA_MUTEX_HPP
 
+#include "error.hpp"
 #include <cstdint>
 
 namespace Anja
@@ -22,6 +23,23 @@ namespace Anja
 						{m.lock();}
 
 					~LockGuard()
+						{r_m.unlock();}
+				private:
+					Mutex& r_m;
+				};
+
+			class LockGuardNonblocking
+				{
+				public:
+					LockGuardNonblocking(const LockGuardNonblocking&)=delete;
+					LockGuardNonblocking& operator=(const LockGuardNonblocking&)=delete;
+					explicit LockGuardNonblocking(Mutex& m):r_m(m)
+						{
+						if(!m.lockTry())
+							{throw Error("The current resource is temporary busy. Please try again later.");}
+						}
+
+					~LockGuardNonblocking()
 						{r_m.unlock();}
 				private:
 					Mutex& r_m;
