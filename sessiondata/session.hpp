@@ -80,6 +80,7 @@ namespace Anja
 
 
 			static constexpr unsigned int MULTIOUTPUT=0x1;
+			static constexpr unsigned int ALLOW_CHANNEL_OVERRIDE=0x2;
 
 			static const char* const* flagNames() noexcept;
 

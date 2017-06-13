@@ -91,7 +91,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			break;
 
 		case MIDI::StatusCodes::NOTE_ON:
-			//TODO: Same note different channels OK?
+			//TODO: Same note different channels should be OK?
 			if(m_key_to_voice_index[ msg.value1()&0x7f ]==m_voices_alloc.null())
 				{
 				auto i=m_voices_alloc.idGet();
@@ -103,8 +103,13 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 
 				assert(i!=m_voices_alloc.null());
 				m_key_to_voice_index[ msg.value1()&0x7f ]=i;
-				m_voices[i]=Voice(r_session->waveformGet(midiToSlot(msg.value1()&0x7f))
-					,msg.value1()&0x80?17:msg.channel()
+				auto& waveform=r_session->waveformGet(midiToSlot(msg.value1()&0x7f));
+				m_voices[i]=Voice(waveform
+					,msg.value1()&0x80?
+						 17
+						:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
+							 msg.channel()
+							:waveform.channel()
 					,msg.value2()/127.0,offset);
 				}
 			break;

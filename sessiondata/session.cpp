@@ -15,7 +15,12 @@
 
 using namespace Anja;
 
-static constexpr const char* FLAG_NAMES[]={"Use individual ports for each channel",nullptr};
+static constexpr const char* FLAG_NAMES[]=
+	{
+	 "Use individual ports for each channel"
+	,"Allow external MIDI sources to set playback channel"
+	,nullptr
+	};
 
 const char* const* Session::flagNames() noexcept
 	{return FLAG_NAMES;}
