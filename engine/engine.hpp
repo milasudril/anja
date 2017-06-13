@@ -63,9 +63,11 @@ namespace Anja
 				}
 
 			void process(AudioClient& client,int n_frames) noexcept;
-			void bufferSize(AudioClient& client,int n_frames) noexcept;
+			void bufferSize(AudioClient& client,int n_frames);
 			const char* port(AudioClient::PortType type,int index) const noexcept;
-			void portConnected(AudioClient& client,AudioClient::PortType type,int index) noexcept;
+			void portConnected(AudioClient& client,AudioClient::PortType type,int index);
+			void loop(Voice& voice,int event_offset) noexcept;
+			void playbackDone(Voice& voice,int event_offset) noexcept;
 
 
 			enum class TaskId:int{RECORD};

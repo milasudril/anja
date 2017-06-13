@@ -55,20 +55,18 @@ void Voice::generate(float* buffer_out,int n_frames) noexcept
 		}
 
 	auto g=m_gain*m_velocity;
+	auto buffer_out_init=buffer_out;
 	while(n_frames!=0 && r_pos_current!=r_end)
 		{
 		*buffer_out+=g*(*r_pos_current);
 		r_pos_current+=m_dir;
-		if(r_pos_current==r_loop_end && (m_flags&Waveform::LOOP))
-			{
-			r_pos_current=r_loop_begin;
-			if(m_flags&Waveform::GAIN_ONLOOP_SET)
-				{
-				//TODO set gain from random generator...
-				}
-			}
-
 		++buffer_out;
+
+		if(r_pos_current==r_loop_end)
+			{m_vt.loop(r_cb_obj,*this,buffer_out-buffer_out_init);}
 		--n_frames;
 		}
+
+	if(r_pos_current==r_end || m_state==State::DONE)
+		{m_vt.playback_done(r_cb_obj,*this,buffer_out - buffer_out_init);}
 	}

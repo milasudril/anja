@@ -49,7 +49,7 @@ void Engine::init_notify()
 		{m_vt.unmuted(r_cb_obj,*this,k);}
 	}
 
-void Engine::bufferSize(AudioClient& client,int n_frames) noexcept
+void Engine::bufferSize(AudioClient& client,int n_frames)
 	{
 	m_channel_buffers=ArraySimple<float>(n_frames*m_channel_gain.length());
 	}
@@ -60,7 +60,7 @@ Engine::~Engine()
 	m_ready.set();
 	}
 
-void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index) noexcept
+void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index)
 	{
 	if(type==AudioClient::PortType::MIDI_OUT)
 		{
@@ -70,6 +70,17 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 			channelGain(k,r_session->channel(k).gain());
 			}
 		}
+	}
+
+void Engine::playbackDone(Voice& voice,int event_offset) noexcept
+	{
+	printf("Hello\n");
+	}
+
+void Engine::loop(Voice& voice,int event_offset) noexcept
+	{
+	if(voice.flags()&Waveform::LOOP)
+		{voice.playFromLoopBegin();}
 	}
 
 void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
@@ -110,7 +121,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 						:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
 							 msg.channel()
 							:waveform.channel()
-					,msg.value2()/127.0,offset);
+					,msg.value2()/127.0,offset,*this);
 				}
 			break;
 
