@@ -23,12 +23,12 @@ namespace Anja
 
 			template<class Callback>
 			explicit Voice(Waveform&& waveform,int channel,float velocity
-				,int start_offset,Callback&,int id)=delete;
+				,int start_offset,Callback&,int id,int key)=delete;
 
 			template<class Callback>
 			explicit Voice(const Waveform& waveform,int channel,float velocity
-				,int start_offset,Callback& cb,int id):Voice(waveform,channel,velocity
-				,start_offset,id)
+				,int start_offset,Callback& cb,int id,int key):Voice(waveform,channel,velocity
+				,start_offset,id,key)
 				{
 				r_cb_obj=&cb;
 				m_vt.loop=[](void* cb_obj,Voice& self,int event_offset)
@@ -89,9 +89,12 @@ namespace Anja
 			int id() const noexcept
 				{return m_id;}
 
+			int key() const noexcept
+				{return m_key;}
+
 		private:
 			explicit Voice(const Waveform& waveform,int channel,float velocity
-				,int start_offset,int id) noexcept;
+				,int start_offset,int id,int key) noexcept;
 
 			float m_velocity;
 			float m_gain;
@@ -115,8 +118,9 @@ namespace Anja
 				void (*loop)(void* cb,Voice& src,int event_offset);
 				void (*playback_done)(void* cb,Voice& src,int event_offset);
 				} m_vt;
-			int m_id;
 			float m_gain_init;
+			int m_key;
+			int m_id;
 		};
 	}
 

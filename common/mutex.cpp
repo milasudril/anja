@@ -19,7 +19,11 @@ static pthread_mutex_t* mutex(uint8_t* bytes)
 Mutex::Mutex()
 	{
 	static_assert(sizeof(m_impl)==sizeof(pthread_mutex_t),"Implementation size is wrong");
-	pthread_mutex_init(mutex(m_impl.data),NULL);
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init(mutex(m_impl.data),&attr);
+	pthread_mutexattr_destroy(&attr);
 	}
 
 Mutex::~Mutex()

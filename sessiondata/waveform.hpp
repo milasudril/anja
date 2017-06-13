@@ -7,6 +7,7 @@
 #define ANJA_WAVEFORM_HPP
 
 #include "../common/arraydynamicshort.hpp"
+#include "../common/mutex.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -265,6 +266,15 @@ namespace Anja
 				return *this;
 				}
 
+			bool lockTry() const noexcept
+				{return m_mtx.lockTry();}
+
+			const Waveform& release() const noexcept
+				{
+				m_mtx.unlock();
+				return *this;
+				}
+
 		private:
 			static constexpr uint32_t DIRTY=0x80000000;
 			static constexpr uint32_t MASK_CHANGE_IGNORE=DIRTY|RECORD_RUNNING|PLAYBACK_RUNNING;
@@ -284,6 +294,7 @@ namespace Anja
 					{return std::max(a,std::min(x,b));}
 				return clamp(b,a,x);
 				}
+			mutable Mutex m_mtx;
 		};
 	}
 #endif

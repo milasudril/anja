@@ -195,6 +195,7 @@
     <File Name="maikeconfig-inst.json"/>
     <File Name="README.md"/>
     <File Name="test.cpp"/>
+    <File Name="waveform_usage.dot"/>
   </VirtualDirectory>
   <VirtualDirectory Name="midiconstants">
     <File Name="midiconstants/control_codes.py"/>

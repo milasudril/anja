@@ -4,7 +4,8 @@
 
 using namespace Anja;
 
-Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset,int id) noexcept
+Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offset
+	,int id,int key) noexcept
 	{
 	m_velocity=velocity;
 	m_gain=dBToAmplitude( m_gain );
@@ -21,6 +22,7 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	m_channel=channel;
 	m_dir=waveform.direction();
 	m_id=id;
+	m_key=key;
 	}
 
 void Voice::generate(float* buffer_out,int n_frames) noexcept

@@ -56,6 +56,12 @@ void Engine::bufferSize(AudioClient& client,int n_frames)
 
 Engine::~Engine()
 	{
+	for(int k=0;k<16;++k)
+		{messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,k,0});}
+
+//	Poll event queue state to make sure there are no more events left when we
+//	destroy the engine.
+	while(!m_ui_events.empty());
 	m_running=0;
 	m_ready.set();
 	}
@@ -75,6 +81,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept
 	{
 	m_voices_alloc.idRelease(voice.id());
+	r_session->waveformGet(midiToSlot(voice.key())).release();
 	voice=Voice{}; //Reset voice so we do not get here any more.
 	}
 
@@ -108,23 +115,27 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			//TODO: Same note different channels should be OK?
 			if(m_key_to_voice_index[ msg.value1()&0x7f ]==m_voices_alloc.null())
 				{
-				auto i=m_voices_alloc.idGet();
-				if(i==m_voices_alloc.null())
-					{
-					m_voices_alloc.reset();
-					i=m_voices_alloc.idGet();
-					}
-				assert(i!=m_voices_alloc.null());
-				m_key_to_voice_index[ msg.value1()&0x7f ]=i;
 				auto& waveform=r_session->waveformGet(midiToSlot(msg.value1()&0x7f));
-				m_voices[i]=Voice(waveform
-					,msg.value1()&0x80?
-						 17
-						:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
-							 msg.channel()
-							:waveform.channel()
-					,msg.value2()/127.0,offset,*this,i);
-				m_voices[i].gainRandomize(m_rng);
+				if(waveform.lockTry())
+					{
+					auto i=m_voices_alloc.idGet();
+					if(i==m_voices_alloc.null())
+						{
+						m_voices_alloc.reset();
+						i=m_voices_alloc.idGet();
+						}
+					assert(i!=m_voices_alloc.null());
+					m_key_to_voice_index[ msg.value1()&0x7f ]=i;
+
+					m_voices[i]=Voice(waveform
+						,msg.value1()&0x80?
+							 17
+							:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
+								 msg.channel()
+								:waveform.channel()
+						,msg.value2()/127.0,offset,*this,i,msg.value1()&0x7f);
+					m_voices[i].gainRandomize(m_rng);
+					}
 				}
 			break;
 
@@ -136,16 +147,14 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case MIDI::ControlCodes::SOUND_OFF:
-					std::for_each(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
-						,[msg,this](VoiceIndex& i)
+					printf("Sound off %d\n",msg.channel());
+					std::for_each(m_voices.begin(),m_voices.end(),[msg,offset,this](Voice& voice)
 						{
-						if(i!=m_voices_alloc.null() && m_voices[i].channel()==msg.channel())
-							{i=m_voices_alloc.null();}
-						});
-					std::for_each(m_voices.begin(),m_voices.end(),[msg,offset](Voice& voice)
-						{
-						if(voice.channel()==msg.channel())
-							{voice.flagsUnset(Waveform::SUSTAIN).stop(offset);}
+						if(!voice.done() && voice.channel()==msg.channel())
+							{
+							voice.flagsUnset(Waveform::SUSTAIN).stop(offset);
+							m_key_to_voice_index[voice.key()]=m_voices_alloc.null();
+							}
 						});
 					break;
 
