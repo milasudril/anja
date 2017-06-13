@@ -13,6 +13,10 @@
 #@			 "name":"led_ready.png","dependencies":
 #@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
+#@           ,{
+#@			 "name":"led_off.png","dependencies":
+#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
+#@			 }
 #@      ]
 #@  }
 
@@ -30,7 +34,7 @@ try:
 	print('# Baking LED sprites')
 
 	blender=subprocess.Popen(['blender','-b',in_dir+'/led_sprites.blend' \
-		,'-s','1','-e','3','-o',target_dir+'/'+in_dir+'/led_#.png','-a'] \
+		,'-s','1','-e','4','-o',target_dir+'/'+in_dir+'/led_#.png','-a'] \
 		,stdout=subprocess.PIPE)
 	for lines in blender.stdout:
 		progress=lines.decode('utf8').rstrip().split('|')
@@ -39,6 +43,7 @@ try:
 	os.rename(target_dir+'/'+in_dir+'/led_1.png',target_dir+'/'+in_dir+'/led_stop.png')
 	os.rename(target_dir+'/'+in_dir+'/led_2.png',target_dir+'/'+in_dir+'/led_wait.png')
 	os.rename(target_dir+'/'+in_dir+'/led_3.png',target_dir+'/'+in_dir+'/led_ready.png')
+	os.rename(target_dir+'/'+in_dir+'/led_4.png',target_dir+'/'+in_dir+'/led_off.png')
 
 	sys.exit(0)
 except Exception:

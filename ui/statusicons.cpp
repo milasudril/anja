@@ -16,6 +16,7 @@ ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(message_warning.png));
 ANJA_BLOB(uint8_t,led_stop,MAIKE_TARGET(led_stop.png));
 ANJA_BLOB(uint8_t,led_wait,MAIKE_TARGET(led_wait.png));
 ANJA_BLOB(uint8_t,led_ready,MAIKE_TARGET(led_ready.png));
+ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(led_ready.png));
 
 std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcept
 	{
@@ -38,6 +39,9 @@ std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcep
 
 		case StatusIcon::READY:
 			return {led_ready_begin,led_ready_end};
+
+		case StatusIcon::OFF:
+			return {led_off_begin,led_off_end};
 
 		}
 	return {nullptr,nullptr};
