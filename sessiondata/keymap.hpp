@@ -49,6 +49,7 @@ namespace Anja
 		static constexpr int FADE_OUT=108;
 		static constexpr int FADE_IN_FAST=106;
 		static constexpr int FADE_OUT_FAST=105;
+		static constexpr int KILL_ALL=111;
 		}
 	}
 

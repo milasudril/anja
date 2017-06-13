@@ -236,6 +236,11 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 						m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note|0x80,127});
 						}
 						break;
+
+					case Keys::KILL_ALL:
+						for(size_t k=0;k<ChannelMixer::length();++k)
+							{m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
+						break;
 					}
 				}
 			}

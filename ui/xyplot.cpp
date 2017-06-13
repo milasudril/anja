@@ -429,7 +429,7 @@ gboolean XYPlot::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 		self->m_grab_dom=self->m_dom;
 		}
 
-	return TRUE;
+	return FALSE;
 	}
 
 gboolean XYPlot::Impl::mouse_up(GtkWidget* object,GdkEventButton* event,void* obj)

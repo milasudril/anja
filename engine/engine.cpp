@@ -75,6 +75,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept
 	{
 	m_voices_alloc.idRelease(voice.id());
+	voice=Voice{}; //Reset voice so we do not get here any more.
 	}
 
 void Engine::loop(Voice& voice,int event_offset) noexcept
@@ -113,7 +114,6 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					m_voices_alloc.reset();
 					i=m_voices_alloc.idGet();
 					}
-
 				assert(i!=m_voices_alloc.null());
 				m_key_to_voice_index[ msg.value1()&0x7f ]=i;
 				auto& waveform=r_session->waveformGet(midiToSlot(msg.value1()&0x7f));
@@ -137,14 +137,16 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 
 				case MIDI::ControlCodes::SOUND_OFF:
 					std::for_each(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
-						,[this,msg,offset](VoiceIndex& i)
-							{
-							if(i!=m_voices_alloc.null() && m_voices[i].channel()==msg.channel())
-								{
-								m_voices[i].flagsUnset(Waveform::SUSTAIN).stop(offset);
-								i=m_voices_alloc.null();
-								}
-							});
+						,[msg,this](VoiceIndex& i)
+						{
+						if(i!=m_voices_alloc.null() && m_voices[i].channel()==msg.channel())
+							{i=m_voices_alloc.null();}
+						});
+					std::for_each(m_voices.begin(),m_voices.end(),[msg,offset](Voice& voice)
+						{
+						if(voice.channel()==msg.channel())
+							{voice.flagsUnset(Waveform::SUSTAIN).stop(offset);}
+						});
 					break;
 
 				case FADE_IN:
