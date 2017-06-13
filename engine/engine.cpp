@@ -138,7 +138,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 							{
 							if(i!=m_voices_alloc.null() && m_voices[i].channel()==msg.channel())
 								{
-								m_voices[i].stop(offset);
+								m_voices[i].flagsUnset(Waveform::SUSTAIN).stop(offset);
 								i=m_voices_alloc.null();
 								m_voices_alloc.idRelease(i);
 								}

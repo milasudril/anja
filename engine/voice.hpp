@@ -6,6 +6,7 @@
 #ifndef ANJA_VOICE_HPP
 #define ANJA_VOICE_HPP
 
+#include "../sessiondata/waveform.hpp"
 #include <cstdint>
 
 namespace Anja
@@ -44,7 +45,23 @@ namespace Anja
 			bool done() const noexcept
 				{return r_pos_current==r_end || m_state==State::DONE;}
 
-			Voice& stop(int offset) noexcept;
+			Voice& stop(int offset) noexcept
+				{
+				if(m_flags&Waveform::SUSTAIN)
+					{m_flags&=~Waveform::LOOP;}
+				else
+					{
+					m_pos_offset=offset;
+					m_state=State::END;
+					}
+				return *this;
+				}
+
+			Voice& flagsUnset(uint32_t flags_unset) noexcept
+				{
+				m_flags&=~flags_unset;
+				return *this;
+				}
 
 			int channel() const noexcept
 				{return m_channel;}

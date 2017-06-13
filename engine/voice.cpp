@@ -2,7 +2,6 @@
 
 #include "voice.hpp"
 #include "../common/units.hpp"
-#include "../sessiondata/waveform.hpp"
 
 using namespace Anja;
 
@@ -21,18 +20,6 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	m_flags=waveform.flags();
 	m_channel=channel;
 	m_dir=waveform.direction();
-	}
-
-Voice& Voice::stop(int offset) noexcept
-	{
-	if(m_flags&Waveform::SUSTAIN)
-		{m_flags&=~Waveform::LOOP;}
-	else
-		{
-		m_pos_offset=offset;
-		m_state=State::END;
-		}
-	return *this;
 	}
 
 void Voice::generate(float* buffer_out,int n_frames) noexcept
