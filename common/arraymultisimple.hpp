@@ -117,7 +117,8 @@ namespace Anja
 			{
 			for_each(ret,[N,&success_count](auto& x,auto index)
 				{
-				x=reinterpret_cast<decltype(x)>(memoryAllocate(N*sizeof(*x)));
+				auto tmp=memoryAllocate(N*sizeof(*x));
+				x=static_cast<std::remove_reference_t<decltype(x)> >(tmp);
 				++success_count;
 				});
 			}
@@ -140,7 +141,7 @@ namespace Anja
 	ArrayMultiSimple<T...>::ArrayMultiSimple(SizeType n_elems)
 		{
 		assert(n_elems!=0);
-		auto data=alloc(n_elems);
+		auto data=alloc<T...>(n_elems);
 		int success_count=0;
 		try
 			{
