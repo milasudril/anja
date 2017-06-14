@@ -356,7 +356,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		{
 		auto wave_in=m_client.waveIn(0,n_frames);
 		auto n=std::min(static_cast<size_t>(n_frames),m_rec_buffers.length()-m_rec_write_offset);
-		memcpy(m_rec_buffers.begin<0>(),wave_in,n*sizeof(float));
+		memcpy(m_rec_buffers.begin<0>() + m_rec_write_offset,wave_in,n*sizeof(float));
 		m_rec_write_offset+=n;
 		if(static_cast<size_t>(m_rec_write_offset)==m_rec_buffers.length())
 			{
@@ -391,7 +391,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 			if(r_waveform_in==nullptr)
 				{
 				printf("Unlocking resource %p for REC\n",r_waveform);
-				r_waveform->offsetsReset().unlock();
+				r_waveform->sampleRate(m_client.sampleRate()).offsetsReset().unlock();
 				r_waveform=nullptr;
 				}
 			}
