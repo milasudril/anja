@@ -387,7 +387,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 
 		if(r_waveform!=nullptr)
 			{
-		//	r_rec_slot->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
+			r_waveform->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
 			if(r_waveform_in==nullptr)
 				{
 				printf("Unlocking resource %p for REC\n",r_waveform);

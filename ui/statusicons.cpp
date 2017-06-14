@@ -1,5 +1,18 @@
 //@	{
-//@	 "targets":[{"name":"statusicons.o","type":"object"}]
+//@	 "targets":
+//@		[{
+//@		"name":"statusicons.o","type":"object"
+//@		,"dependencies":
+//@			[
+//@				 {"ref":"message_error.png","rel":"generated"}
+//@				,{"ref":"message_info.png","rel":"generated"}
+//@				,{"ref":"message_warning.png","rel":"generated"}
+//@				,{"ref":"led_stop.png","rel":"generated"}
+//@				,{"ref":"led_wait.png","rel":"generated"}
+//@				,{"ref":"led_ready.png","rel":"generated"}
+//@				,{"ref":"led_off.png","rel":"generated"}
+//@			]
+//@		}]
 //@	}
 
 #include "statusicons.hpp"

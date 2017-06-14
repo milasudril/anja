@@ -312,6 +312,20 @@ void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
 		c.points.push_back(p);
 		});
 	m_curves.push_back(std::move(c));
+	auto M=std::abs(dom.max.y());
+	if(std::abs(dom.max.y() - dom.min.y()) < 1e-7*M)
+		{
+		auto dy=0.5*M;
+		dom.max.y()+=dy;
+		dom.min.y()-=dy;
+		}
+	M=std::abs(dom.max.x());
+	if(std::abs(dom.max.x() - dom.min.x()) < 1e-7*M)
+		{
+		auto dx=0.5*M;
+		dom.max.x()+=dx;
+		dom.min.x()-=dx;
+		}
 	m_dom_full=dom;
 	gtk_widget_queue_draw(GTK_WIDGET(m_canvas));
 	}

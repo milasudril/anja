@@ -2,15 +2,6 @@
 //@	 "targets":
 //@		[{
 //@		"name":"message.o","type":"object","cxxoptions":{"cflags_extra":["fno-lto"]}
-//@		,"dependencies":
-//@			[
-//@				 {"ref":"message_error.png","rel":"generated"}
-//@				,{"ref":"message_info.png","rel":"generated"}
-//@				,{"ref":"message_warning.png","rel":"generated"}
-//@				,{"ref":"led_stop.png","rel":"generated"}
-//@				,{"ref":"led_wait.png","rel":"generated"}
-//@				,{"ref":"led_ready.png","rel":"generated"}
-//@			]
 //@		}]
 //@	}
 
