@@ -125,9 +125,11 @@ namespace Anja
 			typedef Vec4dSSE2 Vec4d;
 #endif
 			ArrayMultiSimple<float,std::pair<Vec4d,Vec4d>> m_channel_gain;
+			ArrayMultiSimple<float,float> m_rec_buffers;
+			int m_rec_write_offset;
 			uint16_t m_ch_state;
 			pcg32 m_rng;
-
+			Waveform* r_rec_slot;
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;

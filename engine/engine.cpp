@@ -29,7 +29,10 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_voices_alloc(m_voices.length())
 	,m_channel_buffers(16*64)
 	,m_channel_gain(16)
+	,m_rec_buffers(48000)
+	,m_rec_write_offset(0)
 	,m_ch_state(0xffff)
+	,r_rec_slot(nullptr)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
@@ -40,6 +43,8 @@ Engine::Engine(const Session& session):r_session(&session)
 		,std::pair<Vec4d,Vec4d>{Vec4d{1.0,1.0,1.0,1.0},Vec4d{1.0,1.0,1.0,1.0}});
 
 	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
+	if(m_client.sampleRate()!=48000) //Use one second record buffers;
+		{m_rec_buffers=ArrayMultiSimple<float,float>(m_client.sampleRate());}
 	}
 
 void Engine::init_notify()
@@ -315,12 +320,27 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
 		{vec*=g_vec;});
 
-
-	if(client.waveOutCount()>2)  //Individual channel output
+//	For individual channel output, write data to output ports
+	if(client.waveOutCount()>2)
 		{
 		auto ch_buffers=m_channel_buffers.begin();
 		for(size_t k=0;k<m_channel_gain.length();++k)
 			{memcpy(client.waveOut(k,n_frames),ch_buffers + k*n_frames,n_frames*sizeof(float));}
+		}
+
+//	Write input data to record buffers
+
+		{
+		auto wave_in=m_client.waveIn(0,n_frames);
+		auto n=std::min(static_cast<size_t>(n_frames),m_rec_buffers.length()-m_rec_write_offset);
+		memcpy(m_rec_buffers.begin<0>(),wave_in,n*sizeof(float));
+		m_rec_write_offset+=n;
+		if(static_cast<size_t>(m_rec_write_offset)==m_rec_buffers.length())
+			{
+			m_rec_buffers.swap<0,1>();
+			m_rec_write_offset=0;
+			m_ready.set();
+			}
 		}
 	}
 
@@ -330,6 +350,10 @@ void Engine::run<Engine::TaskId::RECORD>()
 	while(m_running)
 		{
 		m_ready.wait();
+		if(r_rec_slot!=nullptr)
+			{
+			r_rec_slot->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
+			}
 		}
 	}
 

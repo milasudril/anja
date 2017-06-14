@@ -88,6 +88,13 @@ namespace Anja
 				return *(begin<ArrayIndex>() + index);
 				}
 
+			template<size_t a,size_t b>
+			ArrayMultiSimple& swap() noexcept
+				{
+				std::swap(std::get<a>(m_data),std::get<b>(m_data));
+				return *this;
+				}
+
 
 		private:
 			size_t m_N;
