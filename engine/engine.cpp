@@ -143,6 +143,10 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				}
 			break;
 
+		case RECORD_STOP:
+			printf("Record stop\n");
+			break;
+
 		case MIDI::StatusCodes::CONTROL_CHANGE:
 			switch(msg.ctrlCode())
 				{
@@ -151,7 +155,6 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case MIDI::ControlCodes::SOUND_OFF:
-					printf("Sound off %d\n",msg.channel());
 					std::for_each(m_voices.begin(),m_voices.end(),[msg,offset,this](Voice& voice)
 						{
 						if(!voice.done() && voice.channel()==msg.channel())
@@ -184,6 +187,11 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
 					}
 					break;
+
+				case RECORD_START:
+					printf("Record start %d\n",msg.value2());
+					break;
+
 				default:
 					break;
 				}

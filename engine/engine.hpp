@@ -103,10 +103,23 @@ namespace Anja
 				return messagePost(MIDI::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
 				}
 
+			Engine& recordStart(int slot) noexcept
+				{
+				assert(slot>=0 && slot<128);
+				return messagePost(MIDI::Message(RECORD_START,0,slot));
+				}
+
+			Engine& recordStop() noexcept
+				{
+				return messagePost(MIDI::Message{RECORD_STOP,0,0});
+				}
+
 
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
 			static constexpr auto FADE_IN=MIDI::ControlCodes::GENERAL_PURPOSE_2;
+			static constexpr auto RECORD_START=MIDI::ControlCodes::GENERAL_PURPOSE_3;
+			static constexpr auto RECORD_STOP=MIDI::StatusCodes::STOP;
 
 			const Session* r_session;
 			volatile bool m_running;

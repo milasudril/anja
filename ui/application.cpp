@@ -199,13 +199,18 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 		if(note!=0xff)
 			{
 			auto slot=scancodeToSlot(scancode);
-			m_engine->messagePost(MIDI::Message
+			if(keymask&KEYMASK_KEY_CTRL)
+				{m_engine->recordStart(note);}
+			else
 				{
-				 MIDI::StatusCodes::NOTE_ON
-				,static_cast<int>(m_session.waveformGet(slot).channel())
-				,note
-				,127
-				});
+				m_engine->messagePost(MIDI::Message
+					{
+					 MIDI::StatusCodes::NOTE_ON
+					,static_cast<int>(m_session.waveformGet(slot).channel())
+					,note
+					,127
+					});
+				}
 			}
 		else
 			{
@@ -256,23 +261,38 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 		if(note!=0xff)
 			{
 			auto slot=scancodeToSlot(scancode);
-			m_engine->messagePost(MIDI::Message
+			if(keymask&KEYMASK_KEY_CTRL)
+				{m_engine->recordStop();}
+			else
 				{
-				 MIDI::StatusCodes::NOTE_OFF
-				,static_cast<int>(m_session.waveformGet(slot).channel())
-				,note
-				,127
-				});
+				m_engine->messagePost(MIDI::Message
+					{
+					 MIDI::StatusCodes::NOTE_OFF
+					,static_cast<int>(m_session.waveformGet(slot).channel())
+					,note
+					,127
+					});
+				}
 			}
 		else
 			{
-			if(scancode==Keys::AUDITION)
+			switch(scancode)
 				{
-				auto slot_current=m_session.slotActiveGet();
-				assert(slot_current>=0 && slot_current<128);
-				note=slotToMIDI(slot_current);
-				m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});
+				case Keys::AUDITION:
+					{
+					auto slot_current=m_session.slotActiveGet();
+					assert(slot_current>=0 && slot_current<128);
+					note=slotToMIDI(slot_current);
+					m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});
+					}
+					break;
+
+				case Keys::RECORD_START_L:
+				case Keys::RECORD_START_R:
+					m_engine->recordStop();
+					break;
 				}
+
 			}
 		}
 	m_keystate[scancode]=0;
@@ -333,7 +353,7 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 
 			case 10:
 				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
-				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end});
+				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end},144);
 				m_about->callback(*this,0);
 				break;
 			}

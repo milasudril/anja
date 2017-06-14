@@ -68,9 +68,10 @@ namespace Anja
 				}
 
 			void logo(const ImageRepository& images,ImageRepository::IdType id
-				,const std::pair<const uint8_t*,const uint8_t*>& data)
+				,const std::pair<const uint8_t*,const uint8_t*>& data
+				,int min_height)
 				{
-				m_logo.minHeight(144).showPng(images,id,data);
+				m_logo.minHeight(min_height).showPng(images,id,data);
 				}
 
 		private:
