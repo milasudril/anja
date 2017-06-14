@@ -380,6 +380,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 			if(r_waveform_in->lockTry())
 				{
 				r_waveform=r_waveform_in;
+				r_waveform->clear();
 				printf("Locked resource %p for REC\n",r_waveform);
 				}
 			}
@@ -390,7 +391,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 			if(r_waveform_in==nullptr)
 				{
 				printf("Unlocking resource %p for REC\n",r_waveform);
-				r_waveform->unlock();
+				r_waveform->offsetsReset().unlock();
 				r_waveform=nullptr;
 				}
 			}
