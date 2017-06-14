@@ -272,7 +272,7 @@ namespace Anja
 			bool lockTry() const noexcept
 				{return m_mtx.lockTry();}
 
-			const Waveform& release() const noexcept
+			const Waveform& unlock() const noexcept
 				{
 				m_mtx.unlock();
 				return *this;

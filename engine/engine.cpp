@@ -20,7 +20,7 @@ namespace
 		{static constexpr Engine::TaskId value=x;};
 	}
 
-Engine::Engine(const Session& session):r_session(&session)
+Engine::Engine(Session& session):r_session(&session)
 	,m_running(1)
 	,m_ui_events(1024)
 	,m_time_init(now_ms())
@@ -32,7 +32,7 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_rec_buffers(48000)
 	,m_rec_write_offset(0)
 	,m_ch_state(0xffff)
-	,r_rec_slot(nullptr)
+	,r_waveform_rec(nullptr)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
@@ -60,6 +60,7 @@ void Engine::bufferSize(AudioClient& client,int n_frames)
 
 Engine::~Engine()
 	{
+	recordStop();
 	for(int k=0;k<16;++k)
 		{messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,k,0});}
 
@@ -85,7 +86,7 @@ void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int in
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept
 	{
 	m_voices_alloc.idRelease(voice.id());
-	r_session->waveformGet(midiToSlot(voice.key())).release();
+	r_session->waveformGet(midiToSlot(voice.key())).unlock();
 	voice=Voice{}; //Reset voice so we do not get here any more.
 	}
 
@@ -145,6 +146,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 
 		case RECORD_STOP:
 			printf("Record stop\n");
+			r_waveform_rec=nullptr;
 			break;
 
 		case MIDI::StatusCodes::CONTROL_CHANGE:
@@ -189,7 +191,10 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case RECORD_START:
+					{
 					printf("Record start %d\n",msg.value2());
+					r_waveform_rec=&r_session->waveformGet(midiToSlot(msg.value2()&0x7f));
+					}
 					break;
 
 				default:
@@ -365,12 +370,29 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 template<>
 void Engine::run<Engine::TaskId::RECORD>()
 	{
+	Waveform* r_waveform=nullptr;
 	while(m_running)
 		{
 		m_ready.wait();
-		if(r_rec_slot!=nullptr)
+		auto r_waveform_in=r_waveform_rec;
+		if(r_waveform==nullptr && r_waveform_in!=nullptr)
 			{
-			r_rec_slot->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
+			if(r_waveform_in->lockTry())
+				{
+				r_waveform=r_waveform_in;
+				printf("Locked resource %p for REC\n",r_waveform);
+				}
+			}
+
+		if(r_waveform!=nullptr)
+			{
+		//	r_rec_slot->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
+			if(r_waveform_in==nullptr)
+				{
+				printf("Unlocking resource %p for REC\n",r_waveform);
+				r_waveform->unlock();
+				r_waveform=nullptr;
+				}
 			}
 		}
 	}

@@ -27,10 +27,8 @@ namespace Anja
 	class Engine
 		{
 		public:
-			Engine(Session&&)=delete;
-
 			template<class Callback>
-			explicit Engine(const Session& session,Callback& cb):Engine(session)
+			explicit Engine(Session& session,Callback& cb):Engine(session)
 				{
 				callback(cb);
 				m_client.activate();
@@ -121,7 +119,7 @@ namespace Anja
 			static constexpr auto RECORD_START=MIDI::ControlCodes::GENERAL_PURPOSE_3;
 			static constexpr auto RECORD_STOP=MIDI::StatusCodes::STOP;
 
-			const Session* r_session;
+			Session* r_session;
 			volatile bool m_running;
 			RingBuffer<AudioClient::MidiEvent,volatile uint32_t> m_ui_events;
 			uint64_t m_time_init;
@@ -142,7 +140,7 @@ namespace Anja
 			int m_rec_write_offset;
 			uint16_t m_ch_state;
 			pcg32 m_rng;
-			Waveform* r_rec_slot;
+			Waveform* volatile r_waveform_rec;
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;
@@ -175,7 +173,7 @@ namespace Anja
 				} m_vt;
 			void* r_cb_obj;
 
-			explicit Engine(const Session& session);
+			explicit Engine(Session& session);
 
 			template<class Callback>
 			Engine& callback(Callback& cb) noexcept
