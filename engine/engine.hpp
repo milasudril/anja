@@ -12,6 +12,7 @@
 #include "../common/thread.hpp"
 #include "../common/readysignal.hpp"
 #include "../common/ringbuffer.hpp"
+#include "../common/arraymultisimple.hpp"
 #include "../common/clock.hpp"
 #include "../common/idgenerator.hpp"
 #include "../common/vec4d.hpp"
