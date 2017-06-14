@@ -29,7 +29,6 @@ Engine::Engine(const Session& session):r_session(&session)
 	,m_voices_alloc(m_voices.length())
 	,m_channel_buffers(16*64)
 	,m_channel_gain(16)
-	,m_channel_gain_factor(16)
 	,m_ch_state(0xffff)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
@@ -37,7 +36,7 @@ Engine::Engine(const Session& session):r_session(&session)
 	m_voices_alloc.fill();
 	std::fill(m_key_to_voice_index.begin(),m_key_to_voice_index.end()
 		,m_voices_alloc.null());
-	std::fill(m_channel_gain_factor.begin(),m_channel_gain_factor.end()
+	std::fill(m_channel_gain.begin<1>(),m_channel_gain.end<1>()
 		,std::pair<Vec4d,Vec4d>{Vec4d{1.0,1.0,1.0,1.0},Vec4d{1.0,1.0,1.0,1.0}});
 
 	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
@@ -143,7 +142,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			switch(msg.ctrlCode())
 				{
 				case MIDI::ControlCodes::CHANNEL_VOLUME:
-					m_channel_gain[msg.channel()]=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
+					m_channel_gain.get<0>(msg.channel())=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
 					break;
 
 				case MIDI::ControlCodes::SOUND_OFF:
@@ -164,9 +163,9 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					auto f=1.0/sec_to_decay_factor(t,fs);
 					auto f2=f*f;
 					auto f4=f2*f2;
-					m_channel_gain_factor[msg.channel()].first=Vec4d{1.0,f,f2,f2*f};
-					m_channel_gain_factor[msg.channel()].first*=Vec4d{1.0e-4,1.0e-4,1.0e-4,1.0e-4};
-					m_channel_gain_factor[msg.channel()].second=Vec4d{f4,f4,f4,f4};
+					m_channel_gain.get<1>(msg.channel()).first=Vec4d{1.0,f,f2,f2*f};
+					m_channel_gain.get<1>(msg.channel()).first*=Vec4d{1.0e-4,1.0e-4,1.0e-4,1.0e-4};
+					m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
 					}
 					break;
 
@@ -176,8 +175,8 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					auto f=sec_to_decay_factor(t,fs);
 					auto f2=f*f;
 					auto f4=f2*f2;
-					m_channel_gain_factor[msg.channel()].first=Vec4d{1.0,f,f2,f2*f};
-					m_channel_gain_factor[msg.channel()].second=Vec4d{f4,f4,f4,f4};
+					m_channel_gain.get<1>(msg.channel()).first=Vec4d{1.0,f,f2,f2*f};
+					m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
 					}
 					break;
 				default:
@@ -264,8 +263,8 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 	assert(n_frames%4==0);
 	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
-		auto gain=m_channel_gain[k];
-		auto f=m_channel_gain_factor[k];
+		auto gain=m_channel_gain.get<0>(k);
+		auto f=m_channel_gain.get<1>(k);
 		vec4_t<float> g_vec={gain,gain,gain,gain};
 		auto begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
 		auto end=begin + n_frames/4;
@@ -292,7 +291,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 			m_ch_state|=(1<<k);
 			m_vt.unmuted(r_cb_obj,*this,k);
 			}
-		m_channel_gain_factor[k].first=f.first;
+		m_channel_gain.get<1>(k).first=f.first;
 		}
 
 //	Mix channels

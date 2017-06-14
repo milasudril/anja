@@ -118,14 +118,13 @@ namespace Anja
 			ArraySimple<VoiceIndex> m_key_to_voice_index;
 			IdGenerator<RingBuffer<VoiceIndex,uint32_t>> m_voices_alloc;
 			ArraySimple<float> m_channel_buffers;
-			ArraySimple<float> m_channel_gain;
 
 #ifdef __AVX__
 			typedef Vec4dAVX Vec4d;
 #else
 			typedef Vec4dSSE2 Vec4d;
 #endif
-			ArraySimple<std::pair<Vec4d,Vec4d>> m_channel_gain_factor;
+			ArrayMultiSimple<float,std::pair<Vec4d,Vec4d>> m_channel_gain;
 			uint16_t m_ch_state;
 			pcg32 m_rng;
 
