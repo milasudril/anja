@@ -250,75 +250,86 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		}
 
 //	Render and mix voices
-	memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));
-	auto audition=client.waveOut(indexAudition(client),n_frames);
-	memset(audition,0,n_frames*sizeof(*audition));
-	std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
 		{
-		if( !v.done() )
+		memset(m_channel_buffers.begin(),0,m_channel_buffers.length()*sizeof(float));
+		auto audition=client.waveOut(indexAudition(client),n_frames);
+		memset(audition,0,n_frames*sizeof(*audition));
+		std::for_each(m_voices.begin(),m_voices.end(),[audition,n_frames,this](Voice& v)
 			{
-			if(v.channel()==17)
-				{v.generate(audition,n_frames);}
-			else
-				{v.generate(m_channel_buffers.begin() + n_frames*v.channel(),n_frames);}
-			}
-		});
+			if( !v.done() )
+				{
+				if(v.channel()==17)
+					{v.generate(audition,n_frames);}
+				else
+					{v.generate(m_channel_buffers.begin() + n_frames*v.channel(),n_frames);}
+				}
+			});
+		}
 
 //	Apply channel gain
-	assert(n_frames%4==0);
-	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
-		auto gain=m_channel_gain.get<0>(k);
-		auto f=m_channel_gain.get<1>(k);
-		vec4_t<float> g_vec={gain,gain,gain,gain};
-		auto begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
-		auto end=begin + n_frames/4;
-		constexpr auto clamp_a=Vec4d{0.0,0.0,0.0,0.0};
-		constexpr auto clamp_b=Vec4d{1.0,1.0,1.0,1.0};
-		while(begin!=end)
+		assert(n_frames%4==0);
+		for(size_t k=0;k<m_channel_gain.length();++k)
 			{
-			*begin=static_cast<vec4_t<float>>(f.first)*g_vec*(*begin);
-			f.first*=f.second;
-			f.first=clamp(clamp_a,clamp_b,f.first);
-			++begin;
+			auto gain=m_channel_gain.get<0>(k);
+			auto f=m_channel_gain.get<1>(k);
+			vec4_t<float> g_vec={gain,gain,gain,gain};
+			auto begin=reinterpret_cast< vec4_t<float>* >(m_channel_buffers.begin() + k*n_frames);
+			auto end=begin + n_frames/4;
+			constexpr auto clamp_a=Vec4d{0.0,0.0,0.0,0.0};
+			constexpr auto clamp_b=Vec4d{1.0,1.0,1.0,1.0};
+			while(begin!=end)
+				{
+				*begin=static_cast<vec4_t<float>>(f.first)*g_vec*(*begin);
+				f.first*=f.second;
+				f.first=clamp(clamp_a,clamp_b,f.first);
+				++begin;
+				}
+			if(f.first[3] < 1.0e-4 && m_ch_state&(1<<k))
+				{
+				m_ch_state&=~(1<<k);
+				m_vt.muted(r_cb_obj,*this,k);
+				auto msg=MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0};
+				process(msg,n_frames-1,fs);
+				write(msg,n_frames-1,midi_out);
+				}
+			else
+			if(f.first[3] >= 1.0e-4 && !(m_ch_state&(1<<k)))
+				{
+				m_ch_state|=(1<<k);
+				m_vt.unmuted(r_cb_obj,*this,k);
+				}
+			m_channel_gain.get<1>(k).first=f.first;
 			}
-		if(f.first[3] < 1.0e-4 && m_ch_state&(1<<k))
-			{
-			m_ch_state&=~(1<<k);
-			m_vt.muted(r_cb_obj,*this,k);
-			auto msg=MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0};
-			process(msg,n_frames-1,fs);
-			write(msg,n_frames-1,midi_out);
-			}
-		else
-		if(f.first[3] >= 1.0e-4 && !(m_ch_state&(1<<k)))
-			{
-			m_ch_state|=(1<<k);
-			m_vt.unmuted(r_cb_obj,*this,k);
-			}
-		m_channel_gain.get<1>(k).first=f.first;
 		}
+
+
+	auto master=reinterpret_cast<vec4_t<float>*>( client.waveOut(indexMaster(client),n_frames) );
 
 //	Mix channels
-	auto master=reinterpret_cast<vec4_t<float>*>( client.waveOut(indexMaster(client),n_frames) );
-	memset(master,0,n_frames*sizeof(float));
-	for(size_t k=0;k<m_channel_gain.length();++k)
 		{
-		auto begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
-		auto ptr_out=master;
-		auto end=begin + n_frames/4;
-		while(begin!=end)
+		memset(master,0,n_frames*sizeof(float));
+		for(size_t k=0;k<m_channel_gain.length();++k)
 			{
-			*ptr_out+=*begin;
-			++begin;
-			++ptr_out;
+			auto begin=reinterpret_cast< vec4_t<const float>* >(m_channel_buffers.begin() + k*n_frames);
+			auto ptr_out=master;
+			auto end=begin + n_frames/4;
+			while(begin!=end)
+				{
+				*ptr_out+=*begin;
+				++begin;
+				++ptr_out;
+				}
 			}
 		}
 
-	auto g=dBToAmplitude( r_session->gainGet() );
-	auto g_vec=vec4_t<float>{g,g,g,g};
-	std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
-		{vec*=g_vec;});
+//	Adjust master gain
+		{
+		auto g=dBToAmplitude( r_session->gainGet() );
+		auto g_vec=vec4_t<float>{g,g,g,g};
+		std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
+			{vec*=g_vec;});
+		}
 
 //	For individual channel output, write data to output ports
 	if(client.waveOutCount()>2)
@@ -329,7 +340,6 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		}
 
 //	Write input data to record buffers
-
 		{
 		auto wave_in=m_client.waveIn(0,n_frames);
 		auto n=std::min(static_cast<size_t>(n_frames),m_rec_buffers.length()-m_rec_write_offset);
