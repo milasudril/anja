@@ -170,6 +170,7 @@ namespace Anja
 				{
 				void (*muted)(void* cb_obj,Engine& engine,int channel);
 				void (*unmuted)(void* cb_obj,Engine& engine,int channel);
+				void (*record_done)(void* cb_obj,Engine& engine,int slot);
 				} m_vt;
 			void* r_cb_obj;
 
@@ -182,6 +183,8 @@ namespace Anja
 					{reinterpret_cast<Callback*>(cb_obj)->muted(engine,channel);};
 				m_vt.unmuted=[](void* cb_obj,Engine& engine,int channel)
 					{reinterpret_cast<Callback*>(cb_obj)->unmuted(engine,channel);};
+				m_vt.record_done=[](void* cb_obj,Engine& engine,int slot)
+					{reinterpret_cast<Callback*>(cb_obj)->recordDone(engine,slot);};
 				r_cb_obj=&cb;
 				return *this;
 				}

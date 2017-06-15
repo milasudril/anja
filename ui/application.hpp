@@ -102,8 +102,9 @@ namespace Anja
 
 			void muted(Engine& engine,int channel) noexcept;
 			void unmuted(Engine& engine,int channel) noexcept;
+			void recordDone(Engine& engine,int channel) noexcept;
 
-			enum MessageId:int32_t{CHANNEL_MUTED,CHANNEL_UNMUTED};
+			enum MessageId:int32_t{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE};
 			typedef int32_t MessageParam;
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);

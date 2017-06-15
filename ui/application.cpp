@@ -99,6 +99,11 @@ void Application::unmuted(Engine& engine,int channel) noexcept
 	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_UNMUTED),channel);
 	}
 
+void Application::recordDone(Engine& engine,int slot) noexcept
+	{
+	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::RECORD_DONE),slot);
+	}
+
 
 void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 	{
@@ -109,10 +114,32 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
 				,statusIcon(StatusIcon::STOP));
 			break;
+
 		case MessageId::CHANNEL_UNMUTED:
 			assert(param>=0 && param<16);
 			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
 				,statusIcon(StatusIcon::READY));
+			break;
+
+		case MessageId::RECORD_DONE:
+			{
+			assert(param>=0 && param<128);
+			auto scancode=slotToScancode(param);
+			if(scancode==0xff)
+				{return;}
+			if(m_keystate[scancode])
+				{
+				auto note=slotToMIDI(param);
+				m_engine->messagePost(MIDI::Message
+					{
+					 MIDI::StatusCodes::NOTE_ON
+					,static_cast<int>(m_session.waveformGet(param).channel())
+					,note
+					,127
+					});
+				}
+		//TODO: Move focus to current slot
+			}
 			break;
 		}
 	}
@@ -200,7 +227,7 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			{
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL)
-				{m_engine->recordStart(note);}
+				{m_engine->recordStop().recordStart(note);}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
