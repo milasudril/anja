@@ -394,7 +394,7 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 
 			case 10:
 				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
-				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end},144);
+				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end},192);
 				m_about->callback(*this,0);
 				break;
 			}
