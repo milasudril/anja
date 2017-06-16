@@ -12,6 +12,7 @@
 //@				,{"ref":"led_ready.png","rel":"generated"}
 //@				,{"ref":"led_off.png","rel":"generated"}
 //@			]
+//@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
 //@		}]
 //@	}
 

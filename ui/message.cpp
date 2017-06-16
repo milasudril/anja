@@ -1,7 +1,7 @@
 //@	{
 //@	 "targets":
 //@		[{
-//@		"name":"message.o","type":"object","cxxoptions":{"cflags_extra":["fno-lto"]}
+//@		"name":"message.o","type":"object"
 //@		}]
 //@	}
 
