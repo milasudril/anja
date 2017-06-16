@@ -484,7 +484,6 @@ WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 		m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
 		if(waveform.index()!=index_old)
 			{m_plot.showAll();}
-		m_filename_input.focus();
 		}
 	offsets_update();
 
@@ -603,6 +602,5 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 	m_options_input.selected(waveform.flags());
 	m_waveform_db=filename_update(waveform,m_filename_input,m_options_input,m_plot);
 	m_plot.showAll();
-	m_filename_input.focus();
 	offsets_update();
 	}

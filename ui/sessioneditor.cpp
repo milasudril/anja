@@ -73,7 +73,6 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	if(index!=-1)
 		{
 		m_tabs.activate(1);
-		m_mixer.focus(index);
 		return;
 		}
 
