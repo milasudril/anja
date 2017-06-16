@@ -434,8 +434,6 @@ void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 			auto key_end=multipar(value.begin())?"\n":": ";
 			fputs(key_end,m_sink.get());
 			valueWrite(value.begin(),m_sink.get());
-		//	fprintf(m_sink.get(),"%s: %s\n\n",name.begin(),value.begin());
-
 			if(*key_end=='\n')
 				{putc('\n',m_sink.get());}
 			putc('\n',m_sink.get());
