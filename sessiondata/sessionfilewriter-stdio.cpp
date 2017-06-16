@@ -429,6 +429,7 @@ void SessionFileWriter::Impl::recordWrite(const SessionFileRecord& record)
 		{
 		if(name!="Description")
 			{
+			putc('~',m_sink.get());
 			keyWrite(name.begin(),m_sink.get());
 			auto key_end=multipar(value.begin())?"\n":": ";
 			fputs(key_end,m_sink.get());
