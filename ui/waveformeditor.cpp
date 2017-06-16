@@ -291,6 +291,24 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			}
 			break;
 
+		case TextEntryId::CURSOR_BEGIN_LOOP:
+			{
+			double val_new;
+			if(convert(entry.content(),val_new))
+				{m_waveform.offset<Waveform::Cursor::BEGIN_LOOP>(val_new);}
+			offsets_update();
+			}
+			break;
+
+		case TextEntryId::CURSOR_END_LOOP:
+			{
+			double val_new;
+			if(convert(entry.content(),val_new))
+				{m_waveform.offset<Waveform::Cursor::END_LOOP>(val_new);}
+			offsets_update();
+			}
+			break;
+
 		case TextEntryId::CURSOR_END:
 			{
 			double val_new;
@@ -586,6 +604,8 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 	m_options_input.callback(*this,OptionListId::OPTIONS);
 	m_plot.callback(*this,PlotId::WAVEFORM);
 	m_cursor_begin_entry.callback(*this,TextEntryId::CURSOR_BEGIN);
+	m_cursor_begin_loop_entry.callback(*this,TextEntryId::CURSOR_BEGIN_LOOP);
+	m_cursor_end_loop_entry.callback(*this,TextEntryId::CURSOR_END_LOOP);
 	m_cursor_end_entry.callback(*this,TextEntryId::CURSOR_END);
 	m_swap.callback(*this,ButtonId::CURSORS_SWAP);
 
