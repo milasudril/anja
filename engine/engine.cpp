@@ -416,8 +416,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 			case RecAction::END:
 				if(r_waveform!=nullptr)
 					{
-					r_waveform->append(m_rec_buffers.begin<1>(),m_rec_length)
-						.sampleRate(m_client.sampleRate()).offsetsReset().unlock();
+					r_waveform->append(m_rec_buffers.begin<1>(),m_rec_length).unlock();
 					r_waveform=nullptr;
 					m_vt.record_done(r_cb_obj,*this,rec_slot);
 					}

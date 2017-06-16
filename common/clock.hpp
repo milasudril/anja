@@ -11,6 +11,7 @@
 namespace Anja
 	{
 	double now_ms();
+	int64_t wallclock();
 	}
 
 #endif

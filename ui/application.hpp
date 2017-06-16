@@ -137,9 +137,12 @@ namespace Anja
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;
+			int m_rec_count;
 
 			void engine_stop();
 			void engine_start();
+
+			String filename_generate(int slot);
 		};
 	}
 

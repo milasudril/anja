@@ -112,6 +112,9 @@ namespace Anja
 				return messagePost(MIDI::Message{RECORD_STOP,0,0});
 				}
 
+			double sampleRate() const noexcept
+				{return m_client.sampleRate();}
+
 
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;

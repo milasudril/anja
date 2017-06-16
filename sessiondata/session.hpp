@@ -124,6 +124,12 @@ namespace Anja
 			WaveformProxy waveformViewGet(uint8_t slot) noexcept
 				{return WaveformProxy(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
 
+			WaveformData& waveformData(uint8_t slot) noexcept
+				{return m_waveform_data[slot];}
+
+			const WaveformData& waveformData(uint8_t slot) const noexcept
+				{return m_waveform_data[slot];}
+
 			ChannelProxy channelViewGet(int ch) noexcept
 				{return ChannelProxy(m_channels[ch],m_channel_data[ch]);}
 

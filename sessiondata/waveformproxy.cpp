@@ -38,17 +38,6 @@ static String filename_get(const char* filename,const String& load_path)
 	return fullpath;
 	}
 
-static String filenameGenerate(const String& label)
-	{
-	String ret(label);
-	if(ret.length()!=0)
-		{ret.append('-');}
-	char buff[9];
-	sprintf(buff,"%x",s_id_gen.next());
-	ret.append(buff).append(".wav");
-	return ret;
-	}
-
 WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec)
 	{
 	r_waveform_data->load(rec);
@@ -64,16 +53,17 @@ WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec)
 	return *this;
 	}
 
-static String filename_generate(const String& str,const String& in_dir)
-	{
-	if(absoluteIs(str))
-		{return makeRelativeTo(str.begin(),in_dir.begin());}
-	return String(in_dir).append(str);
-	}
-
 String WaveformProxy::filename() const
 	{
 	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
+	}
+
+WaveformProxy& WaveformProxy::filename(const Anja::String& str)
+	{
+	auto dir=*r_dir_current;
+	dir.append(str);
+	r_waveform_data->filename(std::move(dir));
+	return *this;
 	}
 
 const WaveformProxy& WaveformProxy::store(SessionFileRecord& rec) const

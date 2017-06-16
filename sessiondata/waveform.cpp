@@ -152,6 +152,7 @@ Waveform& Waveform::waveformLoad(const char* filename)
 
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
 	flagsSet(Waveform::READONLY|Waveform::DIRTY);
+	flagsUnset(Waveform::RECORDED);
 
 	return *this;
 	}

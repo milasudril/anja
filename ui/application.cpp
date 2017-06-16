@@ -13,6 +13,7 @@
 #include "../common/blob.hpp"
 #include "../sessiondata/keymap.hpp"
 #include "statusicons.hpp"
+#include <inttypes.h>
 #include <maike/targetinclude.hpp>
 
 using namespace Anja;
@@ -102,6 +103,17 @@ void Application::recordDone(Engine& engine,int slot) noexcept
 	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::RECORD_DONE),slot);
 	}
 
+String Application::filename_generate(int slot)
+	{
+	String ret(m_session.waveformData(slot).keyLabel());
+	if(ret.length()!=0)
+		{ret.append('-');}
+	char buff[64];
+	sprintf(buff,"%" PRIx64 "-%x",wallclock(),m_rec_count);
+	++m_rec_count;
+	ret.append(buff).append(".wav");
+	return ret;
+	}
 
 void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 	{
@@ -125,6 +137,8 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			auto scancode=slotToScancode(param);
 			if(scancode==0xff)
 				{return;}
+			m_session.waveformGet(param).sampleRate(m_engine->sampleRate())
+				.offsetsReset().flagsSet(Waveform::RECORDED);
 			if(m_keystate[scancode])
 				{
 				auto note=slotToMIDI(param);
@@ -136,6 +150,7 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 					,127
 					});
 				}
+			m_session.waveformViewGet(param).filename(filename_generate(param));
 			m_session.slotActiveSet(param);
 			m_session_editor.sessionUpdated();
 			}
@@ -461,6 +476,7 @@ Application::Application():
 				,m_sep_b(m_rows.insertMode({2,0}),false)
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
+	,m_rec_count(0)
 	{
 	m_session_control.append("New session","Load session","Reload session","Save session"
 		,"Save session as","","Start engine","Stop engine","","Fullscreen","Dark UI",""
