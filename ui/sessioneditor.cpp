@@ -42,6 +42,7 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 		}
 	}
 
+
 void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActiveGet();

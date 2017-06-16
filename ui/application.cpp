@@ -136,7 +136,8 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 					,127
 					});
 				}
-		//TODO: Move focus to current slot
+			m_session.slotActiveSet(param);
+			m_session_editor.sessionUpdated();
 			}
 			break;
 		}
@@ -225,10 +226,7 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			{
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL)
-				{
-				printf("[keyDown] Record start %d\n",note);
-				m_engine->recordStop().recordStart(note);
-				}
+				{m_engine->recordStop().recordStart(note);}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
@@ -291,10 +289,7 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL || scancode==Keys::RECORD_START_L
 				|| scancode==Keys::RECORD_START_R)
-				{
-				printf("[keyUp] Record stop %d\n",note);
-				m_engine->recordStop();
-				}
+				{m_engine->recordStop();}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
