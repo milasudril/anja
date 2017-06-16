@@ -208,7 +208,6 @@ bool Application::sessionSaveAs()
 
 Application& Application::sessionLoad()
 	{
-	engine_stop();
 	auto name=std::string(m_session.filenameGet().begin());
 	if(filenameSelect(m_mainwin,m_session.directoryGet().begin()
 		,name,Anja::FilenameSelectMode::OPEN,[this](const char* name)
