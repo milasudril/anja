@@ -18,9 +18,10 @@ These libraries are required in order to run Anja
  * gtk+3
  * gtksourceview-3.0
  * jack
+ * jemalloc
  * sndfile
 
- In addition to these libraries, Anja uses the PCG32 generator from Melisssa O'Neill.
+ In addition to these libraries, Anja uses the PCG32 generator from Melissa O'Neill.
  Currently, her repository is kept as a git submodule.
 
 ### Tools
@@ -30,10 +31,11 @@ These tools are required in order to compile Anja
  * g++ -- The GNU project C++ compiler
  * inkscape -- SVG (Scalable Vector Graphics) editing program.
  * octave -- Package for numerical analysis. MATLAB should work, but requires
-    changes to `maikeconfig` files.
+	changes to `maikeconfig` files.
  * maike -- Automated build tool. You must use version 0.12.0 or later.
-    In case this tool is missing, it will be downloaded from
-    https://github.com/milasudril/maike.
+	In case this tool is missing, the build script will download it from
+	https://github.com/milasudril/maike/archive/0.12.1.tar.gz. This step requires
+	`wget` and `jq` Command-line JSON processor.
  * pkg-config -- Return metainformation about installed libraries
  * python3 -- An interpreted, interactive, object-oriented programming language
 
@@ -42,7 +44,8 @@ Build instructions (ubuntu or debian-like systems)
 These steps should be sufficient to compile Anja on Ubuntu:
 
 	sudo apt-get install pkg-config libgtk-3-dev g++ blender inkscape \
-		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev
+		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev \
+		libjemalloc-dev
 	./build.sh
 
 In order to compile `maike`, you will also need `libjansson-dev`. You may need
@@ -50,4 +53,4 @@ to add a more up-to-date version of blender. Ubuntu users can use this PPA:
 
  * https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender
 
-After compling Anja, the binary will be located in `./__targets_rel` or `__targets`.
+After compling Anja, the binary will be located in `./__targets_rel` or `__targets_dbg`.

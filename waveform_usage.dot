@@ -1,6 +1,0 @@
-digraph "G"
-	{
-	"JACK I/O" -> Waveform[label="reads"]
-	"Recording thread" -> Waveform[label="writes"]
-	"UI" -> Waveform[label="reads/writes"]
-	}
