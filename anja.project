@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="anja" Version="10.0.0" InternalType="Console">
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="maikeconfig.json"/>
+    <VirtualDirectory Name="sessiondata">
+      <File Name="sessiondata/session.hpp"/>
+      <File Name="sessiondata/wavetable.hpp"/>
+      <File Name="sessiondata/waveform.hpp"/>
+      <File Name="sessiondata/waveform.cpp"/>
+      <File Name="sessiondata/optionstring.hpp"/>
+      <File Name="sessiondata/optionstring.cpp"/>
+      <File Name="sessiondata/wavefilereader.hpp"/>
+      <File Name="sessiondata/wavefilereader.cpp"/>
+      <File Name="sessiondata/wavefileinfo.hpp"/>
+      <File Name="sessiondata/wavefilewriter.hpp"/>
+      <File Name="sessiondata/wavefilewriter.cpp"/>
+      <File Name="sessiondata/waveformdata.hpp"/>
+      <File Name="sessiondata/waveformdata.cpp"/>
+      <File Name="sessiondata/sessionfilerecord.hpp"/>
+      <File Name="sessiondata/channelmixer.hpp"/>
+      <File Name="sessiondata/channel.hpp"/>
+      <File Name="sessiondata/channeldata.hpp"/>
+      <File Name="sessiondata/channeldata.cpp"/>
+      <File Name="sessiondata/session.cpp"/>
+      <File Name="sessiondata/sessionfilereader.hpp"/>
+      <File Name="sessiondata/sessionfilereader-stdio.cpp"/>
+      <File Name="sessiondata/sessionfilewriter.hpp"/>
+      <File Name="sessiondata/sessionfilerecordimpl.hpp"/>
+      <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
+      <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
+      <File Name="sessiondata/channel.cpp"/>
+      <File Name="sessiondata/keymap.hpp"/>
+      <File Name="sessiondata/keymap.cpp"/>
+      <File Name="sessiondata/channelproxy.hpp"/>
+      <File Name="sessiondata/channelproxy.cpp"/>
+      <File Name="sessiondata/waveformproxy.cpp"/>
+      <File Name="sessiondata/waveformproxy.hpp"/>
+      <File Name="sessiondata/parser.dot"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="common">
+      <File Name="common/arrayfixed.hpp"/>
+      <File Name="common/arraydynamicshort.hpp"/>
+      <File Name="common/arraysimple.hpp"/>
+      <File Name="common/color.hpp"/>
+      <File Name="common/color.cpp"/>
+      <File Name="common/colorstring.hpp"/>
+      <File Name="common/colorstring.cpp"/>
+      <File Name="common/floatconv.hpp"/>
+      <File Name="common/floatconv.cpp"/>
+      <File Name="common/localeguard.hpp"/>
+      <File Name="common/localeguard-linux.cpp"/>
+      <File Name="common/pathutils.hpp"/>
+      <File Name="common/pathutils-linux.cpp"/>
+      <File Name="common/units.hpp"/>
+      <File Name="common/range.hpp"/>
+      <File Name="common/string.hpp"/>
+      <File Name="common/string.cpp"/>
+      <File Name="common/delayline.hpp"/>
+      <File Name="common/meansquare.hpp"/>
+      <File Name="common/meansquare.cpp"/>
+      <File Name="common/mutex.hpp"/>
+      <File Name="common/mutex.cpp"/>
+      <File Name="common/thread.hpp"/>
+      <File Name="common/thread.cpp"/>
+      <File Name="common/addmemberif.hpp"/>
+      <File Name="common/blob.hpp"/>
+      <File Name="common/memoryalloc.hpp"/>
+      <File Name="common/memoryalloc.cpp"/>
+      <File Name="common/vectortype.hpp"/>
+      <File Name="common/arrayinit.hpp"/>
+      <File Name="common/vec2.hpp"/>
+      <File Name="common/error.hpp"/>
+      <File Name="common/syserror.hpp"/>
+      <File Name="common/error.cpp"/>
+      <File Name="common/syserror.cpp"/>
+      <File Name="common/readysignal.hpp"/>
+      <File Name="common/readysignal.cpp"/>
+      <File Name="common/ringbuffer.hpp"/>
+      <File Name="common/clock.hpp"/>
+      <File Name="common/clock.cpp"/>
+      <File Name="common/idgenerator.hpp"/>
+      <File Name="common/nextpow2.hpp"/>
+      <File Name="common/vec4d.hpp"/>
+      <File Name="common/arraymultisimple.hpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="ui">
+      <File Name="ui/sessioneditor.hpp"/>
+      <File Name="ui/container.hpp"/>
+      <File Name="ui/window.cpp"/>
+      <File Name="ui/window.hpp"/>
+      <File Name="ui/uicontext.hpp"/>
+      <File Name="ui/uicontext.cpp"/>
+      <File Name="ui/paned.hpp"/>
+      <File Name="ui/paned.cpp"/>
+      <File Name="ui/tabview.cpp"/>
+      <File Name="ui/tabview.hpp"/>
+      <File Name="ui/textentry.hpp"/>
+      <File Name="ui/textentry.cpp"/>
+      <File Name="ui/sessioneditor.cpp"/>
+      <File Name="ui/box.hpp"/>
+      <File Name="ui/box.cpp"/>
+      <File Name="ui/label.hpp"/>
+      <File Name="ui/label.cpp"/>
+      <File Name="ui/scrolledwindow.hpp"/>
+      <File Name="ui/scrolledwindow.cpp"/>
+      <File Name="ui/waveformeditor.hpp"/>
+      <File Name="ui/waveformeditor.cpp"/>
+      <File Name="ui/listbox.cpp"/>
+      <File Name="ui/listbox.hpp"/>
+      <File Name="ui/button.cpp"/>
+      <File Name="ui/button.hpp"/>
+      <File Name="ui/checkbox.hpp"/>
+      <File Name="ui/checkbox.cpp"/>
+      <File Name="ui/buttonlist.hpp"/>
+      <File Name="ui/buttonlist.cpp"/>
+      <File Name="ui/optionlist.hpp"/>
+      <File Name="ui/optionlist.cpp"/>
+      <File Name="ui/slider.hpp"/>
+      <File Name="ui/slider.cpp"/>
+      <File Name="ui/xyplot.hpp"/>
+      <File Name="ui/keymask.hpp"/>
+      <File Name="ui/keymask.cpp"/>
+      <File Name="ui/xyplot.cpp"/>
+      <File Name="ui/filenameselect.hpp"/>
+      <File Name="ui/filenameselect.cpp"/>
+      <File Name="ui/colorpicker.hpp"/>
+      <File Name="ui/colorpicker.cpp"/>
+      <File Name="ui/paletteview.hpp"/>
+      <File Name="ui/paletteview.cpp"/>
+      <File Name="ui/colorview.hpp"/>
+      <File Name="ui/colorview.cpp"/>
+      <File Name="ui/dialog.hpp"/>
+      <File Name="ui/imageview.hpp"/>
+      <File Name="ui/imageview.cpp"/>
+      <File Name="ui/channelstrip.hpp"/>
+      <File Name="ui/channelstrip.cpp"/>
+      <File Name="ui/separator.hpp"/>
+      <File Name="ui/separator.cpp"/>
+      <File Name="ui/mixerconsole.hpp"/>
+      <File Name="ui/mixerconsole.cpp"/>
+      <File Name="ui/uiutility.hpp"/>
+      <File Name="ui/uiutility.cpp"/>
+      <File Name="ui/knob.hpp"/>
+      <File Name="ui/knob.cpp"/>
+      <File Name="ui/knob_sprites.m"/>
+      <File Name="ui/knob_sprites.py"/>
+      <File Name="ui/knob_sprites.blend"/>
+      <File Name="ui/message_info.py"/>
+      <File Name="ui/message_error.svg"/>
+      <File Name="ui/message_info.svg"/>
+      <File Name="ui/message_warning.svg"/>
+      <File Name="ui/inkscape.py"/>
+      <File Name="ui/message_error.py"/>
+      <File Name="ui/message_warning.py"/>
+      <File Name="ui/filler.hpp"/>
+      <File Name="ui/filler.cpp"/>
+      <File Name="ui/message.hpp"/>
+      <File Name="ui/message.cpp"/>
+      <File Name="ui/keyboardview.hpp"/>
+      <File Name="ui/sourceview.cpp"/>
+      <File Name="ui/sourceview.hpp"/>
+      <File Name="ui/sessionpropertieseditor.hpp"/>
+      <File Name="ui/sessionpropertieseditor.cpp"/>
+      <File Name="ui/application.hpp"/>
+      <File Name="ui/application.cpp"/>
+      <File Name="ui/aboutbox.hpp"/>
+      <File Name="ui/keyboardview.cpp"/>
+      <File Name="ui/led_sprites.blend"/>
+      <File Name="ui/led_sprites.py"/>
+      <File Name="ui/imagerepository.hpp"/>
+      <File Name="ui/imagerepository.cpp"/>
+      <File Name="ui/statusicons.hpp"/>
+      <File Name="ui/statusicons.cpp"/>
+      <File Name="ui/imagelist.hpp"/>
+      <File Name="ui/imagelist.cpp"/>
+    </VirtualDirectory>
+    <File Name="anja.cpp"/>
+    <File Name="maikeconfig-rel.json"/>
+    <File Name="projectinfo.json"/>
+    <VirtualDirectory Name="testbank">
+      <File Name="testbank/testbank.txt"/>
+    </VirtualDirectory>
+    <File Name="projectinfo.py"/>
+    <File Name="build.sh"/>
+    <File Name="logo.py"/>
+    <VirtualDirectory Name="engine">
+      <File Name="engine/audioclient.hpp"/>
+      <File Name="engine/engine.hpp"/>
+      <File Name="engine/audioclient.cpp"/>
+      <File Name="engine/voice.hpp"/>
+      <File Name="engine/voice.cpp"/>
+      <File Name="engine/engine.cpp"/>
+    </VirtualDirectory>
+    <File Name="maikeconfig-inst.json"/>
+    <File Name="README.md"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="midiconstants">
+    <File Name="midiconstants/control_codes.py"/>
+    <File Name="midiconstants/control_codes.txt"/>
+    <File Name="midiconstants/compile.py"/>
+    <File Name="midiconstants/gm_drumkit.txt"/>
+    <File Name="midiconstants/gm_programs.txt"/>
+    <File Name="midiconstants/status_codes.txt"/>
+    <File Name="midiconstants/gm_drumkit.py"/>
+    <File Name="midiconstants/gm_programs.py"/>
+    <File Name="midiconstants/status_codes.py"/>
+    <File Name="midiconstants/message.hpp"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./__targets_dbg" Command="$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="." PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="yes">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand>rm -rf __targets &amp;&amp; maike</RebuildCommand>
+        <CleanCommand>rm -rf __targets_dbg</CleanCommand>
+        <BuildCommand>maike</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>.</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="yes" EnableCpp14="yes">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP>MAIKE_TARGET_DIRECTORY=__targets</ClangPP>
+        <SearchPaths>/usr/include/gtk-3.0
+I/usr/include/at-spi2-atk/2.0
+/usr/include/at-spi-2.0
+/usr/include/dbus-1.0
+/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+/usr/include/gio-unix-2.0/
+/usr/include/mirclient
+/usr/include/mircommon
+/usr/include/mircookie
+/usr/include/cairo
+/usr/include/pango-1.0
+/usr/include/harfbuzz
+/usr/include/atk-1.0
+/usr/include/pixman-1
+/usr/include/freetype2
+/usr/include/libpng12
+/usr/include/gdk-pixbuf-2.0
+/usr/include/glib-2.0
+/usr/lib/x86_64-linux-gnu/glib-2.0/include</SearchPaths>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="__targets_rel" Command="./$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="." PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="yes">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand>rm -rf __targets_rel &amp;&amp; maike --configfiles=maikeconfig-rel.json</RebuildCommand>
+        <CleanCommand>rm -rf __targets_rel</CleanCommand>
+        <BuildCommand>maike --configfiles=maikeconfig-rel.json</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>.</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="yes" EnableCpp14="yes">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths>/usr/include/gtk-3.0
+I/usr/include/at-spi2-atk/2.0
+/usr/include/at-spi-2.0
+/usr/include/dbus-1.0
+/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+/usr/include/gio-unix-2.0/
+/usr/include/mirclient
+/usr/include/mircommon
+/usr/include/mircookie
+/usr/include/cairo
+/usr/include/pango-1.0
+/usr/include/harfbuzz
+/usr/include/atk-1.0
+/usr/include/pixman-1
+/usr/include/freetype2
+/usr/include/libpng12
+/usr/include/gdk-pixbuf-2.0
+/usr/include/glib-2.0
+/usr/lib/x86_64-linux-gnu/glib-2.0/include</SearchPaths>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

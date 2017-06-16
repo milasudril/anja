@@ -1,0 +1,59 @@
+digraph "Parser"
+	{
+	INIT->SECTION_BEGIN[label="case '#'"]
+	INIT->INIT[label="{whitespace}"]
+	INIT->ERROR_BAD_HEADER[label="default"]
+
+	SECTION_BEGIN->SECTION_BEGIN[label="case '#'"]
+	SECTION_BEGIN->SECTION_TITLE_ESCAPE[label="case '\\'"]
+	SECTION_BEGIN->RECORD[label="case '\\n'"]
+	SECTION_BEGIN->SECTION_TITLE_SPACE[label="{whitespace}"]
+	SECTION_BEGIN->SECTION_TITLE[label="default"]
+
+	SECTION_TITLE_SPACE->SECTION_TITLE_ESCAPE[label="case '\\'"]
+	SECTION_TITLE_SPACE->RECORD[label="case '\\n'"]
+	SECTION_TITLE_SPACE->SECTION_TITLE_SPACE[label="{whitespace}"]
+	SECTION_TITLE_SPACE->SECTION_TITLE[label="default"]
+
+	SECTION_TITLE->SECTION_TITLE_ESCAPE[label="case '\\'"]
+	SECTION_TITLE->RECORD[label="case '\\n'"]
+	SECTION_TITLE->SECTION_TITLE_SPACE[label="{whitespace}"]
+	SECTION_TITLE->SECTION_TITLE[label="default"]
+	SECTION_TITLE_ESCAPE->SECTION_TITLE[label="default"]
+
+	RECORD->SECTION_BEGIN[label="case '#'"]
+	RECORD->KEY[label="case '~'"]
+	RECORD->VALUE_ESCAPE[label="case '\\'"]
+	RECORD->RECORD[label="{whitespace}"]
+	RECORD->VALUE[label="default"]
+
+	VALUE_ESCAPE->VALUE[label="default"]
+	VALUE->VALUE_ESCAPE[label="case '\\'"]
+	VALUE->VALUE_NEWLINE[label="case '\\n'"]
+	VALUE->VALUE_SPACE[label="{whitespace}"]
+	VALUE->VALUE[label="default"]
+
+	VALUE_SPACE->VALUE_ESCAPE[label="case '\\'"]
+	VALUE_SPACE->VALUE_NEWLINE[label="case '\\n'"]
+	VALUE_SPACE->VALUE_SPACE[label="{whitespace}"]
+	VALUE_SPACE->VALUE[label="default"]
+
+	VALUE_NEWLINE->SECTION_BEGIN[label="case '#'"]
+	VALUE_NEWLINE->KEY[label="case '~'"]
+	VALUE_NEWLINE->VALUE_ESCAPE[label="case '\\'"]
+	VALUE_NEWLINE->VALUE_NEWLINE[label="{whitespace}"]
+	VALUE_NEWLINE->VALUE[label="default"]
+
+	KEY->KEY_ESCAPE[label="case '\\'"]
+	KEY->RECORD[label="case '\\n'"]
+	KEY->RECORD[label="case ':'"]
+	KEY->KEY_SPACE[label="{whitespace}"]
+	KEY->KEY[label="default"]
+	KEY_ESCAPE->KEY[label="default"]
+
+	KEY_SPACE->KEY_ESCAPE[label="case '\\'"]
+	KEY_SPACE->RECORD[label="case '\\n'"]
+	KEY_SPACE->RECORD[label="case ':'"]
+	KEY_SPACE->KEY_SPACE[label="{whitespace}"]
+	KEY_SPACE->KEY[label="default"]
+	}

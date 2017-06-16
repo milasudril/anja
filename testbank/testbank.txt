@@ -1,126 +1,86 @@
-==================================Anja testbank=================================
+#Anja testbank
 
-Description: This is a test file that demonstrates how Anja works. Pdsounds.org
-             claims that files on this site is in public domain.
+This is \  \ a test file that demonstrates how Anja works. Pdsounds.org claims that files on this site is in public domain. ~No escape needed here.\
+But here (single newline character).\
+~This should not need any escape char, because we did not switch to newline state (we came from escape state) \
+ ~Neither should this\
+ \ ~This needs, due to two whitespaces
 
-Master gain/dB: -7
+Two newlines are written as is.\
+ \ \
+ \ Newlines interleaved other whitespace
 
---------------------------------------Slot 1------------------------------------
+\~This must be escaped. Otherwise, this would be a key header.
 
-Description: [Sci-fi] effect. From pdsounds.org.
+~Master gain/dB: -7
+~Color presets: 1; 1; 0|0; 1; 0
 
-Filename:    alien_scanner.wav
+##Slot 1
+[Sci-fi] effect. From pdsounds.org.
+~Filename:    alien_scanner.wav
+~Color:       1; 0,534 678; 0.75
+~Channel: 1
+~Begin position/frames: 70000
+~End position/frames: 10000
+~Gain/dB: -6
+~Gain random level/dB: 5
 
-Color:       1; 0,534 678; 0.75
+##Slot 2
+~Description:      [Rooster] from pdsounds.org.
+~Filename:         medium rooster crowing.aiff
+~Color:            0.65;1;0
+~Options:          Sustain|Set gain on loop
+~Gain/dB: -6
+~Gain random level/dB: 3
+~Channel: 1
 
-Playback channel: 1
+##Slot 3
+Some sort of electric [pump] From pdsounds.org.
+~Filename:    pump_im.ogg
+~Color:       1;0.25;0
+~Options:     Loop
+~Channel: 2
 
+##Slot 4
+~Description: [Thunder]bolts From pdsounds.org.
+~Filename:    thunderstorm.flac
+~Color:       0,25;1;1
+~Options:     Sustain|Set gain on loop
+~Gain random level/dB: 6
+~Channel: 1
 
---------------------------------------Slot 2------------------------------------
+##Slot 5
+[Sine 48] 440 Hz sine wave sampled at 48000 Hz
+~Filename:    sine48k.wav
+~Color:       0.25;0;0.5
+~Channel: 3
 
-Description:      [Rooster] from pdsounds.org.
+##Slot 6
+[Sine 44] 440 Hz sine wave sampled at 44100 Hz
+~Filename:    sine44k.wav
+~Color:       1;1;0
+~Channel: 3
 
-Filename:         medium rooster crowing.aiff
-
-Color:            0.65;1;0
-
-Options:          Sustain|Set gain on loop
-
-Playback gain/dB: -6
-
-Playback gain random level/dB: 3
-
-Playback channel: 1
-
-
---------------------------------------Slot 3------------------------------------
-
-Description: Some sort of electric [pump] From pdsounds.org.
-
-Filename:    pump_im.ogg
-
-Color:       1;0.25;0
-
-Options:     Loop
-
-Playback channel: 2
-
-
---------------------------------------Slot 4------------------------------------
-
-Description: [Thunder]bolts From pdsounds.org.
-
-Filename:    thunderstorm.flac
-
-Color:       0,25;1;1
-
-Options:     Sustain|Set gain on loop
-
-Playback gain random level/dB: 6
-
-Playback channel: 1
-
-
---------------------------------------Slot 5------------------------------------
-
-Description: [Sine 48] 440 Hz sine wave sampled at 48000 Hz
-
-Filename:    sine48k.wav
-
-Color:       0.25;0;0.5
-
-Playback channel: 3
-
-
---------------------------------------Slot 6------------------------------------
-
-Description: [Sine 44] 440 Hz sine wave sampled at 44100 Hz
-
-Filename:    sine44k.wav
-
-Color:       1;1;0
-
-Playback channel: 3
-
-
---------------------------------------Slot 7------------------------------------
-
+##Slot 7
 Description: Swedish televerket "Dialog" [Ring]tone
+~Filename:    dialog.wav
+~Color:       0;0.5;1
+~Options:     Loop|Sustain
 
-Filename:    dialog.wav
+##Channel 1
+~Label: Fx
+~Gain/dB: 0
+~Fade time/s: 0
+~Color: 1;0;0
 
-Color:       0;0.5;1
+##Channel 2
+~Label: Ambient
+~Gain/dB: -6
+~Fade time/s: 4
+~Color: 0;1;0
 
-Options:     Loop|Sustain
-
-
-------------------------------------Channel 1-----------------------------------
-
-Label: Fx
-
-Gain/dB: 0
-
-Fade time/s: 0
-
-Color: 1;0;0
-
-
------------------------------------Channel 2------------------------------------
-
-Label: Ambient
-
-Gain/dB: -6
-
-Fade time/s: 4
-
-Color: 0;1;0
-
------------------------------------Channel 3------------------------------------
-
-Label: Test
-
-Gain/dB: 0
-
-Fade time/s: 2
-
-Color: 0;0;1
+##Channel 3
+~Label: Test
+~Gain/dB: 0
+~Fade time/s: 2
+~Color: 0;0;1
