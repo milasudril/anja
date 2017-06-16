@@ -438,9 +438,20 @@ void Application::optionChanged(SessionPropertiesEditor& editor,int id,int optio
 Application& Application::sessionLoad(const char* filename)
 	{
 	engine_stop();
-	m_session.load(filename);
-	m_session_editor.sessionUpdated();
-	title_update(m_session,m_mainwin);
+	try
+		{
+		m_session.load(filename);
+		m_session_editor.sessionUpdated();
+		title_update(m_session,m_mainwin);
+		}
+	catch(...)
+		{
+		try
+			{engine_start();}
+		catch(...)
+			{}
+		throw;
+		}
 	try
 		{engine_start();}
 	catch(...)
