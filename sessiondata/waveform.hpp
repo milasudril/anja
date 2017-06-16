@@ -238,7 +238,7 @@ namespace Anja
 				return *this;
 				}
 
-			Waveform& clear() noexcept
+			Waveform& reset() noexcept
 				{
 				Mutex::LockGuardNonblocking lock(m_mtx);
 				m_gain=0.0f;
@@ -249,6 +249,12 @@ namespace Anja
 				m_data.clear();
 				offsetsReset();
 				m_flags=0;
+				return *this;
+				}
+
+			Waveform& clear() noexcept
+				{
+				m_data.clear();
 				return *this;
 				}
 

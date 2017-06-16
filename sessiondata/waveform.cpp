@@ -22,7 +22,7 @@ const char* const* Waveform::flagNames() noexcept
 
 Waveform::Waveform(const SessionFileRecord& record,const char* filename)
 	{
-	clear();
+	reset();
 	waveformLoad(filename);
 	auto value=record.propertyGet(String("Gain/dB"));
 	if(value!=nullptr)
@@ -130,14 +130,14 @@ Waveform& Waveform::waveformLoad(const char* filename)
 //	If filename is empty or nullptr, clear the slot
 	if(filename==nullptr || *filename=='\0')
 		{
-		clear();
+		reset();
 		return *this;
 		}
 
 //	Try to load the file
 	WavefileInfo info;
 	WavefileReader reader(filename,info);
-	clear();
+	reset();
 	sampleRate(info.fs);
 	capacity(info.n_frames);
 	ArraySimple<float> buffer_tmp(BUFFER_SIZE);

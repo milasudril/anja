@@ -32,7 +32,7 @@ Engine::Engine(Session& session):r_session(&session)
 	,m_rec_buffers(48000)
 	,m_rec_write_offset(0)
 	,m_ch_state(0xffff)
-	,r_waveform_rec(nullptr)
+	,m_rec_length(0)
 	,m_client(client_name(session.titleGet()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
@@ -68,7 +68,6 @@ Engine::~Engine()
 //	destroy the engine.
 	while(!m_ui_events.empty());
 	m_running=0;
-	m_ready.set();
 	}
 
 void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index)
@@ -145,8 +144,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			break;
 
 		case RECORD_STOP:
-			printf("Record stop\n");
-			r_waveform_rec=nullptr;
+			m_rec_message_in=RecordMessage(RecAction::END,0,0);
 			break;
 
 		case MIDI::StatusCodes::CONTROL_CHANGE:
@@ -191,10 +189,8 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case RECORD_START:
-					{
-					printf("Record start %d\n",msg.value2());
-					r_waveform_rec=&r_session->waveformGet(midiToSlot(msg.value2()&0x7f));
-					}
+					m_rec_message_in=RecordMessage(RecAction::BEGIN
+						,midiToSlot(msg.value2()&0x7f),m_rec_write_offset);
 					break;
 
 				default:
@@ -223,6 +219,8 @@ int Engine::indexMaster(const AudioClient& client) const noexcept
 
 void Engine::process(AudioClient& client,int n_frames) noexcept
 	{
+	if(m_rec_message_in.action()!=RecAction::BEGIN)
+		{m_rec_message_in=RecordMessage(RecAction::NOP,0,0);}
 	auto fs=client.sampleRate();
 	auto time_factor=fs/1000.0;
 	auto now=time_factor*(now_ms() - m_time_init);
@@ -358,11 +356,27 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		auto n=std::min(static_cast<size_t>(n_frames),m_rec_buffers.length()-m_rec_write_offset);
 		memcpy(m_rec_buffers.begin<0>() + m_rec_write_offset,wave_in,n*sizeof(float));
 		m_rec_write_offset+=n;
-		if(static_cast<size_t>(m_rec_write_offset)==m_rec_buffers.length())
+		switch(m_rec_message_in.action())
 			{
-			m_rec_buffers.swap<0,1>();
-			m_rec_write_offset=0;
-			m_ready.set();
+			case RecAction::END:
+				m_rec_length=m_rec_write_offset;
+				m_rec_write_offset=0;
+				m_rec_buffers.swap<0,1>();
+				memset(m_rec_buffers.begin<0>(),0,m_rec_buffers.length()*sizeof(float));
+				m_rec_message=m_rec_message_in;
+				m_ready.set();
+				break;
+
+			default:
+				if(static_cast<size_t>(m_rec_write_offset)==m_rec_buffers.length())
+					{
+					m_rec_buffers.swap<0,1>();
+					memset(m_rec_buffers.begin<0>(),0,m_rec_buffers.length()*sizeof(float));
+					m_rec_write_offset=0;
+					m_rec_message=m_rec_message_in;
+					m_ready.set();
+					m_rec_message_in=RecordMessage(RecAction::NOP,0,0);
+					}
 			}
 		}
 	}
@@ -370,31 +384,46 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 template<>
 void Engine::run<Engine::TaskId::RECORD>()
 	{
+	int8_t rec_slot=-1;
 	Waveform* r_waveform=nullptr;
 	while(m_running)
 		{
 		m_ready.wait();
-		auto r_waveform_in=r_waveform_rec;
-		if(r_waveform==nullptr && r_waveform_in!=nullptr)
+		RecordMessage rec_message=m_rec_message;
+		switch(rec_message.action())
 			{
-			if(r_waveform_in->lockTry())
-				{
-				r_waveform=r_waveform_in;
-				r_waveform->clear();
-				printf("Locked resource %p for REC\n",r_waveform);
-				}
-			}
+			case RecAction::NOP:
+				if(r_waveform!=nullptr)
+					{r_waveform->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());}
+				break;
 
-		if(r_waveform!=nullptr)
-			{
-			r_waveform->append(m_rec_buffers.begin<1>(),m_rec_buffers.length());
-			if(r_waveform_in==nullptr)
+			case RecAction::BEGIN:
 				{
-				printf("Unlocking resource %p for REC\n",r_waveform);
-				r_waveform->sampleRate(m_client.sampleRate()).offsetsReset().unlock();
-				r_waveform=nullptr;
+				auto l=rec_message.longval();
+				auto rs=rec_message.shortval();
+				assert(rs>=0 && rs<128);
+				auto r_waveform_in=&r_session->waveformGet(rs);
+				if(r_waveform_in->lockTry())
+					{
+					r_waveform_in->clear();
+					r_waveform_in->append(m_rec_buffers.begin<1>() + l,m_rec_buffers.length() - l);
+					rec_slot=rs;
+					r_waveform=r_waveform_in;
+					}
 				}
+				break;
+
+			case RecAction::END:
+				if(r_waveform!=nullptr)
+					{
+					r_waveform->append(m_rec_buffers.begin<1>(),m_rec_length)
+						.sampleRate(m_client.sampleRate()).offsetsReset().unlock();
+					r_waveform=nullptr;
+					m_vt.record_done(r_cb_obj,*this,rec_slot);
+					}
+				break;
 			}
+		m_rec_message=RecordMessage(RecAction::NOP,0,0);
 		}
 	}
 

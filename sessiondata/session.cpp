@@ -156,7 +156,7 @@ Session::Session(const char* filename):m_slot_active(0)
 void Session::waveformsClear()
 	{
 	std::for_each(m_waveforms.begin(),m_waveforms.end(),[](Waveform& wf)
-		{wf.clear();});
+		{wf.reset();});
 
 	std::for_each(m_waveform_data.begin(),m_waveform_data.end(),[](WaveformData& wd)
 		{wd.clear();});

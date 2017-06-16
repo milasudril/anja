@@ -19,12 +19,10 @@ using namespace Anja;
 
 ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo.png));
 
-static constexpr const char* ANJA_OFFLINE="Anja is currently offline. Click "
+static constexpr const char* ANJA_OFFLINE="Click "
 	"`Start engine` in the action panel to connect to the default JACK server.";
-static constexpr const char* ANJA_ONLINE="Anja is connected to the default JACK "
-	"server. Use a JACK patchbay tool such as Catia to route signals to/from Anja.";
-static constexpr const char* ANJA_RESTART_NEEDED="The engine needs to be restarted. "
-	"Notice that doing so requires rerouting signals, and will stop all playback.";
+static constexpr const char* ANJA_ONLINE="Use a JACK patchbay tool such as Catia to route signals to/from Anja.";
+static constexpr const char* ANJA_RESTART_NEEDED="The engine needs to be restarted.";
 
 static void title_update(const Session& session,Window& win)
 	{
@@ -227,7 +225,10 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			{
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL)
-				{m_engine->recordStop().recordStart(note);}
+				{
+				printf("[keyDown] Record start %d\n",note);
+				m_engine->recordStop().recordStart(note);
+				}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
@@ -288,8 +289,12 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 		if(note!=0xff)
 			{
 			auto slot=scancodeToSlot(scancode);
-			if(keymask&KEYMASK_KEY_CTRL)
-				{m_engine->recordStop();}
+			if(keymask&KEYMASK_KEY_CTRL || scancode==Keys::RECORD_START_L
+				|| scancode==Keys::RECORD_START_R)
+				{
+				printf("[keyUp] Record stop %d\n",note);
+				m_engine->recordStop();
+				}
 			else
 				{
 				m_engine->messagePost(MIDI::Message

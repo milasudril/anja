@@ -140,12 +140,55 @@ namespace Anja
 			int m_rec_write_offset;
 			uint16_t m_ch_state;
 			pcg32 m_rng;
-			Waveform* volatile r_waveform_rec;
+
+			enum RecAction:int16_t{NOP,BEGIN,END};
+
+			union RecordMessage
+				{
+				public:
+					RecordMessage()=default;
+
+					RecordMessage(volatile const RecordMessage& x) __attribute__((always_inline)):
+						m_storage(x.m_storage){}
+
+					void operator=(const RecordMessage& x) volatile __attribute__((always_inline))
+						{
+						m_storage=x.m_storage;
+						}
+
+					RecordMessage(RecAction action,int16_t shortval,int32_t longval)
+						{
+						m_vals.action=action;
+						m_vals.shortval=shortval;
+						m_vals.longval=longval;
+						}
+
+					RecAction action() const noexcept
+						{return m_vals.action;}
+
+					int16_t shortval() const noexcept
+						{return m_vals.shortval;}
+
+					int32_t longval() const noexcept
+						{return m_vals.longval;}
+
+				private:
+					int64_t m_storage;
+					struct Values
+						{
+						RecAction action;
+						int16_t shortval;
+						int32_t longval;
+						} m_vals;
+				};
+			volatile RecordMessage m_rec_message;
+			volatile int m_rec_length;
+			RecordMessage m_rec_message_in;
 			AudioClient m_client;
 			ReadySignal m_ready;
 			Thread m_rec_thread;
 
-			void process(MIDI::Message msg,int offset,double fs8) noexcept;
+			void process(MIDI::Message msg,int offset,double fs) noexcept;
 
 			static float dB_to_MIDI_val(float val) noexcept
 				{return 127.0f*(val + 72.0f)/78.0f;}
