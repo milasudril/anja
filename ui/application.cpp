@@ -502,4 +502,8 @@ Application::Application():
 			.showPng(m_images,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
 		});
 	m_mainwin.show();
+	try
+		{engine_start();}
+	catch(...)
+		{}
 	}
