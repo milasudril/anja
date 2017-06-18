@@ -195,6 +195,7 @@
     </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
     <File Name="README.md"/>
+    <File Name="memorender.py"/>
   </VirtualDirectory>
   <VirtualDirectory Name="midiconstants">
     <File Name="midiconstants/control_codes.py"/>
