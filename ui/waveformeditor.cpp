@@ -226,21 +226,10 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			if(*entry.content()!='\0'
 				&& !m_waveform.waveformLoaded(entry.content()))
 				{
-				try
-					{
-					m_waveform.waveformLoad(entry.content());
-					m_waveform_db=filename_update(m_waveform,entry,m_options_input,m_plot);
-					cursor_begin_auto();
-					cursor_end_auto();
-					m_plot.showAll();
-					}
-				catch(const Error& err)
-					{
-					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-						,r_images,err.message(),Message::Type::ERROR));
-					m_err_dlg->callback(*this,0);
-					entry.content(m_waveform.filename().begin());
-					}
+				if(m_waveform.flags()&Waveform::RECORDED)
+					{waveform_confirm_load(1);}
+				else
+					{waveform_load(m_filename_input.content());}
 				}
 			break;
 
@@ -325,6 +314,92 @@ void WaveformEditor::confirmPositive(Dialog<Message,DialogOk>& dlg,int id)
 	m_err_dlg.reset();
 	}
 
+bool WaveformEditor::waveform_saved()
+	{
+	if(!(m_waveform.flags()&Waveform::RECORDED))
+		{return 1;}
+	std::string temp(m_waveform.filename().begin());
+	if(filenameSelect(m_filename,m_waveform.directory().begin(),temp
+		,FilenameSelectMode::SAVE))
+		{
+		m_waveform.waveformSave(temp.c_str());
+		return 1;
+		}
+	return 0;
+	}
+
+void WaveformEditor::waveform_confirm_load(int method)
+	{
+	m_confirm_dlg.reset(new Dialog<Message,DialogConfirmSave>(m_box
+		,"Load new waveform"
+		,r_images
+		,"The current slot has been used for recording. Do you "
+		 "want to save this recording?",Message::Type::WARNING));
+	m_confirm_dlg->callback(*this,method);
+	}
+
+
+void WaveformEditor::dismiss(Dialog<Message,DialogConfirmSave>& dlg,int id)
+	{m_confirm_dlg.reset();}
+
+void WaveformEditor::confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,int id)
+	{
+	m_confirm_dlg.reset();
+	std::string temp(m_waveform.filename().begin());
+	if(filenameSelect(m_box,m_waveform.directory().begin(),temp
+		,FilenameSelectMode::SAVE))
+		{
+		m_waveform.waveformSave(temp.c_str());
+		waveform_load(id);
+		}
+	}
+
+void WaveformEditor::confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,int id)
+	{
+	m_confirm_dlg.reset();
+	waveform_load(id);
+	}
+
+void WaveformEditor::waveform_load(int method)
+	{
+	try
+		{
+		switch(method)
+			{
+			case 0:
+				{
+				std::string temp(m_waveform.filename().begin());
+				if(filenameSelect(m_box,m_waveform.directory().begin(),temp
+					,FilenameSelectMode::OPEN,[this](const char* filename)
+						{return m_waveform.loadPossible(filename);},"Waveform audio"))
+					{waveform_load(temp.c_str());}
+				else
+					{return;}
+				}
+				break;
+
+			case 1:
+				waveform_load(m_filename_input.content());
+				break;
+			}
+		}
+	catch(const Error& err)
+		{
+		m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+			,r_images,err.message(),Message::Type::ERROR));
+		m_err_dlg->callback(*this,0);
+		}
+	}
+
+void WaveformEditor::waveform_load(const char* filename)
+	{
+	m_waveform.waveformLoad(filename);
+	m_waveform.dirtyClear();
+	m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
+	cursor_begin_auto();
+	cursor_end_auto();
+	m_plot.showAll();
+	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
@@ -338,48 +413,17 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			return;
 
 		case ButtonId::FILENAME_BROWSE:
-			{
-			std::string temp(m_waveform.filename().begin());
-			if(filenameSelect(m_filename,m_waveform.directory().begin(),temp
-				,FilenameSelectMode::OPEN,[this](const char* path)
-					{return m_waveform.loadPossible(path);},"Wave Audio files"))
-				{
-				try
-					{
-					auto flags=m_waveform.flags();
-					m_waveform.waveformLoad(temp.c_str());
-					m_waveform.flagsSet(flags);
-					m_waveform.dirtyClear();
-					m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-					cursor_begin_auto();
-					cursor_end_auto();
-					m_plot.showAll();
-					}
-				catch(const Error& err)
-					{
-					m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-						,r_images,err.message(),Message::Type::ERROR));
-					m_err_dlg->callback(*this,0);
-					}
-				}
-			}
+			if(m_waveform.flags()&Waveform::RECORDED)
+				{waveform_confirm_load(0);}
+			else
+				{waveform_load(0);}
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
-			try
-				{
-				m_waveform.waveformLoad(m_waveform.filename().begin());
-				m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-				cursor_begin_auto();
-				cursor_end_auto();
-				m_plot.showAll();
-				}
-			catch(const Error& err)
-				{
-				m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-					,r_images,err.message(),Message::Type::ERROR));
-				m_err_dlg->callback(*this,0);
-				}
+			if(m_waveform.flags()&Waveform::RECORDED)
+				{waveform_confirm_load(1);}
+			else
+				{waveform_load(1);}
 			break;
 
 		case ButtonId::COLOR_PICK:

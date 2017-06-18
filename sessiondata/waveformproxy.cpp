@@ -9,26 +9,6 @@
 
 using namespace Anja;
 
-namespace
-	{
-	class IdGenerator
-		{
-		public:
-			IdGenerator() noexcept:m_value(time(NULL)){}
-
-			uint32_t next() noexcept
-				{
-				++m_value;
-				return m_value;
-				}
-
-		private:
-			uint32_t m_value;
-		};
-	}
-
-static IdGenerator s_id_gen;
-
 static String filename_get(const char* filename,const String& load_path)
 	{
 	if(absoluteIs(filename))

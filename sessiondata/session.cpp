@@ -227,6 +227,7 @@ void Session::clear()
 		{m_color_presets.append(x);});
 	m_state_flags=0;
 	m_flags=0;
+	m_directory=workingDirectory();
 	}
 
 bool Session::loadPossible(const char* filename) const

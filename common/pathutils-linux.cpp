@@ -17,6 +17,13 @@
 
 using namespace Anja;
 
+String Anja::workingDirectory()
+	{
+	String ret;
+	std::unique_ptr<char,decltype(&::free)> buffer(getcwd(NULL,0),::free);
+	return String(buffer.get()).append('/');
+	}
+
 String Anja::realpath(const char* path)
 	{
 	auto fd=open(path,O_CREAT|O_EXCL,S_IRUSR|S_IWUSR);

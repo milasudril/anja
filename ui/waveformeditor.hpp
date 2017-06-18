@@ -32,6 +32,25 @@ namespace Anja
 	class WaveformEditor
 		{
 		public:
+			struct DialogConfirmSave
+				{
+				static constexpr const char* dismiss() noexcept
+					{return "Cancel";}
+
+				static constexpr const char* confirmPositive() noexcept
+					{return "Save";}
+
+				static constexpr const char* confirmNegative() noexcept
+					{return "Don't save";}
+
+				static constexpr const char* user1() noexcept
+					{return nullptr;}
+
+				static constexpr const char* user2() noexcept
+					{return nullptr;}
+				};
+
+
 			enum class ButtonId:int
 				{FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
 
@@ -108,6 +127,11 @@ namespace Anja
 			void confirmPositive(Dialog<ColorPicker>& dlg,int id);
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
+
+			void dismiss(Dialog<Message,DialogConfirmSave>& dlg,int id);
+			void confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,int id);
+			void confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,int id);
+
 			WaveformEditor& waveform(const WaveformProxy& waveform);
 			WaveformEditor& waveformUpdate();
 
@@ -140,11 +164,16 @@ namespace Anja
 			void offsets_update();
 			void cursor_begin_auto() noexcept;
 			void cursor_end_auto() noexcept;
+			bool waveform_saved();
+			void waveform_confirm_load(int method);
+			void waveform_load(int method);
+			void waveform_load(const char* filename_new);
 
 			WaveformProxy m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
 			std::unique_ptr<Dialog<Message,DialogOk>> m_err_dlg;
+			std::unique_ptr<Dialog<Message,DialogConfirmSave>> m_confirm_dlg;
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
 			Box m_box;
