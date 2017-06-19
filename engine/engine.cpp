@@ -60,7 +60,8 @@ void Engine::bufferSize(AudioClient& client,int n_frames)
 
 Engine::~Engine()
 	{
-	recordStop();
+	//TODO: Special message to stop all recording processes?
+	recordStop(0);
 	for(int k=0;k<16;++k)
 		{messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,k,0});}
 
@@ -143,9 +144,6 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				}
 			break;
 
-		case RECORD_STOP:
-			m_rec_message_in=RecordMessage(RecAction::END,0,0);
-			break;
 
 		case MIDI::StatusCodes::CONTROL_CHANGE:
 			switch(msg.ctrlCode())
@@ -202,6 +200,10 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				case RECORD_START:
 					m_rec_message_in=RecordMessage(RecAction::BEGIN
 						,midiToSlot(msg.value2()&0x7f),m_rec_write_offset);
+					break;
+
+				case RECORD_STOP:
+					m_rec_message_in=RecordMessage(RecAction::END,0,0);
 					break;
 
 				default:

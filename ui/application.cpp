@@ -240,7 +240,7 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 			{
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL)
-				{m_engine->recordStop().recordStart(note);}
+				{m_engine->recordStop(note).recordStart(note);}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
@@ -303,7 +303,7 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 			auto slot=scancodeToSlot(scancode);
 			if(keymask&KEYMASK_KEY_CTRL || scancode==Keys::RECORD_START_L
 				|| scancode==Keys::RECORD_START_R)
-				{m_engine->recordStop();}
+				{m_engine->recordStop(note);}
 			else
 				{
 				m_engine->messagePost(MIDI::Message
@@ -330,7 +330,8 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 
 				case Keys::RECORD_START_L:
 				case Keys::RECORD_START_R:
-					m_engine->recordStop();
+					//TODO: Special message to stop all recording processes?
+					m_engine->recordStop(0);
 					break;
 				}
 

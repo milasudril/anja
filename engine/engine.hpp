@@ -107,9 +107,10 @@ namespace Anja
 				return messagePost(MIDI::Message(RECORD_START,0,slot));
 				}
 
-			Engine& recordStop() noexcept
+			Engine& recordStop(int slot) noexcept
 				{
-				return messagePost(MIDI::Message{RECORD_STOP,0,0});
+				assert(slot>=0 && slot<128);
+				return messagePost(MIDI::Message{RECORD_STOP,0,slot});
 				}
 
 			double sampleRate() const noexcept
@@ -120,7 +121,7 @@ namespace Anja
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
 			static constexpr auto FADE_IN=MIDI::ControlCodes::GENERAL_PURPOSE_2;
 			static constexpr auto RECORD_START=MIDI::ControlCodes::GENERAL_PURPOSE_3;
-			static constexpr auto RECORD_STOP=MIDI::StatusCodes::STOP;
+			static constexpr auto RECORD_STOP=MIDI::ControlCodes::GENERAL_PURPOSE_4;
 
 			Session* r_session;
 			volatile bool m_running;
