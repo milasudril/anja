@@ -39,14 +39,17 @@ namespace Anja
 
 		};
 
-	inline Vec4dAVX min(Vec4dAVX a,Vec4dAVX b)
+	inline Vec4dAVX min(Vec4dAVX a,Vec4dAVX b) noexcept
 		{return {a.m_data<b.m_data? a.m_data : b.m_data}; }
 
-	inline Vec4dAVX max(Vec4dAVX a,Vec4dAVX b)
+	inline Vec4dAVX max(Vec4dAVX a,Vec4dAVX b) noexcept
 		{return {a.m_data<b.m_data? b.m_data : a.m_data}; }
 
-	inline Vec4dAVX clamp(Vec4dAVX a,Vec4dAVX b,Vec4dAVX v)
+	inline Vec4dAVX clamp(Vec4dAVX a,Vec4dAVX b,Vec4dAVX v) noexcept
 		{return max(a,min(b,v));}
+
+	inline Vec4dAVX operator*(double c,Vec4dAVX v) noexcept
+		{return Vec4dAVX{c*v.m_data};}
 
 #endif
 	struct Vec4dSSE2
@@ -96,6 +99,11 @@ namespace Anja
 
 	inline Vec4dSSE2 clamp(Vec4dSSE2 a,Vec4dSSE2 b,Vec4dSSE2 v) noexcept
 		{return max(a,min(b,v));}
+
+
+	inline Vec4dSSE2 operator*(double c,Vec4dSSE2 v) noexcept
+		{return Vec4dSSE2{c*v.x,c*v.y};}
+
 	}
 
 #endif // ANJA_VEC4D_HPP

@@ -167,24 +167,35 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 
 				case FADE_IN:
 					{
-					auto t=MIDI_val_to_sec(msg.value2());
-					auto f=1.0/sec_to_decay_factor(t,fs);
-					auto f2=f*f;
-					auto f4=f2*f2;
-					m_channel_gain.get<1>(msg.channel()).first=Vec4d{1.0,f,f2,f2*f};
-					m_channel_gain.get<1>(msg.channel()).first*=Vec4d{1.0e-4,1.0e-4,1.0e-4,1.0e-4};
-					m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
+					auto G=m_channel_gain.get<1>(msg.channel()).first;
+					if(G[0]>=G[3])
+						{
+						auto t=MIDI_val_to_sec(msg.value2());
+						auto f=1.0/sec_to_decay_factor(t,fs);
+						auto f2=f*f;
+						auto f4=f2*f2;
+						auto g=1.0e-4*Vec4d{1.0,f,f2,f2*f};
+						m_channel_gain.get<1>(msg.channel()).first=g[3]>G[0]?
+							g:G.reverse();
+						m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
+						}
 					}
 					break;
 
 				case FADE_OUT:
 					{
-					auto t=MIDI_val_to_sec(msg.value2());
-					auto f=sec_to_decay_factor(t,fs);
-					auto f2=f*f;
-					auto f4=f2*f2;
-					m_channel_gain.get<1>(msg.channel()).first=Vec4d{1.0,f,f2,f2*f};
-					m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
+					auto G=m_channel_gain.get<1>(msg.channel()).first;
+					if(G[0]<=G[3])
+						{
+						auto t=MIDI_val_to_sec(msg.value2());
+						auto f=sec_to_decay_factor(t,fs);
+						auto f2=f*f;
+						auto f4=f2*f2;
+						auto g=Vec4d{1.0,f,f2,f2*f};
+						m_channel_gain.get<1>(msg.channel()).first=g[3]<G[0]?
+							g:G.reverse();
+						m_channel_gain.get<1>(msg.channel()).second=Vec4d{f4,f4,f4,f4};
+						}
 					}
 					break;
 
