@@ -1,1 +1,1 @@
-1.9-beta.0-6-gd44d182-dirty
+1.9-beta.1
