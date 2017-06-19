@@ -14,6 +14,9 @@ def __render__(scene,target_dir,in_dir,target_name):
 	bpy.ops.wm.save_mainfile()
 
 def renderUpToDate(scene):
+	import bpy
+	if not 'render_result' in bpy.data.images:
+		return False
 	if scene.get('up_to_date',False):
 		return True
 	return False
@@ -33,8 +36,11 @@ def main():
 	if renderUpToDate(bpy.context.scene):
 		bpy.data.images['render_result'].save_render(target_dir+'/'+in_dir+'/'+target)
 	else:
-		bpy.context.user_preferences.addons['cycles'].preferences.compute_device_type = 'CUDA'
-		bpy.context.user_preferences.addons['cycles'].preferences.devices[0].use = True
+		try:
+			bpy.context.user_preferences.addons['cycles'].preferences.compute_device_type = 'CUDA'
+			bpy.context.user_preferences.addons['cycles'].preferences.devices[0].use = True
+		except:
+			print('Could not set select CUDA as compute device. Rendering on the CPU')
 		__render__(bpy.context.scene,target_dir,in_dir,target)
 
 if __name__ == "__main__":
