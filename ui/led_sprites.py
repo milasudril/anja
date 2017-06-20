@@ -3,19 +3,19 @@
 #@      [
 #@           {
 #@			 "name":"led_stop.png","dependencies":
-#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
+#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"../memorender.py","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
 #@			 "name":"led_wait.png","dependencies":
-#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
+#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"../memorender.py","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
 #@			 "name":"led_ready.png","dependencies":
-#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
+#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"../memorender.py","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@           ,{
 #@			 "name":"led_off.png","dependencies":
-#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"blender","rel":"tool"}]
+#@				[{"ref":"led_sprites.blend","rel":"file"},{"ref":"../memorender.py","rel":"file"},{"ref":"blender","rel":"tool"}]
 #@			 }
 #@      ]
 #@  }
@@ -23,6 +23,8 @@
 import subprocess
 import sys
 import os
+sys.path.append(os.getcwd())
+import memorender
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -33,19 +35,10 @@ try:
 
 	print('# Baking LED sprites')
 
-	blender=subprocess.Popen(['blender','-b',in_dir+'/led_sprites.blend' \
-		,'-s','1','-e','4','-o',target_dir+'/'+in_dir+'/led_#.png','-a'] \
-		,stdout=subprocess.PIPE)
-	for lines in blender.stdout:
-		progress=lines.decode('utf8').rstrip().split('|')
-		print('# Blender: %s'%(progress[-1].strip()))
-
-	os.rename(target_dir+'/'+in_dir+'/led_1.png',target_dir+'/'+in_dir+'/led_stop.png')
-	os.rename(target_dir+'/'+in_dir+'/led_2.png',target_dir+'/'+in_dir+'/led_wait.png')
-	os.rename(target_dir+'/'+in_dir+'/led_3.png',target_dir+'/'+in_dir+'/led_ready.png')
-	os.rename(target_dir+'/'+in_dir+'/led_4.png',target_dir+'/'+in_dir+'/led_off.png')
-
+	memorender.render('led_sprites.blend',in_dir,target_dir,'led_stop.png'\
+		,'led_wait.png','led_ready.png','led_off.png')
 	sys.exit(0)
+
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))
 	sys.exit(-1)
