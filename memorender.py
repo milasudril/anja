@@ -43,7 +43,7 @@ if __name__ == "__main__":
 def render(source,in_dir,target_dir,*target_name):
 	import subprocess
 	argv=['blender','-b',in_dir+'/'+source \
-		,'--python','memorender.py','--',target_dir,in_dir]
+		,'--python',__file__,'--',target_dir,in_dir]
 	argv.extend(target_name)
 	print('# Starting blender with command line ',argv)
 	blender=subprocess.Popen(argv,stdout=subprocess.PIPE)
