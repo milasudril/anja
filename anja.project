@@ -193,21 +193,22 @@
       <File Name="engine/voice.cpp"/>
       <File Name="engine/engine.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="midiconstants">
+      <File Name="midiconstants/control_codes.py"/>
+      <File Name="midiconstants/control_codes.txt"/>
+      <File Name="midiconstants/compile.py"/>
+      <File Name="midiconstants/gm_drumkit.txt"/>
+      <File Name="midiconstants/gm_programs.txt"/>
+      <File Name="midiconstants/status_codes.txt"/>
+      <File Name="midiconstants/gm_drumkit.py"/>
+      <File Name="midiconstants/gm_programs.py"/>
+      <File Name="midiconstants/status_codes.py"/>
+      <File Name="midiconstants/message.hpp"/>
+    </VirtualDirectory>
     <File Name="maikeconfig-inst.json"/>
     <File Name="README.md"/>
     <File Name="memorender.py"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="midiconstants">
-    <File Name="midiconstants/control_codes.py"/>
-    <File Name="midiconstants/control_codes.txt"/>
-    <File Name="midiconstants/compile.py"/>
-    <File Name="midiconstants/gm_drumkit.txt"/>
-    <File Name="midiconstants/gm_programs.txt"/>
-    <File Name="midiconstants/status_codes.txt"/>
-    <File Name="midiconstants/gm_drumkit.py"/>
-    <File Name="midiconstants/gm_programs.py"/>
-    <File Name="midiconstants/status_codes.py"/>
-    <File Name="midiconstants/message.hpp"/>
+    <File Name="Makefile"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
