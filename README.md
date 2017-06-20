@@ -2,7 +2,7 @@ Anja med J -- A sample player for Jack
 ======================================
 
 This is a live performance sample player/recorder for Jack. In contrast to
-Hydrogen, this will feature a virtual keyboard display as its main UI.
+Hydrogen, this features a virtual keyboard display as its main UI.
 Pre-recorded wave files can be associated to different keyboard keys, and the
 virtual keyboard display will show labels for mapped keys, making it easier to
 find the right sample during a live session. There is also a recording mode, so
@@ -46,11 +46,11 @@ These steps should be sufficient to compile Anja on Ubuntu:
 	sudo apt-get install pkg-config libgtk-3-dev g++ blender inkscape \
 		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev \
 		libjemalloc-dev
-	./build.sh
+	make
 
 In order to compile `maike`, you will also need `libjansson-dev`. You may need
 to add a more up-to-date version of blender. Ubuntu users can use this PPA:
 
  * https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender
 
-After compling Anja, the binary will be located in `./__targets_rel` or `__targets_dbg`.
+After compling Anja, the binary will be located in `__targets_rel` or `__targets_dbg`.

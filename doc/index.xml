@@ -1,0 +1,301 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="html.xsl"?>
+<document>
+	<title>Anja user's guide</title>
+	<author>Torbjörn Rathsman</author>
+	<titlepic>
+		<includegraphics src="../logo-hires.png" media="(min-width:1024px)" />
+		<includegraphics src="../logo-lowres.png" media="(max-width:1024px)" />
+	</titlepic>
+
+	<abstract>
+		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featrues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
+	</abstract>
+
+	<tableofcontents />
+
+	<chapter id="intro">Introduction</chapter>
+	<p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
+
+	<p>Anja also features a channel mixer with 16 channels. All sound effects are routed through one of these channels. The channel mixer makes it possible to fade a group of sound effects together. As with sound effects, each channel has a color and a description. In addition to color, description and channel gain, each channel also has an adjustable fade time, that is used to automatically fade the channel.</p>
+
+	<p>The backend of Anja is JACK, the low-latency audio server<cite>jack</cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
+
+	<p>The session file format of Anja is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
+
+
+	<section id="requirements">System requirements</section>
+	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UI is requires <quantity unit="px">670</quantity>.</p>
+
+
+	<section id="comparison">Anja compared to other software</section>
+	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also an exposed <em>kill all</em> feature.</p>
+
+	<chapter id="install">Installing Anja</chapter>
+
+	<p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure.</p>
+
+	<section id="installlinux">Installing on a GNU/Linux system</section>
+
+	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
+
+	<section id="compile">Compiling Anja</section>
+	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in <cite>anjadeps</cite>. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname>and <prgname>jq</prgname>.</p>
+
+<p>As mentioned above, the Anja source package can be obtained from <cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball issue the command</p>
+
+	<code language="bash">tar -xf anja.tar.gz</code>
+
+	<p>This will create a directory <dirname>anja</dirname>, in current directory. Now <prgname>cd</prgname> into that directory and run <prgname>make</prgname>:</p>
+
+	<code language="bash">cd anja
+make</code>
+
+<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
+<code language="bash">__targets_rel/anja</code>
+
+<infobox type="warning">Normally, Anja is distributed with pre-rendered logo images. It may happen that the corresponding <prgname>Blender</prgname> file has been updated and not the logo images. In this case, it will take a much longer time than normal, to compile Anja, since the <dfn>makefile</dfn> will need to rerender the logo.</infobox>
+
+	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do</p>
+<code language="bash">sudo mv __targets_rel/anja /usr/local/bin</code>
+<p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
+<code language="bash">mv __targets_rel/anja ~/bin</code>
+
+	<chapter id="using">Using Anja</chapter>
+	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine.</p>
+
+	<figure id="anjastart">
+		<includegraphics src="anja-mainwindowstart.png" />
+		<caption>The Anja window, as shown after launching Anja without any command line arguments</caption>
+	</figure>
+
+	<figure id="anjaworkspace">
+		<includegraphics src="anjaworkspace.png" />
+		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>
+	</figure>
+
+	<section id="addfx">Loading a waveform</section>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
+
+	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
+	</infobox>
+
+	<section id="play">Playing waveforms</section>
+	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
+
+	<code language="bash">jack_lsp</code>
+
+	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
+	<code language="nohighlight">system:capture_1
+system:capture_2
+system:playback_1
+system:playback_2
+New session.anja:Master out
+New session.anja:Audio capture
+New session.anja:MIDI in
+New session.anja:MIDI out</code>
+<p>The interesting port in this case is <dirname>New session.anja:Master out</dirname>. Connecting this port to <dirname>system:playback_1</dirname> and <dirname>system:playback_2</dirname> will enable sound output from Anja to the left and right speaker (or what ever is connected to the corresponding audio output ports of the computer). JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. The command to connect these ports would be</p>
+<code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
+jack_connect 'New session.anja:Master out' 'system:playback_2'
+</code>
+<p>The status message shown when the audio engine is running suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catiafig</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
+
+<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. Depending on playback options (see <ref>pboptions</ref>), playback is stopped  by releasing the key, or when the playback position reaches the <dfn>end cursor</dfn> (see <ref>waveformtrim</ref>).</p>
+
+<infobox type="info">Triggering playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
+
+<figure id="catiafig">
+	<includegraphics src="catiaanja.png"/>
+	<caption>Catia with an Anja session started</caption>
+</figure>
+
+<section id="rec">Capturing waveforms</section>
+<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Audio capture</dirname> is connected to a signal source. Then press <kbd>Ins</kbd> and the typeing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ins</kbd> is released before the typing area key, the captured waveform will be playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
+
+<infobox type="info">Triggering audio capture through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
+
+<infobox type="info">It is not possible to record waveforms to a slot that has been marked as read-only. See <ref>waveformprop</ref> form more information.</infobox>
+
+<infobox type="warning">Capturing waveforms stores the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
+
+<section id="waveformprop">Configuring waveform playback</section>
+<p>The playaback behaviour and other properties can be controlled through the <dfn>Waveform data</dfn> tab in the <dfn>Settings panel</dfn> (Area (3) in <ref>anjaworkspace</ref>). An enlarged view of the <dfn>Waveform data</dfn> panel is shown in <ref>waveformdata</ref>. This view is activated by clicking on the corresponding key on the keyboard view (Area (2) in <ref>anjaworkspace</ref>).</p>
+
+<figure id="waveformdata">
+	<includegraphics src="anja-waveformdata.png" />
+	<caption>An enlarged view of the <dfn>Settings panel</dfn> showing waveform data. This panel contains various settings controlling playback of the selected slot.</caption>
+</figure>
+
+<subsection id="wavesource">Source file selection</subsection>
+<p>The source file is chosen throught the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
+
+<infobox type="info">
+	It is not possible to load another waveform when the current slot is in use by the engine.
+</infobox>
+
+<infobox type="info">
+	Changing the source file from disk does not affect Anja, since Anja loads the file into memory.</infobox>
+
+<infobox type="warning">
+	Avoid loading large files. Doing so, may exhaust system memory. See <ref>requirements</ref> for information about memory requirements.
+</infobox>
+
+<subsection id="description">Waveform description</subsection>
+<p>It is possible to assign an arbitrary description to the waveform slot through the <ui-formfield>Description</ui-formfield> field. The description does not affect the waveform playback, but makes it easier to find the waveform in the <dfn>Keyboard view</dfn>.</p>
+
+<p>It may happen that the description is long. Therefore it is possible to mark a key-phrase by surrounding it with square brackets. Then, only the text within the first pair of square brackets will appear at the virtual key. If there are no square brackets within the description, the first word will be used instead.</p>
+
+<subsection id="wavecolor">Waveform color</subsection>
+<p>Like description (see <ref>description</ref>), the <ui-formfield>Color</ui-formfield> field is only used for visual enhancements. The color is given as red-green-blue-alpha values delimited by <char>;</char>, where each component is in the range [0, 1]. If the <ui-button>...</ui-button> is pressed a color selection dialog based on the HSL color system appears. This dialog is described in more detail in <ref>colordlg</ref>.</p>
+
+<infobox type="info">
+	The idea behind color coding of waveform slots is that slots that are used in similar context can be encoded with a similar color. The color coding feature can be used to categorize different kinds of waveforms such as <var>Fx</var>  and <var>Ambient</var>.
+</infobox>
+
+<subsection id="pbchannel">Playback channel</subsection>
+<p>The <ui-formfield>Playback channel</ui-formfield> field assigns a channel to the waveform slot. All sound from this slot will be routed through the selected channel.</p>
+
+<infobox type="info">
+	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>Channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>sessprop</ref>).
+</infobox>
+
+<subsection id="pbgain">Playback gain</subsection>
+<p>Before the signal reaches the strip for the selected playback channel (see <ref>pbchannel</ref>), the signal is amplified by the given playback gain. The gain can be adjusted from <quantity unit="dB">-72</quantity> to <quantity unit="dB">6</quantity>.</p>
+
+<subsection id="pbgainrandom">Playback gain randomization</subsection>
+<p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Playback gain random level</ui-formfield> sets how much the random component is amplified.</p>
+
+<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful on machinegun effects.</infobox>
+
+<subsection id="pboptions">Controlling playback behavior</subsection>
+<p>There are different options for controlling the playback behavior. These are <dfn>Loop</dfn>, <dfn>Sustain</dfn>, <dfn>Readonly</dfn>, and <dfn>Set gain on loop</dfn>.</p>
+
+<subsubsection id="pboptloop">Loop</subsubsection>
+<p>When <dfn>Loop</dfn> is enabled, playback will start form the beginning when the playback position reaches the <dfn>end cursor</dfn>, if no stopping event has occurred before that happens.</p>
+
+<subsubsection id="pboptsustain">Sustain</subsubsection>
+<p>The <dfn>Sustain</dfn> flag controls whether or not a key release event should also send a stop event. When the <dfn>Sustain</dfn> flag is set, a stop event is not sent, emulating the effect of a pushed sustain pedal. </p>
+
+<subsubsection id="pboptreadonly">Readonly</subsubsection>
+<p>The <dfn>Readonly</dfn> flag controls whether or not it is possible to overwrite a loaded waveform with captured audio (see <ref>rec</ref>). Enabling <dfn>Readonly</dfn> prevents that a loaded waveform is accidentally overwritten.</p>
+
+<subsubsection id="pboptgainrand">Set gain on loop</subsubsection>
+<p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possible set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
+
+<subsection id="rangeadjust">Adjusting playback range</subsection>
+<p>It may happen that only a portion of a loaded waveform is interesting. With the <dfn>Trim panel</dfn>, it is possible to select the part of the waveform that should be played. The graph shows in dBFS, the root mean square power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On to of the power function, there are three <dfn>cursors</dfn> that can be moved by click and drag.</p>
+
+<subsubsection id="rangeadjustmanual">Manual range adjustments</subsubsection>
+<p>	The green <dfn>cursor</dfn> marks the playback starting position. The red one marks the stopping position. The positions are moved by moving the corresponding cursor to the desired position. The start and stop position can also be set by typing their positions into the corresponding input fields, <ui-formfield>Begin</ui-formfield> and <ui-formfield>end</ui-formfield>. The positions are in this case given in seconds.</p>
+
+<infobox type="info">
+	If the end <dfn>cursor</dfn> has been placed to the left of the begin <dfn>cursor</dfn>, Anja will play the wavefile backwards.
+</infobox>
+
+<infobox type="info">
+	If a more detailed view of a certain part of the loaded waveform is needed in order to set the start ans stop positions, it is possible to zoom in on the current range by pressing <kbd>Z</kbd>. If <kbd>X</kbd> is pressed, the view will return to the previous view.
+</infobox>
+
+<subsubsection id="rangeauto">Auto-adjusting playback range</subsubsection>
+<p>In addition to manually adjusting the playback range, it is possible to let Anja compute a range automatically. In this case, Anja will use the first and last positions where the signal level exceeds a certain threshold level, start and stop positions. The threshold can be adjusted by moving the yellow (horisontal) <dfn>cursor</dfn> to a suitable level. Clicking on one of the <ui-button>Auto</ui-button> buttons will adjust the corresponding position. If the <kbd>Shift</kbd> is pressed while the yellow <dfn>cursor</dfn> is moved, Anja will adjust both positions accordingly.</p>
+
+<section id="chmixer">Configuring playback channels</section>
+
+<p>The <dfn>Channel mixer</dfn> is shown in <ref>channelmixerfig</ref>. The <dfn>Channel mixer</dfn> controls the playback volume for the different playback channels. To the right of all channel strips, there is a master gain control, which controls the playback volume of the mixed channels. In addition to a gain control, each channel strip also contains an input field for selecting a channel color, which works similar to the color input field for waveforms (see <ref>wavecolor</ref>), and a control for determining the <dfn>time constant</dfn> for automatic fade-in/out.</p>
+
+<figure id="channelmixerfig">
+	<includegraphics src="anjamixer.png"/>
+	<caption>The <dfn>Channel mixer</dfn>. Each channel strip has a label, a color, a fade time knob, and a volume slider. To the right of all strips, there is a master gain control, that affects the gain of the mix.</caption>
+</figure>
+
+<infobox type="info">
+	It may be a good idea to match the channel colors in some way to the colors used for the waveform associated with the playback channel. This makes it easier to find the right channel strip in the <dfn>Channel mixer</dfn>.
+</infobox>
+
+<infobox type="info">
+	The knob for controlling the <dfn>time constant</dfn> for auto-fade works in polar coordinates. If it is hard to find the right value, try to increase the distance to the knob center when adjusting the corresponding value
+</infobox>
+
+<p>Automatic fade-in/out is triggered by hitting <kbd>F<var>k</var></kbd> while pressing <kbd>↑</kbd>/<kbd>↓</kbd>, where <var>k</var> is the channel number. After fade-out, the channel is muted until it is unmuted or a fade-in occures. Mute and unmuting a channel is done by hitting the corresponding channel key (<kbd>F<var>k</var></kbd>) while pressing <kbd>←</kbd> or <kbd>→</kbd> respectively.</p>
+
+<infobox type="info">
+	It is only possible to access channel 1 to 12 from the PC keyboard. In order to auto-fade channel 13-16, an external MIDI controller can be used, see <ref>midi</ref>.
+</infobox>
+
+<infobox type="info">
+	Using the PC keyboard to trigger fade-in/out is only possible when the <dfn>Keybord view</dfn> is active.
+</infobox>
+
+<section id="multichannel">Multi-channel output</section>
+
+<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. The option is activated by checking the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>Session properties</dfn> (see <ref>sessprops</ref>) panel. When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname>. The signal sent to these channels are taken after the corresponding channel strip, but before the master gain adjustment.</p>
+
+<p>If the split signal needs to be mixed before sent to another JACK client, it is possible to connect all ports to the same input port. In this case, it might be good to use <prgname>non-mixer</prgname> to adjust the total output gain.</p>
+
+<infobox type="info">
+	Toggeling multi-channel output requires the engine to be restarted.
+</infobox>
+
+<section id="sessprops">Modifying session properties</section>
+<p>The <dfn>Session properties panel</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <ref>multichannel</ref>.</p>
+
+<infobox type="info">
+	Both toggling multi-channel output and setting a new title requires the engine to be restarted.
+</infobox>
+
+<figure id="sesspropspanel">
+	<includegraphics src="anja-sessionprops.png"/>
+	<caption>The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multi-channel output (see <ref>multichannel</ref>). </caption>
+</figure>
+
+
+<section id="midi">Using MIDI</section>
+<p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by another MIDI enabled device or software. Anja can also be used to controll other MIDI enabled devices or software applications.</p>
+
+<subsection id="midi_in">Controlling Anja with other devices or software applications</subsection>
+
+<p>Before Anja can be controlled, the corresponding <dirname>MIDI in</dirname>, to the MIDI output of the device or software application that should be used to controll Anja. For control from other hardware, a suitable output port is usually <dirname>midi_capture_1</dirname>.</p>
+
+<subsection id="midi_out">Using Anja to control other devices or software applications</subsection>
+
+<p>A suitable input port for controlling external devices is usually <dirname>midi_playback_1</dirname>.</p>
+
+
+	<bibliography>
+		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
+		<item id="anjadeps">Anja sample player: Dependencies <url>https://github.com/milasudril/anja#dependencies</url></item>
+		<item id="jack">JACK Audio Connection Kit <url>http://jackaudio.org</url></item>
+		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
+		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
+		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
+		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
+		<item id="catia">... <url>http://kxstudio.org</url></item>
+		<item id="mma">MIDI Association <url>http://midi.org</url></item>
+	</bibliography>
+
+<appendix />
+
+<chapter id="cmdopts">Command line options</chapter>
+	<p>It is possible to control how Anja is started from the command line. The general syntax is</p>
+
+	<code language="bash">anja [OPTIONS] [--] session</code>
+
+	<p>All possible options are listed in <ref>cmdoptstab</ref>.</p>
+
+	<table id="cmdoptstab">
+		<caption>Command line options for Anja</caption>
+		<tabular>
+			<colheaders><col>Option</col><col>Description</col></colheaders>
+			<row><col>--about</col><col>prints an about message to standard output and exits</col></row>
+			<row><col>--dark</col><col>starts Anja in dark mode. This is default.</col></row>
+			<row><col>--fullscreen</col><col>starts Anja in fullscreen mode</col></row>
+			<row><col>--light</col><col>starts Anja in light mode</col></row>
+			<row><col>--windowed</col><col>starts Anja in windowed mode. This is default.</col></row>
+			<row><col>--help</col><col>prints a summary of command line options to standard output and exits</col></row>
+		</tabular>
+	</table>
+
+	<chapter id="fileformats">Supported file formats</chapter>
+	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>.</p>
+
+</document>

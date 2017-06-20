@@ -209,6 +209,10 @@
     <File Name="README.md"/>
     <File Name="memorender.py"/>
     <File Name="Makefile"/>
+    <VirtualDirectory Name="doc">
+      <File Name="doc/index.xml"/>
+      <File Name="doc/makepage.py"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
