@@ -5,6 +5,7 @@
 #include "window.hpp"
 #include <gtk/gtk.h>
 #include <string>
+#include <algorithm>
 
 using namespace Anja;
 
@@ -62,6 +63,9 @@ class Window::Impl:private Window
 				{gtk_window_unfullscreen(m_handle);}
 			}
 
+		void icon(const ImageRepository& repo,ImageRepository::IdType id
+			,const std::pair<const uint8_t*,const uint8_t*>& data);
+
 	private:
 		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
@@ -74,6 +78,7 @@ class Window::Impl:private Window
 		GtkWindow* m_handle;
 		GtkWidget* r_focus_old;
 		std::string m_title;
+		GdkPixbuf* m_icon;
 	};
 
 Window::Window(const char* title,Container* owner)
@@ -133,6 +138,13 @@ Window& Window::fullscreen(bool state)
 	return *this;
 	}
 
+Window& Window::icon(const ImageRepository& repo,ImageRepository::IdType id
+	,const std::pair<const uint8_t*,const uint8_t*>& data)
+	{
+	m_impl->icon(repo,id,data);
+	return *this;
+	}
+
 
 
 Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
@@ -148,6 +160,7 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	title(ti);
 	if(owner!=nullptr)
 		{gtk_window_set_transient_for(m_handle,GTK_WINDOW(owner->toplevel()));}
+	m_icon=nullptr;
 	}
 
 Window::Impl::~Impl()
@@ -155,7 +168,68 @@ Window::Impl::~Impl()
 	m_impl=nullptr;
 	r_cb_obj=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	if(m_icon!=nullptr)
+		{g_object_unref(m_icon);}
 	}
+
+namespace
+	{
+	struct Pixel
+		{
+		uint8_t b;
+		uint8_t g;
+		uint8_t r;
+		uint8_t a;
+		};
+	}
+
+static inline uint8_t value_scale(int val,int alpha)
+	{
+	return static_cast<uint8_t>( (val*255 + alpha/2)/alpha );
+	}
+
+
+static void unpremultiply(const Pixel* scanline_src,Pixel* scanline_dest
+	,int width)
+	{
+	std::transform(scanline_src,scanline_src + width,scanline_dest
+		,[](Pixel val)
+			{
+			return val.a==0?
+				 Pixel{0x80,0x80,0x80,0}
+				:Pixel
+					{
+					 value_scale(val.b,val.a)
+					,value_scale(val.g,val.a)
+					,value_scale(val.r,val.a)
+					,val.a
+					};
+			}
+		);
+	}
+
+void Window::Impl::icon(const ImageRepository& repo,ImageRepository::IdType id
+	,const std::pair<const uint8_t*,const uint8_t*>& data)
+	{
+	auto img=reinterpret_cast<const cairo_surface_t*>(repo.getFromPng(id,data));
+
+	auto w=cairo_image_surface_get_width( const_cast<cairo_surface_t*>(img) );
+	auto h=cairo_image_surface_get_height( const_cast<cairo_surface_t*>(img) );
+	auto stride=cairo_image_surface_get_stride( const_cast<cairo_surface_t*>(img) );
+	auto pixels_in=reinterpret_cast<const Pixel*>(cairo_image_surface_get_data(const_cast<cairo_surface_t*>(img)));
+//TODO: For now, assume all images have an alpha channel
+// cairo_image_surface_get_format()...
+	Pixel* pixels=static_cast<Pixel*>(malloc(h*stride));
+	for(int k=0;k<h;++k)
+		{
+		auto offset=k*stride/sizeof(Pixel);
+		unpremultiply(pixels_in + offset,pixels + offset,w);
+		}
+	m_icon=gdk_pixbuf_new_from_data(reinterpret_cast<uint8_t*>(pixels)
+		,GDK_COLORSPACE_RGB,TRUE,8,w,h,stride,[](uint8_t* pixels,void*){::free(pixels);},NULL);
+	gtk_window_set_icon(m_handle,m_icon);
+	}
+
 
 gboolean Window::Impl::delete_callback(GtkWidget* widget,GdkEvent* event,void* user_data)
 	{

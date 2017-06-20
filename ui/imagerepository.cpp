@@ -28,6 +28,7 @@ static cairo_surface_t* load(ReadPair read_pair)
 		cairo_surface_destroy(temp);
 		return nullptr;
 		}
+	cairo_surface_flush(temp);
 	return temp;
 	}
 

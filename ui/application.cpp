@@ -502,7 +502,7 @@ Application::Application():
 		v.minHeight(20)
 			.showPng(m_images,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
 		});
-	m_mainwin.show();
+	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
 	try
 		{engine_start();}
 	catch(...)

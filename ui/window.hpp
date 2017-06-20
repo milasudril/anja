@@ -8,6 +8,7 @@
 
 #include "container.hpp"
 #include "keymask.hpp"
+#include "imagerepository.hpp"
 #include <utility>
 
 namespace Anja
@@ -46,6 +47,9 @@ namespace Anja
 			Window& modal(bool state);
 
 			Window& fullscreen(bool state);
+
+			Window& icon(const ImageRepository& repo,ImageRepository::IdType id
+				,const std::pair<const uint8_t*,const uint8_t*>& data);
 
 		protected:
 			struct Vtable
