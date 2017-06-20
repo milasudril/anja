@@ -4,13 +4,13 @@
 //@		"name":"statusicons.o","type":"object"
 //@		,"dependencies":
 //@			[
-//@				 {"ref":"message_error.png","rel":"generated"}
-//@				,{"ref":"message_info.png","rel":"generated"}
-//@				,{"ref":"message_warning.png","rel":"generated"}
-//@				,{"ref":"led_stop.png","rel":"generated"}
-//@				,{"ref":"led_wait.png","rel":"generated"}
-//@				,{"ref":"led_ready.png","rel":"generated"}
-//@				,{"ref":"led_off.png","rel":"generated"}
+//@				 {"ref":"../icons/message_error.png","rel":"generated"}
+//@				,{"ref":"../icons/message_info.png","rel":"generated"}
+//@				,{"ref":"../icons/message_warning.png","rel":"generated"}
+//@				,{"ref":"../icons/led_stop.png","rel":"generated"}
+//@				,{"ref":"../icons/led_wait.png","rel":"generated"}
+//@				,{"ref":"../icons/led_ready.png","rel":"generated"}
+//@				,{"ref":"../icons/led_off.png","rel":"generated"}
 //@			]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
 //@		}]
@@ -23,14 +23,14 @@ using namespace Anja;
 #include "../common/blob.hpp"
 #include <maike/targetinclude.hpp>
 
-ANJA_BLOB(uint8_t,message_error,MAIKE_TARGET(message_error.png));
-ANJA_BLOB(uint8_t,message_info,MAIKE_TARGET(message_info.png));
-ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(message_warning.png));
+ANJA_BLOB(uint8_t,message_error,MAIKE_TARGET(../icons/message_error.png));
+ANJA_BLOB(uint8_t,message_info,MAIKE_TARGET(../icons/message_info.png));
+ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(../icons/message_warning.png));
 
-ANJA_BLOB(uint8_t,led_stop,MAIKE_TARGET(led_stop.png));
-ANJA_BLOB(uint8_t,led_wait,MAIKE_TARGET(led_wait.png));
-ANJA_BLOB(uint8_t,led_ready,MAIKE_TARGET(led_ready.png));
-ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(led_ready.png));
+ANJA_BLOB(uint8_t,led_stop,MAIKE_TARGET(../icons/led_stop.png));
+ANJA_BLOB(uint8_t,led_wait,MAIKE_TARGET(../icons/led_wait.png));
+ANJA_BLOB(uint8_t,led_ready,MAIKE_TARGET(../icons/led_ready.png));
+ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(../icons/led_ready.png));
 
 std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcept
 	{

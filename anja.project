@@ -145,15 +145,7 @@
       <File Name="ui/knob.hpp"/>
       <File Name="ui/knob.cpp"/>
       <File Name="ui/knob_sprites.m"/>
-      <File Name="ui/knob_sprites.py"/>
       <File Name="ui/knob_sprites.blend"/>
-      <File Name="ui/message_info.py"/>
-      <File Name="ui/message_error.svg"/>
-      <File Name="ui/message_info.svg"/>
-      <File Name="ui/message_warning.svg"/>
-      <File Name="ui/inkscape.py"/>
-      <File Name="ui/message_error.py"/>
-      <File Name="ui/message_warning.py"/>
       <File Name="ui/filler.hpp"/>
       <File Name="ui/filler.cpp"/>
       <File Name="ui/message.hpp"/>
@@ -167,14 +159,13 @@
       <File Name="ui/application.cpp"/>
       <File Name="ui/aboutbox.hpp"/>
       <File Name="ui/keyboardview.cpp"/>
-      <File Name="ui/led_sprites.blend"/>
-      <File Name="ui/led_sprites.py"/>
       <File Name="ui/imagerepository.hpp"/>
       <File Name="ui/imagerepository.cpp"/>
       <File Name="ui/statusicons.hpp"/>
       <File Name="ui/statusicons.cpp"/>
       <File Name="ui/imagelist.hpp"/>
       <File Name="ui/imagelist.cpp"/>
+      <File Name="ui/knob_sprites.py"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>
@@ -212,6 +203,17 @@
     <VirtualDirectory Name="doc">
       <File Name="doc/index.xml"/>
       <File Name="doc/makepage.py"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="icons">
+      <File Name="icons/inkscape.py"/>
+      <File Name="icons/led_sprites.py"/>
+      <File Name="icons/led_sprites.blend"/>
+      <File Name="icons/message_error.py"/>
+      <File Name="icons/message_info.py"/>
+      <File Name="icons/message_warning.py"/>
+      <File Name="icons/message_error.svg"/>
+      <File Name="icons/message_info.svg"/>
+      <File Name="icons/message_warning.svg"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
