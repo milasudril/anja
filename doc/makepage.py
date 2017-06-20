@@ -2,6 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import sys
+import codecs
 
 chapters=0
 sections=0
@@ -301,8 +302,8 @@ def defaultrule(node):
 def infobox(node):
 	printWrapper('''<div class="infobox_''' + node.attrib["type"] + ''' ">
 <picture>
-<source srcset="''' + node.attrib["type"] + '''.svg">
-<img src="''' + node.attrib["type"] + '''.gif" alt="'''+node.attrib["type"]+'''">
+<source srcset="message_''' + node.attrib["type"] + '''.svg">
+<img src="message_''' + node.attrib["type"] + '''.gif" alt="'''+node.attrib["type"]+'''">
 </picture>
 <div>''')
 	if node.text != None:

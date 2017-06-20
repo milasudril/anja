@@ -203,6 +203,7 @@
     <VirtualDirectory Name="doc">
       <File Name="doc/index.xml"/>
       <File Name="doc/makepage.py"/>
+      <File Name="doc/index.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
