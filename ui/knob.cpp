@@ -63,9 +63,6 @@ class Knob::Impl:public Knob
 		void* r_cb_obj;
 		double m_value;
 		bool m_grabbed;
-		cairo_surface_t* m_ambient;
-		cairo_surface_t* m_diffuse;
-		cairo_surface_t* m_mask;
 
 		GtkDrawingArea* m_handle;
 		static gboolean draw(GtkWidget* widget,cairo_t* cr,void* obj);
@@ -103,6 +100,10 @@ Knob& Knob::value(double x)
 
 
 
+static cairo_surface_t* s_ambient;
+static cairo_surface_t* s_diffuse;
+static cairo_surface_t* s_mask;
+static int s_usecount=0;
 
 static cairo_surface_t* image_load(const uint8_t* bytes_begin,const uint8_t* bytes_end)
 	{
@@ -127,9 +128,13 @@ static cairo_surface_t* image_load(const uint8_t* bytes_begin,const uint8_t* byt
 
 Knob::Impl::Impl(Container& cnt):Knob(*this),r_cb_obj(nullptr)
 	{
-	m_ambient=image_load(knob_ambient_begin,knob_ambient_end);
-	m_mask=image_load(knob_mask_begin,knob_mask_end);
-	m_diffuse=image_load(knob_diffuse_begin,knob_diffuse_end);
+	if(s_usecount==0)
+		{
+		s_ambient=image_load(knob_ambient_begin,knob_ambient_end);
+		s_mask=image_load(knob_mask_begin,knob_mask_end);
+		s_diffuse=image_load(knob_diffuse_begin,knob_diffuse_end);
+		}
+	++s_usecount;
 	m_value=0;
 	m_grabbed=0;
 	auto widget=gtk_drawing_area_new();
@@ -152,12 +157,14 @@ Knob::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	if(m_diffuse!=nullptr)
-		{cairo_surface_destroy(m_diffuse);}
-	if(m_ambient!=nullptr)
-		{cairo_surface_destroy(m_mask);}
-	if(m_mask!=nullptr)
-		{cairo_surface_destroy(m_ambient);}
+	if(s_usecount==0)
+		{
+		cairo_surface_destroy(s_diffuse);
+		cairo_surface_destroy(s_mask);
+		cairo_surface_destroy(s_ambient);
+		}
+	else
+		{--s_usecount;}
 	}
 
 static void image_render(cairo_t* cr,cairo_surface_t* img,double w_out,double h_out)
@@ -226,15 +233,15 @@ gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_rectangle(cr,0,0,w,h);
 		cairo_fill(cr);
 		cairo_set_operator(cr,CAIRO_OPERATOR_DEST_ATOP);
-		image_render(cr,self->m_mask,w,h);
+		image_render(cr,s_mask,w,h);
 	cairo_pop_group_to_source(cr);
 	cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
 	cairo_paint(cr);
 
 	cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
-	image_render(cr,self->m_ambient,w,h);
+	image_render(cr,s_ambient,w,h);
 	cairo_set_operator(cr,CAIRO_OPERATOR_ADD);
-	image_render(cr,self->m_diffuse,w,h);
+	image_render(cr,s_diffuse,w,h);
 
 
 	float light=luma709(bg)>0.5f?1.0f:0.0f;
@@ -245,7 +252,7 @@ gboolean Knob::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_rectangle(cr,0,0,w,h);
 		cairo_fill(cr);
 		cairo_set_operator(cr,CAIRO_OPERATOR_DEST_ATOP);
-		image_render(cr,self->m_mask,w,h);
+		image_render(cr,s_mask,w,h);
 	cairo_pop_group_to_source(cr);
 	cairo_set_operator(cr,CAIRO_OPERATOR_MULTIPLY);
 	cairo_paint(cr);
