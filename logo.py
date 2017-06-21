@@ -4,8 +4,8 @@
 #@           {
 #@			 "name":"logo.png","dependencies":
 #@				[
-#@					 {"ref":"logo.blend","rel":"file"}
-#@					,{"ref":"memorender.py","rel":"file"}
+#@					 {"ref":"logo.blend","rel":"misc"}
+#@					,{"ref":"memorender.py","rel":"misc"}
 #@					,{"ref":"blender","rel":"tool"}
 #@				]
 #@			 }

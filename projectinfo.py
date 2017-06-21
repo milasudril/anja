@@ -2,9 +2,9 @@
 #@  "targets":
 #@      [{
 #@		 "name":"projectinfo.hpp"
-#@		,"dependencies":[{"ref":"externals.json","rel":"generated"}
-#@			,{"ref":"maikeconfig.json","rel":"generated"}
-#@			,{"ref":"projectinfo.json","rel":"file"}]
+#@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
+#@			,{"ref":"maikeconfig.json","rel":"misc"}
+#@			,{"ref":"projectinfo.json","rel":"misc"}]
 #@		,"status_check":"dynamic"
 #@		}]
 #@  }

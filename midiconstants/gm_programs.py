@@ -3,7 +3,7 @@
 #@      [
 #@           {
 #@			 "name":"gmprograms.hpp","dependencies":
-#@				[{"ref":"gm_programs.txt","rel":"file"},{"ref":"compile.py","rel":"file"}]
+#@				[{"ref":"gm_programs.txt","rel":"misc"},{"ref":"compile.py","rel":"misc"}]
 #@			 }
 #@      ]
 #@  }

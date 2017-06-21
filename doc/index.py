@@ -4,8 +4,8 @@
 #@           {
 #@			 "name":"index.html","dependencies":
 #@				[
-#@					 {"ref":"index.xml","rel":"file"}
-#@					,{"ref":"makepage.py","rel":"file"}
+#@					 {"ref":"index.xml","rel":"misc"}
+#@					,{"ref":"makepage.py","rel":"misc"}
 #@				]
 #@			 }
 #@      ]

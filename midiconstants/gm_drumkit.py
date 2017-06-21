@@ -3,7 +3,7 @@
 #@      [
 #@           {
 #@			 "name":"gmdrumkit.hpp","dependencies":
-#@				[{"ref":"gm_drumkit.txt","rel":"file"},{"ref":"compile.py","rel":"file"}]
+#@				[{"ref":"gm_drumkit.txt","rel":"misc"},{"ref":"compile.py","rel":"misc"}]
 #@			 }
 #@      ]
 #@  }

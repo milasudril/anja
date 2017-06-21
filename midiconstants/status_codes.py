@@ -3,7 +3,7 @@
 #@      [
 #@           {
 #@			 "name":"statuscodes.hpp","dependencies":
-#@				[{"ref":"status_codes.txt","rel":"file"},{"ref":"compile.py","rel":"file"}]
+#@				[{"ref":"status_codes.txt","rel":"misc"},{"ref":"compile.py","rel":"misc"}]
 #@			 }
 #@      ]
 #@  }

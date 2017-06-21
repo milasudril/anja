@@ -3,8 +3,8 @@
 #@      [
 #@           {
 #@			 "name":"message_warning.png","dependencies":
-#@				[{"ref":"message_warning.svg","rel":"file"},{"ref":"inkscape","rel":"tool"}
-#@				,{"ref":"inkscape.py","rel":"file"}]
+#@				[{"ref":"message_warning.svg","rel":"misc"},{"ref":"inkscape","rel":"tool"}
+#@				,{"ref":"inkscape.py","rel":"misc"}]
 #@			 }
 #@      ]
 #@  }

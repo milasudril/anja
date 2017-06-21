@@ -3,7 +3,7 @@
 #@      [
 #@           {
 #@			 "name":"controlcodes.hpp","dependencies":
-#@				[{"ref":"control_codes.txt","rel":"file"},{"ref":"compile.py","rel":"file"}]
+#@				[{"ref":"control_codes.txt","rel":"misc"},{"ref":"compile.py","rel":"misc"}]
 #@			 }
 #@      ]
 #@  }

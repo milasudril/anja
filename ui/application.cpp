@@ -2,7 +2,7 @@
 //@	"targets":
 //@		[{
 //@		"name":"application.o","type":"object"
-//@		,"dependencies":[{"ref":"../logo.png","rel":"generated"}]
+//@		,"dependencies":[{"ref":"../logo.png","rel":"misc"}]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
 //@		,"include_targets":["../projectinfo.hpp"]
 //@		}]
