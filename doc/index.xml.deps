@@ -7,13 +7,17 @@
 <xsl:apply-templates select="@*|node()"/>
 </xsl:template>
 
-<xsl:template match="includegraphics">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
+<xsl:template match="includegraphics">{"ref":"<xsl:value-of select="@src" />","rel":"include_extra"}</xsl:template>
 
 <xsl:template match="/">{
 "targets":
 	[{
 	 "name":"index.html"
-	,"processor":"index.py"
+	,"compiler":
+		{
+		 "name":"python3"
+		,"args":["--","doc/index.py"]
+		}
 	,"dependencies":
 		[
 <xsl:for-each select="//includegraphics">

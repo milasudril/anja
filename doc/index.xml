@@ -3,8 +3,9 @@
 	<title>Anja user's guide</title>
 	<author>Torbjörn Rathsman</author>
 	<titlepic>
-		<includegraphics src="../logo-hires.png" media="(min-width:1024px)" />
-		<includegraphics src="../logo-lowres.png" media="(max-width:1024px)" />
+		<includegraphics src="logo.png" />
+		<!--includegraphics src="../logo-hires.png" media="(min-width:1024px)" /-->
+		<!--includegraphics src="../logo-lowres.png" media="(max-width:1024px)" /-->
 	</titlepic>
 
 	<abstract>
@@ -60,6 +61,7 @@ make</code>
 <p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
 <code language="bash">mv __targets_rel/anja ~/bin</code>
 
+<!--
 	<chapter id="using">Using Anja</chapter>
 	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine.</p>
 
@@ -258,7 +260,7 @@ jack_connect 'New session.anja:Master out' 'system:playback_2'
 <subsection id="midi_out">Using Anja to control other devices or software applications</subsection>
 
 <p>A suitable input port for controlling external devices is usually <dirname>midi_playback_1</dirname>.</p>
-
+-->
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>

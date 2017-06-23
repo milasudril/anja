@@ -1,16 +1,3 @@
-#@  {
-#@  "targets":
-#@      [
-#@           {
-#@			 "name":"index.html","dependencies":
-#@				[
-#@					 {"ref":"index.xml","rel":"misc"}
-#@					,{"ref":"makepage.py","rel":"misc"}
-#@				]
-#@			 }
-#@      ]
-#@  }
-
 import subprocess
 import sys
 import shlex
@@ -25,6 +12,7 @@ def write_error(*args, **kwargs):
 try:
 	target_dir=sys.argv[1];
 	in_dir=sys.argv[2];
+	sys.exit(0)
 
 	print('# Generating manual')
 	status=subprocess.call(' '.join([shlex.quote(in_dir + '/makepage.py') \

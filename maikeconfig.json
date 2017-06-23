@@ -16,6 +16,19 @@
         "."
     ],
     "target_hooks":[
+		{
+		"config":
+			{
+			"filter":
+				{
+				 "name":"xsltproc"
+				,"args":["{depfile}","{source}"]
+				}
+			},
+		"name":"targetxml_default",
+		"plugin":"targetxml",
+		"filename_exts":[".xml"]
+		},
         {
             "config":{
                 "appcompile":{
