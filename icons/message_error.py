@@ -3,7 +3,7 @@
 #@      [
 #@           {
 #@			 "name":"message_error.png","dependencies":
-#@				[{"ref":"message_error.svg","rel":"misc"},{"ref":"inkscape","rel":"tool"}
+#@				[{"ref":"message_error.svg","rel":"misc"}
 #@				,{"ref":"inkscape.py","rel":"misc"}]
 #@			 }
 #@      ]

@@ -1,3 +1,5 @@
+#@	{"dependencies_extra":[{"ref":"inkscape","rel":"tool"}]}
+
 import subprocess
 import sys
 import os
