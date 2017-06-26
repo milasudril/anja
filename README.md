@@ -32,9 +32,9 @@ These tools are required in order to compile Anja
  * inkscape -- SVG (Scalable Vector Graphics) editing program.
  * octave -- Package for numerical analysis. MATLAB should work, but requires
 	changes to `maikeconfig` files.
- * maike -- Automated build tool. You must use version 0.12.0 or later.
+ * maike -- Automated build tool. You must use version 0.15.0 or later.
 	In case this tool is missing, the build script will download it from
-	https://github.com/milasudril/maike/archive/0.13.0.tar.gz. This step requires
+	https://github.com/milasudril/maike/archive/0.15.0.tar.gz. This step requires
 	`wget` and `jq` Command-line JSON processor.
  * pkg-config -- Return metainformation about installed libraries
  * python3 -- An interpreted, interactive, object-oriented programming language
