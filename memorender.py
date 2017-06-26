@@ -1,3 +1,5 @@
+#@	{"dependencies_extra":[{"ref":"blender","rel":"tool"}]}
+
 import sys
 
 def copyOrRender(frame,scene,target_dir,in_dir,target_name):

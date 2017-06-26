@@ -6,7 +6,6 @@
 #@				[
 #@					 {"ref":"logo.blend","rel":"misc"}
 #@					,{"ref":"memorender.py","rel":"misc"}
-#@					,{"ref":"blender","rel":"tool"}
 #@				]
 #@			 }
 #@      ]
