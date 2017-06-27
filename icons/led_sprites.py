@@ -35,7 +35,7 @@ try:
 
 	print('# Baking LED sprites')
 
-	memorender.render('led_sprites.blend',in_dir,target_dir,'led_stop.png'\
+	memorender.render(1,'led_sprites.blend',in_dir,target_dir,'led_stop.png'\
 		,'led_wait.png','led_ready.png','led_off.png')
 	sys.exit(0)
 

@@ -22,7 +22,7 @@ try:
 	in_dir=sys.argv[2];
 
 	print('# Baking logo')
-	memorender.render('logo.blend',in_dir,target_dir,'logo.png')
+	memorender.render(4,'logo.blend',in_dir,target_dir,'logo.png')
 	sys.exit(0)
 
 except Exception:

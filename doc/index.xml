@@ -3,9 +3,8 @@
 	<title>Anja user's guide</title>
 	<author>Torbjörn Rathsman</author>
 	<titlepic>
-		<includegraphics src="logo.png" />
-		<!--includegraphics src="../logo-hires.png" media="(min-width:1024px)" /-->
-		<!--includegraphics src="../logo-lowres.png" media="(max-width:1024px)" /-->
+		<!--includegraphics src="logo-hires.png" media="(min-width:1024px)" /-->
+		<!--includegraphics src="logo-lowres.png" media="(max-width:1024px)" /-->
 	</titlepic>
 
 	<abstract>

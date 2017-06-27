@@ -1,3 +1,5 @@
+#@	{"dependencies_extra":[{"ref":"makepage.py","rel":"misc"}]}
+
 import subprocess
 import sys
 import shlex

@@ -30,7 +30,7 @@ try:
 	in_dir=sys.argv[2];
 
 	print('# Baking knob sprites')
-	memorender.render('knob_sprites.blend',in_dir,target_dir \
+	memorender.render(1,'knob_sprites.blend',in_dir,target_dir \
 		,'knob_ambient_in.png','knob_diffuse_in.png','knob_mask_in.png')
 
 	sys.exit(0)
