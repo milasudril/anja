@@ -8,6 +8,27 @@
 #@					,{"ref":"memorender.py","rel":"misc"}
 #@				]
 #@			 }
+#@           ,{
+#@			 "name":"logo_1.png","dependencies":
+#@				[
+#@					 {"ref":"logo.blend","rel":"misc"}
+#@					,{"ref":"memorender.py","rel":"misc"}
+#@				]
+#@			 }
+#@           ,{
+#@			 "name":"logo_2.png","dependencies":
+#@				[
+#@					 {"ref":"logo.blend","rel":"misc"}
+#@					,{"ref":"memorender.py","rel":"misc"}
+#@				]
+#@			 }
+#@           ,{
+#@			 "name":"logo_3.png","dependencies":
+#@				[
+#@					 {"ref":"logo.blend","rel":"misc"}
+#@					,{"ref":"memorender.py","rel":"misc"}
+#@				]
+#@			 }
 #@      ]
 #@  }
 

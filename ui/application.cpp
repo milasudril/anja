@@ -2,7 +2,7 @@
 //@	"targets":
 //@		[{
 //@		"name":"application.o","type":"object"
-//@		,"dependencies":[{"ref":"../logo.png","rel":"misc"}]
+//@		,"dependencies":[{"ref":"../logo_1.png","rel":"misc"}]
 //@		,"cxxoptions":{"cflags_extra":["fno-lto"]}
 //@		,"include_targets":["../projectinfo.hpp"]
 //@		}]
@@ -18,7 +18,7 @@
 
 using namespace Anja;
 
-ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo.png));
+ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo_1.png));
 
 static constexpr const char* ANJA_OFFLINE="Click "
 	"`Start engine` in the action panel to connect to the default JACK server.";
