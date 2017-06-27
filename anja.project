@@ -206,6 +206,8 @@
       <File Name="doc/index.py"/>
       <File Name="doc/index.xml.deps"/>
       <File Name="doc/resources.cp"/>
+      <File Name="doc/color.css"/>
+      <File Name="doc/format.css"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import sys
-import codecs
+import json
 
 chapters=0
 sections=0
@@ -386,6 +386,7 @@ def processElements(document):
 def main(argv):
 	tree=ET.parse(sys.stdin)
 	document=tree.getroot()
+	args=json.loads(argv[0])
 	global chapters
 	global sections
 	global subsection
@@ -395,18 +396,22 @@ def main(argv):
 	global tables
 	global pass_counter
 	global countmode
-
 	print('''<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>''' + document.findall('title')[0].text + '''</title>
-<link rel="stylesheet" href="highlight/styles/default.css" type="text/css">
-<link rel="stylesheet" href="format.css" type="text/css">
-<link rel="stylesheet" href="color.css" type="text/css">
-<script src="highlight/highlight.pack.js" type="text/javascript"></script>
-<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
-</head>
+<title>''' + document.findall('title')[0].text + '''</title>''')
+	if 'stylesheets' in args:
+		for style in args['stylesheets']:
+			print('''<link rel="stylesheet" href="'''+style+'''" type="text/css">''')
+	if 'scripts' in args:
+		for script in args['scripts']:
+			print('''<script src="'''+script+'''" type="text/javascript"></script>''')
+	if 'scripts_inline' in args:
+		for script in args['scripts_inline']:
+			print(''''<script type="text/javascript"><!--'''+script+'''
+//--></script>''')
+	print('''</head>
 <body>''')
 	chapters=0
 	sections=0
