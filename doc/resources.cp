@@ -1,0 +1,9 @@
+{
+"targets":
+	[
+	 {"name":"logo_3.png","srcdir":".."}
+	,{"name":"logo_2.png","srcdir":".."}
+	,{"name":"logo_1.png","srcdir":".."}
+	,{"name":"logo.png","srcdir":".."}
+	]
+}

@@ -205,6 +205,7 @@
       <File Name="doc/makepage.py"/>
       <File Name="doc/index.py"/>
       <File Name="doc/index.xml.deps"/>
+      <File Name="doc/resources.cp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

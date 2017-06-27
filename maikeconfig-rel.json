@@ -3,12 +3,12 @@
         "paths_full_reject":[],
         "paths_reject":[
             "..",
-            ".",
-			"__targets_dbg",
-            "__targets_rel",
+            ".git",
+            "__targets_dbg",
             "__targets_inst",
-			".git",
-			"testbank"
+            ".",
+            "__targets_rel",
+            "testbank"
         ],
         "recursive":1
     },
@@ -23,19 +23,19 @@
                         "-O3",
                         "{cxxversion}",
                         "-Wall",
-						"-fno-stack-protector",
-						"-flto",
+                        "-fno-stack-protector",
+                        "-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
-						"-DNDEBUG",
+                        "-DNDEBUG",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
-						"-fno-PIE",
-						"-march=native",
-						"--fast-math",
-						"-s",
+                        "{includes_extra}",
+                        "-fno-PIE",
+                        "-march=native",
+                        "--fast-math",
+                        "-s",
                         "-o",
                         "{target}",
                         "{source}",
@@ -44,7 +44,6 @@
                     ],
                     "name":"g++"
                 },
-				"include_format":"-include^",
                 "cflags_extra":[],
                 "cflags_format":"-^",
                 "cxxversion_max":-1,
@@ -53,17 +52,17 @@
                     "args":[
                         "-O3",
                         "-fpic",
-						"-fno-stack-protector",
+                        "-fno-stack-protector",
                         "{cxxversion}",
                         "-Wall",
-						"-flto",
+                        "-flto",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
-						"-DNDEBUG",
+                        "-DNDEBUG",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
+                        "{includes_extra}",
                         "-shared",
                         "-o",
                         "{target}",
@@ -73,6 +72,7 @@
                     ],
                     "name":"g++"
                 },
+                "include_format":"-include^",
                 "includedir":[],
                 "includedir_format":"-I^",
                 "includedir_noscan":[],
@@ -97,19 +97,19 @@
                         "-c",
                         "-O3",
                         "-fpic",
-						"-march=native",
-						"--fast-math",
-						"-flto",
-						"-fno-stack-protector",
+                        "-march=native",
+                        "--fast-math",
+                        "-flto",
+                        "-fno-stack-protector",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
                         "{iquote}",
                         "{includedir}",
-						"-DNDEBUG",
+                        "-DNDEBUG",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
+                        "{includes_extra}",
                         "-o",
                         "{target}",
                         "{source}"
@@ -150,6 +150,14 @@
             "plugin":"targetcxx"
         },
         {
+            "config":{},
+            "filename_exts":[
+                ".cp"
+            ],
+            "name":"targetcp_default",
+            "plugin":"targetcp"
+        },
+        {
             "config":{
                 "command":{
                     "args":[
@@ -165,22 +173,6 @@
             ],
             "name":"targetpython_default",
             "plugin":"targetpython"
-        },
-       {
-            "config":{
-                "command":{
-                    "args":[
-                        "{script}",
-                        "{args}"
-                    ],
-                    "name":"octave-cli"
-                }
-            },
-            "filename_exts":[
-                ".m"
-            ],
-            "name":"targetoctave_default",
-            "plugin":"targetoctave"
         },
         {
             "config":{
@@ -227,6 +219,22 @@
             ],
             "name":"targetarchive_default",
             "plugin":"targetarchive"
+        },
+        {
+            "config":{
+                "command":{
+                    "args":[
+                        "{script}",
+                        "{args}"
+                    ],
+                    "name":"octave-cli"
+                }
+            },
+            "filename_exts":[
+                ".m"
+            ],
+            "name":"targetoctave_default",
+            "plugin":"targetoctave"
         }
     ],
     "targetinfo":{

@@ -3,12 +3,12 @@
         "paths_full_reject":[],
         "paths_reject":[
             "..",
-            ".",
-			"__targets_dbg",
-            "__targets_rel",
+            ".git",
+            "__targets_dbg",
             "__targets_inst",
-			".git",
-			"testbank"
+            ".",
+            "__targets_rel",
+            "testbank"
         ],
         "recursive":1
     },
@@ -16,27 +16,14 @@
         "."
     ],
     "target_hooks":[
-		{
-		"config":
-			{
-			"filter":
-				{
-				 "name":"xsltproc"
-				,"args":["{depfile}","{source}"]
-				}
-			},
-		"name":"targetxml_default",
-		"plugin":"targetxml",
-		"filename_exts":[".xml"]
-		},
         {
             "config":{
                 "appcompile":{
                     "args":[
                         "-g",
                         "-fpic",
-						"-march=native",
-						"--fast-math",
+                        "-march=native",
+                        "--fast-math",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -44,7 +31,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
+                        "{includes_extra}",
                         "-o",
                         "{target}",
                         "{source}",
@@ -57,13 +44,12 @@
                 "cflags_format":"-^",
                 "cxxversion_max":-1,
                 "cxxversion_min":201402,
-				"include_format":"-include^",
                 "dllcompile":{
                     "args":[
                         "-g",
                         "-fpic",
-						"-march=native",
-						"--fast-math",
+                        "-march=native",
+                        "--fast-math",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -71,7 +57,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
+                        "{includes_extra}",
                         "-shared",
                         "-o",
                         "{target}",
@@ -81,6 +67,7 @@
                     ],
                     "name":"g++"
                 },
+                "include_format":"-include^",
                 "includedir":[],
                 "includedir_format":"-I^",
                 "includedir_noscan":[],
@@ -105,8 +92,8 @@
                         "-c",
                         "-g",
                         "-fpic",
-						"-march=native",
-						"--fast-math",
+                        "-march=native",
+                        "--fast-math",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -114,7 +101,7 @@
                         "{includedir}",
                         "-DMAIKE_TARGET_DIRECTORY={target_directory}",
                         "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-						"{includes_extra}",
+                        "{includes_extra}",
                         "-o",
                         "{target}",
                         "{source}"
@@ -155,6 +142,14 @@
             "plugin":"targetcxx"
         },
         {
+            "config":{},
+            "filename_exts":[
+                ".cp"
+            ],
+            "name":"targetcp_default",
+            "plugin":"targetcp"
+        },
+        {
             "config":{
                 "command":{
                     "args":[
@@ -170,22 +165,6 @@
             ],
             "name":"targetpython_default",
             "plugin":"targetpython"
-        },
-        {
-            "config":{
-                "command":{
-                    "args":[
-                        "{script}",
-                        "{args}"
-                    ],
-                    "name":"octave-cli"
-                }
-            },
-            "filename_exts":[
-                ".m"
-            ],
-            "name":"targetoctave_default",
-            "plugin":"targetoctave"
         },
         {
             "config":{
@@ -232,6 +211,38 @@
             ],
             "name":"targetarchive_default",
             "plugin":"targetarchive"
+        },
+        {
+            "config":{
+                "filter":{
+                    "args":[
+                        "{depfile}",
+                        "{source}"
+                    ],
+                    "name":"xsltproc"
+                }
+            },
+            "filename_exts":[
+                ".xml"
+            ],
+            "name":"targetxml_default",
+            "plugin":"targetxml"
+        },
+        {
+            "config":{
+                "command":{
+                    "args":[
+                        "{script}",
+                        "{args}"
+                    ],
+                    "name":"octave-cli"
+                }
+            },
+            "filename_exts":[
+                ".m"
+            ],
+            "name":"targetoctave_default",
+            "plugin":"targetoctave"
         }
     ],
     "targetinfo":{
