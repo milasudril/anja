@@ -92,6 +92,34 @@ int main(int argc, char **argv)
 			return 0;
 			}
 
+		if(cmdline.get<Alice::Stringkey("version")>())
+			{
+			auto& val=cmdline.get<Alice::Stringkey("version")>().valueGet();
+			FileOut output(val.size()?val[0].c_str():nullptr);
+			fprintf(output.get(),"%s version %s\n"
+				"This anja was compiled on %s"
+				,Anja::ProjectInfo::name()
+				,Anja::ProjectInfo::revision()
+				,Anja::ProjectInfo::compilationDate());
+			return 0;
+			}
+
+		if(cmdline.get<Alice::Stringkey("about")>())
+			{
+			auto& val=cmdline.get<Alice::Stringkey("about")>().valueGet();
+			FileOut output(val.size()?val[0].c_str():nullptr);
+			fprintf(output.get(),"%s version %s\n"
+				"This anja was compiled on %s\n\n"
+				"%s\n\n"
+				"%s\n"
+				,Anja::ProjectInfo::name()
+				,Anja::ProjectInfo::revision()
+				,Anja::ProjectInfo::compilationDate()
+				,Anja::ProjectInfo::copyright()
+				,Anja::ProjectInfo::legalBrief());
+			return 0;
+			}
+
 		Anja::Application anja;
 		anja.dark(1);
 		anja.run();

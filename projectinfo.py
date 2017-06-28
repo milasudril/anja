@@ -32,52 +32,52 @@ namespace Anja
 	struct ProjectInfo
 		{
 		public:
-			constexpr const char* name() const noexcept
+			static constexpr const char* name() noexcept
 				{return s_projname;}
 
-			constexpr const char* revision() const noexcept
+			static constexpr const char* revision() noexcept
 				{return s_revision;}
 
-			constexpr const char* nameAndRevision() const noexcept
+			static constexpr const char* nameAndRevision() noexcept
 				{return s_name_rev;}
 
-			constexpr const char* description() const noexcept
+			static constexpr const char* description() noexcept
 				{return s_description;}
 
-			constexpr const char* author() const noexcept
+			static constexpr const char* author() noexcept
 				{return s_author;}
 
-			constexpr const char* years() const noexcept
+			static constexpr const char* years() noexcept
 				{return s_years;}
 
-			constexpr const char* copyright() const noexcept
+			static constexpr const char* copyright() noexcept
 				{return s_copyright;}
 
-			constexpr const char* const* acknowledgement() const noexcept
+			static constexpr const char* const* acknowledgement() noexcept
 				{return s_acknowledgement;}
 
-			constexpr const char* acknowledgementAll() const noexcept
+			static constexpr const char* acknowledgementAll() noexcept
 				{return s_acknowledgement_all;}
 
-			constexpr const char* legalBrief() const noexcept
+			static constexpr const char* legalBrief() noexcept
 				{return s_legal_brief;}
 
-			constexpr const char* const* libraries() const noexcept
+			static constexpr const char* const* libraries() noexcept
 				{return s_libraries;}
 
-			constexpr const char* const* tools() const noexcept
+			static constexpr const char* const* tools() noexcept
 				{return s_tools;}
 
-			constexpr const char* compilationDate() const noexcept
+			static constexpr const char* compilationDate() noexcept
 				{return s_compilation_date;}
 
-			constexpr const char* compiler() const noexcept
+			static constexpr const char* compiler() noexcept
 				{return s_compiler;}
 
-			constexpr const char* architecture() const noexcept
+			static constexpr const char* architecture() noexcept
 				{return s_architecture;}
 
-			constexpr const char* techstring() const noexcept
+			static constexpr const char* techstring() noexcept
 				{return s_techstring;}
 
 		private:

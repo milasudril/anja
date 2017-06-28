@@ -3,6 +3,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+	   <File Name="anja.cpp"/>
+	         <File Name="build.sh"/>
     <File Name="maikeconfig.json"/>
     <VirtualDirectory Name="sessiondata">
       <File Name="sessiondata/session.hpp"/>
@@ -168,14 +170,12 @@
       <File Name="ui/box.hpp"/>
       <File Name="ui/rectangle.hpp"/>
     </VirtualDirectory>
-    <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>
     <VirtualDirectory Name="testbank">
       <File Name="testbank/testbank.txt"/>
     </VirtualDirectory>
     <File Name="projectinfo.py"/>
-    <File Name="build.sh"/>
     <File Name="logo.py"/>
     <VirtualDirectory Name="engine">
       <File Name="engine/audioclient.hpp"/>
