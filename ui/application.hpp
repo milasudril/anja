@@ -115,6 +115,8 @@ namespace Anja
 			void layoutInspect(T&& cb)
 				{
 				cb(0,m_session_control.boundingBox());
+				cb(1,m_session_editor.boundingBoxKeyboard());
+				cb(2,m_session_editor.boundingBoxTabs());
 				}
 
 

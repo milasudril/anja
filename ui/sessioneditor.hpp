@@ -55,6 +55,12 @@ namespace Anja
 				return *this;
 				}
 
+			Rectangle boundingBoxKeyboard() const noexcept
+				{return m_hsplit.boundingBox(0);}
+
+			Rectangle boundingBoxTabs() const noexcept
+				{return m_hsplit.boundingBox(1);}
+
 		private:
 			void (*m_channel_name_callback)(void* cb_obj,ChannelStrip& self,int id);
 			void (*m_channel_gain_callback)(void* cb_obj,ChannelStrip& self,int id);
