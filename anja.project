@@ -221,6 +221,7 @@
       <File Name="icons/message_info.svg"/>
       <File Name="icons/message_warning.svg"/>
     </VirtualDirectory>
+    <File Name="cmdtypes.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
