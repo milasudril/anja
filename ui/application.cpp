@@ -348,6 +348,13 @@ Application& Application::dark(bool status)
 	return *this;
 	}
 
+Application& Application::fullscreen(bool status)
+	{
+	m_fullscreen=status;
+	m_mainwin.fullscreen(m_fullscreen);
+	m_session_control[7].label(m_fullscreen?"Windowed":"Fullscreen");
+	return *this;
+	}
 
 void Application::clicked(ButtonList& buttons,int id,Button& btn)
 	{

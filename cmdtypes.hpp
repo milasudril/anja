@@ -90,7 +90,7 @@ namespace Alice
 	template<class ErrorHandler>
 	WindowMode MakeValue<WindowMode,ErrorHandler>::make_value(const std::string& str)
 		{
-		if(str=="fullsscreen")
+		if(str=="fullscreen")
 			{return WindowMode::FULLSCREEN;}
 		if(str=="windowed")
 			{return WindowMode::WINDOWED;}

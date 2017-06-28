@@ -79,6 +79,7 @@ namespace Anja
 			bool sessionSaveAs();
 
 			Application& dark(bool status);
+			Application& fullscreen(bool status);
 
 			UiContext::RunStatus idle(UiContext& ctx);
 
