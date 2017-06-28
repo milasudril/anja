@@ -75,6 +75,7 @@ namespace Anja
 			Application& sessionNew();
 			Application& sessionLoad(const char* filename);
 			Application& sessionLoad();
+			Application& exit();
 			bool sessionSave();
 			bool sessionSaveAs();
 

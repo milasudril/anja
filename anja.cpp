@@ -77,6 +77,86 @@ namespace
 		private:
 			FILE* m_handle;
 		};
+
+	class CmdReader
+		{
+		public:
+			CmdReader(const char* filename,Anja::Application& dest):
+				 m_src(filename),r_dest(dest)
+				,m_read_thread(*this,std::integral_constant<int,0>{})
+				{}
+
+			template<int id>
+			void run()
+				{
+				auto fptr=m_src.get();
+				std::string buffer;
+				std::vector<std::string> cmd;
+				enum class State:int{NORMAL,ESCAPE};
+				auto state_current=State::NORMAL;
+				while(1)
+					{
+					auto ch_in=getc(fptr);
+					switch(state_current)
+						{
+						case State::NORMAL:
+							switch(ch_in)
+								{
+								case EOF:
+									cmd.push_back(buffer);
+									invoke(cmd);
+									return;
+								case '\n':
+									cmd.push_back(buffer);
+									buffer.clear();
+									invoke(cmd);
+									cmd.clear();
+									break;
+								case '\\':
+									state_current=State::ESCAPE;
+									break;
+								case ',':
+									cmd.push_back(buffer);
+									buffer.clear();
+									break;
+								default:
+									buffer+=ch_in;
+									break;
+								}
+							break;
+						case State::ESCAPE:
+							if(ch_in==EOF)
+								{return;}
+							buffer+=ch_in;
+							state_current=State::NORMAL;
+							break;
+						}
+					}
+				}
+
+		private:
+			void invoke(const std::vector<std::string>& cmd)
+				{
+				try
+					{
+
+					}
+				catch(const Anja::Error& e)
+					{fprintf(stderr,"Error: %s",e.message());}
+				}
+
+			FileIn m_src;
+			Anja::Application& r_dest;
+			Anja::Thread m_read_thread;
+		};
+	}
+
+static CmdReader* cmdreader_create(const std::vector<std::string>& filename
+	,Anja::Application& app)
+	{
+	if(filename.size())
+		{return new CmdReader(filename[0].c_str(),app);}
+	return new CmdReader(nullptr,app);
 	}
 
 int main(int argc, char **argv)
@@ -137,13 +217,12 @@ int main(int argc, char **argv)
 		else
 			{anja.fullscreen(0);}
 
-		if(cmdline.get<Alice::Stringkey("script")>())
-			{
-			}
-		else
-		if(cmdline.get<Alice::Stringkey("session")>())
+		if(cmdline.get<Alice::Stringkey("session")>() && !cmdline.get<Alice::Stringkey("script")>())
 			{anja.sessionLoad(cmdline.get<Alice::Stringkey("session")>().valueGet().c_str());}
 
+		std::unique_ptr<CmdReader> cmdreader(cmdline.get<Alice::Stringkey("script")>()?
+			 cmdreader_create(cmdline.get<Alice::Stringkey("script")>().valueGet(),anja)
+			:nullptr);
 
 		anja.run();
 		}
