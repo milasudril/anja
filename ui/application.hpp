@@ -112,7 +112,7 @@ namespace Anja
 			void process(UiContext& ctx,MessageId id,MessageParam param);
 
 			template<class T>
-			void layoutInspect(T&& cb)
+			void layoutInspect(T&& cb) const
 				{
 				cb(0,m_session_control.boundingBox());
 				cb(1,m_session_editor.boundingBoxKeyboard());
