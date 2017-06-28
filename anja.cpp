@@ -13,7 +13,7 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"Program information","version","prints version information to *filename out*. Without argument, the data is written to standard outout.","filename out",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"Appearance","theme","selects the UI theme. The default theme is `dark`. Notice that theme modes does not work on all GTK+3 themes. In this case, this option has no effect.","theme",Alice::Option::Multiplicity::ONE}
 	,{"Appearance","window-mode","selects the window mode. The default mode is windowed`.","window mode",Alice::Option::Multiplicity::ONE}
-	,{"Session loading/control","session","loads a saved session from *filename in*. Without argument, the session is read from standard input. Notice that this option is ignored if `script` is given.","filename in",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"Session loading/control","session","loads a saved session from *filename in*. Notice that this option is ignored if `script` is given.","filename in",Alice::Option::Multiplicity::ONE}
 	,{"Session loading/control","script","reads and executes commands from *filename in*. Without argument, the session is read from standard input. The command stream works independently of the UI. Notice that this option overrides the `session` option.","filename in",Alice::Option::Multiplicity::ZERO_OR_ONE});
 
 namespace
@@ -135,13 +135,26 @@ int main(int argc, char **argv)
 			anja.fullscreen(val.valueGet()==Alice::WindowMode::FULLSCREEN);
 			}
 		else
-			{anja.dark(1);}
+			{anja.fullscreen(0);}
+
+		if(cmdline.get<Alice::Stringkey("script")>())
+			{
+			}
+		else
+		if(cmdline.get<Alice::Stringkey("session")>())
+			{anja.sessionLoad(cmdline.get<Alice::Stringkey("session")>().valueGet().c_str());}
+
 
 		anja.run();
 		}
 	catch(const Anja::Error& err)
 		{
 		fprintf(stderr,"Error: %s\n",err.message());
+		return -1;
+		}
+	catch(const Alice::ErrorMessage& msg)
+		{
+		fprintf(stderr,"Error: %s\n",msg.data);
 		return -1;
 		}
 	return 0;
