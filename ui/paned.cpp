@@ -53,6 +53,33 @@ class Paned::Impl:private Paned
 		void insertMode(const InsertMode& mode) noexcept
 			{m_mode=mode;}
 
+		Rectangle boundingBox(int index) const noexcept
+			{
+			GtkWidget* widget=nullptr;
+			switch(index)
+				{
+				case 0:
+					widget=gtk_paned_get_child1(m_handle);
+					break;
+				case 1:
+					widget=gtk_paned_get_child2(m_handle);
+					break;
+				}
+
+			auto size=Vec2<double>
+				{
+				 static_cast<double>( gtk_widget_get_allocated_width(widget) )
+				,static_cast<double>( gtk_widget_get_allocated_height(widget) )
+				};
+			int xi;
+			int yi;
+			gtk_widget_translate_coordinates(widget,gtk_widget_get_toplevel(widget)
+				,0,0,&xi,&yi);
+			auto min=Vec2<double>{static_cast<double>(xi),static_cast<double>(yi)};
+
+			return Rectangle{min,min + size};
+			}
+
 	private:
 		GtkPaned* m_handle;
 		InsertMode m_mode;
@@ -98,6 +125,9 @@ Paned& Paned::insertMode(const InsertMode& mode) noexcept
 	m_impl->insertMode(mode);
 	return *this;
 	}
+
+Rectangle Paned::boundingBox(int index) const noexcept
+	{return m_impl->boundingBox(index);}
 
 
 

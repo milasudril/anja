@@ -214,6 +214,22 @@
         },
         {
             "config":{
+                "command":{
+                    "args":[
+                        "{script}",
+                        "{args}"
+                    ],
+                    "name":"bash"
+                }
+            },
+            "filename_exts":[
+                ".sh"
+            ],
+            "name":"targetbash_default",
+            "plugin":"targetbash"
+        },
+        {
+            "config":{
                 "filter":{
                     "args":[
                         "{depfile}",

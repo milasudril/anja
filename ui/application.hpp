@@ -78,6 +78,8 @@ namespace Anja
 			bool sessionSave();
 			bool sessionSaveAs();
 
+			Application& dark(bool status);
+
 			UiContext::RunStatus idle(UiContext& ctx);
 
 			void keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id);
@@ -109,6 +111,12 @@ namespace Anja
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);
 
+			template<class T>
+			void layoutInspect(T&& cb)
+				{
+				cb(0,m_session_control.boundingBox());
+				}
+
 
 		private:
 			ImageRepository m_images;
@@ -123,6 +131,7 @@ namespace Anja
 						Separator m_sep_a;
 						Box m_ch_status;
 							Filler m_ch_status_left;
+							Label m_ch_status_label;
 							ImageList m_ch_status_img;
 							Filler m_ch_status_right;
 						Separator m_sep_b;

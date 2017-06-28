@@ -50,6 +50,24 @@ class ScrolledWindow::Impl:private ScrolledWindow
 				}
 			}
 
+		Rectangle boundingBox() const noexcept
+			{
+			auto widget=GTK_WIDGET(m_handle);
+			auto size=Vec2<double>
+				{
+				 static_cast<double>( gtk_widget_get_allocated_width(widget) )
+				,static_cast<double>( gtk_widget_get_allocated_height(widget) )
+				};
+			int xi;
+			int yi;
+			gtk_widget_translate_coordinates(widget,gtk_widget_get_toplevel(widget)
+				,0,0,&xi,&yi);
+			auto min=Vec2<double>{static_cast<double>(xi),static_cast<double>(yi)};
+
+
+			return Rectangle{min,min + size};
+			}
+
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkScrolledWindow* m_handle;
@@ -93,6 +111,9 @@ ScrolledWindow& ScrolledWindow::directions(uint32_t direction_flags)
 	m_impl->directions(direction_flags);
 	return *this;
 	}
+
+Rectangle ScrolledWindow::boundingBox() const noexcept
+	{return m_impl->boundingBox();}
 
 ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{

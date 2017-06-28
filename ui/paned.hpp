@@ -7,6 +7,7 @@
 #define ANJA_PANED_HPP
 
 #include "container.hpp"
+#include "rectangle.hpp"
 #include <utility>
 
 namespace Anja
@@ -37,6 +38,7 @@ namespace Anja
 			Paned& sensitive(bool val);
 			void* toplevel() const;
 			Paned& insertMode(const InsertMode& mode) noexcept;
+			Rectangle boundingBox(int index) const noexcept;
 
 		protected:
 			class Impl;

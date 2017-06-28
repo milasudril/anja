@@ -341,6 +341,14 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 	}
 
 
+Application& Application::dark(bool status)
+	{
+	m_ctx.dark(status);
+	m_session_control[8].label(m_ctx.dark()?"Light UI":"Dark UI");
+	return *this;
+	}
+
+
 void Application::clicked(ButtonList& buttons,int id,Button& btn)
 	{
 	try
@@ -482,7 +490,8 @@ Application::Application():
 				,m_sep_a(m_rows.insertMode({2,0}),false)
 				,m_ch_status(m_rows.insertMode({0,0}),false)
 					,m_ch_status_left(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
-					,m_ch_status_img(m_ch_status.insertMode({0,0}),false)
+					,m_ch_status_label(m_ch_status.insertMode({0,0}),"Channel status:")
+					,m_ch_status_img(m_ch_status.insertMode({2,0}),false)
 					,m_ch_status_right(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
 				,m_sep_b(m_rows.insertMode({2,0}),false)
 				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)

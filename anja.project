@@ -99,7 +99,6 @@
       <File Name="ui/textentry.hpp"/>
       <File Name="ui/textentry.cpp"/>
       <File Name="ui/sessioneditor.cpp"/>
-      <File Name="ui/box.hpp"/>
       <File Name="ui/box.cpp"/>
       <File Name="ui/label.hpp"/>
       <File Name="ui/label.cpp"/>
@@ -166,6 +165,8 @@
       <File Name="ui/imagelist.hpp"/>
       <File Name="ui/imagelist.cpp"/>
       <File Name="ui/knob_sprites.py"/>
+      <File Name="ui/box.hpp"/>
+      <File Name="ui/rectangle.hpp"/>
     </VirtualDirectory>
     <File Name="anja.cpp"/>
     <File Name="maikeconfig-rel.json"/>
@@ -196,7 +197,6 @@
       <File Name="midiconstants/status_codes.py"/>
       <File Name="midiconstants/message.hpp"/>
     </VirtualDirectory>
-    <File Name="maikeconfig-inst.json"/>
     <File Name="README.md"/>
     <File Name="memorender.py"/>
     <File Name="Makefile"/>
@@ -208,6 +208,7 @@
       <File Name="doc/resources.cp"/>
       <File Name="doc/color.css"/>
       <File Name="doc/format.css"/>
+      <File Name="doc/mainwindowstart.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

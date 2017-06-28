@@ -7,6 +7,7 @@
 #define ANJA_SCROLLEDWINDOW_HPP
 
 #include "container.hpp"
+#include "rectangle.hpp"
 #include <utility>
 #include <cstdint>
 
@@ -35,6 +36,7 @@ namespace Anja
 			static constexpr uint32_t VERTICAL=1;
 			static constexpr uint32_t HORIZONTAL=2;
 			ScrolledWindow& directions(uint32_t direction_flags);
+			Rectangle boundingBox() const noexcept;
 
 		protected:
 			class Impl;

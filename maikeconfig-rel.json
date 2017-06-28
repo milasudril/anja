@@ -227,6 +227,22 @@
                         "{script}",
                         "{args}"
                     ],
+                    "name":"bash"
+                }
+            },
+            "filename_exts":[
+                ".sh"
+            ],
+            "name":"targetbash_default",
+            "plugin":"targetbash"
+        },
+        {
+            "config":{
+                "command":{
+                    "args":[
+                        "{script}",
+                        "{args}"
+                    ],
                     "name":"octave-cli"
                 }
             },

@@ -85,6 +85,9 @@ namespace Anja
 			void clicked(Button& btn,int id)
 				{m_cb(r_cb_obj,*this,m_id,btn);}
 
+			Rectangle boundingBox() const noexcept
+				{return m_scroll.boundingBox();}
+
 		private:
 			int m_id;
 			void (*m_cb)(void* cb_obj,ButtonList& self,int id,Button& option);

@@ -26,7 +26,7 @@
 
 
 	<section id="requirements">System requirements</section>
-	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UI is requires <quantity unit="px">670</quantity>.</p>
+	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UIrequires a height of <quantity unit="px">670</quantity>.</p>
 
 
 	<section id="comparison">Anja compared to other software</section>
@@ -62,15 +62,15 @@ make</code>
 <p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
 <code language="bash">mv __targets_rel/anja ~/bin</code>
 
-<!--
+
 	<chapter id="using">Using Anja</chapter>
 	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine.</p>
 
 	<figure id="anjastart">
-		<includegraphics src="anja-mainwindowstart.png" />
-		<caption>The Anja window, as shown after launching Anja without any command line arguments</caption>
+		<includegraphics src="mainwindowstart.png" />
+		<caption>The Anja window, as shown after launching Anja without any command line arguments, and with a JACK server running.</caption>
 	</figure>
-
+<!--
 	<figure id="anjaworkspace">
 		<includegraphics src="anjaworkspace.png" />
 		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>

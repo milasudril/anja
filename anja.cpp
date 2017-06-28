@@ -18,7 +18,14 @@ int main(int argc, char **argv)
 	try
 		{
 		Anja::Application anja;
-	//	anja.sessionLoad("testbank/testbank.txt");
+		anja.dark(1);
+
+		anja.layoutInspect([](int k,const Anja::Rectangle& rect)
+			{
+			printf("%d %.15g %.15g %.15g %.15g\n",k
+				,rect.min.x(),rect.min.y()
+				,rect.max.x(),rect.max.y());
+			});
 		anja.run();
 		}
 	catch(const Anja::Error& err)
