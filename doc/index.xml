@@ -27,7 +27,7 @@
 
 
 	<section id="requirements">System requirements</section>
-	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UIrequires a height of <quantity unit="px">670</quantity>.</p>
+	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UI requires a height of <quantity unit="px">670</quantity>. To conclude, Anja can be used without any problems on an XGA'display.</p>
 
 
 	<section id="comparison">Anja compared to other software</section>
