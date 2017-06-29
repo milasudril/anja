@@ -6,7 +6,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
-#@		"name":"layout.txt","dependencies":
+#@		"name":"anja_layout.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
@@ -26,7 +26,7 @@ done
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT INT TERM HUP
 mkfifo "$tmpdir/anja_fifo"
-"$target_dir"/anja --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/layout.txt &
+"$target_dir"/anja --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/anja_layout.txt &
 anja=$!
 while ! jack_lsp | grep anja >/dev/null 2>&1; do
 	sleep 0.50s

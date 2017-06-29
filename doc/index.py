@@ -20,7 +20,6 @@ def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
 
 try:
-	print(sys.argv)
 	dest=sys.argv[1]
 	src=sys.argv[2]
 	in_dir=sys.argv[3]

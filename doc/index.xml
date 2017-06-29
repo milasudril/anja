@@ -70,12 +70,12 @@ make</code>
 		<includegraphics src="mainwindowstart.png" />
 		<caption>The Anja window, as shown after launching Anja without any command line arguments, and with a JACK server running.</caption>
 	</figure>
-<!--
-	<figure id="anjaworkspace">
-		<includegraphics src="anjaworkspace.png" />
-		<caption>The different parts of the Anja workspace. (1) is the <dfn>Action panel</dfn>, used to control Anja's state, (2) is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and (3) is the <dfn>Settings panel</dfn>, which controls which loads waveforms and controls the playback of loaded waveforms.</caption>
-	</figure>
 
+	<figure id="anjaworkspace">
+		<includegraphics src="anja_layout.svg" />
+		<caption>The different parts of the Anja workspace. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. In the topmost panel to the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
+	</figure>
+<!--
 	<section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
