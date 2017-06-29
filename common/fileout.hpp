@@ -4,24 +4,25 @@
 #define ANJA_FILEOUT_HPP
 
 #include "error.hpp"
+#include "syserror.hpp"
 
 namespace Anja
 	{
 	class FileOut
 		{
 		public:
-			FileOut(const FileIn&)=delete;
-			FileOut& operator=(const FileIn&)=delete;
+			FileOut(const FileOut&)=delete;
+			FileOut& operator=(const FileOut&)=delete;
 
 		//I am lazy, and will never need these anyway
-			FileOut(FileIn&&)=delete;
-			FileOut& operator=(FileIn&&)=delete;
+			FileOut(FileOut&&)=delete;
+			FileOut& operator=(FileOut&&)=delete;
 
 			FileOut(const char* name)
 				{
 				m_handle=(name==nullptr? stdin : fopen(name,"wb"));
 				if(m_handle==NULL)
-					{throw Anja::Error("Failed to open the file ",name);}
+					{throw Error("It was not possible to open the file ",name,". ",SysError(errno));}
 				}
 
 			~FileOut()

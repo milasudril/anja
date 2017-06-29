@@ -4,6 +4,7 @@
 #define ANJA_FILEIN_HPP
 
 #include "error.hpp"
+#include "syserror.hpp"
 
 namespace Anja
 	{
@@ -21,7 +22,7 @@ namespace Anja
 				{
 				m_handle=(name==nullptr? stdin : fopen(name,"rb"));
 				if(m_handle==NULL)
-					{throw Anja::Error("Failed to open the file ",name);}
+					{throw Error("It was not possible to open the file ",name,". ",SysError(errno));}
 				}
 
 			~FileIn()

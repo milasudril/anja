@@ -3,8 +3,7 @@
 #include "sessionfilewriter.hpp"
 #include "sessionfilerecord.hpp"
 #include "../common/string.hpp"
-#include "../common/error.hpp"
-#include "../common/syserror.hpp"
+#include "../common/fileout.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <cassert>
@@ -20,7 +19,7 @@ class SessionFileWriter::Impl
 		void recordWrite(const SessionFileRecord& record);
 
 	private:
-		std::unique_ptr<FILE,decltype(&fclose)> m_sink;
+		FileOut m_sink;
 	};
 
 SessionFileWriter::SessionFileWriter(const char* filename)
@@ -31,7 +30,7 @@ SessionFileWriter::~SessionFileWriter()
 	{}
 
 SessionFileWriter::Impl::Impl(const char* filename):
-	m_sink{fopen(filename,"wb"),fclose}
+	m_sink(filename)
 	{
 	if(m_sink.get()==NULL)
 		{throw Error("It was not possible to open the file ",filename,". ",SysError(errno));}

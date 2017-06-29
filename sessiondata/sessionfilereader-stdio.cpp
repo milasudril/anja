@@ -2,9 +2,8 @@
 
 #include "sessionfilereader.hpp"
 #include "sessionfilerecordimpl.hpp"
+#include "../common/filein.hpp"
 #include "../common/string.hpp"
-#include "../common/error.hpp"
-#include "../common/syserror.hpp"
 #include "../common/pathutils.hpp"
 
 #include <cstdint>
@@ -22,7 +21,7 @@ class SessionFileReader::Impl
 		bool recordNextGet(SessionFileRecord& record);
 
 	private:
-		std::unique_ptr<FILE,decltype(&fclose)> m_source;
+		FileIn m_source;
 
 		enum class State:uint8_t
 			{
@@ -42,7 +41,7 @@ SessionFileReader::~SessionFileReader()
 	{}
 
 SessionFileReader::Impl::Impl(const char* filename):
-	m_source{fopen(filename,"rb"),fclose}
+	 m_source(filename)
 	,m_state{State::INIT},m_state_old{State::INIT}
 	{
 	if(m_source.get()==NULL)
