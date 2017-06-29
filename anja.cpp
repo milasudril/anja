@@ -18,6 +18,60 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"Session loading/control","session","loads a saved session from *filename in*. Notice that this option is ignored if `script` is given.","filename in",Alice::Option::Multiplicity::ONE}
 	,{"Session loading/control","script","reads and executes commands from *filename in*. Without argument, the session is read from standard input. The command stream works independently of the UI. Notice that this option overrides the `session` option.","filename in",Alice::Option::Multiplicity::ZERO_OR_ONE});
 
+static void commands_read(FILE* fptr,Anja::Application& dest)
+	{
+	Anja::String buffer;
+	Anja::ArrayDynamicShort<decltype(buffer)> cmd;
+	enum class State:int{NORMAL,ESCAPE};
+	auto state_current=State::NORMAL;
+
+	while(1)
+		{
+		auto ch_in=getc(fptr);
+		switch(state_current)
+			{
+			case State::NORMAL:
+				switch(ch_in)
+					{
+					case EOF:
+						cmd.append(buffer);
+						dest.invoke(std::move(cmd));
+						return;
+					case '\n':
+						{
+						cmd.append(buffer);
+						buffer.clear();
+						auto do_exit=0;
+						if(cmd[0]=="exit")
+							{do_exit=1;}
+						dest.invoke(std::move(cmd));
+						if(do_exit)
+							{return;}
+						cmd.clear();
+						}
+						break;
+					case '\\':
+						state_current=State::ESCAPE;
+						break;
+					case ',':
+						cmd.append(buffer);
+						buffer.clear();
+						break;
+					default:
+						buffer.append(ch_in);
+						break;
+					}
+				break;
+			case State::ESCAPE:
+				if(ch_in==EOF)
+					{return;}
+				buffer.append(ch_in);
+				state_current=State::NORMAL;
+				break;
+			}
+		}
+	}
+
 namespace
 	{
 	class CmdReader
@@ -33,56 +87,7 @@ namespace
 				{
 				Anja::FileIn src(m_src.length()==0?nullptr:m_src.begin());
 				auto fptr=src.get();
-				Anja::String buffer;
-				Anja::ArrayDynamicShort<decltype(buffer)> cmd;
-				enum class State:int{NORMAL,ESCAPE};
-				auto state_current=State::NORMAL;
-
-				while(1)
-					{
-					auto ch_in=getc(fptr);
-					switch(state_current)
-						{
-						case State::NORMAL:
-							switch(ch_in)
-								{
-								case EOF:
-									cmd.append(buffer);
-									r_dest.invoke(std::move(cmd));
-									return;
-								case '\n':
-									{
-									cmd.append(buffer);
-									buffer.clear();
-									auto do_exit=0;
-									if(cmd[0]=="exit")
-										{do_exit=1;}
-									r_dest.invoke(std::move(cmd));
-									if(do_exit)
-										{return;}
-									cmd.clear();
-									}
-									break;
-								case '\\':
-									state_current=State::ESCAPE;
-									break;
-								case ',':
-									cmd.append(buffer);
-									buffer.clear();
-									break;
-								default:
-									buffer.append(ch_in);
-									break;
-								}
-							break;
-						case State::ESCAPE:
-							if(ch_in==EOF)
-								{return;}
-							buffer.append(ch_in);
-							state_current=State::NORMAL;
-							break;
-						}
-					}
+				commands_read(fptr,r_dest);
 				}
 
 		private:
