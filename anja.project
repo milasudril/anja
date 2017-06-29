@@ -3,8 +3,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-	   <File Name="anja.cpp"/>
-	         <File Name="build.sh"/>
+    <File Name="anja.cpp"/>
+    <File Name="build.sh"/>
     <File Name="maikeconfig.json"/>
     <VirtualDirectory Name="sessiondata">
       <File Name="sessiondata/session.hpp"/>
@@ -86,6 +86,8 @@
       <File Name="common/nextpow2.hpp"/>
       <File Name="common/vec4d.hpp"/>
       <File Name="common/arraymultisimple.hpp"/>
+      <File Name="common/filein.hpp"/>
+      <File Name="common/fileout.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
