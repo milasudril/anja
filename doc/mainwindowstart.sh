@@ -4,11 +4,19 @@
 #@		"name":"mainwindowstart.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"catia","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"anja_layout.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"catia","rel":"tool"}
+#@			,{"ref":"../anja","rel":"misc"}]
+#@		},{
+#@		"name":"anja_jackports.txt","dependencies":
+#@			[{"ref":"Xvfb","rel":"tool"}
+#@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"catia","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		}]
 #@	}
@@ -31,6 +39,7 @@ anja=$!
 while ! jack_lsp | grep anja >/dev/null 2>&1; do
 	sleep 0.50s
 done
+jack_lsp | grep 'system\|anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --any --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
 echo "layout inspect

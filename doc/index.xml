@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
 	<title>Anja user's guide</title>
+	<subtitle>version <verbatiminput src="../versioninfo.txt" /> aaa</subtitle>
 	<author>Torbjörn Rathsman</author>
 	<titlepic>
 		<includegraphics src="logo_3.png" media="(max-width:128px)" />
@@ -75,42 +76,32 @@ make</code>
 		<includegraphics src="anja_layout.svg" />
 		<caption>The different parts of the Anja workspace. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. In the topmost panel to the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
 	</figure>
-<!--
+
 	<section id="addfx">Loading a waveform</section>
-	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except one of the function keys, but it is recommended to avoid the keys <kbd>Alt</kbd> and <kbd>❖</kbd>. After choosing a slot click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any key except function and system keys. After choosing a, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
 	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
 	</infobox>
 
 	<section id="play">Playing waveforms</section>
-	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. The <dfn>audio engine</dfn> is started by clicking the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, when the engine is running, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
+	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
 
 	<code language="bash">jack_lsp</code>
 
 	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
-	<code language="nohighlight">system:capture_1
-system:capture_2
-system:playback_1
-system:playback_2
-New session.anja:Master out
-New session.anja:Audio capture
-New session.anja:MIDI in
-New session.anja:MIDI out</code>
+	<code language="nohighlight"><verbatiminput src="anja_jackports.txt" /></code>
+
 <p>The interesting port in this case is <dirname>New session.anja:Master out</dirname>. Connecting this port to <dirname>system:playback_1</dirname> and <dirname>system:playback_2</dirname> will enable sound output from Anja to the left and right speaker (or what ever is connected to the corresponding audio output ports of the computer). JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. The command to connect these ports would be</p>
 <code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
 jack_connect 'New session.anja:Master out' 'system:playback_2'
 </code>
-<p>The status message shown when the audio engine is running suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite> shown in <ref>catiafig</ref>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
+<p>The status message shown when the audio engine is running suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</p>
 
 <p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. Depending on playback options (see <ref>pboptions</ref>), playback is stopped  by releasing the key, or when the playback position reaches the <dfn>end cursor</dfn> (see <ref>waveformtrim</ref>).</p>
 
 <infobox type="info">Triggering playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
-<figure id="catiafig">
-	<includegraphics src="catiaanja.png"/>
-	<caption>Catia with an Anja session started</caption>
-</figure>
-
+<!--
 <section id="rec">Capturing waveforms</section>
 <p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Audio capture</dirname> is connected to a signal source. Then press <kbd>Ins</kbd> and the typeing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ins</kbd> is released before the typing area key, the captured waveform will be playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
 

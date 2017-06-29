@@ -6,6 +6,12 @@
 #@			,{"ref":"maikeconfig.json","rel":"misc"}
 #@			,{"ref":"projectinfo.json","rel":"misc"}]
 #@		,"status_check":"dynamic"
+#@		},{
+#@		 "name":"versioninfo.txt"
+#@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
+#@			,{"ref":"maikeconfig.json","rel":"misc"}
+#@			,{"ref":"projectinfo.json","rel":"misc"}]
+#@		,"status_check":"dynamic"
 #@		}]
 #@  }
 
@@ -119,7 +125,7 @@ def compiler_version(exename):
 	for lines in compiler.stdout:
 		return lines.decode('utf8').rstrip()
 
-def get_revision():
+def get_revision(target_dir):
 	with subprocess.Popen(('git', 'describe','--tags','--dirty','--always')\
 		,stdout=subprocess.PIPE) as git:
 		result=git.stdout.read().decode().strip()
@@ -131,6 +137,8 @@ def get_revision():
 			result=versionfile.read().strip()
 	else:
 		with open('versioninfo.txt','w') as versionfile:
+			versionfile.write(result)
+		with open(target_dir+'/versioninfo.txt','w') as versionfile:
 			versionfile.write(result)
 
 	return result
@@ -149,7 +157,7 @@ try:
 	substitutes['author']=projinfo['author']
 	substitutes['legal_brief']=projinfo['legal_brief']
 	substitutes['years']=str(projinfo['years']).replace(', ','–').strip('[]')
-	substitutes['revision']=get_revision()
+	substitutes['revision']=get_revision(target_dir)
 	substitutes['description']=projinfo['description']
 
 	externals=load(target_dir + '/externals.json')

@@ -3,6 +3,9 @@
 import xml.etree.ElementTree as ET
 import sys
 import json
+import html
+
+in_dir=''
 
 chapters=0
 sections=0
@@ -29,6 +32,15 @@ def printWrapper(string):
 
 def title(node):
 	printWrapper('<h1>' + node.text + '</h1>')
+
+def subtitle(node):
+	printWrapper('<sub-title>')
+	if node.text != None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('</sub-title>')
+	if node.tail != None:
+		printWrapper(node.tail)
 
 def author(node):
 	printWrapper('<p class="titlepage">' +node.text + '</p>')
@@ -209,9 +221,13 @@ def caption(node):
 	printWrapper('''</p>''')
 
 def code(node):
-	printWrapper('''<pre><code class="''' + node.attrib["language"] + '''">'''\
-		+ node.text\
-		+ '''</code></pre>''')
+	printWrapper('''<pre><code class="''' + node.attrib["language"] + '''">''')
+	if node.text != None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('''</code></pre>''')
+	if node.tail != None:
+		printWrapper(node.tail)
 
 def ref(node):
 	if node.text in labels:
@@ -234,6 +250,20 @@ def bibliography(node):
 
 def url(node):
 	printWrapper('<a href="' + node.text + '" target="blank">'+node.text+'</a>')
+
+def verbatiminput(node):
+	global in_dir
+	src=node.attrib['src']
+	with open(in_dir + '/' + src, 'r') as content:
+		data=content.read()
+	printWrapper(html.escape(data),False)
+
+def input(node):
+	global in_dir
+	src=node.attrib['src']
+	with open(in_dir + '/' + src, 'r') as content:
+		data=content.read()
+	printWrapper(data)
 
 def figure(node):
 	global figures
@@ -324,6 +354,8 @@ def processElements(document):
 	for node in document.findall('*'):
 		if node.tag=='title':
 			title(node)
+		if node.tag=='subtitle':
+			subtitle(node)
 		elif node.tag=='author':
 			author(node)
 		elif node.tag=='titlepic':
@@ -350,6 +382,10 @@ def processElements(document):
 			listing(node)
 		elif node.tag=='code':
 			code(node)
+		elif node.tag=='input':
+			input(node)
+		elif node.tag=='verbatiminput':
+			input(node)
 		elif node.tag=='caption':
 			caption(node)
 		elif node.tag=='ref':
@@ -396,6 +432,8 @@ def main(argv):
 	global tables
 	global pass_counter
 	global countmode
+	global in_dir
+	in_dir=args['in_dir']
 	print('''<!DOCTYPE html>
 <html>
 <head>
