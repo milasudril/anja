@@ -28,6 +28,7 @@ while ! jack_lsp | grep anja >/dev/null 2>&1; do
 done
 anjawin=$(xdotool search --any --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
-echo "exit" > "$tmpdir/anja_fifo"
+echo "layout inspect
+exit" > "$tmpdir/anja_fifo"
 wait $anja
 kill $server

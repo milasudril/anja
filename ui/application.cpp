@@ -366,6 +366,15 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 	{
 	if(cmd[0]=="exit")
 		{m_ctx.exit();}
+	else
+	if(cmd[0]=="layout inspect")
+		{
+		layoutInspect([](int k,const Rectangle& box)
+			{
+			printf("%d %.15g %.15g %.15g %.15g\n",k,box.min.x(),box.min.y()
+				,box.max.x(),box.max.y());
+			});
+		}
 	}
 
 void Application::clicked(ButtonList& buttons,int id,Button& btn)
