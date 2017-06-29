@@ -82,14 +82,15 @@ namespace
 		{
 		public:
 			CmdReader(const char* filename,Anja::Application& dest):
-				 m_src(filename),r_dest(dest)
+				 m_src(filename==nullptr?"":filename),r_dest(dest)
 				,m_read_thread(*this,std::integral_constant<int,0>{})
 				{}
 
 			template<int id>
 			void run()
 				{
-				auto fptr=m_src.get();
+				FileIn src(m_src.length()==0?nullptr:m_src.begin());
+				auto fptr=src.get();
 				Anja::String buffer;
 				Anja::ArrayDynamicShort<decltype(buffer)> cmd;
 				enum class State:int{NORMAL,ESCAPE};
@@ -143,7 +144,7 @@ namespace
 				}
 
 		private:
-			FileIn m_src;
+			Anja::String m_src;
 			Anja::Application& r_dest;
 			Anja::Thread m_read_thread;
 		};

@@ -1,11 +1,10 @@
 #@	{
 #@	"targets":
 #@		[{
-#@			"name":"mainwindowstart.png","dependencies":
-#@				[{"ref":"Xvfb","rel":"tool"}
-#@				,{"ref":"import","rel":"tool"}
-#@				,{"ref":"../anja","rel":"misc"}
-#@				]
+#@		"name":"mainwindowstart.png","dependencies":
+#@			[{"ref":"Xvfb","rel":"tool"}
+#@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"../anja","rel":"misc"}]
 #@		}]
 #@	}
 
@@ -15,11 +14,20 @@ target_dir=$1
 in_dir=$2
 Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
 server=$!
-sleep 0.5
-DISPLAY=:5 "$target_dir"/anja &
+export DISPLAY=:5
+while ! xdpyinfo >/dev/null 2>&1; do
+   sleep 0.50s
+done
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT INT TERM HUP
+mkfifo "$tmpdir/anja_fifo"
+"$target_dir"/anja --script="$tmpdir/anja_fifo" &
 anja=$!
-sleep 0.5
-anjawin=$(DISPLAY=:5 xdotool search --any --onlyvisible --pid $anja)
-DISPLAY=:5 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
-kill $anja
+while ! jack_lsp | grep anja >/dev/null 2>&1; do
+	sleep 0.50s
+done
+anjawin=$(xdotool search --any --onlyvisible --pid $anja)
+import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
+echo "exit" > "$tmpdir/anja_fifo"
+wait $anja
 kill $server
