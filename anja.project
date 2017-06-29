@@ -211,6 +211,7 @@
       <File Name="doc/color.css"/>
       <File Name="doc/format.css"/>
       <File Name="doc/mainwindowstart.sh"/>
+      <File Name="doc/anja_layout.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

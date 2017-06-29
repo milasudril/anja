@@ -20,7 +20,6 @@ def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
 
 try:
-	print(sys.argv)
 	dest=sys.argv[1]
 	src=sys.argv[2]
 	in_dir=sys.argv[3]
@@ -29,14 +28,14 @@ try:
 	print('# Generating manual from %s'%src)
 	sys.stdout.flush()
 	status=subprocess.call(' '.join([shlex.quote(in_dir + '/makepage.py') \
-		,shlex.quote('{"stylesheets":["format.css","color.css"]}') \
+		,shlex.quote('{"stylesheets":["format.css","color.css"],"in_dir":"'+dest_dir+'"}') \
 		,'<',shlex.quote(src) \
 		,'>',shlex.quote(dest)]) \
 		,shell=True \
 		,env={"LANG":"C.UTF-8"})
 
 	if status!=0:
-		sys.remove(dest)
+		os.remove(dest)
 		raise Exception('Could not generate manual')
 	for deps in sys.argv[4:]:
 		if os.path.isfile(deps) and deps[:2]!='__':

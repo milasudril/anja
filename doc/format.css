@@ -1,8 +1,10 @@
 * {box-sizing: border-box;}
 
+sub-title{display:block;text-align:center}
+
 h1{font-size:30pt;text-align:center}
 
-h2{font-size:20.74pt;margin-bottom:40pt;margin-top:20pt}
+h2,sub-title{font-size:20.74pt;margin-bottom:40pt;margin-top:20pt}
 
 h3{font-size:14.4pt;margin-top:3.5ex;margin-bottom:2.3ex}
 
@@ -29,8 +31,9 @@ span.fill{margin-right:18pt}
 ol,ul{padding-left:14pt;}
 nav{padding-right:0.05em;}
 
-h1,h2,h3,h4,h5,h6,p,li,td,th,div
+h1,h2,h3,h4,h5,h6,p,li,td,th,div,sub-title
 	{font-family:"Latin Modern","Latin Modern Roman","CMU Serif","Century Schoolbook",Serif;}
+h1,h2,h3,h4,h5,h6,th,sub-title{font-weight:bold;}
 code,pre,kbd{font-family:"Latin Modern Mono",Monospace}
 pre > code,kbd,ui-button{font-size:10pt}
 ui-button{font-family: "Latin Modern Sans", sans-serif;}
