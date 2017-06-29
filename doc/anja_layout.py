@@ -69,7 +69,6 @@ try:
 		output.write(anja_layout.substitute(params).encode('utf-8'))
 	sys.exit(0)
 
-	sys.exit(0)
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))
 	sys.exit(-1)

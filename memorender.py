@@ -71,11 +71,11 @@ def render(mipmap_levels,source,in_dir,target_dir,*target_name):
 		,'--python',__file__,'--',target_dir,in_dir,str(mipmap_levels)]
 	argv.extend(target_name)
 	print('# Starting blender with command line ',argv)
-	blender=subprocess.Popen(argv,stdout=subprocess.PIPE)
-	for lines in blender.stdout:
-		progress=lines.decode('utf8').rstrip().split('|')
-		print('# Blender: %s'%(progress[-1].strip()))
-		sys.stdout.flush()
-	blender.wait()
-	if blender.returncode!=0:
-		raise Exception('Blender failed')
+	with subprocess.Popen(argv,stdout=subprocess.PIPE) as blender:
+		for lines in blender.stdout:
+			progress=lines.decode('utf8').rstrip().split('|')
+			print('# Blender: %s'%(progress[-1].strip()))
+			sys.stdout.flush()
+		blender.wait()
+		if blender.returncode!=0:
+			raise Exception('Blender failed')

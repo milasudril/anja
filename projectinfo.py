@@ -120,12 +120,13 @@ def compiler_name(config):
 			return hook['config']['objcompile']['name']
 
 def compiler_version(exename):
-	compiler=subprocess.Popen([exename,'--version'] \
-		,stdout=subprocess.PIPE)
-	for lines in compiler.stdout:
-		return lines.decode('utf8').rstrip()
+	with subprocess.Popen([exename,'--version'] \
+		,stdout=subprocess.PIPE) as compiler:
+		for lines in compiler.stdout:
+			return lines.decode('utf8').rstrip()
+		compiler.wait()
 
-def get_revision(target_dir):
+def get_revision():
 	with subprocess.Popen(('git', 'describe','--tags','--dirty','--always')\
 		,stdout=subprocess.PIPE) as git:
 		result=git.stdout.read().decode().strip()
@@ -137,8 +138,6 @@ def get_revision(target_dir):
 			result=versionfile.read().strip()
 	else:
 		with open('versioninfo.txt','w') as versionfile:
-			versionfile.write(result)
-		with open(target_dir+'/versioninfo.txt','w') as versionfile:
 			versionfile.write(result)
 
 	return result
@@ -157,7 +156,7 @@ try:
 	substitutes['author']=projinfo['author']
 	substitutes['legal_brief']=projinfo['legal_brief']
 	substitutes['years']=str(projinfo['years']).replace(', ','–').strip('[]')
-	substitutes['revision']=get_revision(target_dir)
+	substitutes['revision']=get_revision()
 	substitutes['description']=projinfo['description']
 
 	externals=load(target_dir + '/externals.json')
