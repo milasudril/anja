@@ -8,7 +8,6 @@
 #@		},{
 #@		"name":"layout.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
-#@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		}]
 #@	}
