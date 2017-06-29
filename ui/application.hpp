@@ -68,6 +68,7 @@ namespace Anja
 
 			Application& run()
 				{
+				m_cmd_ready.set();
 				m_ctx.run(*this);
 				return *this;
 				}
@@ -81,6 +82,13 @@ namespace Anja
 
 			Application& dark(bool status);
 			Application& fullscreen(bool status);
+			Application& invoke(ArrayDynamicShort<String>&& cmd) noexcept
+				{
+				m_cmd_ready.wait();
+				m_cmd_buffer[0]=std::move(cmd);
+				m_ctx.messagePost(MessageId::INVOKE,0);
+				return *this;
+				}
 
 			UiContext::RunStatus idle(UiContext& ctx);
 
@@ -108,7 +116,7 @@ namespace Anja
 			void unmuted(Engine& engine,int channel) noexcept;
 			void recordDone(Engine& engine,int channel) noexcept;
 
-			enum MessageId:int32_t{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE};
+			enum MessageId:int32_t{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,INVOKE};
 			typedef int32_t MessageParam;
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);
@@ -152,10 +160,14 @@ namespace Anja
 			std::bitset<256> m_keystate;
 			int m_rec_count;
 
+			ArrayDynamicShort<String> m_cmd_buffer[2];
+			ReadySignal m_cmd_ready;
+
 			void engine_stop();
 			void engine_start();
 
 			String filename_generate(int slot);
+			void command_process(const ArrayDynamicShort<String>& cmd);
 		};
 	}
 

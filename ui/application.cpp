@@ -155,6 +155,12 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			m_session_editor.sessionUpdated();
 			}
 			break;
+
+		case MessageId::INVOKE:
+			std::swap(m_cmd_buffer[0],m_cmd_buffer[1]);
+			m_cmd_ready.set();
+			command_process(m_cmd_buffer[1]);
+			break;
 		}
 	}
 
@@ -354,6 +360,12 @@ Application& Application::fullscreen(bool status)
 	m_mainwin.fullscreen(m_fullscreen);
 	m_session_control[7].label(m_fullscreen?"Windowed":"Fullscreen");
 	return *this;
+	}
+
+void Application::command_process(const ArrayDynamicShort<String>& cmd)
+	{
+	if(cmd[0]=="exit")
+		{m_ctx.exit();}
 	}
 
 void Application::clicked(ButtonList& buttons,int id,Button& btn)

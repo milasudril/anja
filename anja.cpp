@@ -90,10 +90,11 @@ namespace
 			void run()
 				{
 				auto fptr=m_src.get();
-				std::string buffer;
-				std::vector<std::string> cmd;
+				Anja::String buffer;
+				Anja::ArrayDynamicShort<decltype(buffer)> cmd;
 				enum class State:int{NORMAL,ESCAPE};
 				auto state_current=State::NORMAL;
+
 				while(1)
 					{
 					auto ch_in=getc(fptr);
@@ -103,31 +104,38 @@ namespace
 							switch(ch_in)
 								{
 								case EOF:
-									cmd.push_back(buffer);
-									invoke(cmd);
+									cmd.append(buffer);
+									r_dest.invoke(std::move(cmd));
 									return;
 								case '\n':
-									cmd.push_back(buffer);
+									{
+									cmd.append(buffer);
 									buffer.clear();
-									invoke(cmd);
+									auto do_exit=0;
+									if(cmd[0]=="exit")
+										{do_exit=1;}
+									r_dest.invoke(std::move(cmd));
+									if(do_exit)
+										{return;}
 									cmd.clear();
+									}
 									break;
 								case '\\':
 									state_current=State::ESCAPE;
 									break;
 								case ',':
-									cmd.push_back(buffer);
+									cmd.append(buffer);
 									buffer.clear();
 									break;
 								default:
-									buffer+=ch_in;
+									buffer.append(ch_in);
 									break;
 								}
 							break;
 						case State::ESCAPE:
 							if(ch_in==EOF)
 								{return;}
-							buffer+=ch_in;
+							buffer.append(ch_in);
 							state_current=State::NORMAL;
 							break;
 						}
@@ -135,16 +143,6 @@ namespace
 				}
 
 		private:
-			void invoke(const std::vector<std::string>& cmd)
-				{
-				try
-					{
-
-					}
-				catch(const Anja::Error& e)
-					{fprintf(stderr,"Error: %s",e.message());}
-				}
-
 			FileIn m_src;
 			Anja::Application& r_dest;
 			Anja::Thread m_read_thread;
