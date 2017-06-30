@@ -61,10 +61,41 @@ namespace Anja
 				return *this;
 				}
 
+			bool midiInConnected(int index) const noexcept
+				{return m_client.midiInConnected(index);}
+
+			bool midiOutConnected(int index) const noexcept
+				{return m_client.midiOutConnected(index);}
+
+			bool waveInConnected(int index) const noexcept
+				{return m_client.waveInConnected(index);}
+
+			bool waveOutConnected(int index) const noexcept
+				{return m_client.waveOutConnected(index);}
+
+
+			int midiInCount() const noexcept
+				{return m_client.midiInCount();}
+
+			int midiOutCount() const noexcept
+				{return m_client.midiOutCount();}
+
+			int waveInCount() const noexcept
+				{return m_client.waveInCount();}
+
+			int waveOutCount() const noexcept
+				{return m_client.waveOutCount();}
+
+
+			bool muted(int index) const noexcept
+				{return !(m_ch_state&(1<<index));}
+
+
 			void process(AudioClient& client,int n_frames) noexcept;
 			void bufferSize(AudioClient& client,int n_frames);
 			const char* port(AudioClient::PortType type,int index) const noexcept;
 			void portConnected(AudioClient& client,AudioClient::PortType type,int index);
+			void portDisconnected(AudioClient& client,AudioClient::PortType type,int index);
 			void loop(Voice& voice,int event_offset) noexcept;
 			void playbackDone(Voice& voice,int event_offset) noexcept;
 
@@ -218,6 +249,8 @@ namespace Anja
 				void (*muted)(void* cb_obj,Engine& engine,int channel);
 				void (*unmuted)(void* cb_obj,Engine& engine,int channel);
 				void (*record_done)(void* cb_obj,Engine& engine,int slot);
+				void (*port_connected)(void* cb_obj,Engine& engine,AudioClient::PortType type,int index);
+				void (*port_disconnected)(void* cb_obj,Engine& engine,AudioClient::PortType type,int index);
 				} m_vt;
 			void* r_cb_obj;
 
@@ -232,6 +265,10 @@ namespace Anja
 					{reinterpret_cast<Callback*>(cb_obj)->unmuted(engine,channel);};
 				m_vt.record_done=[](void* cb_obj,Engine& engine,int slot)
 					{reinterpret_cast<Callback*>(cb_obj)->recordDone(engine,slot);};
+				m_vt.port_connected=[](void* cb_obj,Engine& engine,AudioClient::PortType type,int index)
+					{reinterpret_cast<Callback*>(cb_obj)->portConnected(engine,type,index);};
+				m_vt.port_disconnected=[](void* cb_obj,Engine& engine,AudioClient::PortType type,int index)
+					{reinterpret_cast<Callback*>(cb_obj)->portDisconnected(engine,type,index);};
 				r_cb_obj=&cb;
 				return *this;
 				}

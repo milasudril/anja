@@ -33,6 +33,8 @@ namespace Anja
 						{return reinterpret_cast<Callback*>(cb_obj)->port(type,index);}
 					,[](void* cb_obj,AudioClient& self,PortType type,int index)
 						{return reinterpret_cast<Callback*>(cb_obj)->portConnected(self,type,index);}
+					,[](void* cb_obj,AudioClient& self,PortType type,int index)
+						{return reinterpret_cast<Callback*>(cb_obj)->portDisconnected(self,type,index);}
 					})
 				{}
 
@@ -53,6 +55,11 @@ namespace Anja
 			AudioClient& midiOutName(int index,const char* name);
 			AudioClient& waveInName(int index,const char* name);
 			AudioClient& waveOutName(int index,const char* name);
+
+			bool midiInConnected(int index) const noexcept;
+			bool midiOutConnected(int index) const noexcept;
+			bool waveInConnected(int index) const noexcept;
+			bool waveOutConnected(int index) const noexcept;
 
 			int midiInCount() const noexcept;
 			int midiOutCount() const noexcept;
@@ -150,6 +157,7 @@ namespace Anja
 				void (*buffersize_callback)(void* cb_obj,AudioClient& self,int n_frames);
 				const char* (*port_callback)(void* cb,PortType type,int index);
 				void (*port_connected)(void* cb,AudioClient& self,PortType type,int index);
+				void (*port_disconnected)(void* cb,AudioClient& self,PortType type,int index);
 				};
 
 			Impl* m_impl;

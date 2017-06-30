@@ -20,6 +20,16 @@ namespace
 		{static constexpr Engine::TaskId value=x;};
 	}
 
+
+static void midi_reset(Engine& e,Session& session)
+	{
+	for(int k=0;k<16;++k)
+		{
+		e.messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
+		e.channelGain(k,session.channel(k).gain());
+		}
+	}
+
 Engine::Engine(Session& session):r_session(&session)
 	,m_running(1)
 	,m_ui_events(1024)
@@ -42,7 +52,7 @@ Engine::Engine(Session& session):r_session(&session)
 	std::fill(m_channel_gain.begin<1>(),m_channel_gain.end<1>()
 		,std::pair<Vec4d,Vec4d>{Vec4d{1.0,1.0,1.0,1.0},Vec4d{1.0,1.0,1.0,1.0}});
 
-	portConnected(m_client,AudioClient::PortType::MIDI_OUT,0);
+	midi_reset(*this,*r_session);
 	if(m_client.sampleRate()!=48000) //Use one second record buffers;
 		{m_rec_buffers=ArrayMultiSimple<float,float>(m_client.sampleRate());}
 	}
@@ -74,13 +84,13 @@ Engine::~Engine()
 void Engine::portConnected(AudioClient& client,AudioClient::PortType type,int index)
 	{
 	if(type==AudioClient::PortType::MIDI_OUT)
-		{
-		for(int k=0;k<16;++k)
-			{
-			messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
-			channelGain(k,r_session->channel(k).gain());
-			}
-		}
+		{midi_reset(*this,*r_session);}
+	m_vt.port_connected(r_cb_obj,*this,type,index);
+	}
+
+void Engine::portDisconnected(AudioClient& client,AudioClient::PortType type,int index)
+	{
+	m_vt.port_disconnected(r_cb_obj,*this,type,index);
 	}
 
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept

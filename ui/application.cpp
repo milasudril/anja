@@ -90,18 +90,24 @@ void Application::confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,Confirm
 
 void Application::muted(Engine& engine,int channel) noexcept
 	{
-	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_MUTED),channel);
+	m_ctx.messagePostTry(MessageId::CHANNEL_MUTED,channel);
 	}
 
 void Application::unmuted(Engine& engine,int channel) noexcept
 	{
-	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::CHANNEL_UNMUTED),channel);
+	m_ctx.messagePostTry(MessageId::CHANNEL_UNMUTED,channel);
 	}
 
 void Application::recordDone(Engine& engine,int slot) noexcept
 	{
-	m_ctx.messagePostTry(static_cast<int32_t>(MessageId::RECORD_DONE),slot);
+	m_ctx.messagePostTry(MessageId::RECORD_DONE,slot);
 	}
+
+void Application::portConnected(Engine& engine,AudioClient::PortType type,int index) noexcept
+	{m_ctx.messagePost(MessageId::PORT_CONNECTED,(static_cast<uint32_t>(type)<<16)|index);}
+
+void Application::portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept
+	{m_ctx.messagePost(MessageId::PORT_DISCONNECTED,(static_cast<uint32_t>(type)<<16)|index);}
 
 String Application::filename_generate(int slot)
 	{
@@ -121,14 +127,104 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 		{
 		case MessageId::CHANNEL_MUTED:
 			assert(param>=0 && param<16);
-			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
-				,statusIcon(StatusIcon::STOP));
+			if(m_engine->waveOutCount()>2 ) //Multi-channel mode
+				{
+				if(m_engine->waveOutConnected(param))
+					{
+					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+						,statusIcon(StatusIcon::STOP));
+					}
+				else
+					{
+					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
+						,statusIcon(StatusIcon::OFF));
+					}
+				}
+			else
+				{
+				m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+					,statusIcon(StatusIcon::STOP));
+				}
 			break;
 
 		case MessageId::CHANNEL_UNMUTED:
 			assert(param>=0 && param<16);
-			m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
-				,statusIcon(StatusIcon::READY));
+			if(m_engine->waveOutCount()>2 ) //Multi-channel mode
+				{
+				if(m_engine->waveOutConnected(param))
+					{
+					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+						,statusIcon(StatusIcon::READY));
+					}
+				else
+					{
+					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+						,statusIcon(StatusIcon::WAIT));
+					}
+				}
+			else
+				{
+				m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+					,statusIcon(StatusIcon::READY));
+				}
+			break;
+
+		case MessageId::PORT_CONNECTED:
+			{
+			auto port=param&0x00ff;
+			auto type=static_cast<AudioClient::PortType>(param>>16);
+
+			if(type==AudioClient::PortType::WAVE_OUT)
+				{
+				if(m_engine->waveOutCount()>2)
+					{
+					if(port<16 && m_engine->muted(port))
+						{
+						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+							,statusIcon(StatusIcon::STOP));
+						}
+					else
+						{
+						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+							,statusIcon(StatusIcon::READY));
+						}
+					}
+				else
+					{
+					m_ch_status_img[port + 16].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+						,statusIcon(StatusIcon::READY));
+					}
+				}
+			}
+			break;
+
+		case MessageId::PORT_DISCONNECTED:
+			{
+			auto port=param&0x00ff;
+			auto type=static_cast<AudioClient::PortType>(param>>16);
+
+			if(type==AudioClient::PortType::WAVE_OUT)
+				{
+				if(m_engine->waveOutCount()>2)
+					{
+					if(port<16 && m_engine->muted(port))
+						{
+						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
+							,statusIcon(StatusIcon::OFF));
+						}
+					else
+						{
+						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+							,statusIcon(StatusIcon::WAIT));
+						}
+					}
+				else
+					{
+					m_ch_status_img[port + 16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+						,statusIcon(StatusIcon::WAIT));
+					}
+				}
+			}
 			break;
 
 		case MessageId::RECORD_DONE:
@@ -166,6 +262,12 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 
 void Application::engine_start()
 	{
+	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end()-2,[this](ImageView& v)
+		{
+		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
+		});
+	m_ch_status_img[16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 	m_engine.reset( new Engine(m_session,*this) );
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
@@ -543,7 +645,7 @@ Application::Application():
 	title_update(m_session,m_mainwin);
 	m_ch_status_img.append<ChannelMixer::length()>();
 	m_ch_status_img.separator();
-	m_ch_status_img.append();
+	m_ch_status_img.append<2>();
 	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
 		{
 		v.minHeight(20)

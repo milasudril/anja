@@ -96,6 +96,18 @@ class AudioClient::Impl:private AudioClient
 			return -1;
 			}
 
+		bool midiInConnected(int index) const noexcept
+			{return connected(portOffset<PortType::MIDI_IN>(index));}
+
+		bool midiOutConnected(int index) const noexcept
+			{return connected(portOffset<PortType::MIDI_OUT>(index));}
+
+		bool waveInConnected(int index) const noexcept
+			{return connected(portOffset<PortType::WAVE_IN>(index));}
+
+		bool waveOutConnected(int index) const noexcept
+			{return connected(portOffset<PortType::WAVE_OUT>(index));}
+
 
 	private:
 		template<PortType type>
@@ -106,6 +118,12 @@ class AudioClient::Impl:private AudioClient
 		void portName(int index,const char* name)
 			{
 			jack_port_rename(m_handle,m_ports[portOffset<type>(index)],name);
+			}
+
+		bool connected(int port) const noexcept
+			{
+			assert( static_cast<size_t>(port)<m_ports.size() );
+			return jack_port_connected(m_ports[port]) > 0;
 			}
 
 		void* r_cb_obj;
@@ -216,6 +234,18 @@ double AudioClient::sampleRate() const noexcept
 	{return m_impl->sampleRate();}
 
 
+bool AudioClient::midiInConnected(int index) const noexcept
+	{return m_impl->midiInConnected(index);}
+
+bool AudioClient::midiOutConnected(int index) const noexcept
+	{return m_impl->midiOutConnected(index);}
+
+bool AudioClient::waveInConnected(int index) const noexcept
+	{return m_impl->waveInConnected(index);}
+
+bool AudioClient::waveOutConnected(int index) const noexcept
+	{return m_impl->waveOutConnected(index);}
+
 
 
 
@@ -253,6 +283,8 @@ static AudioClient::PortType port_type(jack_port_t* port) noexcept
 	}
 
 
+
+
 AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
 	,r_cb_obj(cb_obj),m_vt(vt)
 	{
@@ -280,24 +312,27 @@ AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioCli
 
 	jack_set_port_connect_callback(m_handle,[](jack_port_id_t a,jack_port_id_t b,int connect,void* obj)
 		{
-		if(connect)
+		auto self=reinterpret_cast<Impl*>(obj);
+		auto port_a=jack_port_by_id(self->m_handle,a);
+		if(jack_port_is_mine(self->m_handle,port_a))
 			{
-			auto self=reinterpret_cast<Impl*>(obj);
-			auto port_a=jack_port_by_id(self->m_handle,a);
-			if(jack_port_is_mine(self->m_handle,port_a))
-				{
-				auto type=port_type(port_a);
-				auto i=self->portIndex(port_a,type);
-				self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_a),i);
-				}
+			auto type=port_type(port_a);
+			auto i=self->portIndex(port_a,type);
+			if(connect)
+				{self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_a),i);}
+			else
+				{self->m_vt.port_disconnected(self->r_cb_obj,*self,port_type(port_a),i);}
+			}
 
-			auto port_b=jack_port_by_id(self->m_handle,b);
-			if(jack_port_is_mine(self->m_handle,port_b))
-				{
-				auto type=port_type(port_b);
-				auto i=self->portIndex(port_b,type);
-				self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_b),i);
-				}
+		auto port_b=jack_port_by_id(self->m_handle,b);
+		if(jack_port_is_mine(self->m_handle,port_b))
+			{
+			auto type=port_type(port_b);
+			auto i=self->portIndex(port_b,type);
+			if(connect)
+				{self->m_vt.port_connected(self->r_cb_obj,*self,port_type(port_b),i);}
+			else
+				{self->m_vt.port_disconnected(self->r_cb_obj,*self,port_type(port_b),i);}
 			}
 		},this);
 

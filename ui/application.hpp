@@ -115,9 +115,11 @@ namespace Anja
 			void muted(Engine& engine,int channel) noexcept;
 			void unmuted(Engine& engine,int channel) noexcept;
 			void recordDone(Engine& engine,int channel) noexcept;
+			void portConnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
+			void portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
 
 			enum MessageId:int32_t
-				{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,INVOKE};
+				{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED,PORT_DISCONNECTED,INVOKE};
 			typedef int32_t MessageParam;
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);
