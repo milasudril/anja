@@ -51,6 +51,10 @@ def includegraphics(node):
 		printWrapper(' media="' + node.attrib["media"]+'"')
 	printWrapper('>')
 
+def includegraphics2(node):
+	printWrapper('<img src="' + node.attrib["src"]+'" alt="'\
+		+ node.attrib["src"]+'">')
+
 def titlepic(node):
 	printWrapper('''<div class="titlepic">
 <picture>''')
@@ -416,6 +420,8 @@ def processElements(document):
 			row(node)
 		elif node.tag=='appendix':
 			appendix()
+		elif node.tag=='includegraphics':
+			includegraphics2(node)
 		else:
 			defaultrule(node)
 

@@ -24,7 +24,8 @@ namespace Anja
 			explicit ImageList(Container& cnt,bool vertical):
 				m_box(cnt,vertical)
 				{
-				m_box.homogenous(!vertical).insertMode({2,Box::EXPAND|Box::FILL});
+				m_vertical=vertical;
+				m_box.insertMode({2,Box::EXPAND|Box::FILL});
 				}
 
 			ImageList& clear() noexcept
@@ -62,6 +63,12 @@ namespace Anja
 				return *this;
 				}
 
+			ImageList& separator() noexcept
+				{
+				m_separators.push_back(Separator(m_box,!m_vertical));
+				return *this;
+				}
+
 			ImageView& back() noexcept
 				{return m_images.back();}
 
@@ -92,6 +99,9 @@ namespace Anja
 			Box m_box;
 
 			std::vector<ImageView> m_images;
+			std::vector<Separator> m_separators;
+			bool m_vertical;
+
 			void callbacks_assign();
 		};
 	}

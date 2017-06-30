@@ -77,8 +77,20 @@ make</code>
 		<caption>The different parts of the Anja workspace. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. In the topmost panel to the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
 	</figure>
 
+		<table id="chstatus">
+		<caption>Channel state indicators</caption>
+		<tabular>
+			<colheaders><col>Indicator</col><col>Meaning</col></colheaders>
+			<row><col><includegraphics src="led_off.png" /></col><col>Engine is not running</col></row>
+			<row><col><includegraphics src="led_off.png" /></col><col>Channel is muted, and not connected to any port</col></row>
+			<row><col><includegraphics src="led_wait.png" /></col><col>Channel is unmuted and not connected to any port</col></row>
+			<row><col><includegraphics src="led_stop.png" /></col><col>Channel muted, and connected to some port</col></row>
+			<row><col><includegraphics src="led_ready.png" /></col><col>Channel unmuted and connected to some port</col></row>
+		</tabular>
+	</table>
+
 	<section id="addfx">Loading a waveform</section>
-	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
 	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
 	</infobox>
@@ -106,7 +118,7 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 <infobox type="info">Triggering playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
 <section id="rec">Capturing waveforms</section>
-<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source. Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ins</kbd> is released before the typing area key, the captured waveform will be playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
+<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source. Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
 
 <infobox type="info">Triggering audio capture through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
@@ -116,7 +128,7 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 
 <!--
 <section id="waveformprop">Configuring waveform playback</section>
-<p>The playaback behaviour and other properties can be controlled through the <dfn>Waveform data</dfn> tab in the <dfn>Settings panel</dfn> (Area (3) in <ref>anjaworkspace</ref>). An enlarged view of the <dfn>Waveform data</dfn> panel is shown in <ref>waveformdata</ref>. This view is activated by clicking on the corresponding key on the keyboard view (Area (2) in <ref>anjaworkspace</ref>).</p>
+<p>The playaback behaviour and other properties can be controlled through the <dfn>Waveform data</dfn> tab in the <dfn>Settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>Waveform data</dfn> panel is shown in <ref>waveformdata</ref>. This view is activated by clicking on the corresponding key on the keyboard view (Area (2) in <ref>anjaworkspace</ref>).</p>
 
 <figure id="waveformdata">
 	<includegraphics src="anja-waveformdata.png" />

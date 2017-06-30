@@ -43,6 +43,16 @@ div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
 img{position:relative;width:100%;}
 div.titlepic img{position:relative;width:61%;margin-left:auto;margin-right:auto;display:block}
 
+td > img
+	{
+	height: 1em;
+	width: initial;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	margin-top: 0.25em;
+	margin-bottom: auto;
+	}
 
 @media screen and (min-width: 700px)
 	{

@@ -26,6 +26,7 @@ namespace Anja
 					,m_box_main(m_scroll,vertical)
 						,m_box(m_box_main,vertical)
 				{
+				m_vertical=vertical;
 				m_scroll.border(0);
 				m_box.homogenous(!vertical).insertMode({2,Box::EXPAND|Box::FILL});
 				}
@@ -48,7 +49,7 @@ namespace Anja
 			ButtonList& append(const char* text)
 				{
 				if(*text=='\0')
-					{m_separators.push_back(Separator(m_box,false));}
+					{m_separators.push_back(Separator(m_box,!m_vertical));}
 				else
 					{m_buttons.push_back(Button(m_box,text));}
 				return *this;
@@ -100,6 +101,7 @@ namespace Anja
 			std::vector<Separator> m_separators;
 			std::vector<Button> m_buttons;
 			void callbacks_assign();
+			bool m_vertical;
 		};
 	}
 

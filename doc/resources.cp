@@ -5,5 +5,9 @@
 	,{"name":"logo_2.png","srcdir":".."}
 	,{"name":"logo_1.png","srcdir":".."}
 	,{"name":"logo.png","srcdir":".."}
+	,{"name":"led_off.png","srcdir":"../icons"}
+	,{"name":"led_stop.png","srcdir":"../icons"}
+	,{"name":"led_ready.png","srcdir":"../icons"}
+	,{"name":"led_wait.png","srcdir":"../icons"}
 	]
 }

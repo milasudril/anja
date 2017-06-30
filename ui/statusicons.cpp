@@ -30,7 +30,7 @@ ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(../icons/message_warning.png));
 ANJA_BLOB(uint8_t,led_stop,MAIKE_TARGET(../icons/led_stop.png));
 ANJA_BLOB(uint8_t,led_wait,MAIKE_TARGET(../icons/led_wait.png));
 ANJA_BLOB(uint8_t,led_ready,MAIKE_TARGET(../icons/led_ready.png));
-ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(../icons/led_ready.png));
+ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(../icons/led_off.png));
 
 std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcept
 	{

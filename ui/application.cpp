@@ -174,6 +174,11 @@ void Application::engine_stop()
 	{
 	m_engine.reset();
 	m_status.message(ANJA_OFFLINE).type(Message::Type::STOP);
+	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
+		{
+		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
+		});
+
 	}
 
 Application& Application::sessionNew()
@@ -291,6 +296,9 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 					case Keys::KILL_ALL:
 						for(size_t k=0;k<ChannelMixer::length();++k)
 							{m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
+						break;
+
+					case 1:
 						break;
 					}
 				}
@@ -534,11 +542,14 @@ Application::Application():
 	m_session_editor.callback(*this,0);
 	title_update(m_session,m_mainwin);
 	m_ch_status_img.append<ChannelMixer::length()>();
+	m_ch_status_img.separator();
+	m_ch_status_img.append();
 	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
 		{
 		v.minHeight(20)
-			.showPng(m_images,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
+			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
+
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
 	try
 		{engine_start();}
