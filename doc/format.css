@@ -39,10 +39,9 @@ pre > code,kbd,ui-button{font-size:10pt}
 ui-button{font-family: "Latin Modern Sans", sans-serif;}
 ui-formfield{font-family: "Latin Modern Sans", sans-serif;}
 div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
-	{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
-img{position:relative;width:100%}
-
-
+	{position:relative;width:80%;left:0px;margin-left:auto;margin-right:auto;margin-top:3.25ex;margin-bottom:1.5ex}
+img{position:relative;width:100%;}
+div.titlepic img{position:relative;width:61%;margin-left:auto;margin-right:auto;display:block}
 
 
 @media screen and (min-width: 700px)
@@ -54,7 +53,7 @@ img{position:relative;width:100%}
 	nav > h2,nav > ol{position:static}
 
 	div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
-		{position:relative;width:calc(100% - 200px - 80pt);left:200px;margin-left:40pt;}
+		{position:relative;width:calc(80% - 200px);left:100px; margin-left:auto;margin-right:auto}
 
 	}
 
