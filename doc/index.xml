@@ -42,7 +42,7 @@
 	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
 	<section id="compile">Compiling Anja</section>
-	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in <cite>anjadeps</cite>. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname>and <prgname>jq</prgname>.</p>
+	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in <cite>anjadeps</cite>. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
 
 <p>As mentioned above, the Anja source package can be obtained from <cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball issue the command</p>
 
@@ -56,7 +56,7 @@ make</code>
 <p>When running <prgname>make</prgname>, files are written to <dirname>__targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
 <code language="bash">__targets_rel/anja</code>
 
-<infobox type="warning">Normally, Anja is distributed with pre-rendered logo images. It may happen that the corresponding <prgname>Blender</prgname> file has been updated and not the logo images. In this case, it will take a much longer time than normal, to compile Anja, since the <dfn>makefile</dfn> will need to rerender the logo.</infobox>
+<infobox type="warning">Normally, Anja is distributed with pre-rendered logo images. It may happen that the corresponding <prgname>Blender</prgname> file has been updated and not the logo images. In this case, it will take a much longer time than normal to compile Anja, since the will need to be rerendered.</infobox>
 
 	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do</p>
 <code language="bash">sudo mv __targets_rel/anja /usr/local/bin</code>
@@ -78,7 +78,7 @@ make</code>
 	</figure>
 
 	<section id="addfx">Loading a waveform</section>
-	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any typing key except system keys and the space bar. After choosing a, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn>. It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
 	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
 	</infobox>
@@ -91,7 +91,7 @@ make</code>
 	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
 	<code language="nohighlight"><verbatiminput src="anja_jackports.txt" /></code>
 
-<p>The interesting ports in this case are <dirname>New session.anja:Master out</dirname> and <dirname>New session.anja:Audition</dirname>. Connecting <dirname>Master out</dirname> to any system playback port will enable sound output from Anja through the corresponding physical port <em>when the corresponding key is pressed</em>. The other port <dirname>Audition</dirname>, produces sound <em>when space bar is pressed</em>. In the latter case, the current slot is used as sound source. The audition port is ideal for prelistening to sounds without feeding them to a PA system.</p>
+<p>The interesting ports in this case are <dirname>New session.anja:Master out</dirname> and <dirname>New session.anja:Audition</dirname>. Connecting <dirname>Master out</dirname> to any system playback port will enable sound output from Anja through the corresponding physical port <strong>when the corresponding key <kbd><var>K</var></kbd> is pressed</strong>. The other port, <dirname>Audition</dirname>, produces sound <strong>when space bar is pressed</strong>. In the latter case, the slot mapped to <kbd><var>K</var></kbd> is used as sound source. The audition port is ideal for prelistening to sounds without feeding them to a PA system.</p>
 
 <p>JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. The command to connect the mentioned ports would be</p>
 <code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
@@ -105,9 +105,8 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 
 <infobox type="info">Triggering playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
-<!--
 <section id="rec">Capturing waveforms</section>
-<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Audio capture</dirname> is connected to a signal source. Then press <kbd>Ins</kbd> and the typeing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ins</kbd> is released before the typing area key, the captured waveform will be playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
+<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source. Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ins</kbd> is released before the typing area key, the captured waveform will be playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
 
 <infobox type="info">Triggering audio capture through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
 
@@ -115,6 +114,7 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 
 <infobox type="warning">Capturing waveforms stores the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
 
+<!--
 <section id="waveformprop">Configuring waveform playback</section>
 <p>The playaback behaviour and other properties can be controlled through the <dfn>Waveform data</dfn> tab in the <dfn>Settings panel</dfn> (Area (3) in <ref>anjaworkspace</ref>). An enlarged view of the <dfn>Waveform data</dfn> panel is shown in <ref>waveformdata</ref>. This view is activated by clicking on the corresponding key on the keyboard view (Area (2) in <ref>anjaworkspace</ref>).</p>
 
