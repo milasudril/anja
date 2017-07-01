@@ -71,6 +71,7 @@ class Window::Impl:private Window
 		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
 		static gboolean key_up(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* user_data);
+		static gboolean focus_out(GtkWidget *widget,GdkEvent* event,void* user_data);
 
 		int m_id;
 		void* r_cb_obj;
@@ -155,6 +156,8 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	g_signal_connect(widget,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(widget,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(mouse_down),this);
+	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_out),this);
+
 
 	m_handle=GTK_WINDOW(widget);
 	title(ti);
@@ -310,3 +313,8 @@ gboolean Window::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 	return FALSE;
 	}
 
+gboolean Window::Impl::focus_out(GtkWidget *widget,GdkEvent* event,void* user_data)
+	{
+	printf("Hello, Hello\n");
+	return FALSE;
+	}

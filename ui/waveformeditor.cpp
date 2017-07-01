@@ -229,7 +229,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				if(m_waveform.flags()&Waveform::RECORDED)
 					{waveform_confirm_load(1);}
 				else
-					{waveform_load(m_filename_input.content());}
+					{waveform_load(1);}
 				}
 			break;
 

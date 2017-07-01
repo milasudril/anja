@@ -181,7 +181,7 @@ namespace Anja
 			union RecordMessage
 				{
 				public:
-					RecordMessage()=default;
+					RecordMessage():m_storage(0){}
 
 					RecordMessage(volatile const RecordMessage& x) __attribute__((always_inline)):
 						m_storage(x.m_storage){}
