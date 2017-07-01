@@ -60,7 +60,7 @@ try:
 	params=dict()
 	params['width']=max(Mx) + min(mx)
 	params['height']=max(My) + min(my)
-	labels=['Action panel','Keyboard view','Settings panel','Status bar']
+	labels=['Action panel','Keyboard view','Settings panel','Status area']
 	rects=[]
 	for k,v in enumerate(labels):
 		rects.append( rect(k,labels,mx,my,Mx,My) )

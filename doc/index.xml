@@ -42,9 +42,9 @@
 	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
 	<section id="compile">Compiling Anja</section>
-	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in <cite>anjadeps</cite>. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
+	<p>Before Anja can be compiled, certain programs, and development packages are needed. These are listed in<cite>anjadeps</cite>. Obeserve that some of the packages may need a corresponding development package. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
 
-<p>As mentioned above, the Anja source package can be obtained from <cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball issue the command</p>
+<p>As mentioned above, the Anja source package can be obtained from<cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball issue the command</p>
 
 	<code language="bash">tar -xf anja.tar.gz</code>
 
@@ -63,9 +63,9 @@ make</code>
 <p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
 <code language="bash">mv __targets_rel/anja ~/bin</code>
 
-
 	<chapter id="using">Using Anja</chapter>
-	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of three main parts annotated in <ref>anjaworkspace</ref>. To the left, there the <dfn>Action panel</dfn> a panel with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms. Above the <dfn>Keyboard view</dfn>, there is an area for text messages indicating the state of the audio engine.</p>
+
+	<p>Starting Anja without any command line arguments brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>Status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>Action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindowstart.png" />
@@ -74,57 +74,64 @@ make</code>
 
 	<figure id="anjaworkspace">
 		<includegraphics src="anja_layout.svg" />
-		<caption>The different parts of the Anja workspace. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. In the topmost panel to the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
+		<caption>The different parts of the Anja workspace. At the top, there is a <dfn>Status area</dfn> showing the state of Anja. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. To the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
 	</figure>
 
-		<table id="chstatus">
-		<caption>Channel state indicators</caption>
-		<tabular>
-			<colheaders><col>Indicator</col><col>Meaning</col></colheaders>
-			<row><col><includegraphics src="led_off.png" /></col><col>Engine is not running</col></row>
-			<row><col><includegraphics src="led_off.png" /></col><col>Channel is muted, and not connected to any port</col></row>
-			<row><col><includegraphics src="led_wait.png" /></col><col>Channel is unmuted and not connected to any port</col></row>
-			<row><col><includegraphics src="led_stop.png" /></col><col>Channel muted, and connected to some port</col></row>
-			<row><col><includegraphics src="led_ready.png" /></col><col>Channel unmuted and connected to some port</col></row>
-		</tabular>
-	</table>
-
-	<section id="addfx">Loading a waveform</section>
+<section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
 
 	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
 	</infobox>
 
 	<section id="play">Playing waveforms</section>
-	<p>Before any sound can be heard from Anja, the <dfn>audio engine</dfn> has to be running. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>. To list all JACK clients and ports open a teminal and type</p>
+	<p>Before any sound can be heard from Anja, the following conditions has to be met:</p>
 
-	<code language="bash">jack_lsp</code>
+	<ul><li>The <dfn>audio engine</dfn> has to be running</li>
+	<li>The output of Anja has to be connected to a suitable system playback port</li>
+	<li>The corresponding playback channel (see <ref>pbchannel</ref>) has to be unmuted, and have a non-zero gain.</li>
+	<li>The workspace must accept keyboard input (see <ref>keybstatus</ref>), or the MIDI input port must be connected to a MIDI event source (see <ref>midi</ref>)</li></ul>
+
+<subsection id="engstatus">Controlling and manipulating engine status</subsection>
+
+	<p>The state of the engine is showed by the leftmost panel in the <dfn>Status area</dfn> (see <ref>anjaworkspace</ref>). A green light <includegraphics src="led_ready.png" /> means that the engine is running, while a red light <includegraphics src="led_stop.png" /> means that it is not. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
+
+<subsection id="connections">Connecting Anja to system playback</subsection>
+	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. You can verify that these ports exists this by opening a terminal and run the command</p>
+
+	<code language="bash">jack_lsp | grep '\.anja'</code>
 
 	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
 	<code language="nohighlight"><verbatiminput src="anja_jackports.txt" /></code>
 
-<p>The interesting ports in this case are <dirname>New session.anja:Master out</dirname> and <dirname>New session.anja:Audition</dirname>. Connecting <dirname>Master out</dirname> to any system playback port will enable sound output from Anja through the corresponding physical port <strong>when the corresponding key <kbd><var>K</var></kbd> is pressed</strong>. The other port, <dirname>Audition</dirname>, produces sound <strong>when space bar is pressed</strong>. In the latter case, the slot mapped to <kbd><var>K</var></kbd> is used as sound source. The audition port is ideal for prelistening to sounds without feeding them to a PA system.</p>
 
-<p>JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. The command to connect the mentioned ports would be</p>
+	<p>The difference between <dirname>Master out</dirname> and <dirname>Audition</dirname> ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting the space bar.</p>
+
+	<infobox type="info">
+	Notice that hitting space bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to prelisten to sounds without routing them to a PA system.
+	</infobox>
+
+<p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two lights to the left of the <dfn>keyboard status indicator</dfn>. When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about channel status indicators, see <ref>chstatus</ref>.</p>
+
+<p>JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be</p>
 <code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
 jack_connect 'New session.anja:Audition' 'system:playback_2'
 </code>
-<p>Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition</p>
+<p>Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</p>
 
-<infobox type="info">The status message shown when the audio engine is running suggests using a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</infobox>
+<infobox type="info">Instead of using the command line, it is possible to a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</infobox>
 
-<p>When the <dfn>audio engine</dfn> is started, and the output port is connected, a loaded waveform can be played by hitting the corresponding key on the computer keyboard. Depending on playback options (see <ref>pboptions</ref>), playback is stopped  by releasing the key, or when the playback position reaches the <dfn>end cursor</dfn> (see <ref>waveformtrim</ref>).</p>
 
-<infobox type="info">Triggering playback through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
+<subsection id="keybstatus">Activating the keyboard</subsection>
+<p>Since the keyboard is shared between the playback triggering system and form input fields, playback can only be triggered from the keyboard when keyboard triggering is active. The <dfn>keyboard status indicator</dfn> is red <includegraphics src="led_stop.png"/> when a form input field has keyboard focus, and green <includegraphics src="led_ready.png"/> when playback triggering is active. Keyboard triggering is activated by hitting <kbd>ESC</kbd>, or by clicking anywhere on the workspace that would not capture keyboard focus.</p>
 
 <section id="rec">Capturing waveforms</section>
 <p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source. Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
 
-<infobox type="info">Triggering audio capture through the computer keyboard is only possible when the <dfn>Keyboard view</dfn> has keyboard focus. This is indicated by a green rectangle.</infobox>
+<infobox type="info">Triggering audio capture from the computer keyboard is only possible when keyboard triggering is active. When it is active, the <dfn>keyboard status indicator</dfn> is green <includegraphics src="led_ready.png"/>. Otherwise, it is red <includegraphics src="led_stop.png"/>.</infobox>
 
 <infobox type="info">It is not possible to record waveforms to a slot that has been marked as read-only. See <ref>waveformprop</ref> form more information.</infobox>
 
-<infobox type="warning">Capturing waveforms stores the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
+<infobox type="warning">Captured waveforms are stored the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
 
 <!--
 <section id="waveformprop">Configuring waveform playback</section>
@@ -283,6 +290,20 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 	</bibliography>
 
 <appendix />
+
+<chapter id="chstatuslist">Channel status indicators</chapter>
+		<table id="chstatus">
+		<caption>Channel state indicators</caption>
+		<tabular>
+			<colheaders><col>Indicator</col><col>Meaning</col></colheaders>
+			<row><col><includegraphics src="led_off.png" /></col><col>Engine is not running</col></row>
+			<row><col><includegraphics src="led_off.png" /></col><col>Channel is muted, and not connected to any port</col></row>
+			<row><col><includegraphics src="led_wait.png" /></col><col>Channel is unmuted and not connected to any port</col></row>
+			<row><col><includegraphics src="led_stop.png" /></col><col>Channel muted, and connected to some port</col></row>
+			<row><col><includegraphics src="led_ready.png" /></col><col>Channel unmuted and connected to some port</col></row>
+		</tabular>
+	</table>
+
 
 <chapter id="cmdopts">Command line options</chapter>
 	<p>It is possible to control how Anja is started from the command line. The general syntax is</p>

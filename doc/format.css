@@ -54,6 +54,15 @@ td > img
 	margin-bottom: auto;
 	}
 
+p > img,div > img
+	{
+	height: 1em;
+	width: initial;
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
+	}
+
 @media screen and (min-width: 700px)
 	{
 	body > * {width:calc(100% - 200px);position:relative;left:200px;}

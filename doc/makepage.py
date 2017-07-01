@@ -54,6 +54,8 @@ def includegraphics(node):
 def includegraphics2(node):
 	printWrapper('<img src="' + node.attrib["src"]+'" alt="'\
 		+ node.attrib["src"]+'">')
+	if node.tail != None:
+		printWrapper(node.tail)
 
 def titlepic(node):
 	printWrapper('''<div class="titlepic">

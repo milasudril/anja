@@ -37,7 +37,7 @@ anja=$!
 while ! jack_lsp | grep anja >/dev/null 2>&1; do
 	sleep 0.50s
 done
-jack_lsp | grep 'system\|anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
+jack_lsp | grep '\.anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --any --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
 echo "layout inspect

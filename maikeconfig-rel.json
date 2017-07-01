@@ -251,6 +251,21 @@
             ],
             "name":"targetoctave_default",
             "plugin":"targetoctave"
+        },{
+            "config":{
+                "filter":{
+                    "args":[
+                        "{depfile}",
+                        "{source}"
+                    ],
+                    "name":"xsltproc"
+                }
+            },
+            "filename_exts":[
+                ".xml"
+            ],
+            "name":"targetxml_default",
+            "plugin":"targetxml"
         }
     ],
     "targetinfo":{
