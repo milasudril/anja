@@ -2,6 +2,7 @@
 
 #include "textentry.hpp"
 #include "container.hpp"
+#include "focussink.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
@@ -62,6 +63,7 @@ class TextEntry::Impl:private TextEntry
 		GtkEntry* m_handle;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 	};
 
 TextEntry::TextEntry(Container& cnt)
@@ -118,6 +120,7 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	,r_cb(nullptr)
 	{
 	auto widget=gtk_entry_new();
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
 
@@ -158,4 +161,13 @@ gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpoin
 	if(state->r_cb!=nullptr)
 		{state->r_cb(state->r_cb_obj,*state);}
 	return FALSE;
+	}
+
+gboolean TextEntry::Impl::focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+	{
+	auto root=gtk_widget_get_toplevel(widget);
+	auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+	if(sink!=nullptr)
+		{sink->action(sink->object);}
+	return TRUE;
 	}

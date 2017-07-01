@@ -171,6 +171,7 @@
       <File Name="ui/knob_sprites.py"/>
       <File Name="ui/box.hpp"/>
       <File Name="ui/rectangle.hpp"/>
+      <File Name="ui/focussink.hpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>

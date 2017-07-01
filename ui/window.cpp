@@ -3,6 +3,7 @@
 //@	}
 
 #include "window.hpp"
+#include "focussink.hpp"
 #include <gtk/gtk.h>
 #include <string>
 #include <algorithm>
@@ -71,7 +72,7 @@ class Window::Impl:private Window
 		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
 		static gboolean key_up(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* user_data);
-		static gboolean focus_out(GtkWidget *widget,GdkEvent* event,void* user_data);
+		static void focus_out(void* user_data);
 
 		int m_id;
 		void* r_cb_obj;
@@ -80,6 +81,8 @@ class Window::Impl:private Window
 		GtkWidget* r_focus_old;
 		std::string m_title;
 		GdkPixbuf* m_icon;
+
+		FocusSink m_focus;
 	};
 
 Window::Window(const char* title,Container* owner)
@@ -156,7 +159,10 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	g_signal_connect(widget,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(widget,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(mouse_down),this);
-	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_out),this);
+	m_focus={this,focus_out};
+	g_object_set_data(G_OBJECT(widget),"anja-focus-sink",&m_focus);
+
+//	g_object_set_property(widget,"anja_focus-out-event",const GValue *value);
 
 
 	m_handle=GTK_WINDOW(widget);
@@ -168,6 +174,7 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 
 Window::Impl::~Impl()
 	{
+	g_object_set_data(G_OBJECT(m_handle),"anja-focus-sink",nullptr);
 	m_impl=nullptr;
 	r_cb_obj=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
@@ -310,11 +317,11 @@ gboolean Window::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 	if(w!=NULL)
 		{self->r_focus_old=w;}
 	gtk_window_set_focus(GTK_WINDOW(widget),NULL);
+	printf("Mouse down\n");
 	return FALSE;
 	}
 
-gboolean Window::Impl::focus_out(GtkWidget *widget,GdkEvent* event,void* user_data)
+void Window::Impl::focus_out(void* user_data)
 	{
-	printf("Hello, Hello\n");
-	return FALSE;
+	printf("Focus out\n");
 	}
