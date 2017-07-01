@@ -58,5 +58,7 @@ void Voice::generate(float* buffer_out,int n_frames) noexcept
 		}
 
 	if(r_pos_current==r_end || m_state==State::DONE)
-		{m_vt.playback_done(r_cb_obj,*this,buffer_out - buffer_out_init);}
+		{
+		m_vt.playback_done(r_cb_obj,*this,buffer_out - buffer_out_init);
+		}
 	}

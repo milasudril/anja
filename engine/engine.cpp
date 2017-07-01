@@ -133,6 +133,12 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				auto& waveform=r_session->waveformGet(midiToSlot(msg.value1()&0x7f));
 				if(waveform.lockTry())
 					{
+					if(waveform.length()==0)
+						{
+						waveform.unlock();
+						return;
+						}
+
 					auto i=m_voices_alloc.idGet();
 					if(i==m_voices_alloc.null())
 						{
