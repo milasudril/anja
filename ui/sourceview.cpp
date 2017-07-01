@@ -2,6 +2,7 @@
 
 #include "sourceview.hpp"
 #include "container.hpp"
+#include "focussink.hpp"
 #include <gtksourceview/gtksource.h>
 #include <cstring>
 
@@ -56,6 +57,15 @@ class SourceView::Impl:private SourceView
 		mutable char* m_content;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
+
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+			{
+			auto root=gtk_widget_get_toplevel(widget);
+			auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+			if(sink!=nullptr)
+				{sink->action(sink->object);}
+			return TRUE;
+			}
 	};
 
 SourceView::SourceView(Container& cnt)
@@ -125,6 +135,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_style),
 		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	g_object_ref_sink(m_handle);
 	gtk_container_add(GTK_CONTAINER(scroll),widget);
 	g_object_ref_sink(m_scroll);

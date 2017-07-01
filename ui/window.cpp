@@ -72,6 +72,7 @@ class Window::Impl:private Window
 		static gboolean key_down(GtkWidget*widget,GdkEvent* event,void* user_data);
 		static gboolean key_up(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* user_data);
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 		static void focus_out(void* user_data);
 
 		int m_id;
@@ -159,10 +160,9 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	g_signal_connect(widget,"key-press-event",G_CALLBACK(key_down),this);
 	g_signal_connect(widget,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(mouse_down),this);
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	m_focus={this,focus_out};
 	g_object_set_data(G_OBJECT(widget),"anja-focus-sink",&m_focus);
-
-//	g_object_set_property(widget,"anja_focus-out-event",const GValue *value);
 
 
 	m_handle=GTK_WINDOW(widget);
@@ -317,11 +317,24 @@ gboolean Window::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 	if(w!=NULL)
 		{self->r_focus_old=w;}
 	gtk_window_set_focus(GTK_WINDOW(widget),NULL);
-	printf("Mouse down\n");
+
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.focus_in(self->r_cb_obj,*self,self->m_id);}
+
 	return FALSE;
 	}
 
 void Window::Impl::focus_out(void* user_data)
 	{
-	printf("Focus out\n");
+	auto self=reinterpret_cast<Impl*>(user_data);
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.focus_out(self->r_cb_obj,*self,self->m_id);}
+	}
+
+gboolean Window::Impl::focus_in_callback(GtkWidget* widget,GdkEvent* event,void* user_data)
+	{
+	auto self=reinterpret_cast<Impl*>(user_data);
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.focus_in(self->r_cb_obj,*self,self->m_id);}
+	return FALSE;
 	}

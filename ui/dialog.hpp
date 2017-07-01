@@ -198,6 +198,10 @@ namespace Anja
 			void keyUp(Window& win,int scancode,keymask_t keymask,int id)
 				{}
 
+			void focusIn(Window&,int){}
+
+			void focusOut(Window&,int){}
+
 		private:
 			static constexpr bool has_dismiss() noexcept
 				{return DialogTraits::dismiss()!=nullptr;}

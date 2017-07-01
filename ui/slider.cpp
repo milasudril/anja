@@ -2,6 +2,7 @@
 
 #include "slider.hpp"
 #include "container.hpp"
+#include "focussink.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
@@ -34,6 +35,16 @@ class Slider::Impl:private Slider
 		void* r_cb_obj;
 		GtkScale* m_handle;
 		static gboolean changed_callback(GtkWidget* widget,gpointer data);
+
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+			{
+			auto root=gtk_widget_get_toplevel(widget);
+			auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+			if(sink!=nullptr)
+				{sink->action(sink->object);}
+			return TRUE;
+			}
+
 	};
 
 Slider::Slider(Container& cnt,bool vertical)
@@ -75,6 +86,7 @@ Slider::Impl::Impl(Container& cnt,bool vertical):Slider(*this),m_id(0)
 	gtk_widget_get_preferred_size(widget,&minsize,&natsize);
 
 	g_signal_connect(widget,"value-changed",G_CALLBACK(changed_callback),this);
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	m_handle=GTK_SCALE(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);

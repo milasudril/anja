@@ -92,9 +92,11 @@ namespace Anja
 
 			UiContext::RunStatus idle(UiContext& ctx);
 
-			void keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id);
-			void keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id);
+			void keyDown(Window& win,int scancode,keymask_t keymask,int id);
+			void keyUp(Window& win,int scancode,keymask_t keymask,int id);
 			void clicked(ButtonList& buttons,int id,Button& btn);
+			void focusIn(Window& win,int id);
+			void focusOut(Window& win,int id);
 
 			void titleChanged(SessionPropertiesEditor& editor,int id);
 			void descriptionChanged(SessionPropertiesEditor& editor,int id);

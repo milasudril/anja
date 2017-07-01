@@ -2,6 +2,7 @@
 
 #include "listbox.hpp"
 #include "container.hpp"
+#include "focussink.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
@@ -69,6 +70,16 @@ class Listbox::Impl:private Listbox
 			if(self->r_cb!=nullptr)
 				{self->r_cb(self->r_cb_obj,*self);}
 			}
+
+
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+			{
+			auto root=gtk_widget_get_toplevel(widget);
+			auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+			if(sink!=nullptr)
+				{sink->action(sink->object);}
+			return TRUE;
+			}
 	};
 
 Listbox::Listbox(Container& cnt)
@@ -119,6 +130,7 @@ Listbox::Impl::Impl(Container& cnt):Listbox(*this),m_id(0),r_cb(nullptr)
 	auto widget=gtk_combo_box_text_new();
 	m_handle=GTK_COMBO_BOX_TEXT(widget);
 	g_signal_connect(widget,"changed",G_CALLBACK(changed_callback),this);
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
 	}

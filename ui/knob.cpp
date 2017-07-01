@@ -138,7 +138,7 @@ Knob::Impl::Impl(Container& cnt):Knob(*this),r_cb_obj(nullptr)
 	m_value=0;
 	m_grabbed=0;
 	auto widget=gtk_drawing_area_new();
-	gtk_widget_set_can_focus(widget,TRUE);
+//TODO: gtk_widget_set_can_focus(widget,TRUE);
 	gtk_widget_add_events(widget,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK
 		|GDK_BUTTON_RELEASE_MASK|GDK_KEY_PRESS_MASK|GDK_KEY_RELEASE_MASK
 		|GDK_SCROLL_MASK);

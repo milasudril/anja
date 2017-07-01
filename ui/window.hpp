@@ -66,11 +66,18 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->keyDown(self,scancode,keymask,static_cast<IdType>(id));};
 					key_up=[](void* cb_obj,Window& self,int scancode,keymask_t keymask,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->keyUp(self,scancode,keymask,static_cast<IdType>(id));};
+					focus_in=[](void* cb_obj,Window& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->focusIn(self,static_cast<IdType>(id));};
+
+					focus_out=[](void* cb_obj,Window& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->focusOut(self,static_cast<IdType>(id));};
 					}
 
 				void (*closing)(void* cb_obj,Window& self,int id);
 				void (*key_down)(void* cb_obj,Window& self,int scancode,keymask_t keymask,int id);
 				void (*key_up)(void* cb_obj,Window& self,int scancode,keymask_t keymask,int id);
+				void (*focus_in)(void* cb_obj,Window& self,int id);
+				void (*focus_out)(void* cb_obj,Window& self,int id);
 				};
 
 

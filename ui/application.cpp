@@ -412,6 +412,12 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 	m_keystate[scancode]=1;
 	}
 
+void Application::focusIn(Window& win,int id)
+	{m_keyb_status.message(ANJA_KEYB_ACTIVE).type(Message::Type::READY);}
+
+void Application::focusOut(Window& win,int id)
+	{m_keyb_status.message(ANJA_KEYB_INACTIVE).type(Message::Type::STOP);}
+
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
 	if(m_engine)

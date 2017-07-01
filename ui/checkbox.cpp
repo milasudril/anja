@@ -2,6 +2,7 @@
 
 #include "checkbox.hpp"
 #include "container.hpp"
+#include "focussink.hpp"
 
 #include <gtk/gtk.h>
 
@@ -36,6 +37,7 @@ class Checkbox::Impl:public Checkbox
 		GtkToggleButton* m_handle;
 
 		static void clicked_callback(GtkWidget* widget,gpointer data);
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 	};
 
 
@@ -81,6 +83,7 @@ Checkbox::Impl::Impl(Container& cnt,const char* title):Checkbox(*this),m_id(0),r
 	{
 	GtkWidget* widget=gtk_check_button_new_with_label(title);
 	g_signal_connect(widget,"clicked",G_CALLBACK(clicked_callback),this);
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	m_handle=GTK_TOGGLE_BUTTON(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
@@ -92,3 +95,11 @@ Checkbox::Impl::~Impl()
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
+gboolean Checkbox::Impl::focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+	{
+	auto root=gtk_widget_get_toplevel(widget);
+	auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+	if(sink!=nullptr)
+		{sink->action(sink->object);}
+	return TRUE;
+	}

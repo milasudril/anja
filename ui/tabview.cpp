@@ -3,6 +3,7 @@
 //@	}
 
 #include "tabview.hpp"
+#include "focussink.hpp"
 #include <gtk/gtk.h>
 #include <string>
 
@@ -45,6 +46,16 @@ class TabView::Impl:private TabView
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkNotebook* m_handle;
 		std::string m_tab_title;
+
+		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+			{
+			auto root=gtk_widget_get_toplevel(widget);
+			auto sink=reinterpret_cast<const FocusSink*>( g_object_get_data(G_OBJECT(root),"anja-focus-sink") );
+			if(sink!=nullptr)
+				{sink->action(sink->object);}
+			return TRUE;
+			}
+
 	};
 
 TabView::TabView(Container& cnt)
@@ -95,6 +106,7 @@ TabView& TabView::activate(int index) noexcept
 TabView::Impl::Impl(Container& cnt):TabView(*this)
 	{
 	auto widget=gtk_notebook_new();
+	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_NOTEBOOK(widget);
