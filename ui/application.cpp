@@ -20,10 +20,9 @@ using namespace Anja;
 
 ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo_1.png));
 
-static constexpr const char* ANJA_OFFLINE="Click "
-	"`Start engine` in the action panel to connect to the default JACK server.";
-static constexpr const char* ANJA_ONLINE="Use a JACK patchbay tool such as Catia to route signals to/from Anja.";
-static constexpr const char* ANJA_RESTART_NEEDED="The engine needs to be restarted.";
+static constexpr const char* ANJA_OFFLINE="Stopped";
+static constexpr const char* ANJA_ONLINE="Running";
+static constexpr const char* ANJA_RESTART_NEEDED="Restart needed";
 
 static void title_update(const Session& session,Window& win)
 	{
@@ -620,19 +619,21 @@ void Application::gainChanged(ChannelStrip& strip,int id)
 
 Application::Application():
 	m_mainwin("New session--Anja")
-		,m_cols(m_mainwin,false)
-			,m_session_control(m_cols,true)
-			,m_cols_sep(m_cols.insertMode({2,0}),true)
-			,m_rows(m_cols.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}),true)
-				,m_status(m_rows,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
-				,m_sep_a(m_rows.insertMode({2,0}),false)
-				,m_ch_status(m_rows.insertMode({0,0}),false)
+		,m_rows(m_mainwin,true)
+			,m_status_row(m_rows,false)
+				,m_status(m_status_row,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
+				,m_sep_a(m_status_row.insertMode({2,0}),true)
+				,m_ch_status(m_status_row.insertMode({0,0}),false)
 					,m_ch_status_left(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
 					,m_ch_status_label(m_ch_status.insertMode({0,0}),"Channel status:")
 					,m_ch_status_img(m_ch_status.insertMode({2,0}),false)
 					,m_ch_status_right(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
-				,m_sep_b(m_rows.insertMode({2,0}),false)
-				,m_session_editor(m_rows.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
+				,m_sep_b(m_status_row.insertMode({2,0}),true)
+			,m_row_sep(m_rows,false)
+			,m_cols(m_rows.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}),false)
+				,m_session_control(m_cols,true)
+				,m_cols_sep(m_cols.insertMode({2,0}),true)
+				,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
 	,m_rec_count(0)
 	{

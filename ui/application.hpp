@@ -138,10 +138,8 @@ namespace Anja
 			UiContext m_ctx;
 			Session m_session;
 			Window m_mainwin;
-				Box m_cols;
-					Anja::ButtonList m_session_control;
-					Separator m_cols_sep;
-					Box m_rows;
+				Box m_rows;
+					Box m_status_row;
 						Message m_status;
 						Separator m_sep_a;
 						Box m_ch_status;
@@ -150,6 +148,10 @@ namespace Anja
 							ImageList m_ch_status_img;
 							Filler m_ch_status_right;
 						Separator m_sep_b;
+					Separator m_row_sep;
+					Box m_cols;
+						Anja::ButtonList m_session_control;
+						Separator m_cols_sep;
 						Anja::SessionEditor m_session_editor;
 			bool m_fullscreen;
 
