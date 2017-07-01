@@ -24,6 +24,9 @@ static constexpr const char* ANJA_OFFLINE="Stopped";
 static constexpr const char* ANJA_ONLINE="Running";
 static constexpr const char* ANJA_RESTART_NEEDED="Restart needed";
 
+static constexpr const char* ANJA_KEYB_ACTIVE="Keyboard active";
+static constexpr const char* ANJA_KEYB_INACTIVE="Keyboard inactive";
+
 static void title_update(const Session& session,Window& win)
 	{
 	String title(session.titleGet());
@@ -400,6 +403,7 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 						break;
 
 					case 1:
+						m_keyb_status.message(ANJA_KEYB_ACTIVE).type(Message::Type::READY);
 						break;
 					}
 				}
@@ -622,18 +626,17 @@ Application::Application():
 		,m_rows(m_mainwin,true)
 			,m_status_row(m_rows,false)
 				,m_status(m_status_row,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
-				,m_sep_a(m_status_row.insertMode({2,0}),true)
+				,m_sep_a(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
 				,m_ch_status(m_status_row.insertMode({0,0}),false)
-					,m_ch_status_left(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
 					,m_ch_status_label(m_ch_status.insertMode({0,0}),"Channel status:")
 					,m_ch_status_img(m_ch_status.insertMode({2,0}),false)
-					,m_ch_status_right(m_ch_status.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}))
-				,m_sep_b(m_status_row.insertMode({2,0}),true)
+				,m_sep_b(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
+				,m_keyb_status(m_status_row.insertMode({2,0}),m_images,ANJA_KEYB_INACTIVE,Message::Type::STOP,0)
 			,m_row_sep(m_rows,false)
-			,m_cols(m_rows.insertMode({0,Anja::Box::EXPAND|Anja::Box::FILL}),false)
+			,m_cols(m_rows.insertMode({0,Box::EXPAND|Box::FILL}),false)
 				,m_session_control(m_cols,true)
 				,m_cols_sep(m_cols.insertMode({2,0}),true)
-				,m_session_editor(m_cols.insertMode({2,Anja::Box::EXPAND|Anja::Box::FILL}),m_images,m_session)
+				,m_session_editor(m_cols.insertMode({2,Box::EXPAND|Box::FILL}),m_images,m_session)
 	,m_fullscreen(0)
 	,m_rec_count(0)
 	{

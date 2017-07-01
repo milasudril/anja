@@ -143,11 +143,10 @@ namespace Anja
 						Message m_status;
 						Separator m_sep_a;
 						Box m_ch_status;
-							Filler m_ch_status_left;
 							Label m_ch_status_label;
 							ImageList m_ch_status_img;
-							Filler m_ch_status_right;
 						Separator m_sep_b;
+						Message m_keyb_status;
 					Separator m_row_sep;
 					Box m_cols;
 						Anja::ButtonList m_session_control;
