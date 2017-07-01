@@ -7,6 +7,7 @@
 #define ANJA_BOX_HPP
 
 #include "container.hpp"
+#include "rectangle.hpp"
 #include <utility>
 
 namespace Anja
@@ -43,6 +44,8 @@ namespace Anja
 			Box& insertMode(const InsertMode& mode) noexcept;
 
 			Box& alignment(float x) noexcept;
+
+			Rectangle boundingBox() const noexcept;
 
 		protected:
 			class Impl;

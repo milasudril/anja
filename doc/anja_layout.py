@@ -21,30 +21,30 @@ text
 	{
 	 font-size:16px;fill:#800040;font-family:"Latin Modern Roman",Serif;
 	}
+rect
+	{
+	 fill:#ffffff;stroke-width:2px,stroke:rgb(0,0,0)
+	}
 </style>
-  <g transform="translate($ctrl_mx,$ctrl_my)">
-    <rect x="0" y="0" width="$ctrl_sx" height="$ctrl_sy" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="$ctrl_mMx" y="$ctrl_mMy" text-anchor="middle" dominant-baseline="middle">$ctrl_label</text>
-  </g>
-  <g transform="translate($keyb_mx,$keyb_my)">
-    <rect x="0" y="0" width="$keyb_sx" height="$keyb_sy" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="$keyb_mMx" y="$keyb_mMy" text-anchor="middle" dominant-baseline="middle">$keyb_label</text>
-  </g>
-  <g transform="translate($settings_mx,$settings_my)">
-    <rect x="0" y="0" width="$settings_sx" height="$settings_sy" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="$settings_mMx" y="$settings_mMy" text-anchor="middle" dominant-baseline="middle">$settings_label</text>
-  </g>
+$rectangles
 </svg>
 ''')
 
-def rect(index,keys,labels,mx,my,Mx,My,params):
-	params[keys[index] + '_mx']=mx[index]
-	params[keys[index] + '_my']=my[index]
-	params[keys[index] + '_sx']=Mx[index] - mx[index]
-	params[keys[index] + '_sy']=My[index] - my[index]
-	params[keys[index] + '_mMx']=0.5*( mx[index] + Mx[index] ) - mx[index]
-	params[keys[index] + '_mMy']=0.5*( my[index] +  My[index] ) - my[index]
-	params[keys[index] + '_label']=labels[index]
+rectangle=string.Template('''<g transform="translate($mx,$my)">
+    <rect x="0" y="0" width="$sx" height="$sy" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="$mMx" y="$mMy" text-anchor="middle" dominant-baseline="middle">$label</text>
+  </g>''')
+
+def rect(index,labels,mx,my,Mx,My):
+	params=dict()
+	params['mx']=mx[index]
+	params['my']=my[index]
+	params['sx']=Mx[index] - mx[index]
+	params['sy']=My[index] - my[index]
+	params['mMx']=0.5*( mx[index] + Mx[index] ) - mx[index]
+	params['mMy']=0.5*( my[index] +  My[index] ) - my[index]
+	params['label']=labels[index]
+	return rectangle.substitute(params)
 
 try:
 	target_dir=sys.argv[1]
@@ -60,10 +60,11 @@ try:
 	params=dict()
 	params['width']=max(Mx) + min(mx)
 	params['height']=max(My) + min(my)
-	keys=['ctrl','keyb','settings']
-	labels=['Action panel','Keyboard view','Settings panel']
-	for k,v in enumerate(keys):
-		rect(k,keys,labels,mx,my,Mx,My,params)
+	labels=['Action panel','Keyboard view','Settings panel','Status bar']
+	rects=[]
+	for k,v in enumerate(labels):
+		rects.append( rect(k,labels,mx,my,Mx,My) )
+	params['rectangles']=rects
 
 	with open(target_dir + '/' + in_dir + '/anja_layout.svg','wb') as output:
 		output.write(anja_layout.substitute(params).encode('utf-8'))
