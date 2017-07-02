@@ -1,3 +1,5 @@
+//@	{"targets":[{"name":"ringbuffer.hpp","type":"include"}]}
+
 #ifndef ANJA_RINGBUFFER_HPP
 #define ANJA_RINGBUFFER_HPP
 

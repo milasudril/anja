@@ -27,7 +27,7 @@ namespace Anja
 				{
 				Vtable vt
 					{
-					[](void* cb_obj,UiContext& self)
+					 [](void* cb_obj,UiContext& self)
 						{
 						auto cb=reinterpret_cast<Callback*>(cb_obj);
 						return cb->idle(self);
