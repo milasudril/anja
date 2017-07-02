@@ -15,6 +15,7 @@
 #include "message.hpp"
 #include "aboutbox.hpp"
 #include "imagelist.hpp"
+#include "portselector.hpp"
 #include "../sessiondata/session.hpp"
 #include "../engine/engine.hpp"
 #include <memory>
@@ -162,6 +163,7 @@ namespace Anja
 
 			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
 			std::unique_ptr<Dialog<Message,DialogOk> > m_error;
+			std::unique_ptr<Dialog<PortSelector,DialogOkCancel> >m_port_selector;
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;

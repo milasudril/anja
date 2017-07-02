@@ -43,6 +43,12 @@ namespace Anja
 			auto end() noexcept
 				{return m_buttons.end();}
 
+			auto begin() const noexcept
+				{return m_buttons.begin();}
+
+			auto end() const noexcept
+				{return m_buttons.end();}
+
 			Button& operator[](int k) noexcept
 				{return m_buttons[k];}
 

@@ -272,6 +272,15 @@ void Application::engine_start()
 	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 	m_engine.reset( new Engine(m_session,*this) );
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
+
+	m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+		,"Output port selection"));
+	m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+		{
+		m_port_selector->widget().portAppend(port_name);
+		return true;
+		});
+	m_port_selector->show();
 	}
 
 void Application::engine_stop()

@@ -202,6 +202,9 @@ namespace Anja
 
 			void focusOut(Window&,int){}
 
+			void show()
+				{m_window.show();}
+
 		private:
 			static constexpr bool has_dismiss() noexcept
 				{return DialogTraits::dismiss()!=nullptr;}
