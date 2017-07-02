@@ -112,6 +112,9 @@ namespace Anja
 			void confirmNegative(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id);
 			void confirmPositive(Dialog<AboutBox,AboutDialog>& dlg,int id);
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
+			void dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id);
+			void confirmPositive(Dialog<PortSelector,DialogOkCancel>& dlg,int id);
+
 			void user1(Dialog<AboutBox,AboutDialog>& dlg,int id);
 			void user2(Dialog<AboutBox,AboutDialog>& dlg,int id);
 
@@ -120,6 +123,9 @@ namespace Anja
 			void recordDone(Engine& engine,int channel) noexcept;
 			void portConnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
 			void portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
+
+			void clicked(ImageList& imglist,int id,ImageView& img);
+
 
 			enum MessageId:int32_t
 				{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED,PORT_DISCONNECTED,INVOKE};

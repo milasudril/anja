@@ -392,14 +392,15 @@ bool AudioClient::Impl::portsEnum(void* cb_obj,PortEnumCallback cb,const char* p
 		{return 0;}
 	try
 		{
-		while(*ports!=nullptr)
+		auto port=ports;
+		while(*port!=nullptr)
 			{
-			if(!cb(cb_obj,*this,*ports))
+			if(!cb(cb_obj,*this,*port))
 				{
 				free(ports);
 				return 0;
 				}
-			++ports;
+			++port;
 			}
 		free(ports);
 		return 1;

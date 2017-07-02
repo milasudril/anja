@@ -272,15 +272,6 @@ void Application::engine_start()
 	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 	m_engine.reset( new Engine(m_session,*this) );
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
-
-	m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
-		,"Output port selection"));
-	m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
-		{
-		m_port_selector->widget().portAppend(port_name);
-		return true;
-		});
-	m_port_selector->show();
 	}
 
 void Application::engine_stop()
@@ -505,6 +496,35 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 		}
 	}
 
+void Application::clicked(ImageList& imglist,int id,ImageView& img)
+	{
+	m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+		,"Output port selection"));
+	m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+		{
+		m_port_selector->widget().portAppend(port_name);
+		return true;
+		});
+	m_port_selector->callback(*this,0);
+	m_port_selector->show();
+	}
+
+void Application::dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
+	{
+	m_port_selector.reset(nullptr);
+	}
+
+void Application::confirmPositive(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
+	{
+	dlg.widget().state([](const Button& btn)
+		{
+		fprintf(stderr,"%s\n",btn.label());
+		});
+
+	m_port_selector.reset(nullptr);
+	}
+
+
 void Application::clicked(ButtonList& buttons,int id,Button& btn)
 	{
 	try
@@ -670,6 +690,7 @@ Application::Application():
 		v.minHeight(20)
 			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
+	m_ch_status_img.callback(*this,0);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
 	try
