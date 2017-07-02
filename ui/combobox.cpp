@@ -1,13 +1,13 @@
-//@	{"targets":[{"name":"listbox.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]}
+//@	{"targets":[{"name":"combobox.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]}
 
-#include "listbox.hpp"
+#include "combobox.hpp"
 #include "container.hpp"
 #include "focussink.hpp"
 #include <gtk/gtk.h>
 
 using namespace Anja;
 
-class Listbox::Impl:private Listbox
+class Combobox::Impl:private Combobox
 	{
 	public:
 		Impl(Container& cnt);
@@ -82,50 +82,50 @@ class Listbox::Impl:private Listbox
 			}
 	};
 
-Listbox::Listbox(Container& cnt)
+Combobox::Combobox(Container& cnt)
 	{m_impl=new Impl(cnt);}
 
-Listbox::~Listbox()
+Combobox::~Combobox()
 	{delete m_impl;}
 
-int Listbox::id() const noexcept
+int Combobox::id() const noexcept
 	{return m_impl->id();}
 
-Listbox& Listbox::append(const char* option)
+Combobox& Combobox::append(const char* option)
 	{
 	m_impl->append(option);
 	return *this;
 	}
 
-Listbox& Listbox::replace(int index,const char* option)
+Combobox& Combobox::replace(int index,const char* option)
 	{
 	m_impl->replace(index,option);
 	return *this;
 	}
 
-Listbox& Listbox::selected(int index) noexcept
+Combobox& Combobox::selected(int index) noexcept
 	{
 	m_impl->selected(index);
 	return *this;
 	}
 
-int Listbox::selected() const noexcept
+int Combobox::selected() const noexcept
 	{return m_impl->selected();}
 
-Listbox& Listbox::clear() noexcept
+Combobox& Combobox::clear() noexcept
 	{
 	m_impl->clear();
 	return *this;
 	}
 
-Listbox& Listbox::callback(Callback cb,void* cb_obj,int id)
+Combobox& Combobox::callback(Callback cb,void* cb_obj,int id)
 	{
 	m_impl->callback(cb,cb_obj,id);
 	return *this;
 	}
 
 
-Listbox::Impl::Impl(Container& cnt):Listbox(*this),m_id(0),r_cb(nullptr)
+Combobox::Impl::Impl(Container& cnt):Combobox(*this),m_id(0),r_cb(nullptr)
 	{
 	auto widget=gtk_combo_box_text_new();
 	m_handle=GTK_COMBO_BOX_TEXT(widget);
@@ -135,7 +135,7 @@ Listbox::Impl::Impl(Container& cnt):Listbox(*this),m_id(0),r_cb(nullptr)
 	cnt.add(widget);
 	}
 
-Listbox::Impl::~Impl()
+Combobox::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));

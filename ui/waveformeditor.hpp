@@ -10,7 +10,7 @@
 #include "label.hpp"
 #include "textentry.hpp"
 #include "paned.hpp"
-#include "listbox.hpp"
+#include "combobox.hpp"
 #include "button.hpp"
 #include "optionlist.hpp"
 #include "slider.hpp"
@@ -117,7 +117,7 @@ namespace Anja
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
-			void changed(Listbox& lb,ListboxId id);
+			void changed(Combobox& lb,ListboxId id);
 			void cursorXMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 			void cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 			void cursorXRightclick(XYPlot& plot,PlotId id,int index,keymask_t keymask);
@@ -193,7 +193,7 @@ namespace Anja
 							Button m_color_pick;
 						Box m_channel;
 							Label m_channel_label;
-							Listbox m_channel_input;
+							Combobox m_channel_input;
 						Box m_gain;
 							Label m_gain_label;
 							Box m_gain_input;

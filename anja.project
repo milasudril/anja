@@ -110,8 +110,6 @@
       <File Name="ui/scrolledwindow.cpp"/>
       <File Name="ui/waveformeditor.hpp"/>
       <File Name="ui/waveformeditor.cpp"/>
-      <File Name="ui/listbox.cpp"/>
-      <File Name="ui/listbox.hpp"/>
       <File Name="ui/button.cpp"/>
       <File Name="ui/button.hpp"/>
       <File Name="ui/checkbox.hpp"/>
@@ -172,6 +170,8 @@
       <File Name="ui/box.hpp"/>
       <File Name="ui/rectangle.hpp"/>
       <File Name="ui/focussink.hpp"/>
+      <File Name="ui/combobox.hpp"/>
+      <File Name="ui/combobox.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>

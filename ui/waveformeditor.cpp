@@ -436,7 +436,7 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 	src.state(0);
 	}
 
-void WaveformEditor::changed(Listbox& lb,ListboxId id)
+void WaveformEditor::changed(Combobox& lb,ListboxId id)
 	{
 	switch(id)
 		{
