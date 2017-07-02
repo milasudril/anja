@@ -26,7 +26,7 @@ namespace Anja
 
 			Button(Button&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
-			
+
 			template<class Callback,class IdType>
 			Button& callback(Callback& cb,IdType id)
 				{
@@ -36,7 +36,7 @@ namespace Anja
 					auto id=static_cast<IdType>(self.id());
 					x->clicked(self,id);
 					};
-				return callback(cb_wrapper,&cb,static_cast<int>(id)); 
+				return callback(cb_wrapper,&cb,static_cast<int>(id));
 				}
 
 			const char* label() const noexcept;
@@ -46,6 +46,8 @@ namespace Anja
 			int id() const noexcept;
 
 			Button& state(bool s) noexcept;
+
+			bool state() const noexcept;
 
 		protected:
 			class Impl;

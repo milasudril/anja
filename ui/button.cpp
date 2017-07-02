@@ -37,6 +37,9 @@ class Button::Impl:private Button
 			r_cb=cb;
 			}
 
+		bool state() const noexcept
+			{return gtk_toggle_button_get_active(m_handle);}
+
 	private:
 		int m_id;
 		Callback r_cb;
@@ -76,6 +79,12 @@ Button& Button::state(bool s) noexcept
 	m_impl->state(s);
 	return *this;
 	}
+
+bool Button::state() const noexcept
+	{
+	return m_impl->state();
+	}
+
 
 
 Button::Impl::Impl(Container& cnt,const char* lab):Button(*this),m_id(0)

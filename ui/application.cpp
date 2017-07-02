@@ -516,9 +516,9 @@ void Application::dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
 
 void Application::confirmPositive(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
 	{
-	dlg.widget().state([](const Button& btn)
+	dlg.widget().state([](const char* port,bool status)
 		{
-		fprintf(stderr,"%s\n",btn.label());
+		fprintf(stderr,"%s %d\n",port,status);
 		});
 
 	m_port_selector.reset(nullptr);

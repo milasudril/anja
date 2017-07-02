@@ -28,7 +28,9 @@ namespace Anja
 			template<class Callback>
 			const PortSelector& state(Callback&& cb) const noexcept
 				{
-				std::for_each(m_ports.begin(),m_ports.end(),cb);
+				std::for_each(m_ports.begin(),m_ports.end()
+					,[&cb](const Button& btn)
+						{cb(btn.label(),btn.state());});
 				return *this;
 				}
 
