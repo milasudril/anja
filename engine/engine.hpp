@@ -148,6 +148,23 @@ namespace Anja
 				{return m_client.sampleRate();}
 
 
+			template<class Callback>
+			bool midiInEnum(Callback&& cb)
+				{return m_client.midiInEnum(std::move(cb));}
+
+			template<class Callback>
+			bool midiOutEnum(Callback&& cb)
+				{return m_client.midiOutEnum(std::move(cb));}
+
+			template<class Callback>
+			bool waveInEnum(Callback&& cb)
+				{return m_client.waveInEnum(std::move(cb));}
+
+			template<class Callback>
+			bool waveOutEnum(Callback&& cb)
+				{return m_client.waveOutEnum(std::move(cb));}
+
+
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
 			static constexpr auto FADE_IN=MIDI::ControlCodes::GENERAL_PURPOSE_2;

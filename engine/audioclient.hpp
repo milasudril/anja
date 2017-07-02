@@ -150,6 +150,34 @@ namespace Anja
 
 			double sampleRate() const noexcept;
 
+			template<class Callback>
+			bool midiInEnum(Callback&& cb)
+				{
+				return midiInEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
+			template<class Callback>
+			bool midiOutEnum(Callback&& cb)
+				{
+				return midiOutEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
+			template<class Callback>
+			bool waveInEnum(Callback&& cb)
+				{
+				return waveInEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
+			template<class Callback>
+			bool waveOutEnum(Callback&& cb)
+				{
+				return waveOutEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
 		private:
 			struct Vtable
 				{
@@ -164,6 +192,15 @@ namespace Anja
 
 			explicit AudioClient(Impl& impl):m_impl(&impl){}
 			explicit AudioClient(const char* name,void* cb_obj,const Vtable& cb);
+
+
+			typedef bool (*PortEnumCallback)(void* cb_obj,AudioClient& client
+				,const char* port_name);
+
+			bool midiInEnum(void* cb_obj,PortEnumCallback cb);
+			bool midiOutEnum(void* cb_obj,PortEnumCallback cb);
+			bool waveInEnum(void* cb_obj,PortEnumCallback cb);
+			bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
 		};
 
 	}

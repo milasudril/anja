@@ -108,6 +108,11 @@ class AudioClient::Impl:private AudioClient
 		bool waveOutConnected(int index) const noexcept
 			{return connected(portOffset<PortType::WAVE_OUT>(index));}
 
+		bool midiInEnum(void* cb_obj,PortEnumCallback cb);
+		bool midiOutEnum(void* cb_obj,PortEnumCallback cb);
+		bool waveInEnum(void* cb_obj,PortEnumCallback cb);
+		bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
+
 
 	private:
 		template<PortType type>
@@ -132,6 +137,9 @@ class AudioClient::Impl:private AudioClient
 		double m_sample_rate;
 		uint8_t m_port_type_offsets[PORT_TYPE_COUNT];
 		std::vector<jack_port_t*> m_ports;
+
+		bool portsEnum(void* cb_obj,PortEnumCallback cb,const char* port_type
+			,JackPortFlags port_flags);
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -247,6 +255,18 @@ bool AudioClient::waveOutConnected(int index) const noexcept
 	{return m_impl->waveOutConnected(index);}
 
 
+bool AudioClient::midiInEnum(void* cb_obj,PortEnumCallback cb)
+	{return m_impl->midiInEnum(cb_obj,cb);}
+
+bool AudioClient::midiOutEnum(void* cb_obj,PortEnumCallback cb)
+	{return m_impl->midiOutEnum(cb_obj,cb);}
+
+bool AudioClient::waveInEnum(void* cb_obj,PortEnumCallback cb)
+	{return m_impl->waveInEnum(cb_obj,cb);}
+
+bool AudioClient::waveOutEnum(void* cb_obj,PortEnumCallback cb)
+	{return m_impl->waveOutEnum(cb_obj,cb);}
+
 
 
 static constexpr auto port_direction(AudioClient::PortType type)
@@ -281,8 +301,6 @@ static AudioClient::PortType port_type(jack_port_t* port) noexcept
 	else
 		{return output?AudioClient::PortType::WAVE_OUT : AudioClient::PortType::WAVE_IN;}
 	}
-
-
 
 
 AudioClient::Impl::Impl(const char* name,void* cb_obj,const Vtable& vt):AudioClient(*this)
@@ -352,4 +370,43 @@ AudioClient::Impl::~Impl()
 	std::for_each(m_ports.begin(),m_ports.end(),[this](jack_port_t* port)
 		{jack_port_unregister(m_handle,port);});
 	jack_client_close(m_handle);
+	}
+
+bool AudioClient::Impl::midiInEnum(void* cb_obj,PortEnumCallback cb)
+	{return portsEnum(cb_obj,cb,port_type(PortType::MIDI_IN),port_direction((PortType::MIDI_IN)));}
+
+bool AudioClient::Impl::midiOutEnum(void* cb_obj,PortEnumCallback cb)
+	{return portsEnum(cb_obj,cb,port_type(PortType::MIDI_OUT),port_direction((PortType::MIDI_OUT)));}
+
+bool AudioClient::Impl::waveInEnum(void* cb_obj,PortEnumCallback cb)
+	{return portsEnum(cb_obj,cb,port_type(PortType::WAVE_IN),port_direction((PortType::WAVE_IN)));}
+
+bool AudioClient::Impl::waveOutEnum(void* cb_obj,PortEnumCallback cb)
+	{return portsEnum(cb_obj,cb,port_type(PortType::WAVE_OUT),port_direction((PortType::WAVE_OUT)));}
+
+bool AudioClient::Impl::portsEnum(void* cb_obj,PortEnumCallback cb,const char* port_type
+	,JackPortFlags port_flags)
+	{
+	auto ports=jack_get_ports(m_handle,nullptr,port_type,port_flags);
+	if(ports==nullptr)
+		{return 0;}
+	try
+		{
+		while(*ports!=nullptr)
+			{
+			if(!cb(cb_obj,*this,*ports))
+				{
+				free(ports);
+				return 0;
+				}
+			++ports;
+			}
+		free(ports);
+		return 1;
+		}
+	catch(...)
+		{
+		free(ports);
+		throw;
+		}
 	}

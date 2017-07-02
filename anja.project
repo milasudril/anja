@@ -172,7 +172,6 @@
       <File Name="ui/focussink.hpp"/>
       <File Name="ui/combobox.hpp"/>
       <File Name="ui/combobox.cpp"/>
-      <File Name="ui/listboxtest.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>
