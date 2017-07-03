@@ -172,6 +172,10 @@ namespace Anja
 			bool waveOutEnum(Callback&& cb)
 				{return m_client.waveOutEnum(std::move(cb));}
 
+			template<class Callback>
+			bool waveOutConnectionsEnum(int index,Callback&& cb)
+				{return m_client.waveOutConnectionsEnum(index,std::move(cb));}
+
 
 		private:
 			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;

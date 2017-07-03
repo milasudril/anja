@@ -113,6 +113,8 @@ class AudioClient::Impl:private AudioClient
 		bool waveInEnum(void* cb_obj,PortEnumCallback cb);
 		bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
 
+		bool waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+
 		void waveOutConnect(int index,const char* port)
 			{
 			auto offset=portOffset<PortType::WAVE_OUT>(index);
@@ -154,6 +156,8 @@ class AudioClient::Impl:private AudioClient
 
 		bool portsEnum(void* cb_obj,PortEnumCallback cb,const char* port_type
 			,JackPortFlags port_flags);
+
+		bool connectionsEnum(int port_index,void* cb_obj,PortEnumCallback cb);
 	};
 
 AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
@@ -281,6 +285,10 @@ bool AudioClient::waveInEnum(void* cb_obj,PortEnumCallback cb)
 
 bool AudioClient::waveOutEnum(void* cb_obj,PortEnumCallback cb)
 	{return m_impl->waveOutEnum(cb_obj,cb);}
+
+bool AudioClient::waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{return m_impl->waveOutConnectionsEnum(index,cb_obj,cb);}
+
 
 
 void AudioClient::waveOutConnect(int index,const char* dest)
@@ -431,6 +439,39 @@ bool AudioClient::Impl::portsEnum(void* cb_obj,PortEnumCallback cb,const char* p
 	catch(...)
 		{
 		free(ports);
+		throw;
+		}
+	}
+
+bool AudioClient::Impl::waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{
+	auto port_index=portOffset<PortType::WAVE_OUT>(index);
+	return connectionsEnum(port_index,cb_obj,cb);
+	}
+
+bool AudioClient::Impl::connectionsEnum(int port_index,void* cb_obj,PortEnumCallback cb)
+	{
+	auto connections=jack_port_get_all_connections(m_handle,m_ports[port_index]);
+	if(connections==nullptr)
+		{return 0;}
+	try
+		{
+		auto connection=connections;
+		while(*connection!=nullptr)
+			{
+			if(!cb(cb_obj,*this,*connection))
+				{
+				free(connections);
+				return 0;
+				}
+			++connection;
+			}
+		free(connections);
+		return 1;
+		}
+	catch(...)
+		{
+		free(connections);
 		throw;
 		}
 	}

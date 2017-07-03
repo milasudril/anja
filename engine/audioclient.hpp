@@ -183,6 +183,13 @@ namespace Anja
 					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
 				}
 
+			template<class Callback>
+			bool waveOutConnectionsEnum(int index,Callback&& cb)
+				{
+				return waveOutConnectionsEnum(index,&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
 		private:
 			struct Vtable
 				{
@@ -206,6 +213,8 @@ namespace Anja
 			bool midiOutEnum(void* cb_obj,PortEnumCallback cb);
 			bool waveInEnum(void* cb_obj,PortEnumCallback cb);
 			bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
+
+			bool waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
 		};
 
 	}

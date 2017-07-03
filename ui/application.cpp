@@ -514,6 +514,12 @@ void Application::clicked(ImageList& imglist,int id,ImageView& img)
 				return true;
 				});
 			m_port_selector->callback(*this,port_index);
+			m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
+				{
+				fprintf(stderr,"%s\n",port_name);
+			//	m_port_selector->widget().portAppend(port_name);
+				return true;
+				});
 			m_port_selector->show();
 			}
 		}
