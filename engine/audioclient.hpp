@@ -61,6 +61,11 @@ namespace Anja
 			bool waveInConnected(int index) const noexcept;
 			bool waveOutConnected(int index) const noexcept;
 
+
+			void waveOutConnect(int index,const char* target_port);
+			void waveOutDisconnect(int index,const char* target_port);
+
+
 			int midiInCount() const noexcept;
 			int midiOutCount() const noexcept;
 			int waveInCount() const noexcept;

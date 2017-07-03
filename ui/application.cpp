@@ -526,9 +526,12 @@ void Application::dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
 
 void Application::confirmPositive(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
 	{
-	dlg.widget().state([](const char* port,bool status)
+	dlg.widget().state([this,id](const char* port,bool status)
 		{
-		fprintf(stderr,"%s %d\n",port,status);
+		if(status)
+			{m_engine->waveOutConnect(id,port);}
+		else
+			{m_engine->waveOutDisconnect(id,port);}
 		});
 
 	m_port_selector.reset(nullptr);

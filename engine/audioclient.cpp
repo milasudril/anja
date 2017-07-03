@@ -113,6 +113,20 @@ class AudioClient::Impl:private AudioClient
 		bool waveInEnum(void* cb_obj,PortEnumCallback cb);
 		bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
 
+		void waveOutConnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::WAVE_OUT>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_connect(m_handle,source,port);
+			}
+
+		void waveOutDisconnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::WAVE_OUT>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_disconnect(m_handle,source,port);
+			}
+
 
 	private:
 		template<PortType type>
@@ -149,6 +163,7 @@ AudioClient::AudioClient(const char* name,void* cb_obj,const Vtable& vt)
 
 AudioClient::~AudioClient()
 	{delete m_impl;}
+
 
 AudioClient& AudioClient::activate()
 	{
@@ -266,6 +281,14 @@ bool AudioClient::waveInEnum(void* cb_obj,PortEnumCallback cb)
 
 bool AudioClient::waveOutEnum(void* cb_obj,PortEnumCallback cb)
 	{return m_impl->waveOutEnum(cb_obj,cb);}
+
+
+void AudioClient::waveOutConnect(int index,const char* dest)
+	{m_impl->waveOutConnect(index,dest);}
+
+
+void AudioClient::waveOutDisconnect(int index,const char* dest)
+	{m_impl->waveOutDisconnect(index,dest);}
 
 
 

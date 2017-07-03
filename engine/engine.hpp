@@ -87,6 +87,14 @@ namespace Anja
 				{return m_client.waveOutCount();}
 
 
+			void waveOutConnect(int index,const char* target_port)
+				{m_client.waveOutConnect(index,target_port);}
+
+			void waveOutDisconnect(int index,const char* target_port)
+				{m_client.waveOutDisconnect(index,target_port);}
+
+
+
 			bool muted(int index) const noexcept
 				{return !(m_ch_state&(1<<index));}
 
