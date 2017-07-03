@@ -496,23 +496,36 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 		}
 	}
 
+static String port_title(const Session& session,int id)
+	{
+	switch(id)
+		{
+		case 16:
+			return String("Master out: Port selection");
+		case 17:
+			return String("Audition: Port selection");
+		default:
+			return String(session.channelLabelGet(id)).append(": Port selection");
+		}
+	}
+
 void Application::clicked(ImageList& imglist,int id,ImageView& img)
 	{
 	if(m_engine)
 		{
-		if(m_engine->waveOutCount()==2 && img.id()>=16)
+		if(m_engine->waveOutCount()>2 || (m_engine->waveOutCount()<=2 && img.id()>=16))
 			{
-			auto port_index=img.id() - 16;
-			auto title=id==0?"Master out: Port selection"
-				:"Audition: Port selection";
+			auto title=port_title(m_session,img.id());
+			auto port_index=m_engine->waveOutCount()>2?img.id():img.id() - 16;
 
-			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
-				,title));
+			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin,title.begin()));
+
 			m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
 				{
 				m_port_selector->widget().portAppend(port_name);
 				return true;
 				});
+
 			m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
 				{
 				m_port_selector->widget().select(port_name);
