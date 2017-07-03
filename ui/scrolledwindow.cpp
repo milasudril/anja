@@ -38,6 +38,7 @@ class ScrolledWindow::Impl:private ScrolledWindow
 
 				case 1:
 					gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_NEVER,GTK_POLICY_AUTOMATIC);
+					gtk_widget_set_size_request(GTK_WIDGET(m_handle),-1,64);
 					break;
 
 				case 2:
@@ -121,8 +122,7 @@ ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_SCROLLED_WINDOW(widget);
-//	TODO: Separate member function
-	gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_NEVER,GTK_POLICY_AUTOMATIC);
+	directions(VERTICAL);
 	}
 
 ScrolledWindow::Impl::~Impl()

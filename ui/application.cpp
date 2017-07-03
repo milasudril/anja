@@ -498,15 +498,25 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 
 void Application::clicked(ImageList& imglist,int id,ImageView& img)
 	{
-	m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
-		,"Output port selection"));
-	m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+	if(m_engine)
 		{
-		m_port_selector->widget().portAppend(port_name);
-		return true;
-		});
-	m_port_selector->callback(*this,0);
-	m_port_selector->show();
+		if(m_engine->waveOutCount()==2 && img.id()>=16)
+			{
+			auto port_index=img.id() - 16;
+			auto title=id==0?"Master out: Port selection"
+				:"Audition: Port selection";
+
+			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+				,title));
+			m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().portAppend(port_name);
+				return true;
+				});
+			m_port_selector->callback(*this,port_index);
+			m_port_selector->show();
+			}
+		}
 	}
 
 void Application::dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id)

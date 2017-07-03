@@ -1,9 +1,10 @@
-//@	{"targets":[{"name":"portselector.hpp","type":"include"}]}
+			//@	{"targets":[{"name":"portselector.hpp","type":"include"}]}
 
 #ifndef ANJA_PORTSELECTOR_HPP
 #define ANJA_PORTSELECTOR_HPP
 
 #include "buttonlist.hpp"
+#include "filler.hpp"
 
 namespace Anja
 	{
@@ -12,9 +13,13 @@ namespace Anja
 		{
 		public:
 			PortSelector(Container& cnt):m_box(cnt,true)
-				,m_label(m_box,"Select or unselect ports")
-				,m_ports(m_box.insertMode({2,Box::EXPAND|Box::FILL}),true)
-				{}
+				,m_label(m_box.insertMode({4,0}),"Select or unselect ports by click-\ning on the corresponding button")
+					,m_ports_panel(m_box.insertMode({4,Box::EXPAND|Box::FILL}),false)
+						,m_filler_left(m_ports_panel.insertMode({0,Box::EXPAND|Box::FILL}))
+						,m_ports(m_ports_panel.insertMode({0,0}),true)
+						,m_filler_right(m_ports_panel.insertMode({0,Box::EXPAND|Box::FILL}))
+				{
+				}
 
 			~PortSelector()
 				{}
@@ -37,7 +42,10 @@ namespace Anja
 		private:
 			Box m_box;
 				Label m_label;
-				ButtonList m_ports;
+				Box m_ports_panel;
+					Filler m_filler_left;
+					ButtonList m_ports;
+					Filler m_filler_right;
 		};
 
 	}
