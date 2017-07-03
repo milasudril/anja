@@ -511,30 +511,47 @@ static String port_title(const Session& session,int id)
 
 void Application::clicked(ImageList& imglist,int id,ImageView& img)
 	{
-	if(m_engine)
+	if(!m_engine)
 		{
-		if(m_engine->waveOutCount()>2 || (m_engine->waveOutCount()<=2 && img.id()>=16))
+		try
+			{engine_start();}
+		catch(const Error& e)
 			{
-			auto title=port_title(m_session,img.id());
-			auto port_index=m_engine->waveOutCount()>2?img.id():img.id() - 16;
-
-			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin,title.begin()));
-
-			m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
-				{
-				m_port_selector->widget().portAppend(port_name);
-				return true;
-				});
-
-			m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
-				{
-				m_port_selector->widget().select(port_name);
-				return true;
-				});
-
-			m_port_selector->callback(*this,port_index);
-			m_port_selector->show();
+			m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error",m_images
+				,e.message(),Message::Type::ERROR));
+			m_error->callback(*this,0);
+			return;
 			}
+		}
+
+	if(m_engine->waveOutCount()>2 || (m_engine->waveOutCount()<=2 && img.id()>=16))
+		{
+		auto title=port_title(m_session,img.id());
+		auto port_index=m_engine->waveOutCount()>2?img.id():img.id() - 16;
+
+		m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin,title.begin()));
+
+		m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+			{
+			m_port_selector->widget().portAppend(port_name);
+			return true;
+			});
+
+		m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
+			{
+			m_port_selector->widget().select(port_name);
+			return true;
+			});
+
+		m_port_selector->callback(*this,port_index);
+		m_port_selector->show();
+		}
+	else
+		{
+		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error"
+			,m_images,"The port is hardwired in single channel mode.",Message::Type::ERROR));
+		m_error->callback(*this,0);
+		return;
 		}
 	}
 
