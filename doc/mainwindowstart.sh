@@ -1,4 +1,4 @@
-#@	{
+ #@	{
 #@	"targets":
 #@		[{
 #@		"name":"mainwindowstart.png","dependencies":
@@ -49,5 +49,5 @@ import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
 echo "layout inspect
 exit" > "$tmpdir/anja_fifo"
 wait $anja
-kill $jack
+kill -9 $jack
 kill $server
