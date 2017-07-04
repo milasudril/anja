@@ -78,7 +78,22 @@ def tableofcontents(node,document):
 <h2>Table of contents</h2>
 <ol><li>''')
 	sibling_prev='none'
+	chapter=0
+	section=0
+	subsection=0
+	subsubsection=0
+	global countmode
 	for sibling in document.findall('*'):
+		if sibling.tag=='appendix':
+			chapter=-1
+			countmode=1
+
+		if sibling.tag=='chapter':
+			chapter=chapter+1
+			section=0
+			subsection=0
+			subsubsection=0
+
 		if sibling.tag=='chapter' or sibling.tag=='section'	\
 			or sibling.tag=='subsection' or sibling.tag=='chapter-star':
 			if ((sibling.tag=='chapter' or sibling.tag=='chapter-star') \
@@ -97,6 +112,9 @@ def tableofcontents(node,document):
 				printWrapper('</li><li>')
 
 			printWrapper('<a href="#' + sibling.attrib["id"] + '">')
+			if sibling.tag=='chapter':
+				printWrapper('<span class="fill">' \
+					+ chapstr(chapter) + '</span> ')
 			if sibling.text != None:
 				printWrapper(sibling.text)
 			processElements(sibling)
@@ -109,6 +127,7 @@ def tableofcontents(node,document):
 		printWrapper('</li></ol>')
 	printWrapper('''</ol>
 </nav>''')
+	countmode=0
 
 def chapter(node):
 	global chapters
@@ -120,10 +139,8 @@ def chapter(node):
 	global countmode
 	global tables
 	chapters=chapters+1
-
-
 	printWrapper('<h2 id="' + node.attrib["id"] + '"><span class="fill">' \
-		+ chapstr() + '</span> ')
+		+ chapstr(chapters) + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -178,7 +195,7 @@ def subsection(node):
 	global subsections
 	global subsubsections
 	subsections=subsections + 1
-	name=chapstr()+'.'+str(sections)+'.'+str(subsections)
+	name=chapstr(chapters)+'.'+str(sections)+'.'+str(subsections)
 	printWrapper('<h4 id="' + node.attrib["id"] + '"><span class="fill">' \
 		+ name + '</span>')
 	if node.text != None:
@@ -191,7 +208,7 @@ def subsection(node):
 def subsubsection(node):
 	global subsubsections
 	subsubsections=subsubsections + 1
-	name=chapstr()+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
+	name=chapstr(chapters)+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
 	printWrapper('<h5 id="' + node.attrib["id"] + '"><span class="fill">'
 		+ name + '</span>')
 	if node.text != None:
@@ -223,13 +240,12 @@ def libname(node):
 def quantity(node):
 	printWrapper(node.text + '&#160;' + node.attrib["unit"] + node.tail)
 
-def chapstr():
-	global chapters
+def chapstr(chapter):
 	chapnum=['A','B','C','D','E','F','G','H']
 	if countmode:
-		return chapnum[chapters-1]
+		return chapnum[chapter]
 	else:
-		return str(chapters);
+		return str(chapter);
 
 def listing(node):
 	global listings
@@ -237,7 +253,7 @@ def listing(node):
 	global float_type
 	global labels
 	listings=listings + 1
-	float_name=chapstr()+'.'+str(listings)
+	float_name=chapstr(chapters)+'.'+str(listings)
 	float_type='Listing'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<div class="listing" id="''' + node.attrib["id"] + '''">''')
@@ -301,7 +317,7 @@ def figure(node):
 	global float_type
 	global labels
 	figures=figures + 1
-	float_name=chapstr()+'.'+str(figures)
+	float_name=chapstr(chapters)+'.'+str(figures)
 	float_type='Figure'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<figure id="''' + node.attrib["id"] + '''">
@@ -321,7 +337,7 @@ def table(node):
 	global float_type
 
 	tables=tables + 1
-	float_name=chapstr()+'.'+str(tables)
+	float_name=chapstr(chapters)+'.'+str(tables)
 	float_type='Table'
 	labels[node.attrib["id"]]=[float_type,float_name]
 	printWrapper('''<figure id="''' + node.attrib["id"] + '''">''')

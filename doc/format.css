@@ -111,3 +111,6 @@ div.infobox_info > div{display:table-cell; vertical-align: top;padding-left:0.5e
 table{border-top:2px solid;border-bottom:2px solid;border-collapse:collapse}
 td{vertical-align: top;}
 tr.colheaders>td{border-bottom:1px solid;font-weight: bold;padding-right:}
+
+nav li{list-style-type:none;}
+nav > ol {margin-left: 0px;padding-left: 0px; list-style-type: none;}
