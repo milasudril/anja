@@ -172,6 +172,7 @@
       <File Name="ui/combobox.hpp"/>
       <File Name="ui/combobox.cpp"/>
       <File Name="ui/portselector.hpp"/>
+      <File Name="ui/application.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>
@@ -187,7 +188,6 @@
       <File Name="engine/voice.hpp"/>
       <File Name="engine/voice.cpp"/>
       <File Name="engine/engine.cpp"/>
-      <File Name="ui/application.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="midiconstants">
       <File Name="midiconstants/control_codes.py"/>
@@ -225,6 +225,8 @@
       <File Name="icons/message_error.svg"/>
       <File Name="icons/message_info.svg"/>
       <File Name="icons/message_warning.svg"/>
+      <File Name="icons/message_usererror.py"/>
+      <File Name="icons/message_usererror.svg"/>
     </VirtualDirectory>
     <File Name="cmdtypes.hpp"/>
   </VirtualDirectory>

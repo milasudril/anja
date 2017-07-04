@@ -7,6 +7,7 @@
 //@				 {"ref":"../icons/message_error.png","rel":"misc"}
 //@				,{"ref":"../icons/message_info.png","rel":"misc"}
 //@				,{"ref":"../icons/message_warning.png","rel":"misc"}
+//@				,{"ref":"../icons/message_usererror.png","rel":"misc"}
 //@				,{"ref":"../icons/led_stop.png","rel":"misc"}
 //@				,{"ref":"../icons/led_wait.png","rel":"misc"}
 //@				,{"ref":"../icons/led_ready.png","rel":"misc"}
@@ -24,6 +25,7 @@ using namespace Anja;
 #include <maike/targetinclude.hpp>
 
 ANJA_BLOB(uint8_t,message_error,MAIKE_TARGET(../icons/message_error.png));
+ANJA_BLOB(uint8_t,message_usererror,MAIKE_TARGET(../icons/message_usererror.png));
 ANJA_BLOB(uint8_t,message_info,MAIKE_TARGET(../icons/message_info.png));
 ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(../icons/message_warning.png));
 
@@ -38,6 +40,9 @@ std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcep
 		{
 		case StatusIcon::ERROR:
 			return {message_error_begin,message_error_end};
+
+		case StatusIcon::USER_ERROR:
+			return {message_usererror_begin,message_usererror_end};
 
 		case StatusIcon::INFORMATION:
 			return {message_info_begin,message_info_end};

@@ -271,7 +271,7 @@ void Application::engine_start()
 	m_engine.reset( new Engine(m_session,*this) );
 	m_ch_status_img[16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	
+
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
@@ -549,14 +549,11 @@ void Application::clicked(ImageList& imglist,int id,ImageView& img)
 		}
 	else
 		{
-	//	TODO: This is a USER_ERROR and should not be illustrated as a potential
-	//	system error (like JACK failure). Currently there is no appropriate icon
-	//	so use WARNING for now.
 		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja port selection"
 			,m_images,"The output from this bus is hardwired in single channel "
 					"mode. To activate multichannel mode, use the option "
 					"\"Use individual ports for each channel\" found in the "
-					"\"Session\" panel.",Message::Type::WARNING));
+					"\"Session\" panel.",Message::Type::USER_ERROR));
 		m_error->callback(*this,0);
 		return;
 		}

@@ -36,6 +36,9 @@ Message& Message::type(Type type)
 		case Type::ERROR:
 			imageShow(m_icon,r_images,StatusIcon::ERROR);
 			break;
+		case Type::USER_ERROR:
+			imageShow(m_icon,r_images,StatusIcon::USER_ERROR);
+			break;
 		case Type::INFORMATION:
 			imageShow(m_icon,r_images,StatusIcon::INFORMATION);
 			break;

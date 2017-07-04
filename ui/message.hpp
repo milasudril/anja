@@ -16,7 +16,7 @@ namespace Anja
 	class Message
 		{
 		public:
-			enum class Type:int{INFORMATION,WARNING,ERROR,READY,WAIT,STOP};
+			enum class Type:int{INFORMATION,WARNING,ERROR,USER_ERROR,READY,WAIT,STOP};
 
 			Message(Container& cnt,ImageRepository&& images,const char* message
 				,Type type,bool wordwrap=true)=delete;
