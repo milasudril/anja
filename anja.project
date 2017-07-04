@@ -157,7 +157,6 @@
       <File Name="ui/sessionpropertieseditor.hpp"/>
       <File Name="ui/sessionpropertieseditor.cpp"/>
       <File Name="ui/application.hpp"/>
-      <File Name="ui/application.cpp"/>
       <File Name="ui/aboutbox.hpp"/>
       <File Name="ui/keyboardview.cpp"/>
       <File Name="ui/imagerepository.hpp"/>
@@ -188,6 +187,7 @@
       <File Name="engine/voice.hpp"/>
       <File Name="engine/voice.cpp"/>
       <File Name="engine/engine.cpp"/>
+      <File Name="ui/application.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="midiconstants">
       <File Name="midiconstants/control_codes.py"/>
