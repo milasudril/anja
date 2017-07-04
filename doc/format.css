@@ -113,4 +113,5 @@ td{vertical-align: top;}
 tr.colheaders>td{border-bottom:1px solid;font-weight: bold;padding-right:}
 
 nav li{list-style-type:none;}
-nav > ol {margin-left: 0px;padding-left: 0px; list-style-type: none;}
+nav span.fill{margin-right:0.5em}
+nav > ol {margin-left: 0px;padding-left: 0px;}

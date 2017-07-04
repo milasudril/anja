@@ -94,6 +94,19 @@ def tableofcontents(node,document):
 			subsection=0
 			subsubsection=0
 
+		if sibling.tag=='section':
+			section=section + 1
+			subsection=0
+			subsubsection=0
+
+		if sibling.tag=='subsection':
+			subsection=subsection + 1
+			subsubsection=0
+
+		if sibling.tag=='subsubsection':
+			subsubsection=subsubsection + 1
+
+
 		if sibling.tag=='chapter' or sibling.tag=='section'	\
 			or sibling.tag=='subsection' or sibling.tag=='chapter-star':
 			if ((sibling.tag=='chapter' or sibling.tag=='chapter-star') \
@@ -113,11 +126,20 @@ def tableofcontents(node,document):
 
 			printWrapper('<a href="#' + sibling.attrib["id"] + '">')
 			if sibling.tag=='chapter':
-				printWrapper('<span class="fill">' \
-					+ chapstr(chapter) + '</span> ')
+				printWrapper('<span class="fill">' + chapstr(chapter) + \
+					'</span> ')
+			if sibling.tag=='section':
+				printWrapper('<span class="fill">' + chapstr(chapter) \
+					+ '.' + str(section) + '</span> ')
+			if sibling.tag=='subsection':
+				printWrapper('<span class="fill">' + chapstr(chapter) \
+					+ '.' + str(section) \
+					+ '.' + str(subsection) + '</span> ')
+			printWrapper('<span class="content">')
 			if sibling.text != None:
 				printWrapper(sibling.text)
 			processElements(sibling)
+			printWrapper('</span>')
 			printWrapper('</a>')
 			sibling_prev=sibling.tag
 
