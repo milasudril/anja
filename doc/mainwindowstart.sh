@@ -41,7 +41,7 @@ mkfifo "$tmpdir/anja_fifo"
 "$target_dir"/anja --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/anja_layout.txt &
 anja=$!
 while ! jack_lsp | grep anja >/dev/null 2>&1; do
-	sleep 0.1s
+	sleep 0.5s
 done
 jack_lsp | grep '\.anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --any --onlyvisible --pid $anja)
