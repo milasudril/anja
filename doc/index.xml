@@ -16,6 +16,8 @@
 
 	<tableofcontents />
 
+	<chapter-star id="notations">Notations used within Anja and this manual</chapter-star>
+
 	<chapter id="intro">Introduction</chapter>
 	<p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
 

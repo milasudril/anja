@@ -80,15 +80,17 @@ def tableofcontents(node,document):
 	sibling_prev='none'
 	for sibling in document.findall('*'):
 		if sibling.tag=='chapter' or sibling.tag=='section'	\
-			or sibling.tag=='subsection':
-			if (sibling.tag=='chapter' and sibling_prev=='section') \
+			or sibling.tag=='subsection' or sibling.tag=='chapter-star':
+			if ((sibling.tag=='chapter' or sibling.tag=='chapter-star') \
+				and sibling_prev=='section') \
 				or (sibling.tag=='section' and sibling_prev=='subsection'):
 				printWrapper('</li></ol>')
-			if sibling.tag=='chapter' and sibling_prev=='subsection':
+			if (sibling.tag=='chapter' or sibling.tag=='chapter-star')\
+				and sibling_prev=='subsection':
 				printWrapper('</li></ol></li></ol>')
 
-
-			if (sibling_prev=='chapter' and sibling.tag=='section') \
+			if ( (sibling_prev=='chapter' or sibling_prev=='chapter-star') \
+				and sibling.tag=='section') \
 				or (sibling_prev=='section' and sibling.tag=='subsection'):
 				printWrapper('<ol><li>')
 			elif sibling_prev!='none':
@@ -127,6 +129,28 @@ def chapter(node):
 	processElements(node)
 	printWrapper('</h2>')
 	labels[ node.attrib["id"] ]=['Chapter',str(chapters)]
+	sections=0
+	subsections=0
+	subsubsections=0
+	listings=0
+	figures=0
+	tables=0
+
+def chapter_star(node):
+	global sections
+	global subsections
+	global subsubsections
+	global listings
+	global figures
+	global countmode
+	global tables
+	global chapters
+
+	printWrapper('<h2 id="' + node.attrib["id"] + '">')
+	if node.text != None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('</h2>')
 	sections=0
 	subsections=0
 	subsubsections=0
@@ -424,6 +448,8 @@ def processElements(document):
 			appendix()
 		elif node.tag=='includegraphics':
 			includegraphics2(node)
+		elif node.tag=='chapter-star':
+			chapter_star(node)
 		else:
 			defaultrule(node)
 
