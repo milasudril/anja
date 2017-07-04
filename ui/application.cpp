@@ -264,13 +264,14 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 
 void Application::engine_start()
 	{
-	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end()-2,[this](ImageView& v)
+	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
 		{
 		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
+	m_engine.reset( new Engine(m_session,*this) );
 	m_ch_status_img[16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_engine.reset( new Engine(m_session,*this) );
+	
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
