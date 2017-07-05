@@ -9,5 +9,9 @@
 	,{"name":"led_stop.png","srcdir":"../icons"}
 	,{"name":"led_ready.png","srcdir":"../icons"}
 	,{"name":"led_wait.png","srcdir":"../icons"}
+	,{"name":"message_info.svg","srcdir":"../icons"}
+	,{"name":"message_warning.svg","srcdir":"../icons"}
+	,{"name":"message_error.svg","srcdir":"../icons"}
+	,{"name":"message_usererror.svg","srcdir":"../icons"}
 	]
 }

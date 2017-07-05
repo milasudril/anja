@@ -109,8 +109,9 @@ div.infobox_info > picture{display:table-cell;width:4em;}
 div.infobox_info > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
 
 table{border-top:2px solid;border-bottom:2px solid;border-collapse:collapse}
-td{vertical-align: top;}
-tr.colheaders>td{border-bottom:1px solid;font-weight: bold;padding-right:}
+td{vertical-align: top;padding-right:0.25em}
+tr.colheaders>td{border-bottom:2px solid;font-weight: bold;}
+tr.hline>td{border-bottom:1px solid}
 
 nav li{list-style-type:none;}
 nav span.fill{margin-right:0.5em}

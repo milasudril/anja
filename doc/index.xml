@@ -16,7 +16,19 @@
 
 	<tableofcontents />
 
-	<chapter-star id="notations">Notations used within Anja and this manual</chapter-star>
+	<chapter-star id="notations">Notations</chapter-star>
+	<p>The following table shows examples of notations used within this manual, or within Anja itself.</p>
+	<tabular>
+		<colheaders><col>Symbol</col><col>Meaning</col></colheaders>
+			<row><col><includegraphics src="message_info.svg" /></col><col>The surrounding box may contain useful tips or shortcuts</col></row>
+			<row><col><includegraphics src="message_warning.svg" /></col><col>The surrounding box contains information that will save you trouble</col></row>
+			<row><col><includegraphics src="message_usererror.svg" /></col><col>You have done something in a wrong way. The surrounding box contains information about how you should fix it.</col></row>
+			<row><col><includegraphics src="message_error.svg" /></col><col>The desired action failed. The surrounding box contains information about what went wrong.</col></row>
+			<hline colspan="2"/>
+			<row><col><kbd>Key</kbd></col><col>A key on the computer keyboard</col></row>
+			<row><col><ui-button>Button</ui-button></col><col>A button in the user interface</col></row>
+			<row><col><ui-formfield>Formfield</ui-formfield></col><col>An input field within the user interface</col></row>
+	</tabular>
 
 	<chapter id="intro">Introduction</chapter>
 	<p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>

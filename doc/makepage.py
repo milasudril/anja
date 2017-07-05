@@ -376,6 +376,12 @@ def colheaders(node):
 	processElements(node)
 	printWrapper('''</tr>\n''')
 
+def hline(node):
+	printWrapper('''<tr class="hline">''')
+	for k in range(0,int(node.attrib["colspan"])):
+		printWrapper('''<td></td>''')
+	printWrapper('''</tr>''')
+
 def row(node):
 	printWrapper('''<tr>''')
 	processElements(node)
@@ -488,6 +494,8 @@ def processElements(document):
 			includegraphics2(node)
 		elif node.tag=='chapter-star':
 			chapter_star(node)
+		elif node.tag=='hline':
+			hline(node)
 		else:
 			defaultrule(node)
 
