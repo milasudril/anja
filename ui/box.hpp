@@ -23,7 +23,7 @@ namespace Anja
 				unsigned short flags;
 				};
 
-			explicit Box(Container& parent,bool vertical);
+			explicit Box(Container& parent,bool vertical,int global_spacing=2);
 			~Box();
 
 			Box& operator=(Box&& obj) noexcept

@@ -22,7 +22,7 @@ namespace Anja
 			ImageList(ImageList&&)=delete;
 
 			explicit ImageList(Container& cnt,bool vertical):
-				m_box(cnt,vertical)
+				m_box(cnt,vertical,0)
 				{
 				m_vertical=vertical;
 				m_box.insertMode({0,0});
@@ -65,7 +65,7 @@ namespace Anja
 
 			ImageList& separator() noexcept
 				{
-				m_box.insertMode({2,0});
+				m_box.insertMode({4,0});
 				m_separators.push_back(Separator(m_box,!m_vertical));
 				m_box.insertMode({0,0});
 				return *this;

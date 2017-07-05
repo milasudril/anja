@@ -838,7 +838,7 @@ Application::Application():
 				,m_status(m_status_row,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
 				,m_sep_a(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
 				,m_ch_status(m_status_row.insertMode({0,0}),false)
-					,m_ch_status_label(m_ch_status.insertMode({2,0}),"Bus status:")
+					,m_ch_status_label(m_ch_status.insertMode({4,0}),"Bus status:")
 					,m_ch_status_img(m_ch_status.insertMode({0,0}),false)
 				,m_sep_b(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
 				,m_keyb_status(m_status_row.insertMode({0,0}),m_images,ANJA_KEYB_INACTIVE,Message::Type::STOP,0)

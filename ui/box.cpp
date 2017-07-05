@@ -10,7 +10,7 @@ using namespace Anja;
 class Box::Impl:private Box
 	{
 	public:
-		Impl(Container& cnt,bool vertical);
+		Impl(Container& cnt,bool vertical,int global_spacing);
 		~Impl();
 
 		void _add(GtkWidget* handle) noexcept
@@ -61,8 +61,8 @@ class Box::Impl:private Box
 		InsertMode m_mode;
 	};
 
-Box::Box(Container& cnt,bool vertical)
-	{m_impl=new Box::Impl(cnt,vertical);}
+Box::Box(Container& cnt,bool vertical,int global_spacing)
+	{m_impl=new Box::Impl(cnt,vertical,global_spacing);}
 
 Box::~Box()
 	{delete m_impl;}
@@ -110,9 +110,9 @@ Rectangle Box::boundingBox() const noexcept
 	{return m_impl->boundingBox();}
 
 
-Box::Impl::Impl(Container& cnt,bool vertical):Box(*this),m_mode{0,0}
+Box::Impl::Impl(Container& cnt,bool vertical,int global_spacing):Box(*this),m_mode{0,0}
 	{
-	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,2);
+	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,global_spacing);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_BOX(widget);
