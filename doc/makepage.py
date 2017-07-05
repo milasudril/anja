@@ -85,7 +85,7 @@ def tableofcontents(node,document):
 	global countmode
 	for sibling in document.findall('*'):
 		if sibling.tag=='appendix':
-			chapter=-1
+			chapter=0
 			countmode=1
 
 		if sibling.tag=='chapter':
@@ -167,7 +167,10 @@ def chapter(node):
 		printWrapper(node.text)
 	processElements(node)
 	printWrapper('</h2>')
-	labels[ node.attrib["id"] ]=['Chapter',str(chapters)]
+	if countmode:
+		labels[ node.attrib["id"] ]=['Appendix',chapstr(chapters)]
+	else:
+		labels[ node.attrib["id"] ]=['Chapter',chapstr(chapters)]
 	sections=0
 	subsections=0
 	subsubsections=0
@@ -265,7 +268,7 @@ def quantity(node):
 def chapstr(chapter):
 	chapnum=['A','B','C','D','E','F','G','H']
 	if countmode:
-		return chapnum[chapter]
+		return chapnum[chapter-1]
 	else:
 		return str(chapter);
 

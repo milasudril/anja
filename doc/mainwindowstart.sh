@@ -38,7 +38,7 @@ jack_wait -w --server $JACK_DEFAULT_SERVER
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT INT TERM HUP
 mkfifo "$tmpdir/anja_fifo"
-"$target_dir"/anja --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/anja_layout.txt &
+"$target_dir"/anja --theme=light --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/anja_layout.txt &
 anja=$!
 while ! jack_lsp | grep anja >/dev/null 2>&1; do
 	sleep 0.5s
