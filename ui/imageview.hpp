@@ -48,6 +48,8 @@ namespace Anja
 
 			int id() const noexcept;
 
+			ImageView& backgroundShade(float hue,float strength) noexcept;
+
 		private:
 			class Impl;
 			Impl* m_impl;

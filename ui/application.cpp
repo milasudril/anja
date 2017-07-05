@@ -743,6 +743,8 @@ Application::Application():
 		v.minHeight(20)
 			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
+	m_ch_status_img[16].backgroundShade(0.66,0.5f);
+	m_ch_status_img[17].backgroundShade(0.66,0.5f);
 	m_ch_status_img.callback(*this,0);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();

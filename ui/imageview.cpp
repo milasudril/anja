@@ -45,12 +45,23 @@ class ImageView::Impl:private ImageView
 			gtk_widget_set_size_request(GTK_WIDGET(m_handle),w,h);
 			}
 
+		void backgroundShade(float hue,float strength) noexcept
+			{
+			auto color=ColorHSLA(hue,1,0.5,1);
+			m_background=ColorRGBA(color);
+			m_background.red*=strength;
+			m_background.green*=strength;
+			m_background.blue*=strength;
+			m_background.alpha*=strength;
+			}
+
 	private:
 		int m_id;
 		CallbackImpl m_cb;
 		void* r_cb_obj;
 		const cairo_surface_t* r_img;
 		GtkDrawingArea* m_handle;
+		ColorRGBA m_background;
 		int m_height_request;
 		bool m_hover;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
@@ -99,11 +110,17 @@ ImageView& ImageView::minSize(int w,int h)
 	return *this;
 	}
 
+ImageView& ImageView::backgroundShade(float hue,float strength) noexcept
+	{
+	m_impl->backgroundShade(hue,strength);
+	return *this;
+	}
+
 
 
 
 ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
-	,r_img(nullptr),m_hover(0)
+	,r_img(nullptr),m_background(0,0,0,0),m_hover(0)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK
@@ -134,6 +151,12 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 
 	auto w_out=static_cast<double>( gtk_widget_get_allocated_width(widget) );
 	auto h_out=static_cast<double>( gtk_widget_get_allocated_height(widget) );
+
+	cairo_set_source_rgba(cr,self->m_background.red,self->m_background.green
+		,self->m_background.blue,self->m_background.alpha);
+	cairo_rectangle(cr,0,0,w_out,h_out);
+	cairo_fill(cr);
+
 	cairo_matrix_t m;
 	cairo_get_matrix(cr,&m);
 
