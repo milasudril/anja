@@ -50,6 +50,8 @@ namespace Anja
 
 			ImageView& backgroundShade(float hue,float strength) noexcept;
 
+			ImageView& padding(int x) noexcept;
+
 		private:
 			class Impl;
 			Impl* m_impl;

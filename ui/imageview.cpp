@@ -53,7 +53,16 @@ class ImageView::Impl:private ImageView
 			m_background.green*=strength;
 			m_background.blue*=strength;
 			m_background.alpha*=strength;
+
+			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
+
+		void padding(int x) noexcept
+			{
+			m_padding=x;
+			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
+			}
+
 
 	private:
 		int m_id;
@@ -63,6 +72,7 @@ class ImageView::Impl:private ImageView
 		GtkDrawingArea* m_handle;
 		ColorRGBA m_background;
 		int m_height_request;
+		int m_padding=0;
 		bool m_hover;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 		static gboolean mouse_up(GtkWidget* object,GdkEventButton* event,void* obj);
@@ -116,11 +126,17 @@ ImageView& ImageView::backgroundShade(float hue,float strength) noexcept
 	return *this;
 	}
 
+ImageView& ImageView::padding(int x) noexcept
+	{
+	m_impl->padding(x);
+	return *this;
+	}
+
 
 
 
 ImageView::Impl::Impl(Container& cnt):ImageView(*this),r_cb_obj(nullptr)
-	,r_img(nullptr),m_background(0,0,0,0),m_hover(0)
+	,r_img(nullptr),m_background(0,0,0,0),m_padding(0),m_hover(0)
 	{
 	auto widget=gtk_drawing_area_new();
 	gtk_widget_add_events(widget,GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK
@@ -165,6 +181,10 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		auto w_win=w_out;
 		auto h_win=h_out;
 
+		w_out-=2*self->m_padding;
+		h_out-=2*self->m_padding;
+
+
 		auto w_in=static_cast<double>( cairo_image_surface_get_width(const_cast<cairo_surface_t*>(img)) );
 		auto h_in=static_cast<double>( cairo_image_surface_get_height(const_cast<cairo_surface_t*>(img)) );
 
@@ -181,7 +201,6 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 			return h_out/h_in;
 			}();
 
-
 		cairo_translate(cr,0.5*(w_win - w_out),0.5*(h_win - h_out));
 		cairo_scale(cr,scale,scale);
 		cairo_set_source_surface(cr,const_cast<cairo_surface_t*>(img),0,0);
@@ -194,7 +213,8 @@ gboolean ImageView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		cairo_set_source_rgba(cr,light,light,light,1.0f);
 		cairo_set_matrix(cr,&m);
 		cairo_set_line_width(cr,2);
-		cairo_rectangle(cr,0,0,w_out,h_out);
+		cairo_rectangle(cr,0.5*self->m_padding,0.5*self->m_padding
+			,w_out+self->m_padding,h_out+self->m_padding);
 		cairo_stroke(cr);
 		}
 

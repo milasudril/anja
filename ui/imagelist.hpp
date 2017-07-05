@@ -25,7 +25,7 @@ namespace Anja
 				m_box(cnt,vertical)
 				{
 				m_vertical=vertical;
-				m_box.insertMode({2,Box::EXPAND|Box::FILL});
+				m_box.insertMode({0,0});
 				}
 
 			ImageList& clear() noexcept

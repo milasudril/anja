@@ -740,8 +740,9 @@ Application::Application():
 	m_ch_status_img.append<2>();
 	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
 		{
-		v.minHeight(20)
-			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
+		v.minHeight(22)
+			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF))
+			.padding(2);
 		});
 	m_ch_status_img[16].backgroundShade(0.66,0.5f);
 	m_ch_status_img[17].backgroundShade(0.66,0.5f);
