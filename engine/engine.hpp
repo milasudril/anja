@@ -93,6 +93,25 @@ namespace Anja
 			void waveOutDisconnect(int index,const char* target_port)
 				{m_client.waveOutDisconnect(index,target_port);}
 
+			void midiOutConnect(int index,const char* target_port)
+				{m_client.midiOutConnect(index,target_port);}
+
+			void midiOutDisconnect(int index,const char* target_port)
+				{m_client.midiOutDisconnect(index,target_port);}
+
+
+			void waveInConnect(int index,const char* target_port)
+				{m_client.waveInConnect(index,target_port);}
+
+			void waveInDisconnect(int index,const char* target_port)
+				{m_client.waveInDisconnect(index,target_port);}
+
+			void midiInConnect(int index,const char* target_port)
+				{m_client.midiInConnect(index,target_port);}
+
+			void midiInDisconnect(int index,const char* target_port)
+				{m_client.midiInDisconnect(index,target_port);}
+
 
 
 			bool muted(int index) const noexcept
@@ -161,12 +180,27 @@ namespace Anja
 				{return m_client.midiInEnum(std::move(cb));}
 
 			template<class Callback>
+			bool midiInConnectionsEnum(int index,Callback&& cb)
+				{return m_client.midiInConnectionsEnum(index,std::move(cb));}
+
+
+			template<class Callback>
 			bool midiOutEnum(Callback&& cb)
 				{return m_client.midiOutEnum(std::move(cb));}
 
 			template<class Callback>
+			bool midiOutConnectionsEnum(int index,Callback&& cb)
+				{return m_client.midiOutConnectionsEnum(index,std::move(cb));}
+
+
+			template<class Callback>
 			bool waveInEnum(Callback&& cb)
 				{return m_client.waveInEnum(std::move(cb));}
+
+			template<class Callback>
+			bool waveInConnectionsEnum(int index,Callback&& cb)
+				{return m_client.waveInConnectionsEnum(index,std::move(cb));}
+
 
 			template<class Callback>
 			bool waveOutEnum(Callback&& cb)

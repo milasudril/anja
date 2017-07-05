@@ -114,6 +114,10 @@ class AudioClient::Impl:private AudioClient
 		bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
 
 		bool waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+		bool waveInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+		bool midiOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+		bool midiInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+
 
 		void waveOutConnect(int index,const char* port)
 			{
@@ -127,6 +131,48 @@ class AudioClient::Impl:private AudioClient
 			auto offset=portOffset<PortType::WAVE_OUT>(index);
 			auto source=jack_port_name(m_ports[offset]);
 			jack_disconnect(m_handle,source,port);
+			}
+
+		void midiOutConnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::MIDI_OUT>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_connect(m_handle,source,port);
+			}
+
+		void midiOutDisconnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::MIDI_OUT>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_disconnect(m_handle,source,port);
+			}
+
+		void waveInConnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::WAVE_IN>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_connect(m_handle,port,source);
+			}
+
+		void waveInDisconnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::WAVE_IN>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_disconnect(m_handle,port,source);
+			}
+
+		void midiInConnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::MIDI_IN>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_connect(m_handle,port,source);
+			}
+
+		void midiInDisconnect(int index,const char* port)
+			{
+			auto offset=portOffset<PortType::MIDI_IN>(index);
+			auto source=jack_port_name(m_ports[offset]);
+			jack_disconnect(m_handle,port,source);
 			}
 
 
@@ -289,14 +335,40 @@ bool AudioClient::waveOutEnum(void* cb_obj,PortEnumCallback cb)
 bool AudioClient::waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
 	{return m_impl->waveOutConnectionsEnum(index,cb_obj,cb);}
 
+bool AudioClient::waveInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{return m_impl->waveInConnectionsEnum(index,cb_obj,cb);}
+
+bool AudioClient::midiInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{return m_impl->midiInConnectionsEnum(index,cb_obj,cb);}
+
+bool AudioClient::midiOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{return m_impl->midiOutConnectionsEnum(index,cb_obj,cb);}
+
 
 
 void AudioClient::waveOutConnect(int index,const char* dest)
 	{m_impl->waveOutConnect(index,dest);}
 
-
 void AudioClient::waveOutDisconnect(int index,const char* dest)
 	{m_impl->waveOutDisconnect(index,dest);}
+
+void AudioClient::midiOutConnect(int index,const char* dest)
+	{m_impl->midiOutConnect(index,dest);}
+
+void AudioClient::midiOutDisconnect(int index,const char* dest)
+	{m_impl->midiOutDisconnect(index,dest);}
+
+void AudioClient::waveInConnect(int index,const char* dest)
+	{m_impl->waveInConnect(index,dest);}
+
+void AudioClient::waveInDisconnect(int index,const char* dest)
+	{m_impl->waveInDisconnect(index,dest);}
+
+void AudioClient::midiInConnect(int index,const char* dest)
+	{m_impl->midiInConnect(index,dest);}
+
+void AudioClient::midiInDisconnect(int index,const char* dest)
+	{m_impl->midiInDisconnect(index,dest);}
 
 
 
@@ -448,6 +520,25 @@ bool AudioClient::Impl::waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCa
 	auto port_index=portOffset<PortType::WAVE_OUT>(index);
 	return connectionsEnum(port_index,cb_obj,cb);
 	}
+
+bool AudioClient::Impl::waveInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{
+	auto port_index=portOffset<PortType::WAVE_IN>(index);
+	return connectionsEnum(port_index,cb_obj,cb);
+	}
+
+bool AudioClient::Impl::midiOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{
+	auto port_index=portOffset<PortType::MIDI_OUT>(index);
+	return connectionsEnum(port_index,cb_obj,cb);
+	}
+
+bool AudioClient::Impl::midiInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb)
+	{
+	auto port_index=portOffset<PortType::MIDI_IN>(index);
+	return connectionsEnum(port_index,cb_obj,cb);
+	}
+
 
 bool AudioClient::Impl::connectionsEnum(int port_index,void* cb_obj,PortEnumCallback cb)
 	{

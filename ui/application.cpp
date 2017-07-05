@@ -133,18 +133,18 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 				{
 				if(m_engine->waveOutConnected(param))
 					{
-					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+					m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
 						,statusIcon(StatusIcon::STOP));
 					}
 				else
 					{
-					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
+					m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
 						,statusIcon(StatusIcon::OFF));
 					}
 				}
 			else
 				{
-				m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+				m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
 					,statusIcon(StatusIcon::STOP));
 				}
 			break;
@@ -155,18 +155,18 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 				{
 				if(m_engine->waveOutConnected(param))
 					{
-					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+					m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
 						,statusIcon(StatusIcon::READY));
 					}
 				else
 					{
-					m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+					m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 						,statusIcon(StatusIcon::WAIT));
 					}
 				}
 			else
 				{
-				m_ch_status_img[param].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+				m_ch_status_img[param+2].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
 					,statusIcon(StatusIcon::READY));
 				}
 			break;
@@ -176,26 +176,45 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			auto port=param&0x00ff;
 			auto type=static_cast<AudioClient::PortType>(param>>16);
 
-			if(type==AudioClient::PortType::WAVE_OUT)
+			switch(type)
 				{
-				if(m_engine->waveOutCount()>2)
+				case AudioClient::PortType::WAVE_OUT:
 					{
-					if(port<16 && m_engine->muted(port))
+					if(m_engine->waveOutCount()>2)
 						{
-						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
-							,statusIcon(StatusIcon::STOP));
+						if(port<16 && m_engine->muted(port))
+							{
+							m_ch_status_img[port+2].showPng(m_images,static_cast<size_t>(StatusIcon::STOP)
+								,statusIcon(StatusIcon::STOP));
+							}
+						else
+							{
+							m_ch_status_img[port+2].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+								,statusIcon(StatusIcon::READY));
+							}
 						}
 					else
 						{
-						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+						m_ch_status_img[port + 16+2].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
 							,statusIcon(StatusIcon::READY));
 						}
 					}
-				else
-					{
-					m_ch_status_img[port + 16].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+					break;
+
+				case AudioClient::PortType::WAVE_IN:
+					m_ch_status_img[0].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
 						,statusIcon(StatusIcon::READY));
-					}
+					break;
+
+				case AudioClient::PortType::MIDI_IN:
+					m_ch_status_img[1].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+						,statusIcon(StatusIcon::READY));
+					break;
+
+				case AudioClient::PortType::MIDI_OUT:
+					m_ch_status_img[20].showPng(m_images,static_cast<size_t>(StatusIcon::READY)
+						,statusIcon(StatusIcon::READY));
+					break;
 				}
 			}
 			break;
@@ -205,26 +224,45 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			auto port=param&0x00ff;
 			auto type=static_cast<AudioClient::PortType>(param>>16);
 
-			if(type==AudioClient::PortType::WAVE_OUT)
+			switch(type)
 				{
-				if(m_engine->waveOutCount()>2)
+				case AudioClient::PortType::WAVE_OUT:
 					{
-					if(port<16 && m_engine->muted(port))
+					if(m_engine->waveOutCount()>2)
 						{
-						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
-							,statusIcon(StatusIcon::OFF));
+						if(port<16 && m_engine->muted(port))
+							{
+							m_ch_status_img[port + 2].showPng(m_images,static_cast<size_t>(StatusIcon::OFF)
+								,statusIcon(StatusIcon::OFF));
+							}
+						else
+							{
+							m_ch_status_img[port + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+								,statusIcon(StatusIcon::WAIT));
+							}
 						}
 					else
 						{
-						m_ch_status_img[port].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+						m_ch_status_img[port + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 							,statusIcon(StatusIcon::WAIT));
 						}
 					}
-				else
-					{
-					m_ch_status_img[port + 16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+					break;
+
+				case AudioClient::PortType::WAVE_IN:
+					m_ch_status_img[0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 						,statusIcon(StatusIcon::WAIT));
-					}
+					break;
+
+				case AudioClient::PortType::MIDI_IN:
+					m_ch_status_img[1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+						,statusIcon(StatusIcon::WAIT));
+					break;
+
+				case AudioClient::PortType::MIDI_OUT:
+					m_ch_status_img[20].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+						,statusIcon(StatusIcon::WAIT));
+					break;
 				}
 			}
 			break;
@@ -269,8 +307,11 @@ void Application::engine_start()
 		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
 	m_engine.reset( new Engine(m_session,*this) );
-	m_ch_status_img[16].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_ch_status_img[17].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
 
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
@@ -499,11 +540,12 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 
 static String port_title(const Session& session,int id)
 	{
+	assert(id>=2 && id<=19);
 	switch(id)
 		{
-		case 16:
+		case 18:
 			return String("Master out: Port selection");
-		case 17:
+		case 19:
 			return String("Audition: Port selection");
 		default:
 			return String(session.channelLabelGet(id)).append(": Port selection");
@@ -525,38 +567,90 @@ void Application::clicked(ImageList& imglist,int id,ImageView& img)
 			}
 		}
 
-	if(m_engine->waveOutCount()>2 || (m_engine->waveOutCount()<=2 && img.id()>=16))
+	switch(img.id())
 		{
-		auto title=port_title(m_session,img.id());
-		auto port_index=m_engine->waveOutCount()>2?img.id():img.id() - 16;
+		case 0:
+			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+				,"Wave in: Port selection"));
+			m_engine->waveOutEnum([this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().portAppend(port_name);
+				return true;
+				});
+			m_engine->waveInConnectionsEnum(0,[this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().select(port_name);
+				return true;
+				});
+			break;
 
-		m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin,title.begin()));
+		case 1:
+			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+				,"MIDI in: Port selection"));
+			m_engine->midiOutEnum([this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().portAppend(port_name);
+				return true;
+				});
+			m_engine->midiInConnectionsEnum(0,[this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().select(port_name);
+				return true;
+				});
+			break;
 
-		m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+		case 20:
+			m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin
+				,"MIDI out: Port selection"));
+			m_engine->midiInEnum([this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().portAppend(port_name);
+				return true;
+				});
+			m_engine->midiOutConnectionsEnum(0,[this](AudioClient& client,const char* port_name)
+				{
+				m_port_selector->widget().select(port_name);
+				return true;
+				});
+			break;
+
+		default:
 			{
-			m_port_selector->widget().portAppend(port_name);
-			return true;
-			});
+			if(m_engine->waveOutCount()>2 || (m_engine->waveOutCount()<=2 && img.id()>=16 + 2))
+				{
+				auto title=port_title(m_session,img.id());
+				auto port_index=m_engine->waveOutCount()>2?img.id()-2:img.id() - 16 - 2;
 
-		m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
-			{
-			m_port_selector->widget().select(port_name);
-			return true;
-			});
+				m_port_selector.reset(new Dialog<PortSelector,DialogOkCancel>(m_mainwin,title.begin()));
 
-		m_port_selector->callback(*this,port_index);
-		m_port_selector->show();
+				m_engine->waveInEnum([this](AudioClient& client,const char* port_name)
+					{
+					m_port_selector->widget().portAppend(port_name);
+					return true;
+					});
+
+				m_engine->waveOutConnectionsEnum(port_index,[this](AudioClient& client,const char* port_name)
+					{
+					m_port_selector->widget().select(port_name);
+					return true;
+					});
+				}
+			else
+				{
+				m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja port selection"
+					,m_images,"The output from this bus is hardwired in single channel "
+							"mode. To activate multichannel mode, use the option "
+							"\"Use individual ports for each channel\" found in the "
+							"\"Session\" panel.",Message::Type::USER_ERROR));
+				m_error->callback(*this,0);
+				return;
+				}
+			}
 		}
-	else
-		{
-		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja port selection"
-			,m_images,"The output from this bus is hardwired in single channel "
-					"mode. To activate multichannel mode, use the option "
-					"\"Use individual ports for each channel\" found in the "
-					"\"Session\" panel.",Message::Type::USER_ERROR));
-		m_error->callback(*this,0);
-		return;
-		}
+
+
+	m_port_selector->callback(*this,img.id());
+	m_port_selector->show();
 	}
 
 void Application::dismiss(Dialog<PortSelector,DialogOkCancel>& dlg,int id)
@@ -568,10 +662,38 @@ void Application::confirmPositive(Dialog<PortSelector,DialogOkCancel>& dlg,int i
 	{
 	dlg.widget().state([this,id](const char* port,bool status)
 		{
-		if(status)
-			{m_engine->waveOutConnect(id,port);}
-		else
-			{m_engine->waveOutDisconnect(id,port);}
+		switch(id)
+			{
+			case 0:
+				if(status)
+					{m_engine->waveInConnect(0,port);}
+				else
+					{m_engine->waveInDisconnect(0,port);}
+				break;
+			case 1:
+				if(status)
+					{m_engine->midiInConnect(0,port);}
+				else
+					{m_engine->midiInDisconnect(0,port);}
+				break;
+
+			case 20:
+				if(status)
+					{m_engine->midiOutConnect(0,port);}
+				else
+					{m_engine->midiOutDisconnect(0,port);}
+				break;
+
+			default:
+				{
+				auto port_index=m_engine->waveOutCount()>2?id-2:id - 16 - 2;
+				if(status)
+					{m_engine->waveOutConnect(port_index,port);}
+				else
+					{m_engine->waveOutDisconnect(port_index,port);}
+				}
+				break;
+			}
 		});
 
 	m_port_selector.reset(nullptr);
@@ -716,7 +838,7 @@ Application::Application():
 				,m_status(m_status_row,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
 				,m_sep_a(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
 				,m_ch_status(m_status_row.insertMode({0,0}),false)
-					,m_ch_status_label(m_ch_status.insertMode({0,0}),"Bus status:")
+					,m_ch_status_label(m_ch_status.insertMode({2,0}),"Bus status:")
 					,m_ch_status_img(m_ch_status.insertMode({0,0}),false)
 				,m_sep_b(m_status_row.insertMode({0,Box::EXPAND|Box::FILL}),true)
 				,m_keyb_status(m_status_row.insertMode({0,0}),m_images,ANJA_KEYB_INACTIVE,Message::Type::STOP,0)
@@ -735,17 +857,22 @@ Application::Application():
 	m_mainwin.callback(*this,0);
 	m_session_editor.callback(*this,0);
 	title_update(m_session,m_mainwin);
-	m_ch_status_img.append<ChannelMixer::length()>();
-	m_ch_status_img.separator();
-	m_ch_status_img.append<2>();
+	m_ch_status_img.append<2>()
+		.separator()
+		.append<ChannelMixer::length()>()
+		.separator()
+		.append<3>();
 	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
 		{
 		v.minHeight(22)
 			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF))
 			.padding(2);
 		});
-	m_ch_status_img[16].backgroundShade(0.66,0.5f);
-	m_ch_status_img[17].backgroundShade(0.66,0.5f);
+	m_ch_status_img[0].backgroundShade(0.66,0.5f);
+	m_ch_status_img[1].backgroundShade(0.0,0.5f);
+	m_ch_status_img[18].backgroundShade(0.66,0.5f);
+	m_ch_status_img[19].backgroundShade(0.66,0.5f);
+	m_ch_status_img[20].backgroundShade(0.0,0.5f);
 	m_ch_status_img.callback(*this,0);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();

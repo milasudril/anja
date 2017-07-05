@@ -64,6 +64,12 @@ namespace Anja
 
 			void waveOutConnect(int index,const char* target_port);
 			void waveOutDisconnect(int index,const char* target_port);
+			void midiOutConnect(int index,const char* target_port);
+			void midiOutDisconnect(int index,const char* target_port);
+			void waveInConnect(int index,const char* target_port);
+			void waveInDisconnect(int index,const char* target_port);
+			void midiInConnect(int index,const char* target_port);
+			void midiInDisconnect(int index,const char* target_port);
 
 
 			int midiInCount() const noexcept;
@@ -163,9 +169,23 @@ namespace Anja
 				}
 
 			template<class Callback>
+			bool midiInConnectionsEnum(int index,Callback&& cb)
+				{
+				return midiInConnectionsEnum(index,&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
+			template<class Callback>
 			bool midiOutEnum(Callback&& cb)
 				{
 				return midiOutEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
+			template<class Callback>
+			bool midiOutConnectionsEnum(int index,Callback&& cb)
+				{
+				return midiOutConnectionsEnum(index,&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
 					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
 				}
 
@@ -175,6 +195,14 @@ namespace Anja
 				return waveInEnum(&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
 					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
 				}
+
+			template<class Callback>
+			bool waveInConnectionsEnum(int index,Callback&& cb)
+				{
+				return waveInConnectionsEnum(index,&cb,[](void* cb_obj,AudioClient& client,const char* port_name)
+					{return (*reinterpret_cast<Callback*>(cb_obj))(client,port_name);});
+				}
+
 
 			template<class Callback>
 			bool waveOutEnum(Callback&& cb)
@@ -215,6 +243,10 @@ namespace Anja
 			bool waveOutEnum(void* cb_obj,PortEnumCallback cb);
 
 			bool waveOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+			bool waveInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+			bool midiInConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+			bool midiOutConnectionsEnum(int index,void* cb_obj,PortEnumCallback cb);
+
 		};
 
 	}
