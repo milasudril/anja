@@ -525,6 +525,11 @@ Application& Application::fullscreen(bool status)
 
 void Application::command_process(const ArrayDynamicShort<String>& cmd)
 	{
+	if(cmd.length()==0)
+		{return;}
+
+	fprintf(stderr,"Anja: %s %d\n",cmd[0].begin(),cmd.length());
+
 	if(cmd[0]=="exit")
 		{m_ctx.exit();}
 	else
@@ -535,6 +540,14 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 			printf("%d %.15g %.15g %.15g %.15g\n",k,box.min.x(),box.min.y()
 				,box.max.x(),box.max.y());
 			});
+		}
+	else
+	if(cmd[0]=="port selector open")
+		{
+		auto port=cmd.length()>1?static_cast<size_t>( atoi(cmd[1].begin()) ):18;
+		fflush(stderr);
+		if(port>=0 && port<m_ch_status_img.size())
+			{clicked(m_ch_status_img,0,m_ch_status_img[port]);}
 		}
 	}
 

@@ -110,29 +110,28 @@ make</code>
 	<p>The state of the engine is showed by the leftmost panel in the <dfn>Status area</dfn> (see <ref>anjaworkspace</ref>). A green light <includegraphics src="led_ready.png" /> means that the engine is running, while a red light <includegraphics src="led_stop.png" /> means that it is not. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
 
 <subsection id="connections">Connecting Anja to system playback</subsection>
-	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. You can verify that these ports exists this by opening a terminal and run the command</p>
-
-	<code language="bash">jack_lsp | grep '\.anja'</code>
-
-	<p>If you did not load any old session, or have not modified the default session, you will see something like</p>
-	<code language="nohighlight"><verbatiminput src="anja_jackports.txt" /></code>
-
-
-	<p>The difference between <dirname>Master out</dirname> and <dirname>Audition</dirname> ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
+	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
 
 	<infobox type="info">
 	Notice that hitting <kbd>Space</kbd> bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to prelisten to sounds without routing them to a PA system.
 	</infobox>
 
-<p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two lights with blue background to the left of the <dfn>keyboard status indicator</dfn>. When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about bus status indicators, see <ref>chstatus</ref>.</p>
+<p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two lights with blue background to the left of the <dfn>keyboard status indicator</dfn>. When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about port status indicators, see <ref>chstatus</ref>.</p>
 
-<p>JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be</p>
+<figure id="portselector">
+	<includegraphics src="portselector.png" />
+	<caption>The port selection dialog. To route the signal to a port, toggle the corresponding button. The choices are confirmed by clicking <ui-button>OK</ui-button>.</caption>
+</figure>
+
+<p>A port can be connected to other ports in the system by clicking on the corresponding status indicator. This brings up a dialog box that contains toggle buttons for all availible ports (see <ref>portselector</ref>). Click <ui-button>OK</ui-button> to confirm your choicee.</p>
+
+<infobox type="info">JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be
 <code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
 jack_connect 'New session.anja:Audition' 'system:playback_2'
 </code>
-<p>Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</p>
+Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</infobox>
 
-<infobox type="info">Instead of using the command line, it is possible to a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</infobox>
+<infobox type="info">Instead of using the command line, it is possible to use a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</infobox>
 
 
 <subsection id="keybstatus">Activating the keyboard</subsection>
@@ -305,8 +304,8 @@ jack_connect 'New session.anja:Audition' 'system:playback_2'
 
 <appendix />
 
-<chapter id="chstatus">Bus status indicators</chapter>
-<p>This table shows all states the bus status indicators can have.</p>
+<chapter id="chstatus">Port status indicators</chapter>
+<p>This table shows all states the port status indicators can have.</p>
 <tabular>
 	<colheaders><col>Indicator</col><col>Meaning</col></colheaders>
 	<row><col><includegraphics src="led_off.png" /></col><col>Engine is not running</col></row>

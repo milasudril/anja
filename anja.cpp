@@ -18,12 +18,13 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"Session loading/control","session","loads a saved session from *filename in*. Notice that this option is ignored if `script` is given.","filename in",Alice::Option::Multiplicity::ONE}
 	,{"Session loading/control","script","reads and executes commands from *filename in*. Without argument, the session is read from standard input. The command stream works independently of the UI. Notice that this option overrides the `session` option.","filename in",Alice::Option::Multiplicity::ZERO_OR_ONE});
 
-static void commands_read(FILE* fptr,Anja::Application& dest)
+static void commands_read(Anja::FileIn& src,Anja::Application& dest)
 	{
 	Anja::String buffer;
 	Anja::ArrayDynamicShort<decltype(buffer)> cmd;
 	enum class State:int{NORMAL,ESCAPE};
 	auto state_current=State::NORMAL;
+	auto fptr=src.get();
 
 	while(1)
 		{
@@ -34,14 +35,25 @@ static void commands_read(FILE* fptr,Anja::Application& dest)
 				switch(ch_in)
 					{
 					case EOF:
+						{
+						auto do_exit=0;
 						cmd.append(buffer);
+					//	assert(cmd.length());
+						if(cmd[0]=="exit")
+							{do_exit=1;}
 						dest.invoke(std::move(cmd));
-						return;
+						if(do_exit)
+							{return;}
+						cmd.clear();
+						}
+						break;
+
 					case '\n':
 						{
 						cmd.append(buffer);
 						buffer.clear();
 						auto do_exit=0;
+					//	assert(cmd.length());
 						if(cmd[0]=="exit")
 							{do_exit=1;}
 						dest.invoke(std::move(cmd));
@@ -64,7 +76,7 @@ static void commands_read(FILE* fptr,Anja::Application& dest)
 				break;
 			case State::ESCAPE:
 				if(ch_in==EOF)
-					{return;}
+					{continue;}
 				buffer.append(ch_in);
 				state_current=State::NORMAL;
 				break;
@@ -85,9 +97,16 @@ namespace
 			template<int id>
 			void run()
 				{
-				Anja::FileIn src(m_src.length()==0?nullptr:m_src.begin());
-				auto fptr=src.get();
-				commands_read(fptr,r_dest);
+				try
+					{
+					Anja::FileIn src(m_src.length()?m_src.begin():nullptr);
+					commands_read(src,r_dest);
+					}
+				catch(const Anja::Error& err)
+					{
+					fprintf(stderr,"Error: %s\n",err.message());
+					return;
+					}
 				}
 
 		private:

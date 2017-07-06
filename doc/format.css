@@ -40,7 +40,7 @@ ui-button{font-family: "Latin Modern Sans", sans-serif;}
 ui-formfield{font-family: "Latin Modern Sans", sans-serif;}
 div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
 	{position:relative;width:80%;left:0px;margin-left:auto;margin-right:auto;margin-top:3.25ex;margin-bottom:1.5ex}
-img{position:relative;width:100%;}
+img{position:relative;max-height:40ex;margin-left:auto;margin-right:auto;display:block}
 div.titlepic img{position:relative;width:61%;margin-left:auto;margin-right:auto;display:block}
 
 td > img
@@ -100,13 +100,13 @@ ui-button
 	display:inline;
 	text-align:center;border-radius:0.2em;}
 
-div.infobox_warning{padding:0.25em;display:table;}
-div.infobox_warning > picture{display:table-cell;width:4em;}
-div.infobox_warning > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
+div.infobox_warning, div.infobox_info{padding:0.25em;display:table;}
+info-content > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
 
+info-content{display:table-row;}
 div.infobox_info{padding:0.25em;display:table;}
-div.infobox_info > picture{display:table-cell;width:4em;}
-div.infobox_info > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
+info-content > picture{display:table-cell;}
+info-content > picture > img{width:4em}
 
 table{border-top:2px solid;border-bottom:2px solid;border-collapse:collapse}
 td{vertical-align: top;padding-right:0.25em}

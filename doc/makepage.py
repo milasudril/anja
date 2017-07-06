@@ -408,6 +408,7 @@ def defaultrule(node):
 
 def infobox(node):
 	printWrapper('''<div class="infobox_''' + node.attrib["type"] + ''' ">
+<info-content>
 <picture>
 <source srcset="message_''' + node.attrib["type"] + '''.svg">
 <img src="message_''' + node.attrib["type"] + '''.gif" alt="'''+node.attrib["type"]+'''">
@@ -417,7 +418,7 @@ def infobox(node):
 		printWrapper(node.text)
 	processElements(node)
 	printWrapper('''</div>
-</div>''')
+</info-content></div>''')
 	if node.tail != None:
 		printWrapper(node.tail)
 
