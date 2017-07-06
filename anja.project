@@ -214,6 +214,7 @@
       <File Name="doc/format.css"/>
       <File Name="doc/mainwindowstart.sh"/>
       <File Name="doc/anja_layout.py" ExcludeProjConfig=""/>
+      <File Name="doc/statusarea.svg"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
