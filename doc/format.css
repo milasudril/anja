@@ -72,7 +72,7 @@ p > img,div > img
 	nav > h2,nav > ol{position:static}
 
 	div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
-		{position:relative;width:calc(80% - 200px);left:100px; margin-left:auto;margin-right:auto}
+		{position:relative;width:calc(80% - 200px);left:100px; margin-left:auto;margin-right:auto;page-break-inside: avoid}
 
 	}
 

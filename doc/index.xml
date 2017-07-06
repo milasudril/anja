@@ -79,7 +79,7 @@ make</code>
 
 	<chapter id="using">Using Anja</chapter>
 
-	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>Status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>Action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
+	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindowstart.png" />
@@ -88,14 +88,14 @@ make</code>
 
 	<figure id="anjaworkspace">
 		<includegraphics src="anja_layout.svg" />
-		<caption>The different parts of the Anja workspace. At the top, there is a <dfn>Status area</dfn> showing the state of Anja. To the left is the <dfn>Action panel</dfn>, used to control Anja's state. To the right is the <dfn>Keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>Settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
+		<caption>The different parts of the Anja workspace. At the top, there is a <dfn>status area</dfn> showing the state of Anja. To the left is the <dfn>action panel</dfn>, used to control Anja's state. To the right is the <dfn>keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
 	</figure>
 
-	<p>The different parts of the <dfn>Settings panel</dfn> will be covered later. The <dfn>Status area</dfn> contains three parts as illustrated by <ref>statusareafig</ref>. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</p>
+	<p>The different parts of the <dfn>Settings panel</dfn> will be covered later. The <dfn>status area</dfn> contains three parts as illustrated by <ref>statusareafig</ref>. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</p>
 
 	<figure id="statusareafig">
 		<includegraphics src="statusarea.svg" />
-		<caption>Detailed description of the <dfn>Status area</dfn>. The <dfn>status area</dfn> contains three panels. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</caption>
+		<caption>Detailed description of the <dfn>status area</dfn>. The <dfn>status area</dfn> contains three panels. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</caption>
 	</figure>
 
 <p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. Wave ports have a blue-shaded background, while MIDI ports have red-shaded background. Input ports are to the left, and output ports are to the right. Between the input and output sections, are indicators with neutral background. These represent the 16 internal Wave ports.</p>
@@ -116,7 +116,7 @@ make</code>
 
 <subsection id="engstatus">Controlling and manipulating engine status</subsection>
 
-	<p>As stated above, the state of the engine is showed by the leftmost panel in the <dfn>Status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
+	<p>As stated above, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
 
 <subsection id="connections">Connecting Anja to system playback</subsection>
 	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
