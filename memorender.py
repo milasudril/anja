@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 def render(mipmap_levels,source,in_dir,target_dir,*target_name):
 	import subprocess
-	argv=['blender','--python-exit-code','255','-b',in_dir+'/'+source \
+	argv=['blender','-noaudio','--python-exit-code','255','-b',in_dir+'/'+source \
 		,'--python',__file__,'--',target_dir,in_dir,str(mipmap_levels)]
 	argv.extend(target_name)
 	print('# Starting blender with command line ',argv)

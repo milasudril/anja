@@ -12,13 +12,13 @@
 #include "filenameselect.hpp"
 #include "../common/blob.hpp"
 #include "../sessiondata/keymap.hpp"
+#include "../common/targetinclude.hpp"
 #include "statusicons.hpp"
 #include <inttypes.h>
-#include <maike/targetinclude.hpp>
 
 using namespace Anja;
 
-ANJA_BLOB(uint8_t,s_logo,MAIKE_TARGET(../logo_1.png));
+ANJA_BLOB(uint8_t,s_logo,ANJA_TARGET(../logo_1.png));
 
 static constexpr const char* ANJA_OFFLINE="Stopped";
 static constexpr const char* ANJA_ONLINE="Running";

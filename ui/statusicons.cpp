@@ -22,17 +22,17 @@
 using namespace Anja;
 
 #include "../common/blob.hpp"
-#include <maike/targetinclude.hpp>
+#include "../common/targetinclude.hpp"
 
-ANJA_BLOB(uint8_t,message_error,MAIKE_TARGET(../icons/message_error.png));
-ANJA_BLOB(uint8_t,message_usererror,MAIKE_TARGET(../icons/message_usererror.png));
-ANJA_BLOB(uint8_t,message_info,MAIKE_TARGET(../icons/message_info.png));
-ANJA_BLOB(uint8_t,message_warning,MAIKE_TARGET(../icons/message_warning.png));
+ANJA_BLOB(uint8_t,message_error,ANJA_TARGET(../icons/message_error.png));
+ANJA_BLOB(uint8_t,message_usererror,ANJA_TARGET(../icons/message_usererror.png));
+ANJA_BLOB(uint8_t,message_info,ANJA_TARGET(../icons/message_info.png));
+ANJA_BLOB(uint8_t,message_warning,ANJA_TARGET(../icons/message_warning.png));
 
-ANJA_BLOB(uint8_t,led_stop,MAIKE_TARGET(../icons/led_stop.png));
-ANJA_BLOB(uint8_t,led_wait,MAIKE_TARGET(../icons/led_wait.png));
-ANJA_BLOB(uint8_t,led_ready,MAIKE_TARGET(../icons/led_ready.png));
-ANJA_BLOB(uint8_t,led_off,MAIKE_TARGET(../icons/led_off.png));
+ANJA_BLOB(uint8_t,led_stop,ANJA_TARGET(../icons/led_stop.png));
+ANJA_BLOB(uint8_t,led_wait,ANJA_TARGET(../icons/led_wait.png));
+ANJA_BLOB(uint8_t,led_ready,ANJA_TARGET(../icons/led_ready.png));
+ANJA_BLOB(uint8_t,led_off,ANJA_TARGET(../icons/led_off.png));
 
 std::pair<const uint8_t*,const uint8_t*> Anja::statusIcon(StatusIcon id) noexcept
 	{

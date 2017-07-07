@@ -54,11 +54,11 @@ These steps should be sufficient to compile Anja on an *Ubuntu desktop:
 
 	sudo apt-get install jackd2 pkg-config libgtk-3-dev g++ blender inkscape \
 		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev \
-		libjemalloc-dev Xvfb octave
+		libjemalloc-dev xvfb octave xsltproc
 	make
 
-In order to compile `maike`, you will also need `libjansson-dev`. You may need
-to add a more up-to-date version of blender. Ubuntu users can use this PPA:
+In order to compile `maike`, you will also need `libjansson-dev`. **You may need
+to add a more up-to-date version of `blender`**. Ubuntu users can use this PPA:
 
  * https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender
 

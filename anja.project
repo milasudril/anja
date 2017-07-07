@@ -88,6 +88,7 @@
       <File Name="common/arraymultisimple.hpp"/>
       <File Name="common/filein.hpp"/>
       <File Name="common/fileout.hpp"/>
+      <File Name="common/targetinclude.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
