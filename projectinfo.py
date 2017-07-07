@@ -138,7 +138,7 @@ def get_revision(target_dir):
 	else:
 		with open('versioninfo.txt','w') as versionfile:
 			versionfile.write(result)
-		with open(target_dir+'/versioninfo.txt','w') as versionfile:
+	with open(target_dir+'/versioninfo.txt','w') as versionfile:
 			versionfile.write(result)
 
 	return result
