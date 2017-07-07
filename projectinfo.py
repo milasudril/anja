@@ -20,6 +20,7 @@ import json
 import string
 import time
 import subprocess
+import shutil
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -126,20 +127,25 @@ def compiler_version(exename):
 		return lines.decode('utf8').rstrip()
 
 def get_revision(target_dir):
-	with subprocess.Popen(('git', 'describe','--tags','--dirty','--always')\
-		,stdout=subprocess.PIPE) as git:
-		result=git.stdout.read().decode().strip()
-		git.wait()
-		status=git.returncode
-
-	if status:
+	if shutil.which('git')==None:
 		with open('versioninfo.txt') as versionfile:
 			result=versionfile.read().strip()
 	else:
-		with open('versioninfo.txt','w') as versionfile:
-			versionfile.write(result)
+		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always')\
+			,stdout=subprocess.PIPE) as git:
+			result=git.stdout.read().decode().strip()
+			git.wait()
+			status=git.returncode
+
+		if status:
+			with open('versioninfo.txt') as versionfile:
+				result=versionfile.read().strip()
+		else:
+			with open('versioninfo.txt','w') as versionfile:
+				versionfile.write(result)
+
 	with open(target_dir+'/versioninfo.txt','w') as versionfile:
-			versionfile.write(result)
+		versionfile.write(result)
 
 	return result
 
