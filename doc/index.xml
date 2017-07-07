@@ -60,11 +60,11 @@
 
 <p>As mentioned above, the Anja source package can be obtained from<cite>anjasrc</cite>. Following this link gives the choice of downloading a gzipped tarball, or a zip archive. For the purpose of this tutorial, it is assumed that the tarball is downloaded. In order to extract that tarball issue the command</p>
 
-	<code language="bash">tar -xf anja.tar.gz</code>
+	<code language="bash">tar -xf anja-src.tar.gz</code>
 
 	<p>This will create a directory <dirname>anja</dirname>, in current directory. Now <prgname>cd</prgname> into that directory and run <prgname>make</prgname>:</p>
 
-	<code language="bash">cd anja
+	<code language="bash">cd anja-src
 make</code>
 
 <p>When running <prgname>make</prgname>, files are written to <dirname>__targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
