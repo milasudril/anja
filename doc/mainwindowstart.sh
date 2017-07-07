@@ -1,4 +1,4 @@
- #@	{
+#@	{
 #@	"targets":
 #@		[{
 #@		"name":"mainwindowstart.png","dependencies":
@@ -36,22 +36,22 @@ set -e
 target_dir=$1
 in_dir=$2
 
-if [ which Xvfb ]; then
+if ! which Xvfb>/dev/null; then
 	echo "# Error: Xvfb is not installed"
 	exit 1
 fi
 
-if [ which xdpyinfo ]; then
+if ! which xdpyinfo>/dev/null; then
 	echo "# Error: xdpyinfo in not installed"
 	exit 1
 fi
 
-if [ which xdotool ]; then
+if ! which xdotool>/dev/null; then
 	echo "# Error: xdotool is not insalled"
 	exit 1
 fi
 
-if [ which import ]; then
+if ! which import>/dev/null; then
 	echo "# Error: import (ImageMagick) is not insalled"
 	exit 1
 fi

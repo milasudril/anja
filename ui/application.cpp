@@ -528,7 +528,13 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 	if(cmd.length()==0)
 		{return;}
 
-	fprintf(stderr,"Anja: %s %d\n",cmd[0].begin(),cmd.length());
+	if(cmd[0].length()==0)
+		{return;}
+
+	fprintf(stderr,"Anja: %s",cmd[0].begin());
+	std::for_each(cmd.begin()+1,cmd.end(),[](const String& str)
+		{fprintf(stderr,",%s",str.begin());});
+	fprintf(stderr,"\n");
 
 	if(cmd[0]=="exit")
 		{m_ctx.exit();}

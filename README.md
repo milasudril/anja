@@ -62,6 +62,6 @@ to add a more up-to-date version of blender. Ubuntu users can use this PPA:
 
  * https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender
 
-The KxStudio repositories may contain a more up-to-date version of JACK. More information can be found here: http://kxstudio.linuxaudio.org/Repositories
+The KxStudio repositories may contain a more up-to-date version of JACK. More information can be found here: http://kxstudio.linuxaudio.org/Repositories.
 
 After compling Anja, the binary will be located in `__targets_rel` or `__targets_dbg`.
