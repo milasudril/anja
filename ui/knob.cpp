@@ -21,14 +21,14 @@
 #include "../common/blob.hpp"
 #include "../common/color.hpp"
 #include "../common/vec2.hpp"
+#include "../common/targetinclude.hpp"
 #include <gtk/gtk.h>
-#include <maike/targetinclude.hpp>
 #include <vector>
 #include <cstring>
 
-ANJA_BLOB(uint8_t,knob_ambient,MAIKE_TARGET(knob_ambient.png));
-ANJA_BLOB(uint8_t,knob_diffuse,MAIKE_TARGET(knob_diffuse.png));
-ANJA_BLOB(uint8_t,knob_mask,MAIKE_TARGET(knob_mask.png));
+ANJA_BLOB(uint8_t,knob_ambient,ANJA_TARGET(knob_ambient.png));
+ANJA_BLOB(uint8_t,knob_diffuse,ANJA_TARGET(knob_diffuse.png));
+ANJA_BLOB(uint8_t,knob_mask,ANJA_TARGET(knob_mask.png));
 
 using namespace Anja;
 
