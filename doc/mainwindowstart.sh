@@ -5,24 +5,28 @@
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"portselector.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"anja_layout.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"anja_jackports.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		}]
 #@	}
@@ -31,6 +35,26 @@ set -e
 
 target_dir=$1
 in_dir=$2
+
+if [ which Xvfb ]; then
+	echo "# Error: Xvfb is not installed"
+	exit 1
+fi
+
+if [ which xdpyinfo ]; then
+	echo "# Error: xdpyinfo in not installed"
+	exit 1
+fi
+
+if [ which xdotool ]; then
+	echo "# Error: xdotool is not insalled"
+	exit 1
+fi
+
+if [ which import ]; then
+	echo "# Error: import (ImageMagick) is not insalled"
+	exit 1
+fi
 
 Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
 server=$!
