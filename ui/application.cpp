@@ -885,13 +885,13 @@ Application::Application():
 		{
 		v.minHeight(22)
 			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF))
-			.padding(2);
+			.padding(4);
 		});
-	m_ch_status_img[0].backgroundShade(0.66,0.5f);
-	m_ch_status_img[1].backgroundShade(0.0,0.5f);
-	m_ch_status_img[18].backgroundShade(0.66,0.5f);
-	m_ch_status_img[19].backgroundShade(0.66,0.5f);
-	m_ch_status_img[20].backgroundShade(0.0,0.5f);
+	m_ch_status_img[0].backgroundShade(0.66,0.7f);
+	m_ch_status_img[1].backgroundShade(0.0,0.7f);
+	m_ch_status_img[18].backgroundShade(0.66,0.7f);
+	m_ch_status_img[19].backgroundShade(0.66,0.7f);
+	m_ch_status_img[20].backgroundShade(0.0,0.7f);
 	m_ch_status_img.callback(*this,0);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
