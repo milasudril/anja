@@ -40,6 +40,7 @@ These tools are required in order to compile Anja
  * pkg-config -- Return metainformation about installed libraries
  * python3 -- An interpreted, interactive, object-oriented programming language
  * xdpyinfo -- Display information utility for X
+ * xdotool -- Tool for manipulating X clients
  * xsltproc -- Command-line XSLT processor
  * Xvfb -- Virtual X server
 
@@ -54,7 +55,7 @@ These steps should be sufficient to compile Anja on an *Ubuntu desktop:
 
 	sudo apt-get install jackd2 pkg-config libgtk-3-dev g++ blender inkscape \
 		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev \
-		libjemalloc-dev xvfb octave xsltproc
+		libjemalloc-dev xvfb octave xdotool xsltproc
 	make
 
 In order to compile `maike`, you will also need `libjansson-dev`. **You may need
