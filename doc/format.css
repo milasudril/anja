@@ -42,6 +42,7 @@ div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
 	{position:relative;width:80%;left:0px;margin-left:auto;margin-right:auto;margin-top:3.25ex;margin-bottom:1.5ex}
 img{position:relative;max-height:40ex;margin-left:auto;margin-right:auto;display:block;max-width:100%}
 div.titlepic img{position:relative;width:61%;margin-left:auto;margin-right:auto;display:block;max-height:initial}
+figure > p{margin-top:0.75ex}
 
 td > img
 	{

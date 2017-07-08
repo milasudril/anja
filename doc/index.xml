@@ -79,7 +79,7 @@ make</code>
 
 	<chapter id="using">Using Anja</chapter>
 
-	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>Keyboard view</dfn> is located, and below that, there is a <dfn>Settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
+	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>keyboard view</dfn> is located, and below that, there is a <dfn>settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindowstart.png" />
@@ -91,14 +91,19 @@ make</code>
 		<caption>The different parts of the Anja workspace. At the top, there is a <dfn>status area</dfn> showing the state of Anja. To the left is the <dfn>action panel</dfn>, used to control Anja's state. To the right is the <dfn>keyboard view</dfn>, which selects waveform slots and channels, and below that is the <dfn>settings panel</dfn>, which is used to load waveforms and control the playback of loaded waveforms.</caption>
 	</figure>
 
-	<p>The different parts of the <dfn>Settings panel</dfn> will be covered later. The <dfn>status area</dfn> contains three parts as illustrated by <ref>statusareafig</ref>. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</p>
+	<p>The different parts of the <dfn>settings panel</dfn> will be covered later. The <dfn>status area</dfn>, shown larger in <ref>statusareacut</ref>, contains three parts as illustrated by <ref>statusareafig</ref>. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</p>
+
+	<figure id="statusareacut">
+		<includegraphics src="statusarea.png" />
+		<caption>A detailed view of the <dfn>status area</dfn>. The <dfn>status area</dfn> contains three panels. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</caption>
+	</figure>
 
 	<figure id="statusareafig">
 		<includegraphics src="statusarea.svg" />
-		<caption>Detailed description of the <dfn>status area</dfn>. The <dfn>status area</dfn> contains three panels. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</caption>
+		<caption>Layout description of the <dfn>status area</dfn>.</caption>
 	</figure>
 
-<p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, are indicators with neutral background. These represent the 16 internal Wave ports.</p>
+<p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
 
 <section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>Keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>Settings panel</dfn>. This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
@@ -116,7 +121,7 @@ make</code>
 
 <subsection id="engstatus">Controlling and manipulating engine status</subsection>
 
-	<p>As stated above, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>Action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
+	<p>As stated above, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
 
 <subsection id="connections">Connecting Anja to system playback</subsection>
 	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
@@ -125,7 +130,7 @@ make</code>
 	Notice that hitting <kbd>Space</kbd> bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to prelisten to sounds without routing them to a PA system.
 	</infobox>
 
-<p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two indicators with blue-shaded background in the output section of the <dfn>port status area</dfn> (see <ref>statusareafig</ref>). When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about port status indicators, see <ref>chstatus</ref>.</p>
+<p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two indicators with blue-shaded background in the output section of the <dfn>port status area</dfn> (see <ref>statusareacut</ref> and <ref>statusareafig</ref>). When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about port status indicators, see <ref>chstatus</ref>.</p>
 
 <figure id="portselector">
 	<includegraphics src="portselector.png" />

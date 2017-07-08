@@ -2,7 +2,16 @@
 #@	"targets":
 #@		[{
 #@		"name":"anja_layout.svg","dependencies":
-#@			[{"ref":"anja_layout.txt","rel":"misc"}]
+#@			[
+#@			 {"ref":"anja_layout.txt","rel":"misc"}
+#@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			]
+#@		},{
+#@		"name":"statusarea.png","dependencies":
+#@			[
+#@			 {"ref":"anja_layout.txt","rel":"misc"}
+#@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			]
 #@		}]
 #@	}
 
@@ -10,6 +19,7 @@ import sys
 import os
 import string
 import numpy
+import subprocess
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -68,6 +78,17 @@ try:
 
 	with open(target_dir + '/' + in_dir + '/anja_layout.svg','wb') as output:
 		output.write(anja_layout.substitute(params).encode('utf-8'))
+
+	statusarea=(Mx[3] - mx[3],My[3] - my[3],mx[3],my[3])
+
+	status=subprocess.call(['convert'\
+		,target_dir + '/' + in_dir +'/mainwindowstart.png'\
+		,'-crop','%dx%d+%d+%d'%statusarea\
+		,'+repage'\
+		,target_dir + '/' + in_dir +'/statusarea.png']\
+		,shell=False \
+		,env={"LANG":"C.UTF-8"})
+
 	sys.exit(0)
 
 except Exception:
