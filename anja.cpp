@@ -35,25 +35,15 @@ static void commands_read(Anja::FileIn& src,Anja::Application& dest)
 				switch(ch_in)
 					{
 					case EOF:
-						{
-						auto do_exit=0;
 						cmd.append(buffer);
-					//	assert(cmd.length());
-						if(cmd[0]=="exit")
-							{do_exit=1;}
 						dest.invoke(std::move(cmd));
-						if(do_exit)
-							{return;}
-						cmd.clear();
-						}
-						break;
+						return;
 
 					case '\n':
 						{
 						cmd.append(buffer);
 						buffer.clear();
 						auto do_exit=0;
-					//	assert(cmd.length());
 						if(cmd[0]=="exit")
 							{do_exit=1;}
 						dest.invoke(std::move(cmd));
@@ -76,7 +66,11 @@ static void commands_read(Anja::FileIn& src,Anja::Application& dest)
 				break;
 			case State::ESCAPE:
 				if(ch_in==EOF)
-					{continue;}
+					{
+					cmd.append(buffer);
+					dest.invoke(std::move(cmd));
+					return;
+					}
 				buffer.append(ch_in);
 				state_current=State::NORMAL;
 				break;

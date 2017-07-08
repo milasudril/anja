@@ -78,12 +78,14 @@ done
 jack_lsp | grep '\.anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --all --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
-echo "layout inspect" > "$tmpdir/anja_fifo"
-echo "port selector open,18" > "$tmpdir/anja_fifo"
+exec 3>"$tmpdir/anja_fifo"
+echo "layout inspect" >&3
+echo "port selector open,18" >&3
 sleep 1
 anjawin=$(xdotool search --all --name "Master out: Port selection")
 import -window $anjawin "$target_dir"/"$in_dir"/portselector.png
-echo "exit" > "$tmpdir/anja_fifo"
+echo "exit" >&3
+exec 3<&-
 wait $anja
 kill -9 $jack
 kill $server
