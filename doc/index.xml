@@ -160,15 +160,15 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 
 <infobox type="warning">Captured waveforms are stored the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
 
-<!--
 <section id="waveformprop">Configuring waveform playback</section>
-<p>The playaback behaviour and other properties can be controlled through the <dfn>Waveform data</dfn> tab in the <dfn>Settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>Waveform data</dfn> panel is shown in <ref>waveformdata</ref>. This view is activated by clicking on the corresponding key on the keyboard view (Area (2) in <ref>anjaworkspace</ref>).</p>
+<p>The playaback behaviour and other properties can be controlled through the <dfn>waveform</dfn> tab in the <dfn>settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>waveform</dfn> panel is shown in <ref>waveformsettings</ref>. This view is activated by clicking on the corresponding key on the keyboard view.</p>
 
-<figure id="waveformdata">
-	<includegraphics src="anja-waveformdata.png" />
-	<caption>An enlarged view of the <dfn>Settings panel</dfn> showing waveform data. This panel contains various settings controlling playback of the selected slot.</caption>
+<figure id="waveformsettings">
+	<includegraphics src="waveformsettings.png" />
+	<caption>An enlarged view of the <dfn>settings panel</dfn> showing waveform data. This panel contains various settings controlling playback of the selected slot.</caption>
 </figure>
 
+<!--
 <subsection id="wavesource">Source file selection</subsection>
 <p>The source file is chosen throught the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
 

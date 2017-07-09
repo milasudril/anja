@@ -12,6 +12,12 @@
 #@			 {"ref":"anja_layout.txt","rel":"misc"}
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			]
+#@		},{
+#@		"name":"waveformsettings.png","dependencies":
+#@			[
+#@			 {"ref":"anja_layout.txt","rel":"misc"}
+#@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			]
 #@		}]
 #@	}
 
@@ -88,6 +94,21 @@ try:
 		,target_dir + '/' + in_dir +'/statusarea.png']\
 		,shell=False \
 		,env={"LANG":"C.UTF-8"})
+
+	if status!=0:
+		sys.exit(-1)
+
+	settingspanel=(Mx[2] - mx[2],My[2] - my[2],mx[2],my[2])
+	status=subprocess.call(['convert'\
+		,target_dir + '/' + in_dir +'/mainwindowstart.png'\
+		,'-crop','%dx%d+%d+%d'%settingspanel\
+		,'+repage'\
+		,target_dir + '/' + in_dir +'/waveformsettings.png']\
+		,shell=False \
+		,env={"LANG":"C.UTF-8"})
+
+	if status!=0:
+		sys.exit(1)
 
 	sys.exit(0)
 

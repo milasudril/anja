@@ -555,6 +555,26 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 		if(port>=0 && port<m_ch_status_img.size())
 			{clicked(m_ch_status_img,0,m_ch_status_img[port]);}
 		}
+	else
+	if(cmd[0]=="waveform load")
+		{
+		if(cmd.length()<3)
+			{return;}
+		auto slot=atoi(cmd[1].begin());
+		if(slot>=0 && slot<128)
+			{
+			m_session.slotActiveSet(slot);
+			m_session.waveformViewGet(slot).waveformLoad(cmd[2].begin());
+			m_session_editor.sessionUpdated();
+			}
+		}
+	else
+	if(cmd[0]=="session load")
+		{
+		if(cmd.length()<2)
+			{return;}
+		sessionLoad(cmd[1].begin());
+		}
 	}
 
 static String port_title(const Session& session,int id)
