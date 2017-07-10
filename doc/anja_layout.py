@@ -5,18 +5,28 @@
 #@			[
 #@			 {"ref":"anja_layout.txt","rel":"misc"}
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			]
 #@		},{
 #@		"name":"statusarea.png","dependencies":
 #@			[
 #@			 {"ref":"anja_layout.txt","rel":"misc"}
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			]
 #@		},{
 #@		"name":"waveformsettings.png","dependencies":
 #@			[
 #@			 {"ref":"anja_layout.txt","rel":"misc"}
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			,{"ref":"waveformloaded.png","rel":"misc"}
+#@			]
+#@		},{
+#@		"name":"waveformtrim.png","dependencies":
+#@			[
+#@			 {"ref":"anja_layout.txt","rel":"misc"}
+#@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			]
 #@		}]
 #@	}
@@ -80,7 +90,7 @@ try:
 	rects=[]
 	for k,v in enumerate(labels):
 		rects.append( rect(k,labels,mx,my,Mx,My) )
-	params['rectangles']=rects
+	params['rectangles']='\n'.join(rects)
 
 	with open(target_dir + '/' + in_dir + '/anja_layout.svg','wb') as output:
 		output.write(anja_layout.substitute(params).encode('utf-8'))
@@ -100,10 +110,22 @@ try:
 
 	settingspanel=(Mx[2] - mx[2],My[2] - my[2],mx[2],my[2])
 	status=subprocess.call(['convert'\
-		,target_dir + '/' + in_dir +'/mainwindowstart.png'\
+		,target_dir + '/' + in_dir +'/waveformloaded.png'\
 		,'-crop','%dx%d+%d+%d'%settingspanel\
 		,'+repage'\
 		,target_dir + '/' + in_dir +'/waveformsettings.png']\
+		,shell=False \
+		,env={"LANG":"C.UTF-8"})
+
+	if status!=0:
+		sys.exit(1)
+
+	trim=(Mx[4] - mx[4],My[4] - my[4],mx[4],my[4])
+	status=subprocess.call(['convert'\
+		,target_dir + '/' + in_dir +'/waveformloaded.png'\
+		,'-crop','%dx%d+%d+%d'%trim\
+		,'+repage'\
+		,target_dir + '/' + in_dir +'/waveformtrim.png']\
 		,shell=False \
 		,env={"LANG":"C.UTF-8"})
 

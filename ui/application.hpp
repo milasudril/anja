@@ -140,6 +140,7 @@ namespace Anja
 				cb(1,m_session_editor.boundingBoxKeyboard());
 				cb(2,m_session_editor.boundingBoxTabs());
 				cb(3,m_status_row.boundingBox());
+				cb(4,m_session_editor.boundingBoxTrim());
 				}
 
 

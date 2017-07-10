@@ -8,6 +8,13 @@
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
+#@		"name":"waveformloaded.png","dependencies":
+#@			[{"ref":"Xvfb","rel":"tool"}
+#@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"../anja","rel":"misc"}]
+#@		},{
 #@		"name":"portselector.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
@@ -84,6 +91,11 @@ echo "port selector open,18" >&3
 sleep 1
 anjawin=$(xdotool search --all --name "Master out: Port selection")
 import -window $anjawin "$target_dir"/"$in_dir"/portselector.png
+echo "port selector close" >&3
+echo "waveform load,0,testbank/alien_scanner.wav" >&3
+sleep 1
+anjawin=$(xdotool search --all --onlyvisible --pid $anja)
+import -window $anjawin "$target_dir"/"$in_dir"/waveformloaded.png
 echo "exit" >&3
 exec 3<&-
 wait $anja

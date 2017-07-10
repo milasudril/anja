@@ -551,10 +551,12 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 	if(cmd[0]=="port selector open")
 		{
 		auto port=cmd.length()>1?static_cast<size_t>( atoi(cmd[1].begin()) ):18;
-		fflush(stderr);
 		if(port>=0 && port<m_ch_status_img.size())
 			{clicked(m_ch_status_img,0,m_ch_status_img[port]);}
 		}
+	else
+	if(cmd[0]=="port selector close")
+		{m_port_selector.reset();}
 	else
 	if(cmd[0]=="waveform load")
 		{
@@ -565,7 +567,7 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 			{
 			m_session.slotActiveSet(slot);
 			m_session.waveformViewGet(slot).waveformLoad(cmd[2].begin());
-			m_session_editor.sessionUpdated();
+			m_session_editor.sessionUpdated().waveformAutotrim();
 			}
 		}
 	else

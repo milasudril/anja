@@ -161,23 +161,22 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <infobox type="warning">Captured waveforms are stored the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
 
 <section id="waveformprop">Configuring waveform playback</section>
-<p>The playaback behaviour and other properties can be controlled through the <dfn>waveform</dfn> tab in the <dfn>settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>waveform</dfn> panel is shown in <ref>waveformsettings</ref>. This view is activated by clicking on the corresponding key on the keyboard view.</p>
+<p>The playaback behaviour and other properties can be controlled through the <dfn>waveform tab</dfn> in the <dfn>settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>waveform tab</dfn> after loading a waveform file is shown in <ref>waveformsettings</ref>. This view is activated by clicking on the corresponding key on the keyboard view.</p>
 
 <figure id="waveformsettings">
 	<includegraphics src="waveformsettings.png" />
-	<caption>An enlarged view of the <dfn>settings panel</dfn> showing waveform data. This panel contains various settings controlling playback of the selected slot.</caption>
+	<caption>An enlarged view of the <dfn>settings panel</dfn> showing the <dfn>waveform tab</dfn>, after loading a waveform file. This tab contains various settings controlling playback of the selected slot.</caption>
 </figure>
 
-<!--
 <subsection id="wavesource">Source file selection</subsection>
-<p>The source file is chosen throught the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
+<p>The source file is chosen through the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
 
 <infobox type="info">
 	It is not possible to load another waveform when the current slot is in use by the engine.
 </infobox>
 
 <infobox type="info">
-	Changing the source file from disk does not affect Anja, since Anja loads the file into memory.</infobox>
+	Changing the source file on disk without clicking on the reload button <ui-button>↺</ui-button> does not affect Anja, since Anja loads a copy of the file content into memory.</infobox>
 
 <infobox type="warning">
 	Avoid loading large files. Doing so, may exhaust system memory. See <ref>requirements</ref> for information about memory requirements.
@@ -189,7 +188,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>It may happen that the description is long. Therefore it is possible to mark a key-phrase by surrounding it with square brackets. Then, only the text within the first pair of square brackets will appear at the virtual key. If there are no square brackets within the description, the first word will be used instead.</p>
 
 <subsection id="wavecolor">Waveform color</subsection>
-<p>Like description (see <ref>description</ref>), the <ui-formfield>Color</ui-formfield> field is only used for visual enhancements. The color is given as red-green-blue-alpha values delimited by <char>;</char>, where each component is in the range [0, 1]. If the <ui-button>...</ui-button> is pressed a color selection dialog based on the HSL color system appears. This dialog is described in more detail in <ref>colordlg</ref>.</p>
+<p>Like description (see <ref>description</ref>), the <ui-formfield>Color</ui-formfield> field is only used for visual enhancements. The color is given as red-green-blue-alpha values delimited by <char>;</char>, where each component is in the range [0, 1]. If the <ui-button>...</ui-button> is pressed, a color selection dialog based on the HSL color system appears.</p>
 
 <infobox type="info">
 	The idea behind color coding of waveform slots is that slots that are used in similar context can be encoded with a similar color. The color coding feature can be used to categorize different kinds of waveforms such as <var>Fx</var>  and <var>Ambient</var>.
@@ -199,7 +198,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>The <ui-formfield>Playback channel</ui-formfield> field assigns a channel to the waveform slot. All sound from this slot will be routed through the selected channel.</p>
 
 <infobox type="info">
-	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>Channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>sessprop</ref>).
+	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>sessprop</ref>).
 </infobox>
 
 <subsection id="pbgain">Playback gain</subsection>
@@ -208,40 +207,61 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <subsection id="pbgainrandom">Playback gain randomization</subsection>
 <p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Playback gain random level</ui-formfield> sets how much the random component is amplified.</p>
 
-<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful on machinegun effects.</infobox>
+<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful for creating a more "living" sound.</infobox>
 
 <subsection id="pboptions">Controlling playback behavior</subsection>
 <p>There are different options for controlling the playback behavior. These are <dfn>Loop</dfn>, <dfn>Sustain</dfn>, <dfn>Readonly</dfn>, and <dfn>Set gain on loop</dfn>.</p>
 
 <subsubsection id="pboptloop">Loop</subsubsection>
-<p>When <dfn>Loop</dfn> is enabled, playback will start form the beginning when the playback position reaches the <dfn>end cursor</dfn>, if no stopping event has occurred before that happens.</p>
+<p>When <dfn>Loop</dfn> is enabled, playback will start form the <dfn>loop begin cursor </dfn> when the playback position reaches the <dfn>loop end cursor</dfn>, if no stopping event has occurred before that happens. For more information about adjusting cursors, see <ref>rangeadjust</ref>.</p>
 
 <subsubsection id="pboptsustain">Sustain</subsubsection>
 <p>The <dfn>Sustain</dfn> flag controls whether or not a key release event should also send a stop event. When the <dfn>Sustain</dfn> flag is set, a stop event is not sent, emulating the effect of a pushed sustain pedal. </p>
 
 <subsubsection id="pboptreadonly">Readonly</subsubsection>
-<p>The <dfn>Readonly</dfn> flag controls whether or not it is possible to overwrite a loaded waveform with captured audio (see <ref>rec</ref>). Enabling <dfn>Readonly</dfn> prevents that a loaded waveform is accidentally overwritten.</p>
+<p>The <dfn>Readonly</dfn> flag controls whether or not it is possible to overwrite a loaded waveform with captured audio (see <ref>rec</ref>). Enabling <dfn>Readonly</dfn> prevents that a loaded waveform is accidentally overwritten by a record command.</p>
 
 <subsubsection id="pboptgainrand">Set gain on loop</subsubsection>
 <p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possible set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
 
-<subsection id="rangeadjust">Adjusting playback range</subsection>
-<p>It may happen that only a portion of a loaded waveform is interesting. With the <dfn>Trim panel</dfn>, it is possible to select the part of the waveform that should be played. The graph shows in dBFS, the root mean square power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On to of the power function, there are three <dfn>cursors</dfn> that can be moved by click and drag.</p>
+<subsection id="rangeadjust">Adjusting playback or loop range</subsection>
+<p>It may happen that only a portion of a loaded waveform is interesting for playback or loop. With the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>), it is possible to select the part of the waveform that should be played or looped. The graph shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On top of the function graph, there are four cursors showing playback and loop range, as well as the <dfn>auto-trigger threshold level</dfn>. In addition to the plot window, there are input fields that can be used to set playback cursor positions by entering the corresponding time position in seconds.</p>
 
-<subsubsection id="rangeadjustmanual">Manual range adjustments</subsubsection>
-<p>	The green <dfn>cursor</dfn> marks the playback starting position. The red one marks the stopping position. The positions are moved by moving the corresponding cursor to the desired position. The start and stop position can also be set by typing their positions into the corresponding input fields, <ui-formfield>Begin</ui-formfield> and <ui-formfield>end</ui-formfield>. The positions are in this case given in seconds.</p>
-
-<infobox type="info">
-	If the end <dfn>cursor</dfn> has been placed to the left of the begin <dfn>cursor</dfn>, Anja will play the wavefile backwards.
-</infobox>
+<figure id="trimpanel">
+	<includegraphics src="waveformtrim.png" />
+	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively. Between the <em>begin</em> part and <em>end</em> part is a toggle button that toggles reversed playback.</caption>
+</figure>
 
 <infobox type="info">
-	If a more detailed view of a certain part of the loaded waveform is needed in order to set the start ans stop positions, it is possible to zoom in on the current range by pressing <kbd>Z</kbd>. If <kbd>X</kbd> is pressed, the view will return to the previous view.
+Notice that when a cursor is located at the same position as another cursor, it might be obscured by the other cursor. This is why there are only three cursors visible in <ref>trimpanel</ref>.
 </infobox>
 
-<subsubsection id="rangeauto">Auto-adjusting playback range</subsubsection>
-<p>In addition to manually adjusting the playback range, it is possible to let Anja compute a range automatically. In this case, Anja will use the first and last positions where the signal level exceeds a certain threshold level, start and stop positions. The threshold can be adjusted by moving the yellow (horisontal) <dfn>cursor</dfn> to a suitable level. Clicking on one of the <ui-button>Auto</ui-button> buttons will adjust the corresponding position. If the <kbd>Shift</kbd> is pressed while the yellow <dfn>cursor</dfn> is moved, Anja will adjust both positions accordingly.</p>
+<figure id="playseq">
+	<includegraphics src="playseq.svg" />
+	<caption>The playback sequence. Playback starts at the <em>begin</em> cursor and passes the <em>loop begin</em> cursor. When the playback position reaches the <em>loop end</em> cursor, and loop is activated and the engine has not received a stop message, the playback will continue from <em>loop begin</em> when it reaches <em>loop end</em>. Otherwise, playback continues until <em>end</em> is reached, or a stop message is received.</caption>
+</figure>
 
+<p>Before going into the details on how to set playback and loop ranges, it is good to get an overview of the playback sequence illustrated in <ref>playseq</ref>. Playback starts at the <em>begin</em> cursor and passes the <em>loop begin</em> cursor. When the playback position reaches the <em>loop end</em> cursor, and loop is activated and the engine has not received a stop message, the playback will continue from <em>loop begin</em> when it reaches <em>loop end</em>. Otherwise, playback continues until <em>end</em> is reached, or a stop message is received.</p>
+
+<subsubsection id="cursorpositions">Setting cursor positions</subsubsection>
+<p>The primary way of setting the position of a cursor is to drag the cursor into position. The position of the <em>begin</em> is controlled by the green solid cursor and the position of the <em>loop begin</em> is controlled by the green dashed cursor. The end cursors are drawn the same way but in red instead of green.</p>
+
+<infobox type="info">If it is hard to position a cursor sufficently exact, try pressing <kbd>Ctrl</kbd> or <kbd>Shift</kbd> while using the mousewheel. This will zoom in or out in the <var>x</var> or <var>y</var> directions. Draging inside the plot window, but not near a cursor, will translate the view window. Right-clicking in the plot window will reset the view to its initial state.
+</infobox>
+
+<p>Another way of adjusting the cursor positions is to drag the auto-triggering cursor while pressing <kbd>Shift</kbd>. This will move the <em>begin</em> and <em>end</em> cursors to the first or last position where the signal power exceeds the current threshold level. If this requires that the loop cursors to move, they will be pushed by the non-loop cursors.</p>
+
+<infobox type="info">It is possible to use the auto-trigger threshold to set both the playback range and the loop range individually as long as the loop range is set given a higher threshold level. Since the auto-trigger only moves the <em>begin</em> and <em>end</em> cursors, but doing so may push the loop cursors to new positions, it is possible to push the loop cursors inwards to a certain position. When lowering the auto-trigger threshold, the loop cursors stays, but the other cursors move outwards.
+</infobox>
+
+<infobox type="info">If <kbd>Shift</kbd> is not pressed when the auto-triggering cursor is moved, no automatic adjustment is applied. This way, the auto-triggering cursor can be used as a guide for positioning the cursors manually.
+</infobox>
+
+<p>A third option is to enter cursors positions into the input fields below the plot window. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively.</p>
+
+<subsubsection id="revplayback">Reversed playback</subsubsection>
+<p>Reversed playback is toggled by the middle button in the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>). What it does is to swap the direction shown in <ref>playseq</ref> by reversing the list of cursor.  Another way of enabling reversed playback is to manually position the <em>end</em> cursors before the <em>begin</em> cursors. When <em>begin</em> and <em>end</em> cursors meats, the reverse toggle button changes state.</p>
+<!--
 <section id="chmixer">Configuring playback channels</section>
 
 <p>The <dfn>Channel mixer</dfn> is shown in <ref>channelmixerfig</ref>. The <dfn>Channel mixer</dfn> controls the playback volume for the different playback channels. To the right of all channel strips, there is a master gain control, which controls the playback volume of the mixed channels. In addition to a gain control, each channel strip also contains an input field for selecting a channel color, which works similar to the color input field for waveforms (see <ref>wavecolor</ref>), and a control for determining the <dfn>time constant</dfn> for automatic fade-in/out.</p>

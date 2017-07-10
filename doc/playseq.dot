@@ -1,0 +1,12 @@
+digraph "playsec"
+	{
+	rankdir="LR"
+	"Begin" -> "Loop begin"
+	"Loop begin" -> "Loop end"
+	"Loop end" -> "End"
+	"Loop end" -> "Loop begin"[label="Loop and\nnot stopped"]
+	"Sample position" -> dummy
+	dummy[style=invis]
+	"Sample position"[shape=none]
+	"Sample position"->"Loop begin"[style=invis]
+	}

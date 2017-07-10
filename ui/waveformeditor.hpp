@@ -104,6 +104,14 @@ namespace Anja
 
 			WaveformEditor& channelNames(const String* names_begin,const String* names_end);
 
+			WaveformEditor& autotrim() noexcept
+				{
+				cursor_begin_auto();
+				cursor_end_auto();
+				return *this;
+				}
+
+
 			template<class Callback,class IdType>
 			WaveformEditor& callback(Callback& cb,IdType id) noexcept
 				{
@@ -134,6 +142,9 @@ namespace Anja
 
 			WaveformEditor& waveform(const WaveformProxy& waveform);
 			WaveformEditor& waveformUpdate();
+
+			Rectangle boundingBoxTrim() const noexcept
+				{return m_details_right.boundingBox();}
 
 		private:
 			struct Vtable

@@ -61,6 +61,15 @@ namespace Anja
 			Rectangle boundingBoxTabs() const noexcept
 				{return m_hsplit.boundingBox(1);}
 
+			Rectangle boundingBoxTrim() const noexcept
+				{return m_waveform.boundingBoxTrim();}
+
+			SessionEditor& waveformAutotrim() noexcept
+				{
+				m_waveform.autotrim();
+				return *this;
+				}
+
 		private:
 			void (*m_channel_name_callback)(void* cb_obj,ChannelStrip& self,int id);
 			void (*m_channel_gain_callback)(void* cb_obj,ChannelStrip& self,int id);
