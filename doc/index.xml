@@ -225,11 +225,11 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possible set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
 
 <subsection id="rangeadjust">Adjusting playback or loop range</subsection>
-<p>It may happen that only a portion of a loaded waveform is interesting for playback or loop. With the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>), it is possible to select the part of the waveform that should be played or looped. The graph shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On top of the function graph, there are four cursors showing playback and loop range, as well as the <dfn>auto-trigger threshold level</dfn>. In addition to the plot window, there are input fields that can be used to set playback cursor positions by entering the corresponding time position in seconds.</p>
+<p>It may happen that only a part of a loaded waveform is interesting for playback or loop. With the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>), it is possible to select the part of the waveform that should be played or looped. The graph shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On top of the function graph, there are four cursors showing playback and loop range, as well as the <dfn>auto-trigger threshold level</dfn>. In addition to the plot window, there are input fields that can be used to set playback cursor positions by entering the corresponding time position in seconds.</p>
 
 <figure id="trimpanel">
 	<includegraphics src="waveformtrim.png" />
-	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively. Between the <em>begin</em> part and <em>end</em> part is a toggle button that toggles reversed playback.</caption>
+	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively. Between the <em>begin</em> part and <em>end</em> section is a toggle button that toggles reversed playback.</caption>
 </figure>
 
 <infobox type="info">
@@ -242,6 +242,9 @@ Notice that when a cursor is located at the same position as another cursor, it 
 </figure>
 
 <p>Before going into the details on how to set playback and loop ranges, it is good to get an overview of the playback sequence illustrated in <ref>playseq</ref>. Playback starts at the <em>begin</em> cursor and passes the <em>loop begin</em> cursor. When the playback position reaches the <em>loop end</em> cursor, and loop is activated and the engine has not received a stop message, the playback will continue from <em>loop begin</em> when it reaches <em>loop end</em>. Otherwise, playback continues until <em>end</em> is reached, or a stop message is received.</p>
+
+<infobox type="warning">If the <em>loop begin</em> cursor coincides with <em>loop end</em> cursor, the loop range becomes empty and there will be no audible loop.
+</infobox>
 
 <subsubsection id="cursorpositions">Setting cursor positions</subsubsection>
 <p>The primary way of setting the position of a cursor is to drag the cursor into position. The position of the <em>begin</em> is controlled by the green solid cursor and the position of the <em>loop begin</em> is controlled by the green dashed cursor. The end cursors are drawn the same way but in red instead of green.</p>
