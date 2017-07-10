@@ -38,6 +38,10 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	if(scancode!=0xff);
 		{
 		m_keyboard.keyLabel(scancode,r_session.waveformViewGet(slot).keyLabel().begin())
+			.keyLabel(Keys::AUDITION
+				,Anja::String("Audition: ")
+					.append(r_session.waveformViewGet(slot)
+					.keyLabel()).begin())
 			.redraw();
 		}
 	}

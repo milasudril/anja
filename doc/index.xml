@@ -106,7 +106,7 @@ make</code>
 <p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
 
 <section id="addfx">Loading a waveform</section>
-	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse...</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse...</ui-button>.</p>
+	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
 
 	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
 	</infobox>
@@ -161,7 +161,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <infobox type="warning">Captured waveforms are stored the waveform in virtual memory. This means that it is not possible to record longer waveforms. Also, trying to do so may crash Anja. See <ref>requirements</ref> for information about memory requirements.</infobox>
 
 <section id="waveformprop">Configuring waveform playback</section>
-<p>The playaback behaviour and other properties can be controlled through the <dfn>waveform tab</dfn> in the <dfn>settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>waveform tab</dfn> after loading a waveform file is shown in <ref>waveformsettings</ref>. This view is activated by clicking on the corresponding key on the keyboard view.</p>
+<p>The playback behaviour and other properties can be controlled through the <dfn>waveform tab</dfn> in the <dfn>settings panel</dfn> (see <ref>anjaworkspace</ref>). An enlarged view of the <dfn>waveform tab</dfn> after loading a waveform file is shown in <ref>waveformsettings</ref>. This view is activated by clicking on the corresponding key on the keyboard view.</p>
 
 <figure id="waveformsettings">
 	<includegraphics src="waveformsettings.png" />
@@ -169,7 +169,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 </figure>
 
 <subsection id="wavesource">Source file selection</subsection>
-<p>The source file is chosen through the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
+<p>The source file is chosen through the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse…</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
 
 <infobox type="info">
 	It is not possible to load another waveform when the current slot is in use by the engine.
@@ -188,14 +188,14 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>It may happen that the description is long. Therefore it is possible to mark a key-phrase by surrounding it with square brackets. Then, only the text within the first pair of square brackets will appear at the virtual key. If there are no square brackets within the description, the first word will be used instead.</p>
 
 <subsection id="wavecolor">Waveform color</subsection>
-<p>Like description (see <ref>description</ref>), the <ui-formfield>Color</ui-formfield> field is only used for visual enhancements. The color is given as red-green-blue-alpha values delimited by <char>;</char>, where each component is in the range [0, 1]. If the <ui-button>...</ui-button> is pressed, a color selection dialog based on the HSL color system appears.</p>
+<p>Like description (see <ref>description</ref>), the <ui-formfield>Color</ui-formfield> field is only used for visual enhancements. The color is given as red-green-blue-alpha values delimited by <char>;</char>, where each component is in the range [0, 1]. If the <ui-button>…</ui-button> is pressed, a color selection dialog based on the HSL color system appears.</p>
 
 <infobox type="info">
 	The idea behind color coding of waveform slots is that slots that are used in similar context can be encoded with a similar color. The color coding feature can be used to categorize different kinds of waveforms such as <var>Fx</var>  and <var>Ambient</var>.
 </infobox>
 
 <subsection id="pbchannel">Playback channel</subsection>
-<p>The <ui-formfield>Playback channel</ui-formfield> field assigns a channel to the waveform slot. All sound from this slot will be routed through the selected channel.</p>
+<p>The <ui-formfield>Channel</ui-formfield> field assigns a channel to the waveform slot. All sound from this slot will be routed through the selected channel.</p>
 
 <infobox type="info">
 	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>sessprop</ref>).
@@ -205,7 +205,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>Before the signal reaches the strip for the selected playback channel (see <ref>pbchannel</ref>), the signal is amplified by the given playback gain. The gain can be adjusted from <quantity unit="dB">-72</quantity> to <quantity unit="dB">6</quantity>.</p>
 
 <subsection id="pbgainrandom">Playback gain randomization</subsection>
-<p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Playback gain random level</ui-formfield> sets how much the random component is amplified.</p>
+<p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Gain random</ui-formfield> sets how much the random component is amplified.</p>
 
 <infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful for creating a more "living" sound.</infobox>
 
