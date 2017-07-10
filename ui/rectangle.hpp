@@ -1,4 +1,4 @@
-//@	{"targets":[{"name":"rectangle","type":"include"}]}
+//@	{"targets":[{"name":"rectangle.hpp","type":"include"}]}
 
 #ifndef ANJA_RECTANGLE_HPP
 #define ANJA_RECTANGLE_HPP

@@ -16,6 +16,7 @@
 #include "aboutbox.hpp"
 #include "imagelist.hpp"
 #include "portselector.hpp"
+#include "memview.hpp"
 #include "../sessiondata/session.hpp"
 #include "../engine/engine.hpp"
 #include <memory>
@@ -158,6 +159,8 @@ namespace Anja
 							ImageList m_ch_status_img;
 						Separator m_sep_b;
 						Message m_keyb_status;
+						Separator m_sep_c;
+						MemView m_mem;
 					Separator m_row_sep;
 					Box m_cols;
 						Anja::ButtonList m_session_control;
