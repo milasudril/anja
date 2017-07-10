@@ -214,8 +214,14 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case RECORD_START:
-					m_rec_message_in=RecordMessage(RecAction::BEGIN
-						,midiToSlot(msg.value2()&0x7f),m_rec_write_offset);
+					{
+					auto slot=midiToSlot(msg.value2()&0x7f);
+					if(!(r_session->waveformGet(slot).flags()&Waveform::READONLY))
+						{
+						m_rec_message_in=RecordMessage(RecAction::BEGIN
+							,midiToSlot(msg.value2()&0x7f),m_rec_write_offset);
+						}
+					}
 					break;
 
 				case RECORD_STOP:
