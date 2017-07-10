@@ -8,9 +8,8 @@ Voice::Voice(const Waveform& waveform,int channel,float velocity,int start_offse
 	,int id,int key) noexcept
 	{
 	m_velocity=velocity;
-	m_gain=dBToAmplitude( m_gain );
 	m_gain_random=waveform.gainRandom();
-	m_gain_init=m_gain;
+	m_gain_init=waveform.gain();
 
 	r_pos_current=waveform.pointer<Waveform::Cursor::BEGIN>();
 	r_loop_begin=waveform.pointer<Waveform::Cursor::BEGIN_LOOP>();
