@@ -15,6 +15,13 @@
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
+#@		"name":"mixerfull.png","dependencies":
+#@			[{"ref":"Xvfb","rel":"tool"}
+#@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"../anja","rel":"misc"}]
+#@		},{
 #@		"name":"portselector.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
@@ -96,6 +103,9 @@ echo "waveform load,0,testbank/alien_scanner.wav" >&3
 sleep 1
 anjawin=$(xdotool search --all --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/waveformloaded.png
+echo "settings,channels" >&3
+sleep 1
+import -window $anjawin "$target_dir"/"$in_dir"/mixerfull.png
 echo "exit" >&3
 exec 3<&-
 wait $anja

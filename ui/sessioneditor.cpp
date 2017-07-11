@@ -159,7 +159,7 @@ SessionEditor::SessionEditor(Container& cnt,const ImageRepository& images,Sessio
 			,m_waveform(m_tabs.tabTitle("Waveform"),images
 				,session.waveformViewGet(session.slotActiveGet())
 				,session.channelLabelsGet())
-			,m_mixer(m_tabs.tabTitle("Channel Mixer"),session)
+			,m_mixer(m_tabs.tabTitle("Channel mixer"),session)
 			,m_settings(m_tabs.tabTitle("Session"),session)
 	{
 

@@ -43,6 +43,24 @@ namespace Anja
 
 			SessionEditor& sessionUpdated();
 
+			SessionEditor& waveformShow()
+				{
+				m_tabs.activate(0);
+				return *this;
+				}
+
+			SessionEditor& mixerShow()
+				{
+				m_tabs.activate(1);
+				return *this;
+				}
+
+			SessionEditor& sessionShow()
+				{
+				m_tabs.activate(2);
+				return *this;
+				}
+
 			template<class Callback,class IdType>
 			SessionEditor& callback(Callback& cb,IdType id)
 				{

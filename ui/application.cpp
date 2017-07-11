@@ -584,6 +584,21 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 			{return;}
 		sessionLoad(cmd[1].begin());
 		}
+	else
+	if(cmd[0]=="settings")
+		{
+		if(cmd.length()<2)
+			{return;}
+
+		if(cmd[1]=="waveform")
+			{m_session_editor.waveformShow();}
+		else
+		if(cmd[1]=="channels")
+			{m_session_editor.mixerShow();}
+		else
+		if(cmd[1]=="session")
+			{m_session_editor.sessionShow();}
+		}
 	}
 
 static String port_title(const Session& session,int id)
