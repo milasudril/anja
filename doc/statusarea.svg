@@ -41,18 +41,19 @@
    inkscape:window-height="1139"
    id="namedview4270"
    showgrid="true"
-   inkscape:zoom="0.76851597"
-   inkscape:cx="220.61192"
-   inkscape:cy="28.450593"
+   inkscape:zoom="0.54342285"
+   inkscape:cx="788.68727"
+   inkscape:cy="-63.867315"
    inkscape:window-x="0"
    inkscape:window-y="0"
    inkscape:window-maximized="1"
    inkscape:current-layer="svg4242"
-   inkscape:snap-to-guides="true">
+   inkscape:snap-to-guides="true"
+   showguides="true">
   <inkscape:grid
      type="xygrid"
      id="grid4144"
-     spacingx="142" />
+     spacingx="106.5" />
 </sodipodi:namedview>
 <style
    id="style4244">
@@ -67,48 +68,66 @@ rect
 </style>
 
 
+
 ['', '', '', '<rect
    id="rect4266-3"
-   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999988px"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
    height="22"
-   width="276"
+   width="205"
    y="4"
-   x="288" />
+   x="217" />
 <rect
    id="rect4266"
-   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999988px"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2px"
    height="22"
-   width="276"
+   width="205"
    y="4"
    x="3.9999998" />
+<rect
+   id="rect4266-3-5"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
+   height="22"
+   width="205"
+   y="3.9999988"
+   x="430"
+   inkscape:transform-center-x="14.167929"
+   inkscape:transform-center-y="-16.915719" />
+<rect
+   id="rect4266-3-5-3"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
+   height="22"
+   width="205"
+   y="3.9999988"
+   x="643"
+   inkscape:transform-center-x="14.167929"
+   inkscape:transform-center-y="-16.915719" />
 <text
    style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
    id="text4268"
    dominant-baseline="middle"
-   y="15"
-   x="426">Port status</text>
+   y="14.824"
+   x="319.46829">Port status</text>
+
 
 ']
-<rect
-   id="rect4266-3-5"
-   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999988px"
-   height="22"
-   width="276"
-   y="4"
-   x="572"
-   inkscape:transform-center-x="19.07487"
-   inkscape:transform-center-y="-16.915719" />
 <text
    style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
    id="text4268-6"
    dominant-baseline="middle"
    y="15"
-   x="141.74463">Engine stauts</text>
+   x="106.47385">Engine stauts</text>
 <text
    style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
    id="text4268-6-2"
    dominant-baseline="middle"
-   y="14.999976"
-   x="709.74567"
+   y="15.015971"
+   x="532.53094"
    transform="scale(0.9999984,1.0000016)">Keyboard status</text>
+<text
+   style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
+   id="text4268-6-2-6"
+   dominant-baseline="middle"
+   y="15.015971"
+   x="745.44818"
+   transform="scale(0.9999984,1.0000016)">Memory usage</text>
 </svg>

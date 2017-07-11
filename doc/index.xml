@@ -41,7 +41,7 @@
 
 
 	<section id="requirements">System requirements</section>
-	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja in fullscreen mode is <quantity unit="px">880</quantity> &#215; <quantity unit="px">420</quantity>. At this height, you choose what parts of the UI you wish to show. The full UI requires a height of <quantity unit="px">670</quantity>. To conclude, Anja can be used without any problems on an XGA display.</p>
+	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
 
 
 	<section id="comparison">Anja compared to other software</section>
@@ -95,7 +95,7 @@ make</code>
 
 	<figure id="statusareacut">
 		<includegraphics src="statusarea.png" />
-		<caption>A detailed view of the <dfn>status area</dfn>. The <dfn>status area</dfn> contains three panels. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</caption>
+		<caption>A detailed view of the <dfn>status area</dfn>. The <dfn>status area</dfn> contains four panels: An engine status indicator, port status indicators, a keyboard status indicator, and a memory usage indicator.</caption>
 	</figure>
 
 	<figure id="statusareafig">
@@ -104,6 +104,10 @@ make</code>
 	</figure>
 
 <p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
+
+<p>The memory usage indicator uses high-saturated colors for memory used by the current instance of Anja. The amount of memory used by other processes uses low-saturated colors. The level indicator is divided into two parts: RAM and swap. The RAM part is green, while the swap part is red.</p>
+
+<infobox type="warning">You do <em>not</em> want Anja to spill over into the swap space, since it can result in long delays between pressing triggering playback, and actual sound output. Also, it can result in sound dropout from other processes running on the same JACK server.</infobox>
 
 <section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
@@ -225,11 +229,11 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>As mentioned in <ref>pbgainrandom</ref>, it is possible to only randomize gain on the trig event, but it is also possible set a new gain for each iteration in a loop. When this flag is set, the latter happens.</p>
 
 <subsection id="rangeadjust">Adjusting playback or loop range</subsection>
-<p>It may happen that only a part of a loaded waveform is interesting for playback or loop. With the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>), it is possible to select the part of the waveform that should be played or looped. The graph shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On top of the function graph, there are four cursors showing playback and loop range, as well as the <dfn>auto-trigger threshold level</dfn>. In addition to the plot window, there are input fields that can be used to set playback cursor positions by entering the corresponding time position in seconds.</p>
+<p>It may happen that only a part of a loaded waveform is interesting for playback or loop. With the <dfn>trim panel</dfn> (see <ref>trimpanel</ref>), it is possible to select the part of the waveform that should be played or looped. The graph shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity>, as a function of time in seconds. On top of the function graph, there are four cursors showing playback and loop range, as well as the <dfn>auto-trigger threshold level</dfn>. In addition to the plot window, there are four input fields that can be used to set playback cursor positions by entering the corresponding time position in seconds. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively. Between the <em>begin</em> part and <em>end</em> section is a toggle button that toggles reversed playback.</p>
 
 <figure id="trimpanel">
 	<includegraphics src="waveformtrim.png" />
-	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. The leftmost input field <ui-formfield>↦</ui-formfield> sets the <em>begin</em> position. The next input field, <ui-formfield>↪</ui-formfield>, sets the <em>loop begin</em> position. The next two input fields, <ui-formfield>↩</ui-formfield> and <ui-formfield>⇥</ui-formfield>, controls <em>loop end</em> and <em>end</em> respectively. Between the <em>begin</em> part and <em>end</em> section is a toggle button that toggles reversed playback.</caption>
+	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. </caption>
 </figure>
 
 <infobox type="info">
