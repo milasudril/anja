@@ -24,8 +24,8 @@ static constexpr const char* ANJA_OFFLINE="Stopped";
 static constexpr const char* ANJA_ONLINE="Running";
 static constexpr const char* ANJA_RESTART_NEEDED="Restart needed";
 
-static constexpr const char* ANJA_KEYB_ACTIVE="Keyboard active";
-static constexpr const char* ANJA_KEYB_INACTIVE="Keyboard inactive";
+static constexpr const char* ANJA_KEYB_ACTIVE="Keyboard";
+static constexpr const char* ANJA_KEYB_INACTIVE="Keyboard";
 
 static void title_update(const Session& session,Window& win)
 	{
@@ -445,7 +445,8 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 						break;
 
 					case 1:
-						m_keyb_status.message(ANJA_KEYB_ACTIVE).type(Message::Type::READY);
+						m_keyb_status_view.showPng(m_images
+							,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
 						break;
 					}
 				}
@@ -455,10 +456,16 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 	}
 
 void Application::focusIn(Window& win,int id)
-	{m_keyb_status.message(ANJA_KEYB_ACTIVE).type(Message::Type::READY);}
+	{
+	m_keyb_status_view.showPng(m_images
+		,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
+	}
 
 void Application::focusOut(Window& win,int id)
-	{m_keyb_status.message(ANJA_KEYB_INACTIVE).type(Message::Type::STOP);}
+	{
+	m_keyb_status_view.showPng(m_images
+		,static_cast<size_t>(StatusIcon::STOP),statusIcon(StatusIcon::STOP));
+	}
 
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)
 	{
@@ -877,14 +884,18 @@ Application::Application():
 		,m_rows(m_mainwin,true)
 			,m_status_row(m_rows,false)
 				,m_status(m_status_row,m_images,ANJA_OFFLINE,Message::Type::STOP,0)
-				,m_sep_a(m_status_row.insertMode({4,Box::EXPAND|Box::FILL}),true)
+				,m_sep_a(m_status_row.insertMode({2,Box::EXPAND|Box::FILL}),true)
 				,m_ch_status(m_status_row.insertMode({0,0}),false)
-					,m_ch_status_label(m_ch_status.insertMode({4,0}),"Port status:")
+					,m_ch_status_label(m_ch_status.insertMode({2,0}),"Ports:")
 					,m_ch_status_img(m_ch_status.insertMode({0,0}),false)
 				,m_sep_b(m_status_row.insertMode({4,Box::EXPAND|Box::FILL}),true)
-				,m_keyb_status(m_status_row.insertMode({0,0}),m_images,ANJA_KEYB_INACTIVE,Message::Type::STOP,0)
-				,m_sep_c(m_status_row.insertMode({4,Box::EXPAND|Box::FILL}),true)
-				,m_mem(m_status_row.insertMode({0,0}))
+				,m_keyb_status(m_status_row.insertMode({0,0}),false)
+					,m_keyb_status_label(m_keyb_status.insertMode({0,0}),"Keyboard:")
+					,m_keyb_status_view(m_keyb_status.insertMode({2,0}))
+				,m_sep_c(m_status_row.insertMode({2,0}),true)
+				,m_mem(m_status_row.insertMode({0,0}),false)
+					,m_mem_label(m_mem.insertMode({2,0}),"Mem:")
+					,m_mem_view(m_mem.insertMode({0,0}))
 			,m_row_sep(m_rows,false)
 			,m_cols(m_rows.insertMode({0,Box::EXPAND|Box::FILL}),false)
 				,m_session_control(m_cols,true)
@@ -917,6 +928,7 @@ Application::Application():
 	m_ch_status_img[19].backgroundShade(0.66,0.7f);
 	m_ch_status_img[20].backgroundShade(0.0,0.7f);
 	m_ch_status_img.callback(*this,0);
+	m_keyb_status_view.minHeight(18);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
 	try

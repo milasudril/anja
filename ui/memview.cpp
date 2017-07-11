@@ -32,9 +32,6 @@ class MemView::Impl:private MemView
 		float m_total_swap;
 		float m_mem_ratio;
 		guint m_timer;
-
-		uint8_t* buffer_test;
-
 	};
 
 MemView::MemView(Container& cnt)
@@ -157,7 +154,6 @@ gboolean MemView::Impl::update(void* obj)
 				self->m_self_swap=static_cast<float>(x)/memtot;
 				}
 			});
-	//	fprintf(stderr,"%.7g %.7g\n",self->m_self,self->m_self_swap);
 		}
 
 	gtk_widget_queue_draw(GTK_WIDGET(self->m_handle));
@@ -168,22 +164,12 @@ MemView::Impl::Impl(Container& cnt):MemView(*this)
 	{
 	auto widget=gtk_drawing_area_new();
 	g_signal_connect(widget,"draw",G_CALLBACK(draw),this);
-	gtk_widget_set_size_request(widget,128,-1);
+	gtk_widget_set_size_request(widget,96,-1);
 	m_handle=GTK_DRAWING_AREA(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
-	m_timer=g_timeout_add(1000,update,this);
-
-//TODO query procfs
-	m_self=0.25f;
-	m_total=0.5f;
-	m_self_swap=0.125f/2;
-	m_total_swap=0.25f/2;
-	m_mem_ratio=0.75f;
-
-//	size_t N=24e9;
-//	buffer_test=static_cast<uint8_t*>(malloc(N));
-//	memset(buffer_test,0,N);
+	update(this);
+	m_timer=g_timeout_add(5000,update,this);
 	}
 
 MemView::Impl::~Impl()

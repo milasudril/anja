@@ -158,9 +158,13 @@ namespace Anja
 							Label m_ch_status_label;
 							ImageList m_ch_status_img;
 						Separator m_sep_b;
-						Message m_keyb_status;
+						Box m_keyb_status;
+							Label m_keyb_status_label;
+							ImageView m_keyb_status_view;
 						Separator m_sep_c;
-						MemView m_mem;
+						Box m_mem;
+							Label m_mem_label;
+							MemView m_mem_view;
 					Separator m_row_sep;
 					Box m_cols;
 						Anja::ButtonList m_session_control;

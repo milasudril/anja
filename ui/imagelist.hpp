@@ -25,7 +25,7 @@ namespace Anja
 				m_box(cnt,vertical,0)
 				{
 				m_vertical=vertical;
-				m_box.insertMode({0,0});
+				m_box.insertMode({0,Box::FILL|Box::EXPAND});
 				}
 
 			ImageList& clear() noexcept
@@ -65,9 +65,9 @@ namespace Anja
 
 			ImageList& separator() noexcept
 				{
-				m_box.insertMode({4,0});
+				m_box.insertMode({4,Box::FILL|Box::EXPAND});
 				m_separators.push_back(Separator(m_box,!m_vertical));
-				m_box.insertMode({0,0});
+				m_box.insertMode({0,Box::FILL|Box::EXPAND});
 				return *this;
 				}
 
