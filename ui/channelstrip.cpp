@@ -197,7 +197,7 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelProxy& channel):
 	m_ft_input.callback(*this,TextEntryId::FADETIME);
 	m_gain_slider.callback(*this,SliderId::GAIN);
 	m_gain_input.callback(*this,TextEntryId::GAIN);
-
+	m_ft_label.small(true);
 
 	label_update(channel,m_name);
 	color_update(channel,m_color);

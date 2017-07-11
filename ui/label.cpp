@@ -6,6 +6,9 @@
 
 using namespace Anja;
 
+static GtkCssProvider* s_smallstyle=nullptr;
+static size_t s_style_refcount=0;
+
 class Label::Impl:private Label
 	{
 	public:
@@ -33,6 +36,18 @@ class Label::Impl:private Label
 				}
 			}
 
+		void small(bool status)
+			{
+			auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+			if(status)
+				{
+				gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_smallstyle),
+					GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+				}
+			else
+				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
+			}
+
 	private:
 		GtkLabel* m_handle;
 	};
@@ -58,6 +73,12 @@ Label& Label::wordwrap(bool status)
 	return *this;
 	}
 
+Label& Label::small(bool status)
+	{
+	m_impl->small(status);
+	return *this;
+	}
+
 
 Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 	{
@@ -66,10 +87,28 @@ Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 	m_handle=GTK_LABEL(widget);
 	g_object_ref_sink(m_handle);
 	cnt.add(widget);
+
+	if(s_style_refcount==0)
+		{
+		s_smallstyle=gtk_css_provider_new();
+		gtk_css_provider_load_from_data(s_smallstyle,"*{font-size:0.8em;padding:1px}",-1,NULL);
+		}
+	++s_style_refcount;
 	}
 
 Label::Impl::~Impl()
 	{
 	m_impl=nullptr;
+	if(s_style_refcount!=0)
+		{
+		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
+		gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));
+		}
+	else
+		{
+		--s_style_refcount;
+		if(s_style_refcount==0)
+			{g_object_unref(s_smallstyle);}
+		}
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}

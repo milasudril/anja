@@ -33,6 +33,9 @@ namespace Anja
 
 			Label& wordwrap(bool status);
 
+			Label& small(bool status);
+
+
 		protected:
 			class Impl;
 			Impl* m_impl;
