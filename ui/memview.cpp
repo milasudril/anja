@@ -7,8 +7,10 @@
 #include "uiutility.hpp"
 #include <gtk/gtk.h>
 #include <string>
+#include <memory>
 
-#include <sys/sysinfo.h>
+#include <cstring>
+#include <unistd.h>
 
 using namespace Anja;
 
@@ -30,6 +32,9 @@ class MemView::Impl:private MemView
 		float m_total_swap;
 		float m_mem_ratio;
 		guint m_timer;
+
+		uint8_t* buffer_test;
+
 	};
 
 MemView::MemView(Container& cnt)
@@ -44,6 +49,8 @@ static void procfs_read(FILE* src,RecProc&& rp)
 	{
 	enum class State:int{KEY,VALUE};
 	auto state_current=State::KEY;
+	std::string key;
+	std::string value;
 	while(true)
 		{
 		auto ch_in=getc(src);
@@ -52,49 +59,108 @@ static void procfs_read(FILE* src,RecProc&& rp)
 
 		switch(state_current)
 			{
-			case KEY:
+			case State::KEY:
 				switch(ch_in)
 					{
 					case EOF:
-						break;
+						rp(key,value);
+						return;
 					case ':':
+						state_current=State::VALUE;
 						break;
 					default:
-						break;
+						key+=ch_in;
 					}
 				break;
-			case VALUE:
+			case State::VALUE:
 				switch(ch_in)
 					{
 					case EOF:
-						break;
+						rp(key,value);
+						return;
 					case '\n':
+						rp(key,value);
+						key.clear();
+						value.clear();
+						state_current=State::KEY;
 						break;
 					default:
-						break;
+						value+=ch_in;
 					}
 				break;
 			}
 		}
 	}
 
+namespace
+	{
+	struct FileCloser
+		{
+		void operator()(FILE* f) const noexcept
+			{if(f!=nullptr){fclose(f);}}
+		};
+	}
+
 gboolean MemView::Impl::update(void* obj)
 	{
 	auto self=reinterpret_cast<Impl*>(obj);
 
-	struct sysinfo info;
-	sysinfo(&info);
+	struct MemInfo
+		{
+		size_t mem_tot;
+		size_t mem_avail;
+		size_t swap_tot;
+		size_t swap_avail;
+		} meminfo;
+	meminfo=MemInfo{0,0,0,0};
 
-	auto memtot=info.totalram + info.totalswap;
-	self->m_mem_ratio=static_cast<float>(info.totalram)/static_cast<float>(memtot);
-	self->m_total=static_cast<float>( info.totalram - info.bufferram - info.freeram)/memtot;
+		{
+		std::unique_ptr<FILE,FileCloser> memfile(fopen("/proc/meminfo","rb"));
+		procfs_read(memfile.get(),[&meminfo](const std::string& key,const std::string& value)
+			{
+			if(key=="MemTotal")
+				{meminfo.mem_tot=static_cast<size_t>( atoll(value.c_str()) );}
+			else
+			if(key=="MemAvailable")
+				{meminfo.mem_avail=static_cast<size_t>( atoll(value.c_str()) );}
+			else
+			if(key=="SwapTotal")
+				{meminfo.swap_tot=static_cast<size_t>( atoll(value.c_str()) );}
+			else
+			if(key=="SwapFree")
+				{meminfo.swap_avail=static_cast<size_t>( atoll(value.c_str()) );}
+			});
+		}
 
-	fprintf(stderr,"%ld %ld %ld\n",info.bufferram,info.freeram,info.bufferram+info.freeram);
+	auto memtot=meminfo.mem_tot + meminfo.swap_tot;
+	self->m_total=static_cast<float>( meminfo.mem_tot - meminfo.mem_avail )/memtot;
+	self->m_total_swap=static_cast<float>((meminfo.swap_tot - meminfo.swap_avail))/memtot;
+	self->m_mem_ratio=static_cast<float>(meminfo.mem_tot)/static_cast<float>(memtot);
 
-	self->m_self=0.0f;
+		{
+		std::string pidinfo("/proc/");
+		pidinfo+=std::to_string(getpid());
+		pidinfo+="/status";
+		std::unique_ptr<FILE,FileCloser> memfile(fopen(pidinfo.c_str(),"rb"));
+
+		procfs_read(memfile.get(),[self,memtot](const std::string&key,const std::string& value)
+			{
+			if(key=="VmRSS")
+				{
+				auto x=static_cast<size_t>(atoll(value.c_str()));
+				self->m_self=static_cast<float>(x)/memtot;
+				}
+			else
+			if(key=="VmSwap")
+				{
+				auto x=static_cast<size_t>(atoll(value.c_str()));
+				self->m_self_swap=static_cast<float>(x)/memtot;
+				}
+			});
+	//	fprintf(stderr,"%.7g %.7g\n",self->m_self,self->m_self_swap);
+		}
 
 	gtk_widget_queue_draw(GTK_WIDGET(self->m_handle));
-
 	return TRUE;
 	}
 
@@ -114,6 +180,10 @@ MemView::Impl::Impl(Container& cnt):MemView(*this)
 	m_self_swap=0.125f/2;
 	m_total_swap=0.25f/2;
 	m_mem_ratio=0.75f;
+
+//	size_t N=24e9;
+//	buffer_test=static_cast<uint8_t*>(malloc(N));
+//	memset(buffer_test,0,N);
 	}
 
 MemView::Impl::~Impl()
