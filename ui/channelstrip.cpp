@@ -180,7 +180,7 @@ ChannelStrip::ChannelStrip(Container& cnt,const ChannelProxy& channel):
 		,m_name(m_box)
 		,m_color(m_box)
 		,m_sep_a(m_box.insertMode({0,0}),false)
-		,m_ft_label(m_box.insertMode({0,0}),"FT/s")
+		,m_ft_label(m_box.insertMode({0,0}),"FT")
 		,m_ft_knob(m_box.insertMode({0,0}))
 		,m_ft_input(m_box.insertMode({2,0}))
 		,m_sep_b(m_box.insertMode({4,0}),false)
