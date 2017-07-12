@@ -113,7 +113,7 @@ make</code>
 <section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
 
-	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. For information about playing multi-channel audio, see <ref>multichannel</ref>.
+	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. What you would do, is to separate the channels of the input file with a tool such as <prgname>ffmpeg</prgname> and load the resulting tracks into different slots, mapped to different channels. Then use multi-channel output (see <ref>multichannel</ref>) and trigger playback of these slots simultaneously.
 	</infobox>
 
 	<section id="play">Playing waveforms</section>
