@@ -12,7 +12,7 @@
 using namespace Anja;
 
 static const char* STYLESHEET=R"EOF(
-GtkEntry,GtkButton{padding-top:2px;padding-bottom:2px;padding-left:4px}
+GtkEntry,GtkButton,.tooltip{padding-top:2px;padding-bottom:2px;padding-left:4px}
 GtkButton{padding-right:4px}
 GtkComboBox > * {padding-top:0px;padding-bottom:0px}
 GtkNotebook > *

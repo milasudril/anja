@@ -327,12 +327,21 @@ void Application::engine_stop()
 
 	}
 
+static void chlabels_update(Session& session,ImageList& chstatus)
+	{
+	for(int k=0;k<16;++k)
+		{
+		chstatus[k + 2].title(session.channelLabelGet(k).begin());
+		}
+	}
+
 Application& Application::sessionNew()
 	{
 	engine_stop();
 	m_session.clear();
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
+	chlabels_update(m_session,m_ch_status_img);
 	try
 		{engine_start();}
 	catch(...)
@@ -857,7 +866,6 @@ void Application::optionChanged(SessionPropertiesEditor& editor,int id,int optio
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
-
 Application& Application::sessionLoad(const char* filename)
 	{
 	engine_stop();
@@ -866,6 +874,7 @@ Application& Application::sessionLoad(const char* filename)
 		m_session.load(filename);
 		m_session_editor.sessionUpdated();
 		title_update(m_session,m_mainwin);
+		chlabels_update(m_session,m_ch_status_img);
 		}
 	catch(...)
 		{
@@ -886,6 +895,7 @@ void Application::nameChanged(ChannelStrip& strip,int id)
 	{
 	if(m_engine && m_session.flagsGet()&Session::MULTIOUTPUT)
 		{m_engine->waveOutName(id,strip.name().begin());}
+	m_ch_status_img[id + 2].title(strip.name().begin());
 	}
 
 void Application::gainChanged(ChannelStrip& strip,int id)
@@ -937,12 +947,13 @@ Application::Application():
 			.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF))
 			.padding(4);
 		});
-	m_ch_status_img[0].backgroundShade(0.66,0.7f);
-	m_ch_status_img[1].backgroundShade(0.0,0.7f);
-	m_ch_status_img[18].backgroundShade(0.66,0.7f);
-	m_ch_status_img[19].backgroundShade(0.66,0.7f);
-	m_ch_status_img[20].backgroundShade(0.0,0.7f);
+	m_ch_status_img[0].backgroundShade(0.66,0.7f).title("Wave in");
+	m_ch_status_img[1].backgroundShade(0.0,0.7f).title("MIDI in");
+	m_ch_status_img[18].backgroundShade(0.66,0.7f).title("Master out");
+	m_ch_status_img[19].backgroundShade(0.66,0.7f).title("Audition");
+	m_ch_status_img[20].backgroundShade(0.0,0.7f).title("MIDI out");
 	m_ch_status_img.callback(*this,0);
+	chlabels_update(m_session,m_ch_status_img);
 	m_keyb_status_view.minHeight(18);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();

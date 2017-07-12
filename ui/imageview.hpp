@@ -52,6 +52,8 @@ namespace Anja
 
 			ImageView& padding(int x) noexcept;
 
+			ImageView& title(const char* text);
+
 		private:
 			class Impl;
 			Impl* m_impl;

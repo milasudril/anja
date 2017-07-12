@@ -63,6 +63,9 @@ class ImageView::Impl:private ImageView
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
 
+		void title(const char* text)
+			{gtk_widget_set_tooltip_text(GTK_WIDGET(m_handle),text);}
+
 
 	private:
 		int m_id;
@@ -129,6 +132,12 @@ ImageView& ImageView::backgroundShade(float hue,float strength) noexcept
 ImageView& ImageView::padding(int x) noexcept
 	{
 	m_impl->padding(x);
+	return *this;
+	}
+
+ImageView& ImageView::title(const char* text)
+	{
+	m_impl->title(text);
 	return *this;
 	}
 

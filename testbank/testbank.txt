@@ -14,6 +14,7 @@ Two newlines are written as is.\
 
 ~Master gain/dB: -7
 ~Color presets: 1; 1; 0|0; 1; 0
+~Options: Use individual ports for each channel
 
 ##Slot 1
 [Sci-fi] effect. From pdsounds.org.
