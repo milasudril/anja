@@ -40,6 +40,14 @@
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
 #@			]
+#@		},{
+#@		"name":"session.png","dependencies":
+#@			[
+#@			 {"ref":"anja_layout.txt","rel":"misc"}
+#@			,{"ref":"mainwindowstart.png","rel":"misc"}
+#@			,{"ref":"waveformloaded.png","rel":"misc"}
+#@			,{"ref":"sessfull.png","rel":"misc"}
+#@			]
 #@		}]
 #@	}
 
@@ -137,6 +145,17 @@ try:
 		,'-crop','%dx%d+%d+%d'%settingspanel\
 		,'+repage'\
 		,target_dir + '/' + in_dir +'/channels.png']\
+		,shell=False \
+		,env={"LANG":"C.UTF-8"})
+
+	if status!=0:
+		sys.exit(1)
+
+	status=subprocess.call(['convert'\
+		,target_dir + '/' + in_dir +'/sessfull.png'\
+		,'-crop','%dx%d+%d+%d'%settingspanel\
+		,'+repage'\
+		,target_dir + '/' + in_dir +'/session.png']\
 		,shell=False \
 		,env={"LANG":"C.UTF-8"})
 

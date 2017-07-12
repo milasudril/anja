@@ -22,6 +22,13 @@
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
+#@		"name":"sessfull.png","dependencies":
+#@			[{"ref":"Xvfb","rel":"tool"}
+#@			,{"ref":"import","rel":"tool"}
+#@			,{"ref":"xdotool","rel":"tool"}
+#@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"../anja","rel":"misc"}]
+#@		},{
 #@		"name":"portselector.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
@@ -106,6 +113,9 @@ import -window $anjawin "$target_dir"/"$in_dir"/waveformloaded.png
 echo "settings,channels" >&3
 sleep 1
 import -window $anjawin "$target_dir"/"$in_dir"/mixerfull.png
+echo "settings,session" >&3
+sleep 1
+import -window $anjawin "$target_dir"/"$in_dir"/sessfull.png
 echo "exit" >&3
 exec 3<&-
 wait $anja

@@ -299,17 +299,18 @@ Notice that when a cursor is located at the same position as another cursor, it 
 
 <p>When a channel is muted and the engine uses single-channel output, the corresponding indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>), is red <includegraphics src="led_stop.png" />. The same is true when the engine uses multi-channel output (see <ref>multichannel</ref>). In the case the engine uses multi-channel output and the corresponding port is not connecter, the muted state is indicated by a black <includegraphics src="led_off.png" /> indicator. Unmuting the channel, reverts the corresponding indicator to its original state. All possible states of the port status indicators are listed in <ref>chstatus</ref>.</p>
 
-<!--
+
 <section id="multichannel">Multi-channel output</section>
 
-<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. The option is activated by checking the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>Session properties</dfn> (see <ref>sessprops</ref>) panel. When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname>. The signal sent to these channels are taken after the corresponding channel strip, but before the master gain adjustment.</p>
-
-<p>If the split signal needs to be mixed before sent to another JACK client, it is possible to connect all ports to the same input port. In this case, it might be good to use <prgname>non-mixer</prgname> to adjust the total output gain.</p>
+<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. To activate this feature, check the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>), and restart the engine. When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname> and <dirname>Audition</dirname>. The signal sent to the corresponding output ports are taken after the channel strip, but before the master gain adjustment. For a complete overview of the signal flow, see <ref>signalflow</ref>.</p>
 
 <infobox type="info">
-	Toggeling multi-channel output requires the engine to be restarted.
+When activating multi-channel output, the port status indicators for the playback channels turns yellow or black since the corresponding ports are not connected to any input port. However, the singal is still routed to <dirname>Master out</dirname>.
 </infobox>
 
+<infobox type="info">Wiht JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
+
+<!--
 <section id="sessprops">Modifying session properties</section>
 <p>The <dfn>Session properties panel</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <ref>multichannel</ref>.</p>
 
