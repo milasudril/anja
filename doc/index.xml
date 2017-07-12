@@ -284,7 +284,7 @@ Notice that when a cursor is located at the same position as another cursor, it 
 </infobox>
 
 <infobox type="info">
-	The knob uses an exponential mapping to increase precision for shorter time values. Also, it uses polar coordinates. If it is hard to find the right value, try to increase the distance to the knob center when adjusting the corresponding value. It is also possible to enter values into the text entry field below the knob.
+	The knob uses an exponential mapping to increase precision for shorter time values. Also, it uses polar coordinates. If it is hard to find the right value, try to increase the distance from the cursor to the knob center when dragging the knob handle. It is also possible to enter values into the text entry field below the knob.
 </infobox>
 
 <p>Automatic fade-in/out is triggered by hitting <kbd>F<var>k</var></kbd> while pressing <kbd>↑</kbd>/<kbd>↓</kbd>, where <var>k</var> is the channel number. After fade-out, the channel is muted until it is unmuted or a fade-in occures. Mute and unmuting a channel is done by hitting the corresponding channel key (<kbd>F<var>k</var></kbd>) while pressing <kbd>←</kbd> or <kbd>→</kbd> respectively.</p>
@@ -297,7 +297,7 @@ Notice that when a cursor is located at the same position as another cursor, it 
 	Using the PC keyboard to trigger fade-in/out is only possible when keyboard input is active. See <ref>keybstatus</ref> for more information.
 </infobox>
 
-<p>When a channel is muted and the engine uses single-channel output, the corresponding indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>), is red <includegraphics src="led_stop.png" />. When the engine uses multi-channel output (see <ref>multichannel</ref>) the muted state is indicated by a black <includegraphics src="led_off.png" /> indicator. Unmuting the channel, reverts the corresponding indicator to its original state. All possible states of the port status indicators are listed in <ref>chstatus</ref>.</p>
+<p>When a channel is muted and the engine uses single-channel output, the corresponding indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>), is red <includegraphics src="led_stop.png" />. The same is true when the engine uses multi-channel output (see <ref>multichannel</ref>). In the case the engine uses multi-channel output and the corresponding port is not connecter, the muted state is indicated by a black <includegraphics src="led_off.png" /> indicator. Unmuting the channel, reverts the corresponding indicator to its original state. All possible states of the port status indicators are listed in <ref>chstatus</ref>.</p>
 
 <!--
 <section id="multichannel">Multi-channel output</section>
