@@ -93,8 +93,9 @@ namespace Anja
 
 			Session& flagsSet(unsigned int flags) noexcept
 				{
+				if((m_flags|flags)!=m_flags)
+					{m_state_flags|=SESSION_DIRTY;}
 				m_flags|=flags;
-				m_state_flags|=SESSION_DIRTY;
 				return *this;
 				}
 
