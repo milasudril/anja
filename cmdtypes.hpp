@@ -11,7 +11,7 @@ namespace Alice
 	struct MakeType<Stringkey("filename")>:public MakeType<Stringkey("string")>
 		{
 		static constexpr const char* descriptionShortGet() noexcept
-			{return "A valid filename, encoded in UTF-8";}
+			{return "A valid filename";}
 		};
 
 	template<>
@@ -30,11 +30,12 @@ namespace Alice
 	struct MakeType<Stringkey("filename out")>:public MakeType<Stringkey("filename")>
 		{
 		static constexpr const char* descriptionShortGet() noexcept
-			{return "A valid filename, encoded in UTF-8";}
+			{return "A valid filename";}
 
 		static constexpr const char* descriptionLongGet() noexcept
 			{
-			return "If a file with the same name already exists, it will be "					"overwritten.";
+			return "If a file with the same name already exists, it will be "
+				"overwritten.";
 			}
 		};
 
