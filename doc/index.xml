@@ -92,7 +92,7 @@ make</code>
 	</figure>
 
 <section id="statusarea">The status area</section>
-	<p>The <dfn>status area</dfn>, shown larger in <ref>statusareacut</ref>, contains four parts as illustrated by <ref>statusareafig</ref>. The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
+	<p>The <dfn>status area</dfn>, shown larger in <ref>statusareacut</ref>, contains four parts as illustrated by <ref>statusareafig</ref>. The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral or non-highlighted background. These represent the 16 internal Wave ports.</p>
 
 	<figure id="statusareacut">
 		<includegraphics src="statusarea.png" />
@@ -124,7 +124,7 @@ make</code>
 
 <subsection id="engstatus">Controlling and manipulating engine status</subsection>
 
-	<p>As stated in <ref>statusarea</ref>, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn>. Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
+	<p>As stated in <ref>statusarea</ref>, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn> (see <ref>anjaworkspace</ref>). Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
 
 <subsection id="connections">Connecting Anja to system playback</subsection>
 	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
@@ -155,7 +155,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>Since the keyboard is shared between the playback triggering system and form input fields, playback can only be triggered from the keyboard when keyboard triggering is active. The <dfn>keyboard status indicator</dfn> (see <ref>statusarea</ref>) is red <includegraphics src="led_stop.png"/> when a form input field has keyboard focus, and green <includegraphics src="led_ready.png"/> when playback triggering is active. Keyboard triggering is activated by hitting <kbd>ESC</kbd>, or by clicking anywhere on the workspace that would not capture keyboard focus.</p>
 
 <section id="rec">Capturing waveforms</section>
-<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source. The indicator for <dirname>Wave in</dirname> is the leftmost indicator in the <dfn>port status area</dfn>. Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
+<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source by clicking on the indicator for <dirname>Wave in</dirname>. That is, the leftmost indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>). Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
 
 <infobox type="info">Triggering audio capture from the computer keyboard is only possible when keyboard triggering is active. When it is active, the <dfn>keyboard status indicator</dfn> is green <includegraphics src="led_ready.png"/>. Otherwise, it is red <includegraphics src="led_stop.png"/>.</infobox>
 
@@ -300,16 +300,17 @@ Notice that when a cursor is located at the same position as another cursor, it 
 
 <section id="multichannel">Multi-channel output</section>
 
-<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. To activate this feature, check the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>), and restart the engine. When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname> and <dirname>Audition</dirname>. The signal sent to the corresponding output ports are taken after the channel strip, but before the master gain adjustment. For a complete overview of the signal flow, see <ref>signalflow</ref>.</p>
+<p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. To activate this feature, check the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>), and restart the engine by clicking on <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn> (see <ref>anjaworkspace</ref>). When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname> and <dirname>Audition</dirname>. These ports are connected in a similar way as described in <ref>connections</ref>, that is by clicking on the corresponding status indicator (see <ref>statusarea</ref>).</p>
 
-<infobox type="info">
-When activating multi-channel output, the port status indicators for the playback channels turns yellow or black since the corresponding ports are not connected to any input port. However, the singal is still routed to <dirname>Master out</dirname>.
-</infobox>
+<p>The signal sent to the channel-dedicated output ports are taken after the channel strip, but before the master gain adjustment. When activating multi-channel output, the port status indicators for the playback channels turns yellow <includegraphics src="led_wait.png" /> or black <includegraphics src="led_off.png" /> (depending on mute state) since the corresponding ports are not connected to any input port. However, the singal is still being routed to <dirname>Master out</dirname>. For a complete overview of the signal flow, see <ref>signalflow</ref>.
+</p>
 
 <infobox type="info">Wiht JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
 
 <section id="midi">Using MIDI</section>
-<p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by other MIDI enabled devices or software applications. To make it work, connect the <dirname>MIDI in</dirname> port (see <ref>statusarea</ref>) to any MIDI output port such as <dirname>midi_capture_1</dirname>, and Anja will respond to external MIDI commands. Anja can also be used to control other MIDI enabled devices or software applications. To let Anja do so, connect <dirname>MIDI out</dirname> to a suitable MIDI input port on the device or software application you want to control.</p>
+<p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by other MIDI enabled devices or software applications. To make it work, connect the <dirname>MIDI in</dirname> port to any MIDI output port such as <dirname>midi_capture_1</dirname>, and Anja will respond to external MIDI commands. Anja can also be used to control other MIDI enabled devices or software applications. To let Anja do so, connect <dirname>MIDI out</dirname> to a suitable MIDI input port on the device or software application you want to control.</p>
+
+<infobox type="info">As with wave ports, MIDI ports can be connected by clicking on the corresponding status indicator (see <ref>connections</ref>). See <ref>statusarea</ref> for information about how to identify ports in the <dfn>status area</dfn>.</infobox>
 
 <infobox type="info">
 MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channles are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referered to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
@@ -320,16 +321,22 @@ When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets 
 </infobox>
 
 <section id="sessprops">Modifying session properties</section>
-<p>The <dfn>Session properties panel</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <ref>multichannel</ref>.</p>
-
-<infobox type="info">
-	Both toggling multi-channel output and setting a new title requires the engine to be restarted.
-</infobox>
+<p>The <dfn>session tab</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session a <ui-formfield>Description</ui-formfield> that may contian other relevant information, such as a longer description, and or information.</p>
 
 <figure id="sesspropspanel">
 	<includegraphics src="session.png"/>
 	<caption>The <dfn>session tab</dfn>. From this tab, it is possible to give the session a title and a description, as well as enabling multi-channel output (see <ref>multichannel</ref>). </caption>
 </figure>
+
+<infobox type="info">
+The session also has a set of properties that affects certain behaviour of Anja. For example, see <ref>multichannel</ref> and <ref>midi</ref>.
+</infobox>
+
+<infobox type="info">
+	Both toggling multi-channel output and setting a new title requires the engine to be restarted.
+</infobox>
+
+
 
 
 	<bibliography>
