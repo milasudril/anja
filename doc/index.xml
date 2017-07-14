@@ -310,7 +310,17 @@ When activating multi-channel output, the port status indicators for the playbac
 
 <infobox type="info">Wiht JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
 
-<!--
+<section id="midi">Using MIDI</section>
+<p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by other MIDI enabled devices or software applications. To make it work, connect the <dirname>MIDI in</dirname> port (see <ref>statusarea</ref>) to any MIDI output port such as <dirname>midi_capture_1</dirname>, and Anja will respond to external MIDI commands. Anja can also be used to control other MIDI enabled devices or software applications. To let Anja do so, connect <dirname>MIDI out</dirname> to a suitable MIDI input port on the device or software application you want to control.</p>
+
+<infobox type="info">
+MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channles are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referered to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
+</infobox>
+
+<infobox type="info">
+When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets all the MIDI state on the receiver. For example, if the owner of the input port plays any note, there will be no more audio output from that device or software application until the next "note on" message comes.
+</infobox>
+
 <section id="sessprops">Modifying session properties</section>
 <p>The <dfn>Session properties panel</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session short <ui-formfield>Description</ui-formfield> that describes the session further. Anja also has the possibility to use different output ports for the different internal channels by enabling <ui-button>Use individual ports for each channel</ui-button>. This feature is described further in <ref>multichannel</ref>.</p>
 
@@ -319,22 +329,10 @@ When activating multi-channel output, the port status indicators for the playbac
 </infobox>
 
 <figure id="sesspropspanel">
-	<includegraphics src="anja-sessionprops.png"/>
-	<caption>The <dfn>Session properties panel</dfn>. From this panel, it is possible to give the session a title and a description, as well as enabling multi-channel output (see <ref>multichannel</ref>). </caption>
+	<includegraphics src="session.png"/>
+	<caption>The <dfn>session tab</dfn>. From this tab, it is possible to give the session a title and a description, as well as enabling multi-channel output (see <ref>multichannel</ref>). </caption>
 </figure>
 
-
-<section id="midi">Using MIDI</section>
-<p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by another MIDI enabled device or software. Anja can also be used to controll other MIDI enabled devices or software applications.</p>
-
-<subsection id="midi_in">Controlling Anja with other devices or software applications</subsection>
-
-<p>Before Anja can be controlled, the corresponding <dirname>MIDI in</dirname>, to the MIDI output of the device or software application that should be used to controll Anja. For control from other hardware, a suitable output port is usually <dirname>midi_capture_1</dirname>.</p>
-
-<subsection id="midi_out">Using Anja to control other devices or software applications</subsection>
-
-<p>A suitable input port for controlling external devices is usually <dirname>midi_playback_1</dirname>.</p>
--->
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
