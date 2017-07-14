@@ -24,3 +24,10 @@ export LANG=C.UTF-8
 stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| "$in_dir"/makepage.py "$stylesheets" > "$dest"
+
+for k in "${@:4}"
+do
+	if [[ "${k:0:2}" != "__" ]]; then
+		cp "$k" "$dest_dir"
+	fi
+done
