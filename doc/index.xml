@@ -92,7 +92,7 @@ make</code>
 	</figure>
 
 <section id="statusarea">The status area</section>
-	<p>The <dfn>status area</dfn>, shown larger in <ref>statusareacut</ref>, contains three parts as illustrated by <ref>statusareafig</ref>. The leftmost panel shows the status of the engine, and the rightmost panel shows the state of the computer keyboard. Between these, the state of all ports are shown.</p>
+	<p>The <dfn>status area</dfn>, shown larger in <ref>statusareacut</ref>, contains four parts as illustrated by <ref>statusareafig</ref>. The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
 
 	<figure id="statusareacut">
 		<includegraphics src="statusarea.png" />
@@ -103,8 +103,6 @@ make</code>
 		<includegraphics src="statusarea.svg" />
 		<caption>Layout description of the <dfn>status area</dfn>.</caption>
 	</figure>
-
-<p>The engine status and the keyboard status indicators should be self-explanatory: red <includegraphics src="led_stop.png"/> means that it is not ready, and green <includegraphics src="led_ready.png"/> that it is ready. A similar convention holds for the <dfn>port status area</dfn> (see <ref>chstatus</ref> for more details). In addition to being in the state of usable or not usable, ports are of different types: MIDI or Wave, input or output. MIDI ports have red-shaded background, while Wave ports have a blue-shaded background. Input ports are located to the left, and output ports are located to the right. Between the input and output sections, there are indicators with neutral background. These represent the 16 internal Wave ports.</p>
 
 <p>The memory usage indicator uses high-saturated colors for memory used by the current instance of Anja. The amount of memory used by other processes uses low-saturated colors. The level indicator is divided into two parts: RAM and swap. The RAM part is green, while the swap part is red.</p>
 
@@ -318,7 +316,7 @@ MIDI messages for playing notes are always tagged with a MIDI channel number. In
 </infobox>
 
 <infobox type="info">
-When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets all the MIDI state on the receiver. For example, if the owner of the input port plays any note, there will be no more audio output from that device or software application until the next "note on" message comes.
+When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets the state of the receiver, and updates its channel volumes. This means that if the owner of the input port plays any note, there will be no more audio output from that device or software application until the next "note on" message comes.
 </infobox>
 
 <section id="sessprops">Modifying session properties</section>
