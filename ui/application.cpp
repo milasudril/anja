@@ -109,7 +109,25 @@ void Application::portConnected(Engine& engine,AudioClient::PortType type,int in
 	{m_ctx.messagePost(MessageId::PORT_CONNECTED,(static_cast<uint32_t>(type)<<16)|index);}
 
 void Application::portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept
-	{m_ctx.messagePost(MessageId::PORT_DISCONNECTED,(static_cast<uint32_t>(type)<<16)|index);}
+	{
+	auto connected=[&engine](decltype(type) t,decltype(index) i)
+		{
+		switch(t)
+			{
+			case decltype(t)::WAVE_IN:
+				return engine.waveInConnected(i);
+			case decltype(t)::MIDI_IN:
+				return engine.midiInConnected(i);
+			case decltype(t)::WAVE_OUT:
+				return engine.waveOutConnected(i);
+			case decltype(t)::MIDI_OUT:
+				return engine.midiOutConnected(i);
+			}
+		return false;
+		}(type,index);
+	if(!connected)
+		{m_ctx.messagePost(MessageId::PORT_DISCONNECTED,(static_cast<uint32_t>(type)<<16)|index);}
+	}
 
 String Application::filename_generate(int slot)
 	{
