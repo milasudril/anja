@@ -221,6 +221,8 @@
       <File Name="doc/playseq.dot"/>
       <File Name="doc/dotsvgfilter.xsl"/>
       <File Name="doc/playseq.sh"/>
+      <File Name="doc/cmdline.sh"/>
+      <File Name="doc/cmdline.xsl"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

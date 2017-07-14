@@ -9,9 +9,9 @@
 
 <xsl:template match="includegraphics">{"ref":"<xsl:value-of select="@src" />","rel":"include_extra"}</xsl:template>
 
-<xsl:template match="input">{"ref":"<xsl:value-of select="@src" />","rel":"include_extra"}</xsl:template>
+<xsl:template match="input">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
 
-<xsl:template match="verbatiminput">{"ref":"<xsl:value-of select="@src" />","rel":"include_extra"}</xsl:template>
+<xsl:template match="verbatiminput">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
 
 <xsl:template match="/">{
 "targets":

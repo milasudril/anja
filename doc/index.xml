@@ -364,25 +364,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	<row><col><includegraphics src="led_ready.png" /></col><col>Channel unmuted and connected to some port</col></row>
 </tabular>
 
-<chapter id="cmdopts">Command line options</chapter>
-	<p>It is possible to control how Anja is started from the command line. The general syntax is</p>
-
-	<code language="bash">anja [OPTIONS] [--] session</code>
-
-	<p>All possible options are listed in <ref>cmdoptstab</ref>.</p>
-
-	<table id="cmdoptstab">
-		<caption>Command line options for Anja</caption>
-		<tabular>
-			<colheaders><col>Option</col><col>Description</col></colheaders>
-			<row><col>--about</col><col>prints an about message to standard output and exits</col></row>
-			<row><col>--dark</col><col>starts Anja in dark mode. This is default.</col></row>
-			<row><col>--fullscreen</col><col>starts Anja in fullscreen mode</col></row>
-			<row><col>--light</col><col>starts Anja in light mode</col></row>
-			<row><col>--windowed</col><col>starts Anja in windowed mode. This is default.</col></row>
-			<row><col>--help</col><col>prints a summary of command line options to standard output and exits</col></row>
-		</tabular>
-	</table>
+<input src="cmdline.xml" />
 
 	<chapter id="fileformats">Supported file formats</chapter>
 	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>.</p>
