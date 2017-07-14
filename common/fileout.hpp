@@ -20,7 +20,7 @@ namespace Anja
 
 			FileOut(const char* name)
 				{
-				m_handle=(name==nullptr? stdin : fopen(name,"wb"));
+				m_handle=(name==nullptr? stdout : fopen(name,"wb"));
 				if(m_handle==NULL)
 					{throw Error("It was not possible to open the file ",name,". ",SysError(errno));}
 				}
