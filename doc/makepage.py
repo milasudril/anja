@@ -205,7 +205,7 @@ def section(node):
 	global subsections
 	global subsubsections
 	sections=sections + 1
-	name=str(chapters)+'.'+str(sections)
+	name=chapstr(chapters)+'.'+str(sections)
 	printWrapper('<h3 id="' + node.attrib["id"] + '"><span class="fill">' \
 		+ name + '</span>')
 	if node.text != None:
