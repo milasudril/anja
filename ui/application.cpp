@@ -620,7 +620,7 @@ static String port_title(const Session& session,int id)
 		case 19:
 			return String("Audition: Port selection");
 		default:
-			return String(session.channelLabelGet(id)).append(": Port selection");
+			return String(session.channelLabelGet(id-2)).append(": Port selection");
 		}
 	}
 
