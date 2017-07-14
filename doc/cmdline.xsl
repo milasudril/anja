@@ -18,4 +18,16 @@
             <xsl:apply-templates select="@*|node()"/>
         </section>
 	</xsl:template>
+
+	<xsl:template match="code">
+		<cmdoption><xsl:apply-templates select="@*|node()"/></cmdoption>
+	</xsl:template>
+
+	<xsl:template match="li">
+		<xsl:copy>
+			<xsl:attribute name="class">cmdoption</xsl:attribute>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+	</xsl:template>
+
 </xsl:stylesheet>

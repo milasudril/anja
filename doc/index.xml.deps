@@ -19,12 +19,12 @@
 	 "name":"index.html"
 	,"compiler":
 		{
-		 "name":"python3"
-		,"args":["--","doc/index.py"]
+		 "name":"bash"
+		,"args":["doc/index.sh"]
 		}
 	,"dependencies":
 		[
-		{"ref":"index.py","rel":"misc"}
+		{"ref":"index.sh","rel":"misc"}
 		<xsl:if test="count(//includegraphics | //input | //verbatiminput)>0">,</xsl:if><xsl:for-each select="//includegraphics | //input | //verbatiminput">
 <xsl:if test="not(position()=1)">,</xsl:if> <xsl:apply-templates select="." /><xsl:text>
 		</xsl:text>

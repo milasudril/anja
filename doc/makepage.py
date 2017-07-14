@@ -292,7 +292,10 @@ def caption(node):
 	printWrapper('''</p>''')
 
 def code(node):
-	printWrapper('''<pre><code class="''' + node.attrib["language"] + '''">''')
+	printWrapper('''<pre><code''')
+	if "language" in node.attrib:
+		printWrapper(''' class="''' + node.attrib["language"] + '''"''')
+	printWrapper('''>''')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -327,14 +330,7 @@ def verbatiminput(node):
 	src=node.attrib['src']
 	with open(in_dir + '/' + src, 'r') as content:
 		data=content.read()
-	printWrapper(html.escape(data),False)
-
-def input(node):
-	global in_dir
-	src=node.attrib['src']
-	with open(in_dir + '/' + src, 'r') as content:
-		data=content.read()
-	printWrapper(data)
+	printWrapper(html.escape(data,False))
 
 def figure(node):
 	global figures
@@ -460,10 +456,8 @@ def processElements(document):
 			listing(node)
 		elif node.tag=='code':
 			code(node)
-		elif node.tag=='input':
-			input(node)
 		elif node.tag=='verbatiminput':
-			input(node)
+			verbatiminput(node)
 		elif node.tag=='caption':
 			caption(node)
 		elif node.tag=='ref':
@@ -475,6 +469,8 @@ def processElements(document):
 		elif node.tag=='dirname':
 			libname(node)
 		elif node.tag=='prgname':
+			libname(node)
+		elif node.tag=='cmdoption':
 			libname(node)
 		elif node.tag=='env':
 			libname(node)

@@ -14,7 +14,7 @@ set -e
 set -o pipefail
 
 __targets_dbg/anja --help \
-	| sed 's/\(^--[a-z][a-z]*\)\(\[\?=\)\([a-z ]*\)/ * `\1`\2*\3*/g' \
+	| sed 's/\(^--[a-z][a-z\-]*\)\(\[\?=\)\([a-z ]*\)/ * `\1`\2*\3*/g' \
 	| markdown | (cat <<EOF
 <content>
 EOF

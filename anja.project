@@ -223,6 +223,8 @@
       <File Name="doc/playseq.sh"/>
       <File Name="doc/cmdline.sh"/>
       <File Name="doc/cmdline.xsl"/>
+      <File Name="doc/inputstub.xsl"/>
+      <File Name="doc/index.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
