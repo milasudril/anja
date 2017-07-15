@@ -1,7 +1,7 @@
 digraph "signalflow"
 	{
+	splines=polyline
 	rankdir="LR"
-	splines=ortho
 	node[shape="box"];
 	edge[color="#a00000"]
 	"Computer\nkeyboard"[shape=none]
@@ -25,7 +25,7 @@ digraph "signalflow"
 	dummy_0->"Playback\nchannel ports"[style=invis]
 	dummy_0->"Audition"[style=invis]
 	dummy_0[style=invis,width=0.0,height=0.0]
-	"Master gain"->"Channel\nmixer"[color="#00a000",arrowtail=normal,arrowhead=dot,dir=both]
+	"Master gain"->"Channel\nmixer"[color="#00a000",arrowtail=dot,dir=both]
 	"Master out"[shape=none]
 	"junction_1"[style=invis,label="",fixedsize=true,width=0,height=0]
 	"junction_2"[style=invis,label="",fixedsize=true,width=0,height=0]
