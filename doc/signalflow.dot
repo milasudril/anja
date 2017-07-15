@@ -1,0 +1,27 @@
+digraph "signalflow"
+	{
+	rankdir="LR"
+	splines=ortho
+	node[shape="box"];
+	edge[color="#a00000"]
+	"Computer\nkeyboard"[shape=none]
+	"Computer\nkeyboard"->"Scancode\nto MIDI"
+	"Scancode\nto MIDI"->"MIDI\nto slot"
+	"MIDI in"[shape=none]
+	"MIDI in"->"MIDI\nto slot"
+	"MIDI\nto slot"->"Playback\ncontrol"
+	"Playback\ncontrol"->"Gain\nadjustment"[penwidth = 5,color="#0000a0"]
+	"Audition"[shape=none]
+	"Playback\ncontrol"->"Audition"[color="#0000a0"]
+	"Gain\nadjustment"->"junction_1"[penwidth = 5,color="#0000a0",arrowhead=none]
+	"junction_1"->"Channel\nmixer"[penwidth = 5,color="#0000a0"]
+	"junction_1"->"Playback\nchannel ports"[penwidth = 5,color="#0000a0"]
+	"junction_1"->dummy_0[style=invis]
+	dummy_0->"Playback\nchannel ports"[style=invis]
+	dummy_0->"Audition"[style=invis]
+	dummy_0[style="invis"]
+	"Master out"[shape=none]
+	"junction_1"[style=invis,label="",fixedsize=true,width=0,height=0]
+	"Playback\nchannel ports"[shape=none]
+	"Channel\nmixer"->"Master out"[color="#0000a0"]
+	}
