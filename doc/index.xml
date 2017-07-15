@@ -11,7 +11,7 @@
 	</titlepic>
 
 	<abstract>
-		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also featrues a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
+		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
 	</abstract>
 
 	<tableofcontents />
@@ -56,7 +56,7 @@
 	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
 	<section id="compile">Compiling Anja</section>
-	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in<cite>anjadeps</cite>. Obeserve that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
+	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in<cite>anjadeps</cite>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
 
 <p>As mentioned above, the Anja source package can be obtained from<cite>anjasrc</cite>. Following this link gives a link to a gzipped tarball. In order to extract that tarball issue the command</p>
 
@@ -79,7 +79,7 @@ make</code>
 
 	<chapter id="using">Using Anja</chapter>
 
-	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consits of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>keyboard view</dfn> is located, and below that, there is a <dfn>settings panel</dfn>, controling which waveforms are loaded as well as the playback of loaded waveforms.</p>
+	<p>Starting Anja brings up a window that looks like the one presented in <ref>anjastart</ref>. The workspace consists of four main parts outlined in <ref>anjaworkspace</ref>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>keyboard view</dfn> is located, and below that, there is a <dfn>settings panel</dfn>, controlling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
 	<figure id="anjastart">
 		<includegraphics src="mainwindowstart.png" />
@@ -130,7 +130,7 @@ make</code>
 	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
 
 	<infobox type="info">
-	Notice that hitting <kbd>Space</kbd> bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to prelisten to sounds without routing them to a PA system.
+	Notice that hitting <kbd>Space</kbd> bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to pre-listen to sounds without routing them to a PA system.
 	</infobox>
 
 <p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two indicators with blue-shaded background in the output section of the <dfn>port status area</dfn> (see <ref>statusareacut</ref> and <ref>statusareafig</ref>). When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about port status indicators, see <ref>chstatus</ref>.</p>
@@ -232,7 +232,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 
 <figure id="trimpanel">
 	<includegraphics src="waveformtrim.png" />
-	<caption>The <dfn>trim panel</dfn>. Together with cursor postions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. </caption>
+	<caption>The <dfn>trim panel</dfn>. Together with cursor positions, the plot window shows in dB<sub>FS</sub>, the root mean square signal power integrated over <quantity unit="ms">1</quantity> as a function of time in seconds. Below the plot window there are four input fields that sets the positions of the playback cursors. </caption>
 </figure>
 
 <infobox type="info">
@@ -252,7 +252,7 @@ Notice that when a cursor is located at the same position as another cursor, it 
 <subsubsection id="cursorpositions">Setting cursor positions</subsubsection>
 <p>The primary way of setting the position of a cursor is to drag the cursor into position. The position of the <em>begin</em> is controlled by the green solid cursor and the position of the <em>loop begin</em> is controlled by the green dashed cursor. The end cursors are drawn the same way but in red instead of green.</p>
 
-<infobox type="info">If it is hard to position a cursor sufficently exact, try pressing <kbd>Ctrl</kbd> or <kbd>Shift</kbd> while using the mousewheel. This will zoom in or out in the <var>x</var> or <var>y</var> directions. Draging inside the plot window, but not near a cursor, will translate the view window. Right-clicking in the plot window will reset the view to its initial state.
+<infobox type="info">If it is hard to position a cursor sufficiently exact, try pressing <kbd>Ctrl</kbd> or <kbd>Shift</kbd> while using the mousewheel. This will zoom in or out in the <var>x</var> or <var>y</var> directions. Dragging inside the plot window, but not near a cursor, will translate the view window. Right-clicking in the plot window will reset the view to its initial state.
 </infobox>
 
 <p>Another way of adjusting the cursor positions is to drag the auto-triggering cursor while pressing <kbd>Shift</kbd>. This will move the <em>begin</em> and <em>end</em> cursors to the first or last position where the signal power exceeds the current threshold level. If this requires that the loop cursors to move, they will be pushed by the non-loop cursors.</p>
@@ -295,17 +295,17 @@ Notice that when a cursor is located at the same position as another cursor, it 
 	Using the PC keyboard to trigger fade-in/out is only possible when keyboard input is active. See <ref>keybstatus</ref> for more information.
 </infobox>
 
-<p>When a channel is muted and the engine uses single-channel output, the corresponding indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>), is red <includegraphics src="led_stop.png" />. The same is true when the engine uses multi-channel output (see <ref>multichannel</ref>). In the case the engine uses multi-channel output and the corresponding port is not connecter, the muted state is indicated by a black <includegraphics src="led_off.png" /> indicator. Unmuting the channel, reverts the corresponding indicator to its original state. All possible states of the port status indicators are listed in <ref>chstatus</ref>.</p>
+<p>When a channel is muted and the engine uses single-channel output, the corresponding indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>), is red <includegraphics src="led_stop.png" />. The same is true when the engine uses multi-channel output (see <ref>multichannel</ref>). In the case the engine uses multi-channel output and the corresponding port is not connected, the muted state is indicated by a black <includegraphics src="led_off.png" /> indicator. Unmuting the channel, reverts the corresponding indicator to its original state. All possible states of the port status indicators are listed in <ref>chstatus</ref>.</p>
 
 
 <section id="multichannel">Multi-channel output</section>
 
 <p>Anja has the option to use individual channel output. This enables the use of external effect processors on the different channels. To activate this feature, check the checkbox <ui-button>Use individual ports for each channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>), and restart the engine by clicking on <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn> (see <ref>anjaworkspace</ref>). When individual ports are used for different channels, Anja creates one JACK port for each of the 16 channels in addition to <dirname>Master out</dirname> and <dirname>Audition</dirname>. These ports are connected in a similar way as described in <ref>connections</ref>, that is by clicking on the corresponding status indicator (see <ref>statusarea</ref>).</p>
 
-<p>The signal sent to the channel-dedicated output ports are taken after the channel strip, but before the master gain adjustment. When activating multi-channel output, the port status indicators for the playback channels turns yellow <includegraphics src="led_wait.png" /> or black <includegraphics src="led_off.png" /> (depending on mute state) since the corresponding ports are not connected to any input port. However, the singal is still being routed to <dirname>Master out</dirname>. For a complete overview of the signal flow, see <ref>signalflow</ref>.
+<p>The signal sent to the channel-dedicated output ports are taken after the channel strip, but before the master gain adjustment. When activating multi-channel output, the port status indicators for the playback channels turns yellow <includegraphics src="led_wait.png" /> or black <includegraphics src="led_off.png" /> (depending on mute state) since the corresponding ports are not connected to any input port. However, the signal is still being routed to <dirname>Master out</dirname>. For a complete overview of the signal flow, see <ref>signalflow</ref>.
 </p>
 
-<infobox type="info">Wiht JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
+<infobox type="info">With JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
 
 <section id="midi">Using MIDI</section>
 <p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by other MIDI enabled devices or software applications. To make it work, connect the <dirname>MIDI in</dirname> port to any MIDI output port such as <dirname>midi_capture_1</dirname>, and Anja will respond to external MIDI messages. Implementation details of different MIDI messages can be found in <ref>midiref</ref>.</p>
@@ -315,7 +315,7 @@ Notice that when a cursor is located at the same position as another cursor, it 
 <infobox type="info">As with wave ports, MIDI ports can be connected by clicking on the corresponding status indicator (see <ref>connections</ref>). See <ref>statusarea</ref> for information about how to identify ports in the <dfn>status area</dfn>.</infobox>
 
 <infobox type="info">
-MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channles are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referered to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
+MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channels are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referered to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
 </infobox>
 
 <infobox type="info">
@@ -323,7 +323,7 @@ When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets 
 </infobox>
 
 <section id="sessprops">Modifying session properties</section>
-<p>The <dfn>session tab</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session a <ui-formfield>Description</ui-formfield> that may contian other relevant information, such as a longer description, or legal information.</p>
+<p>The <dfn>session tab</dfn>, shown in <ref>sesspropspanel</ref>, contains some session-wide settings. The <ui-formfield>Title</ui-formfield> is used to identify the session in the JACK patchbay. It is also possible give the session a <ui-formfield>Description</ui-formfield> that may contain other relevant information, such as a longer description, or legal information.</p>
 
 <figure id="sesspropspanel">
 	<includegraphics src="session.png"/>
@@ -379,7 +379,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	<colheaders><col>Message</col><col>Control code</col><col>Anja's response</col></colheaders>
 	<row><col>NOTE_OFF</col><col>N/A</col><col>Stop all playback that is associated with the given key</col></row>
 	<row><col>NOTE_ON</col><col>N/A</col><col>If possible, start playback using the slot given by the first data byte. If channel override is allowed (see <ref>midi</ref>), the mapped waveform will be played through the channel given by the message. Otherwise, the it is played through the channel set by anja (see <ref>pbchannel</ref>).</col></row>
-	<row><col>CONTROL_CHANGE</col><col>CHANNEL_VOLUME</col><col>Set playback channel volume. Notice that Anja assumes that the value is a linearly mapped dB value (0 corresponds to <quantity unit="dB">-72</quantity>, 127 corresponds to <quantity unit="dB">6</quantity>), as opposed to General MIDI, which sais that the value should be a regular gain. The reason for this implementation is to make better use of the seven bits availible in a single channel volume message.</col></row>
+	<row><col>CONTROL_CHANGE</col><col>CHANNEL_VOLUME</col><col>Set playback channel volume. Notice that Anja assumes that the value is a linearly mapped dB value (0 corresponds to <quantity unit="dB">-72</quantity>, 127 corresponds to <quantity unit="dB">6</quantity>), as opposed to General MIDI, which says that the value should be a regular gain. The reason for this implementation is to make better use of the seven bits available in a single channel volume message.</col></row>
 	<row><col> </col><col>SOUND_OFF</col><col>Stop all ongoing playback</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_1</col><col>Start a fade out on the given channel. The second data byte controls the decay rate.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_2</col><col>Start a fade in on the given channel. The second data byte controls the decay rate.</col></row>
@@ -390,7 +390,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <input src="cmdline.xml" />
 
 <chapter id="script">Commands accepted in scripts</chapter>
-<p>With the <cmdoption>--script</cmdoption> (see <ref>cmdline</ref>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and is not very tolerat with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
+<p>With the <cmdoption>--script</cmdoption> (see <ref>cmdline</ref>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
 
 <ul>
 <li class="cmdoption"><p><cmdoption>layout inspect</cmdoption></p>
