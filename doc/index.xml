@@ -201,7 +201,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <p>The <ui-formfield>Channel</ui-formfield> field assigns a channel to the waveform slot. All sound from this slot will be routed through the selected channel.</p>
 
 <infobox type="info">
-	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>sessprop</ref>).
+	Channels can be used to fade multiple sound sources together. The mix of all channels can either be controlled by the internal <dfn>channel mixer</dfn> (see <ref>chmixer</ref>), or by an external mixer (see <ref>multichannel</ref>).
 </infobox>
 
 <subsection id="pbgain">Playback gain</subsection>
@@ -365,8 +365,11 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <input src="cmdline.xml" />
-
 	<chapter id="fileformats">Supported file formats</chapter>
 	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>.</p>
+
+<chapter id="signalflow">Signal flow</chapter>
+<p>The following graph illustrates the signal flow of Anja.</p>
+<herefigure><includegraphics src="signalflow.svg" /></herefigure>
 
 </document>

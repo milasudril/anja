@@ -352,6 +352,17 @@ def figure(node):
 	caption(node.findall('caption[last()]')[0])
 	printWrapper('</figure>')
 
+def herefigure(node):
+	printWrapper('''<figure>
+<picture>''')
+	for altgraphics in node.findall('includegraphics'):
+		includegraphics(altgraphics)
+	last=node.findall('includegraphics[last()]')
+	printWrapper('<img src="' + last[0].attrib["src"]+'" alt="'
+		+last[0].attrib["src"]+'">')
+	printWrapper('</picture>')
+	printWrapper('</figure>')
+
 def table(node):
 	global tables
 	global float_name
@@ -479,6 +490,8 @@ def processElements(document):
 			libname(node)
 		elif node.tag=='figure':
 			figure(node)
+		elif node.tag=='herefigure':
+			herefigure(node)
 		elif node.tag=='infobox':
 			infobox(node)
 		elif node.tag=='table':
