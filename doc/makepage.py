@@ -394,7 +394,10 @@ def col(node):
 	printWrapper('</td>')
 
 def defaultrule(node):
-	printWrapper('''<''' + node.tag + '''>''')
+	printWrapper('''<''' + node.tag)
+	for attr,value in node.attrib.items():
+		printWrapper(''' ''' + attr + '''="''' + value + '''"''')
+	printWrapper('''>''')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)

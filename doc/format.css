@@ -24,6 +24,9 @@ cite{font-style:normal}
 
 p.bibitem,table{text-indent:0pt;margin-top:1.25ex;margin-bottom:1.5ex}
 
+li.cmdoption > p:first-of-type{font-weight:bold;margin-top:0ex;margin-bottom:0.5ex}
+li.cmdoption{list-style-type:none;margin-bottom:1.5ex}
+
 div.abstract{margin-top:2ex; font-style:italic}
 p.titlepage{font-size:14.4pt;text-align:center}
 span.fill{margin-right:18pt}
