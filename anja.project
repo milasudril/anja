@@ -226,6 +226,7 @@
       <File Name="doc/index.sh"/>
       <File Name="doc/signalflow.dot"/>
       <File Name="doc/signalflow.sh"/>
+      <File Name="doc/dependencies.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

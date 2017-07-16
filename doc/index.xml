@@ -56,7 +56,7 @@
 	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
 	<section id="compile">Compiling Anja</section>
-	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in<cite>anjadeps</cite>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
+	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in <ref>deps</ref>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
 
 <p>As mentioned above, the Anja source package can be obtained from<cite>anjasrc</cite>. Following this link gives a link to a gzipped tarball. In order to extract that tarball issue the command</p>
 
@@ -343,7 +343,6 @@ The session also has a set of properties that affects certain behaviour of Anja.
 
 	<bibliography>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
-		<item id="anjadeps">Anja sample player: Dependencies <url>https://github.com/milasudril/anja#dependencies</url></item>
 		<item id="jack">JACK Audio Connection Kit <url>http://jackaudio.org</url></item>
 		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
 		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
@@ -403,6 +402,8 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <input src="cmdline.xml" />
+
+<input src="dependencies.xml" />
 
 <chapter id="script">Commands accepted in scripts</chapter>
 <p>With the <cmdoption>--script</cmdoption> (see <ref>cmdline</ref>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
