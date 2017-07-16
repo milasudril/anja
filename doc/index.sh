@@ -28,7 +28,7 @@ stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| "$in_dir"/makepage.py "$stylesheets" > "$dest"
 
-rm -rf gh-pages/*
+rm -r gh-pages/* || true
 
 for k in "${@:4}"
 do
