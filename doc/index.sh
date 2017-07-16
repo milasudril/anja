@@ -25,9 +25,13 @@ stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| "$in_dir"/makepage.py "$stylesheets" > "$dest"
 
+rm -rf gh-pages/*
+
 for k in "${@:4}"
 do
 	if [[ "${k:0:2}" != "__" ]]; then
 		cp "$k" "$dest_dir"
 	fi
+	cp "$k" gh-pages
 done
+cp "$dest" gh-pages
