@@ -369,6 +369,21 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <chapter id="fileformats">Supported file formats</chapter>
 	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>.</p>
 
+	<chapter id="keybindings">Key bindings</chapter>
+	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>ESC</kbd> requires that the computer keyboard is active.</p>
+	<tabular>
+		<colheaders><col>Key combination</col><col>Function</col></colheaders>
+		<row><col><kbd>Ctrl</kbd>+<kbd><var>key</var></kbd></col><col>Record to <kbd><var>key</var></kbd></col></row>
+		<row><col><kbd>DEL</kbd></col><col>Stop all audio playback</col></row>
+			<row><col><kbd>Space</kbd></col><col>Start audition playback of current slot</col></row>
+		<row><col><kbd>ESC</kbd></col><col>Activate the computer keyboard</col></row>
+		<row><col><kbd><var>key</var></kbd></col><col>Start playback of the slot associated with <var>key</var></col></row>
+		<row><col><kbd>↑</kbd> + <kbd>F<var>k</var></kbd></col><col>Fade in channel <var>k</var></col></row>
+		<row><col><kbd>↓</kbd> + <kbd>F<var>k</var></kbd></col><col>Fade out channel <var>k</var></col></row>
+		<row><col><kbd>←</kbd> + <kbd>F<var>k</var></kbd></col><col>Mute channel <var>k</var></col></row>
+		<row><col><kbd>→</kbd> + <kbd>F<var>k</var></kbd></col><col>Unmute channel <var>k</var></col></row>
+	</tabular>
+
 <chapter id="signalflow">Signal flow</chapter>
 <p>The following graph illustrates the signal flow of Anja.</p>
 <herefigure><includegraphics src="signalflow.svg" /></herefigure>
