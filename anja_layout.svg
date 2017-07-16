@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<svg width="852.0" height="617.0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<style>
+text
+	{
+	 font-size:16px;fill:#800040;font-family:"Latin Modern Roman",Serif;
+	}
+rect
+	{
+	 fill:#ffffff;stroke-width:2px,stroke:rgb(0,0,0)
+	}
+</style>
+<g transform="translate(4.0,31.0)">
+    <rect x="0" y="0" width="111.0" height="582.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="55.5" y="291.0" text-anchor="middle" dominant-baseline="middle">Action panel</text>
+  </g>
+<g transform="translate(126.0,31.0)">
+    <rect x="0" y="0" width="720.0" height="240.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="360.0" y="120.0" text-anchor="middle" dominant-baseline="middle">Keyboard view</text>
+  </g>
+<g transform="translate(126.0,278.0)">
+    <rect x="0" y="0" width="720.0" height="335.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="360.0" y="167.5" text-anchor="middle" dominant-baseline="middle">Settings panel</text>
+  </g>
+<g transform="translate(4.0,4.0)">
+    <rect x="0" y="0" width="844.0" height="22.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="422.0" y="11.0" text-anchor="middle" dominant-baseline="middle">Status area</text>
+  </g>
+</svg>

@@ -3,10 +3,10 @@ div.infobox_info{border:4px #0000ff solid;background-color:#c0c0ff}
 @media screen and (min-width: 700px)
 {
 #toc{background-color:#e0e0e0;}
-  
+
 }
 ui-button,ui-formfield{background-color: #e0e0e0}
 kbd{color:#e0e0e0;background-color: #000000;font-weight: bold;}
-a{text-decoration: none;color:#4000ff;}
+a{text-decoration: none;color:#AF34CE;}
 a:hover{text-decoration: underline;}
 

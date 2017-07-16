@@ -1,8 +1,10 @@
 * {box-sizing: border-box;}
 
+sub-title{display:block;text-align:center}
+
 h1{font-size:30pt;text-align:center}
 
-h2{font-size:20.74pt;margin-bottom:40pt;margin-top:20pt}
+h2,sub-title{font-size:20.74pt;margin-bottom:40pt;margin-top:20pt}
 
 h3{font-size:14.4pt;margin-top:3.5ex;margin-bottom:2.3ex}
 
@@ -22,6 +24,9 @@ cite{font-style:normal}
 
 p.bibitem,table{text-indent:0pt;margin-top:1.25ex;margin-bottom:1.5ex}
 
+li.cmdoption > p:first-of-type{font-weight:bold;margin-top:0ex;margin-bottom:0.5ex}
+li.cmdoption{list-style-type:none;margin-bottom:1.5ex}
+
 div.abstract{margin-top:2ex; font-style:italic}
 p.titlepage{font-size:14.4pt;text-align:center}
 span.fill{margin-right:18pt}
@@ -29,18 +34,38 @@ span.fill{margin-right:18pt}
 ol,ul{padding-left:14pt;}
 nav{padding-right:0.05em;}
 
-h1,h2,h3,h4,h5,h6,p,li,td,th,div
+h1,h2,h3,h4,h5,h6,p,li,td,th,div,sub-title
 	{font-family:"Latin Modern","Latin Modern Roman","CMU Serif","Century Schoolbook",Serif;}
+h1,h2,h3,h4,h5,h6,th,sub-title{font-weight:bold;}
 code,pre,kbd{font-family:"Latin Modern Mono",Monospace}
 pre > code,kbd,ui-button{font-size:10pt}
 ui-button{font-family: "Latin Modern Sans", sans-serif;}
 ui-formfield{font-family: "Latin Modern Sans", sans-serif;}
 div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
-	{position:relative;width:calc(100% - 40pt);left:0px;margin-left:20pt;margin-top:3.25ex;margin-bottom:1.5ex}
-img{position:relative;width:100%}
+	{position:relative;width:80%;left:0px;margin-left:auto;margin-right:auto;margin-top:3.25ex;margin-bottom:1.5ex}
+img{position:relative;max-height:40ex;margin-left:auto;margin-right:auto;display:block;max-width:100%}
+div.titlepic img{position:relative;width:61%;margin-left:auto;margin-right:auto;display:block;max-height:initial}
+figure > p{margin-top:0.75ex}
 
+td > img
+	{
+	height: 1em;
+	width: initial;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	margin-top: 0.25em;
+	margin-bottom: auto;
+	}
 
-
+p > img,div > img
+	{
+	height: 1em;
+	width: initial;
+	margin-left: auto;
+	margin-right: auto;
+	display: inline-block;
+	}
 
 @media screen and (min-width: 700px)
 	{
@@ -51,7 +76,7 @@ img{position:relative;width:100%}
 	nav > h2,nav > ol{position:static}
 
 	div.listing,figure,titlepic,div.infobox_warning,div.infobox_info
-		{position:relative;width:calc(100% - 200px - 80pt);left:200px;margin-left:40pt;}
+		{position:relative;width:calc(80% - 200px);left:100px; margin-left:auto;margin-right:auto;page-break-inside: avoid}
 
 	}
 
@@ -79,14 +104,19 @@ ui-button
 	display:inline;
 	text-align:center;border-radius:0.2em;}
 
-div.infobox_warning{padding:0.25em;display:table;}
-div.infobox_warning > picture{display:table-cell;width:4em;}
-div.infobox_warning > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
+div.infobox_warning, div.infobox_info{padding:0.25em;display:table;}
+info-content > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
 
+info-content{display:table-row;}
 div.infobox_info{padding:0.25em;display:table;}
-div.infobox_info > picture{display:table-cell;width:4em;}
-div.infobox_info > div{display:table-cell; vertical-align: top;padding-left:0.5em;}
+info-content > picture{display:table-cell;}
+info-content > picture > img{width:4em;max-width:initial}
 
 table{border-top:2px solid;border-bottom:2px solid;border-collapse:collapse}
-td{vertical-align: top;}
-tr.colheaders>td{border-bottom:1px solid;font-weight: bold;padding-right:}
+td{vertical-align: top;padding-right:0.25em}
+tr.colheaders>td{border-bottom:2px solid;font-weight: bold;}
+tr.hline>td{border-bottom:1px solid}
+
+nav li{list-style-type:none;}
+nav span.fill{margin-right:0.5em}
+nav > ol {margin-left: 0px;padding-left: 0px;}

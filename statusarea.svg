@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="852"
+   height="30"
+   version="1.1"
+   id="svg4242"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="statusarea.svg"><metadata
+   id="metadata4274">
+  <rdf:RDF>
+    <cc:Work
+       rdf:about="">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      <dc:title></dc:title>
+    </cc:Work>
+  </rdf:RDF>
+</metadata>
+<defs
+   id="defs4272">\n    
+\n\t
+\n  </defs>
+<sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1139"
+   id="namedview4270"
+   showgrid="true"
+   inkscape:zoom="0.54342285"
+   inkscape:cx="788.68727"
+   inkscape:cy="-63.867315"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg4242"
+   inkscape:snap-to-guides="true"
+   showguides="true">
+  <inkscape:grid
+     type="xygrid"
+     id="grid4144"
+     spacingx="106.5" />
+</sodipodi:namedview>
+<style
+   id="style4244">
+text
+	{
+	 font-size:16px;fill:#800040;font-family:&quot;Latin Modern Roman&quot;,Serif;
+	}
+rect
+	{
+	 fill:#ffffff;stroke-width:2px,stroke:rgb(0,0,0)
+	}
+</style>
+
+
+
+['', '', '', '<rect
+   id="rect4266-3"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
+   height="22"
+   width="205"
+   y="4"
+   x="217" />
+<rect
+   id="rect4266"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2px"
+   height="22"
+   width="205"
+   y="4"
+   x="3.9999998" />
+<rect
+   id="rect4266-3-5"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
+   height="22"
+   width="205"
+   y="3.9999988"
+   x="430"
+   inkscape:transform-center-x="14.167929"
+   inkscape:transform-center-y="-16.915719" />
+<rect
+   id="rect4266-3-5-3"
+   style="fill:#ffffff;stroke:#000000;stroke-width:1.99999976px"
+   height="22"
+   width="205"
+   y="3.9999988"
+   x="643"
+   inkscape:transform-center-x="14.167929"
+   inkscape:transform-center-y="-16.915719" />
+<text
+   style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
+   id="text4268"
+   dominant-baseline="middle"
+   y="14.824"
+   x="319.46829">Port status</text>
+
+
+']
+<text
+   style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
+   id="text4268-6"
+   dominant-baseline="middle"
+   y="15"
+   x="106.47385">Engine stauts</text>
+<text
+   style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
+   id="text4268-6-2"
+   dominant-baseline="middle"
+   y="15.015971"
+   x="532.53094"
+   transform="scale(0.9999984,1.0000016)">Keyboard status</text>
+<text
+   style="font-size:16px;font-family:'Latin Modern Roman', Serif;text-anchor:middle;fill:#800040"
+   id="text4268-6-2-6"
+   dominant-baseline="middle"
+   y="15.015971"
+   x="745.44818"
+   transform="scale(0.9999984,1.0000016)">Memory usage</text>
+</svg>
