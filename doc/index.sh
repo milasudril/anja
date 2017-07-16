@@ -7,6 +7,9 @@
 #@			,{"ref":"../icons/message_warning.svg","rel":"include_extra"}
 #@			,{"ref":"../icons/message_info.svg","rel":"include_extra"}
 #@			,{"ref":"../icons/message_error.svg","rel":"include_extra"}
+#@			,{"ref":"xsltproc","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"cp","rel":"tool"}
 #@		]
 #@	}
 

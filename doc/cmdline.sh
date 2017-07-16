@@ -3,6 +3,9 @@
 #@		[{
 #@		"name":"cmdline.xml","dependencies":
 #@			[{"ref":"sed","rel":"tool"}
+#@			,{"ref":"cat","rel":"tool"}
+#@			,{"ref":"csplit","rel":"tool"}
+#@			,{"ref":"tail","rel":"tool"}
 #@			,{"ref":"markdown","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}
 #@			,{"ref":"cmdline.xsl","rel":"misc"}]
