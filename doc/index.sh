@@ -13,8 +13,7 @@
 #@		]
 #@	}
 
-set -e
-set -o pipefail
+set -eo pipefail
 
 dest=$1
 src=$2

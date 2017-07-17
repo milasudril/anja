@@ -11,10 +11,10 @@
 #@			,{"ref":"cmdline.xsl","rel":"misc"}]
 #@		}]
 #@	}
+set -eo pipefail
+
 dir_target="$1"
 in_dir="$2"
-set -e
-set -o pipefail
 
 __targets_dbg/anja --help | csplit --prefix="$dir_target"/"$in_dir"/cmdline_ - '/^--*/-1'  > /dev/null
 csplit "$dir_target"/"$in_dir"/cmdline_01 --prefix="$dir_target"/"$in_dir"/cmdline_01_ '/^Common types$/' > /dev/null

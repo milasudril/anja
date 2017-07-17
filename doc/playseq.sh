@@ -8,16 +8,7 @@
 #@		}]
 #@	}
 
-set -e
-if ! command -v dot>/dev/null; then
-	echo "# Error: Dot is not installed"
-	exit 1
-fi
-
-if ! command -v xsltproc>/dev/null; then
-	echo "# Error: Dot is not installed"
-	exit 1
-fi
+set -eo failpipe
 
 target_dir="$1"
 in_dir="$2"

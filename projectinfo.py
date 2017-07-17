@@ -5,7 +5,9 @@
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
 #@			,{"ref":"maikeconfig.json","rel":"misc"}
 #@			,{"ref":"projectinfo.json","rel":"misc"}]
-#@		,"status_check":"dynamic"
+#		Use static status check for now. The project should be recompiled before
+#		a new release anyways
+#@		,"status_check":"static"
 #@		},{
 #@		 "name":"versioninfo.txt"
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
