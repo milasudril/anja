@@ -33,10 +33,9 @@ These tools are required in order to compile Anja
  * import -- Command-line utility for creating screenshots
  * octave -- Package for numerical analysis. MATLAB should work, but requires
 	changes to `maikeconfig` files.
- * maike -- Automated build tool. You must use version 0.15.5 or later.
-	In case this tool is missing, the build script will download it from
-	https://github.com/milasudril/maike/archive/0.15.5.tar.gz. This step requires
-	`wget` and `jq` Command-line JSON processor.
+ * maike -- Automated build tool. You must use version 0.15.9 or later.
+	In case this tool is missing, the build script will download the latest release
+	from https://github.com/milasudril/maike/. This step requires `wget` and `jq` Command-line JSON processor.
  * pkg-config -- Return metainformation about installed libraries
  * python3 -- An interpreted, interactive, object-oriented programming language
  * xdpyinfo -- Display information utility for X

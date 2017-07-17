@@ -57,26 +57,6 @@ set -e
 target_dir=$1
 in_dir=$2
 
-if ! command -v Xvfb>/dev/null; then
-	echo "# Error: Xvfb is not installed"
-	exit 1
-fi
-
-if ! command -v xdpyinfo>/dev/null; then
-	echo "# Error: xdpyinfo in not installed"
-	exit 1
-fi
-
-if ! command -v xdotool>/dev/null; then
-	echo "# Error: xdotool is not insalled"
-	exit 1
-fi
-
-if ! command -v import>/dev/null; then
-	echo "# Error: import (ImageMagick) is not insalled"
-	exit 1
-fi
-
 Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
 server=$!
 export DISPLAY=:5
