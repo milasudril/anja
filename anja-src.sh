@@ -13,7 +13,7 @@
 #@		}]
 #@	}
 
-set -eo failpipe
+set -eo pipefail
 
 dir_target=$1
 find . | grep -v '^.$' | grep -v '__.*' | grep -v 'gh-pages' | grep -v '/\..*' \

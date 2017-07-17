@@ -8,7 +8,7 @@
 #@		}]
 #@	}
 
-set -eo failpipe
+set -eo pipefail
 
 target_dir="$1"
 in_dir="$2"
