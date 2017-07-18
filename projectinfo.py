@@ -5,9 +5,7 @@
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
 #@			,{"ref":"maikeconfig.json","rel":"misc"}
 #@			,{"ref":"projectinfo.json","rel":"misc"}]
-#		Use static status check for now. The project should be recompiled before
-#		a new release anyways
-#@		,"status_check":"static"
+#@		,"status_check":"dynamic"
 #@		},{
 #@		 "name":"versioninfo.txt"
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
@@ -147,7 +145,9 @@ def get_revision(target_dir):
 			with subprocess.Popen(('git','status','--porcelain'),stdout=subprocess.PIPE) as git:
 				gitstatus=git.stdout.read().decode().strip()
 				if gitstatus=='M versioninfo.txt' or gitstatus=='':
-					print('Status: %s\n'%gitstatus)
+					with open(target_dir+'/versioninfo.txt','w') as versionfile:
+						versionfile.write(result)
+					sys.exit(0)
 
 			with open('versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
