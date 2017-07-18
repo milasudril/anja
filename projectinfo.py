@@ -130,8 +130,10 @@ def get_revision(target_dir):
 	if shutil.which('git')==None:
 		with open('versioninfo.txt') as versionfile:
 			result=versionfile.read().strip()
+		with open(target_dir+'/versioninfo.txt','w') as versionfile:
+			versionfile.write(result)
 	else:
-		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always')\
+		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always') \
 			,stdout=subprocess.PIPE) as git:
 			result=git.stdout.read().decode().strip()
 			git.wait()
@@ -140,20 +142,18 @@ def get_revision(target_dir):
 		if status:
 			with open('versioninfo.txt') as versionfile:
 				result=versionfile.read().strip()
-
+			with open(target_dir+'/versioninfo.txt','w') as versionfile:
+				versionfile.write(result)
 		else:
+			with open('versioninfo.txt','w') as versionfile:
+				versionfile.write(result)
+			with open(target_dir+'/versioninfo.txt','w') as versionfile:
+				versionfile.write(result)
+
 			with subprocess.Popen(('git','status','--porcelain'),stdout=subprocess.PIPE) as git:
 				gitstatus=git.stdout.read().decode().strip()
 				if gitstatus=='M versioninfo.txt' or gitstatus=='':
-					with open(target_dir+'/versioninfo.txt','w') as versionfile:
-						versionfile.write(result)
 					sys.exit(0)
-
-			with open('versioninfo.txt','w') as versionfile:
-				versionfile.write(result)
-
-	with open(target_dir+'/versioninfo.txt','w') as versionfile:
-		versionfile.write(result)
 
 	return result
 
