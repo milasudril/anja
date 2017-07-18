@@ -52,7 +52,12 @@
 #@		}]
 #@	}
 
-set -e
+abort()
+	{
+	exit -1
+	}
+trap 'abort' 0
+set -eo pipefail
 
 target_dir=$1
 in_dir=$2
@@ -101,4 +106,5 @@ exec 3<&-
 wait $anja
 kill -9 $jack
 kill $server
-exit 0
+
+trap : 0

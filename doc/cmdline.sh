@@ -11,13 +11,22 @@
 #@			,{"ref":"cmdline.xsl","rel":"misc"}]
 #@		}]
 #@	}
+
+abort()
+	{
+	exit -1
+	}
+trap 'abort' 0
+set -e
 set -eo pipefail
 
 dir_target="$1"
 in_dir="$2"
 
+
 __targets_dbg/anja --help | csplit --prefix="$dir_target"/"$in_dir"/cmdline_ - '/^--*/-1'  > /dev/null
 csplit "$dir_target"/"$in_dir"/cmdline_01 --prefix="$dir_target"/"$in_dir"/cmdline_01_ '/^Common types$/' > /dev/null
+
 
 sed 's/\. For.*/. The different argument types accepted by the different options are/' "$dir_target"/"$in_dir"/cmdline_00 \
 	| (cat && tail -n +3 "$dir_target"/"$in_dir"/cmdline_01_01 \
