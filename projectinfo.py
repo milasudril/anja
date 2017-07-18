@@ -21,6 +21,7 @@ import string
 import time
 import subprocess
 import shutil
+import os
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -145,15 +146,15 @@ def get_revision(target_dir):
 			with open(target_dir+'/versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
 		else:
+			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') as verfile:
+				result_old=verfile.read().strip()
+				if result==result_old:
+					sys.exit(0)
+
 			with open('versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
 			with open(target_dir+'/versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
-
-			with subprocess.Popen(('git','status','--porcelain'),stdout=subprocess.PIPE) as git:
-				gitstatus=git.stdout.read().decode().strip()
-				if gitstatus=='M versioninfo.txt' or gitstatus=='':
-					sys.exit(0)
 
 	return result
 

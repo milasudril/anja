@@ -1,1 +1,1 @@
-1.9-beta.10-5-g2da27f1-dirty
+1.9-beta.10-6-ge555ca7-dirty
