@@ -146,9 +146,11 @@ def get_revision(target_dir):
 			with open(target_dir+'/versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
 		else:
-			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') as verfile:
+			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') \
+				as verfile:
 				result_old=verfile.read().strip()
-				if result==result_old:
+				if result==result_old \
+					and os.path.isfile(target_dir + '/projectinfo.hpp'):
 					sys.exit(0)
 
 			with open('versioninfo.txt','w') as versionfile:
