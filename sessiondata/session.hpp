@@ -200,6 +200,17 @@ namespace Anja
 
 			bool loadPossible(const char* filename) const;
 
+			template<class ProgressCallback>
+			Session& sampleRate(double fs,ProgressCallback& cb_obj)
+				{
+				auto cb=[](void* obj,Session& self,float status)
+					{
+					auto cb=reinterpret_cast<ProgressCallback*>(obj);
+					cb->progress(self,status);
+					};
+				return sampleRate(fs,cb,&cb_obj);
+				}
+
 		private:
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;
@@ -223,6 +234,8 @@ namespace Anja
 
 			void keyHighlight(uint8_t scancode);
 			void keyReset(uint8_t scancode);
+
+			Session& sampleRate(double fs,void (*cb)(void* obj,Session&,float),void* obj);
 		};
 	}
 #endif

@@ -126,6 +126,7 @@ namespace Anja
 			void portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
 
 			void clicked(ImageList& imglist,int id,ImageView& img);
+			void progress(Session& session,float status);
 
 
 			enum MessageId:int32_t

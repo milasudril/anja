@@ -318,6 +318,11 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 		}
 	}
 
+void Application::progress(Session& session,float status)
+	{
+	fprintf(stderr,"#");
+	}
+
 void Application::engine_start()
 	{
 	std::for_each(m_ch_status_img.begin(),m_ch_status_img.end(),[this](ImageView& v)
@@ -325,12 +330,18 @@ void Application::engine_start()
 		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
 	m_engine.reset( new Engine(m_session,*this) );
-	m_ch_status_img[0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_ch_status_img[1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_ch_status_img[2 + 16 + 0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_ch_status_img[2 + 16 + 1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT),statusIcon(StatusIcon::WAIT));
-
+	m_ch_status_img[0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+		,statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+		,statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 0].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+		,statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 1].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+		,statusIcon(StatusIcon::WAIT));
+	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
+		,statusIcon(StatusIcon::WAIT));
+	m_session.sampleRate(m_engine->sampleRate(),*this);
+	fprintf(stderr,"\n");
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
