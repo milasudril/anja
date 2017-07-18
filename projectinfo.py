@@ -146,8 +146,8 @@ def get_revision(target_dir):
 		else:
 			with subprocess.Popen(('git','status','--porcelain'),stdout=subprocess.PIPE) as git:
 				gitstatus=git.stdout.read().decode().strip()
-				if gitstatus=='M versioninfo.txt':
-					print(gitstatus)
+				if gitstatus=='M versioninfo.txt' or gitstatus=='':
+					print('Status: %s\n'%gitstatus)
 
 			with open('versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
