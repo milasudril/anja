@@ -129,6 +129,7 @@ namespace Anja
 			void clicked(ImageList& imglist,int id,ImageView& img);
 			void progressSampleRate(WaveformProxy& waveform,float status);
 			void progressLoad(WaveformProxy& waveform,float status);
+			void dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id);
 
 
 			enum MessageId:int32_t

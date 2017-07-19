@@ -900,11 +900,21 @@ void Application::optionChanged(SessionPropertiesEditor& editor,int id,int optio
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
+struct ProgressAborted{};
+
 void Application::progressLoad(WaveformProxy& waveform,float status)
 	{
+	if(!m_progress)
+		{throw ProgressAborted{};}
 	m_progress->widget().value(status);
 	m_ctx.flush();
 	}
+
+void Application::dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id)
+	{
+	m_progress.reset();
+	}
+
 
 Application& Application::sessionLoad(const char* filename)
 	{
@@ -912,12 +922,17 @@ Application& Application::sessionLoad(const char* filename)
 	try
 		{
 		m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_mainwin,"Anja loading session"));
+		m_progress->callback(*this,0);
 		m_ctx.flush();
 		m_session.load(filename,*this);
 		m_progress.reset();
 		m_session_editor.sessionUpdated();
 		title_update(m_session,m_mainwin);
 		chlabels_update(m_session,m_ch_status_img);
+		}
+	catch(const ProgressAborted&)
+		{
+	//	Swallow...
 		}
 	catch(...)
 		{
@@ -931,7 +946,7 @@ Application& Application::sessionLoad(const char* filename)
 		{engine_start();}
 	catch(...)
 		{}
-return *this;
+	return *this;
 	}
 
 void Application::nameChanged(ChannelStrip& strip,int id)
