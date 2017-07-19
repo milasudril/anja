@@ -44,4 +44,7 @@ ProgressBar::Impl::Impl(Container& cnt):ProgressBar(*this)
 	}
 
 ProgressBar::Impl::~Impl()
-	{gtk_widget_destroy(GTK_WIDGET(m_handle));}
+	{
+	m_impl=nullptr;
+	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	}

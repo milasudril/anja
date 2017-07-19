@@ -17,6 +17,7 @@ namespace Anja
 			Thread(const Thread&)=delete;
 			Thread& operator=(const Thread&)=delete;
 
+		//	Template type deduction?
 			template<class Callback,class TaskId>
 			explicit Thread(Callback& cb,TaskId id_tag):m_cb(thread_entry<Callback,TaskId>)
 				,r_cb_obj(&cb)

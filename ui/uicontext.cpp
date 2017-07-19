@@ -125,6 +125,7 @@ class UiContext::Impl:private UiContext
 				m_mtx.unlock();
 				return 0;
 				}
+			fprintf(stderr,"postTry: %d %d\n",id,param);
 			m_messages.push_back((uint64_t(id)<<32llu)|param);
 			m_mtx.unlock();
 			m_ready.set();
@@ -139,6 +140,7 @@ class UiContext::Impl:private UiContext
 				m_ready.set();
 				sched_yield();
 				}
+			fprintf(stderr,"post: %d %d\n",id,param);
 			m_messages.push_back((uint64_t(id)<<32llu)|param);
 			m_ready.set();
 			}

@@ -132,7 +132,11 @@ namespace Anja
 
 
 			enum MessageId:int32_t
-				{CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED,PORT_DISCONNECTED,INVOKE};
+				{
+				 CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED
+				,PORT_DISCONNECTED,INVOKE,SESSION_LOADED,SAMPLE_RATE_CHANGED
+				,PROGRESS
+				};
 			typedef int32_t MessageParam;
 
 			void process(UiContext& ctx,MessageId id,MessageParam param);
@@ -147,6 +151,14 @@ namespace Anja
 				cb(4,m_session_editor.boundingBoxTrim());
 				}
 
+
+			enum TaskId:int32_t
+				{
+				LOAD,RESAMPLE
+				};
+
+			template<TaskId id>
+			void run();
 
 		private:
 			ImageRepository m_images;
@@ -181,7 +193,10 @@ namespace Anja
 			std::unique_ptr<Dialog<AboutBox,AboutDialog>> m_about;
 			std::unique_ptr<Dialog<Message,DialogOk> > m_error;
 			std::unique_ptr<Dialog<PortSelector,DialogOkCancel> >m_port_selector;
+
+			std::unique_ptr<Thread> m_bg_task;
 			std::unique_ptr<Dialog<ProgressBar,DialogCancel>> m_progress;
+			String m_filename_new;
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;
