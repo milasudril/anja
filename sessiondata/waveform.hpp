@@ -30,9 +30,6 @@ namespace Anja
 				offsetsReset();
 				}
 
-			Waveform& waveformLoad(const char* filename)
-				{return waveformLoad(filename,nullptr,nullptr);}
-
 			const Waveform& waveformSave(const char* filename) const;
 
 			static bool loadPossible(const char* filename);
@@ -51,6 +48,15 @@ namespace Anja
 				,ProgressCallback& cb)
 				{
 				return load(rec,filename,[](void* cb_obj,Waveform& self,float status)
+					{
+					reinterpret_cast<ProgressCallback*>(cb_obj)->progressLoad(self,status);
+					},&cb);
+				}
+
+			template<class ProgressCallback>
+			Waveform& waveformLoad(const char* filename,ProgressCallback& cb)
+				{
+				return waveformLoad(filename,[](void* cb_obj,Waveform& self,float status)
 					{
 					reinterpret_cast<ProgressCallback*>(cb_obj)->progressLoad(self,status);
 					},&cb);

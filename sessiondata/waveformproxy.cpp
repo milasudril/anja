@@ -66,17 +66,26 @@ const WaveformProxy& WaveformProxy::store(SessionFileRecord& rec) const
 	}
 
 
-WaveformProxy& WaveformProxy::waveformLoad(const char* filename)
+WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callback cb,void* cb_obj)
 	{
+	struct load_callback
+		{
+		decltype(cb) m_cb;
+		decltype(cb_obj) m_cb_obj;
+		WaveformProxy& r_proxy;
+		void progressLoad(Waveform& wf,float status)
+			{m_cb(m_cb_obj,r_proxy,status);}
+		} load_cb{cb,cb_obj,*this};
+
 	if(absoluteIs(filename))
 		{
-		r_waveform->waveformLoad(filename);
+		r_waveform->waveformLoad(filename,load_cb);
 		r_waveform_data->filename(filename);
 		}
 	else
 		{
 		auto fullpath=::filename_get(filename,*r_dir_current);
-		r_waveform->waveformLoad(fullpath.begin());
+		r_waveform->waveformLoad(fullpath.begin(),load_cb);
 		r_waveform_data->filename(std::move(fullpath));
 		}
 	return *this;

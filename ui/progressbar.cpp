@@ -14,7 +14,11 @@ class ProgressBar::Impl:private ProgressBar
 		~Impl();
 
 		void value(double x) noexcept
-			{gtk_progress_bar_set_fraction(m_handle,x);}
+			{
+			gtk_progress_bar_set_fraction(m_handle,x);
+			while (g_main_context_pending(NULL))
+				{g_main_context_iteration(NULL,FALSE);}
+			}
 
 	private:
 		GtkProgressBar* m_handle;

@@ -13,6 +13,8 @@
 
 using namespace Anja;
 
+namespace{ struct Aborted{}; }
+
  WaveformEditor& WaveformEditor::channelName(int index,const char* name)
 	{
 	m_channel_input.replace(index,name);
@@ -391,15 +393,34 @@ void WaveformEditor::waveform_load(int method)
 		}
 	}
 
+
+
+void WaveformEditor::progressLoad(WaveformProxy& waveform,float status)
+	{
+	if(!m_progress)
+		{throw Aborted{};}
+	m_progress->widget().value(status);
+	}
+
 void WaveformEditor::waveform_load(const char* filename)
 	{
-
-	m_waveform.waveformLoad(filename);
-	m_waveform.dirtyClear();
-	m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
-	cursor_begin_auto();
-	cursor_end_auto();
-	m_plot.showAll();
+	try
+		{
+		String dlgcaption("Anja loading ");
+		dlgcaption.append(filename);
+		m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_box,dlgcaption.begin()));
+		m_waveform.waveformLoad(filename,*this);
+		m_progress.reset();
+		m_waveform.dirtyClear();
+		m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);
+		cursor_begin_auto();
+		cursor_end_auto();
+		m_plot.showAll();
+		}
+	catch(const Aborted&)
+		{}
+	catch(...)
+		{throw;}
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)

@@ -66,7 +66,15 @@ namespace Anja
 				return *this;
 				}
 
-			WaveformProxy& waveformLoad(const char* filename);
+			template<class ProgressCallback>
+			WaveformProxy& waveformLoad(const char* filename,ProgressCallback& cb)
+				{
+				return waveformLoad(filename,[](void* cb_obj,WaveformProxy& waveform,float status)
+					{
+					reinterpret_cast<ProgressCallback*>(cb_obj)->progressLoad(waveform,status);
+					},&cb);
+				}
+
 
 			const WaveformProxy& waveformSave(const char* filename) const;
 
@@ -230,6 +238,7 @@ namespace Anja
 
 			typedef void (*progress_callback)(void* cb_obj,WaveformProxy& waveform,float status);
 			WaveformProxy& load(const SessionFileRecord& rec,progress_callback cb,void* cb_obj);
+			WaveformProxy& waveformLoad(const char* filename,progress_callback cb,void* cb_obj);
 		};
 	}
 

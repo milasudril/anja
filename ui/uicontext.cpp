@@ -143,12 +143,6 @@ class UiContext::Impl:private UiContext
 			m_ready.set();
 			}
 
-		void flush()
-			{
-			while (g_main_context_pending(NULL))
-				{g_main_context_iteration(NULL,FALSE);}
-			}
-
 	private:
 		volatile bool m_stop;
 		RingBuffer<uint64_t,volatile uint32_t> m_messages;
@@ -194,11 +188,5 @@ bool UiContext::messagePostTry(int32_t id,int32_t param) noexcept
 UiContext& UiContext::messagePost(int32_t id,int32_t param)
 	{
 	m_impl->messagePost(id,param);
-	return *this;
-	}
-
-UiContext& UiContext::flush()
-	{
-	m_impl->flush();
 	return *this;
 	}

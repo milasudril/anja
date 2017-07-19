@@ -19,6 +19,8 @@
 
 using namespace Anja;
 
+namespace{ struct ProgressAborted{}; }
+
 ANJA_BLOB(uint8_t,s_logo,ANJA_TARGET(../logo_1.png));
 
 static constexpr const char* ANJA_OFFLINE="Stopped";
@@ -615,9 +617,19 @@ void Application::command_process(const ArrayDynamicShort<String>& cmd)
 		auto slot=atoi(cmd[1].begin());
 		if(slot>=0 && slot<128)
 			{
-			m_session.slotActiveSet(slot);
-			m_session.waveformViewGet(slot).waveformLoad(cmd[2].begin());
-			m_session_editor.sessionUpdated().waveformAutotrim();
+			try
+				{
+				m_session.slotActiveSet(slot);
+				m_progress.reset(new Dialog<ProgressBox,DialogCancel>(m_mainwin,"Anja loading waveform"));
+				m_progress->callback(*this,0);
+				m_session.waveformViewGet(slot).waveformLoad(cmd[2].begin(),*this);
+				m_progress.reset();
+				m_session_editor.sessionUpdated().waveformAutotrim();
+				}
+			catch(const ProgressAborted&)
+				{}
+			catch(...)
+				{}
 			}
 		}
 	else
@@ -900,8 +912,6 @@ void Application::optionChanged(SessionPropertiesEditor& editor,int id,int optio
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
-struct ProgressAborted{};
-
 void Application::progressLoad(WaveformProxy& waveform,float status)
 	{
 	if(!m_progress)
@@ -909,7 +919,7 @@ void Application::progressLoad(WaveformProxy& waveform,float status)
 	String label("Loading ");
 	label.append(waveform.filename());
 	m_progress->widget().value(status).label(label.begin());
-	m_ctx.flush();
+
 	}
 
 void Application::dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id)
@@ -923,9 +933,10 @@ Application& Application::sessionLoad(const char* filename)
 	engine_stop();
 	try
 		{
-		m_progress.reset(new Dialog<ProgressBox,DialogCancel>(m_mainwin,"Anja loading session"));
+		String dlgcaption("Anja loading session ");
+		dlgcaption.append(filename);
+		m_progress.reset(new Dialog<ProgressBox,DialogCancel>(m_mainwin,dlgcaption.begin()));
 		m_progress->callback(*this,0);
-		m_ctx.flush();
 		m_session.load(filename,*this);
 		m_progress.reset();
 		m_session_editor.sessionUpdated();

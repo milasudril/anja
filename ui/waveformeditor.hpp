@@ -19,6 +19,7 @@
 #include "colorpicker.hpp"
 #include "message.hpp"
 #include "separator.hpp"
+#include "progressbar.hpp"
 #include "../sessiondata/waveformproxy.hpp"
 #include "../common/arraysimple.hpp"
 
@@ -146,6 +147,8 @@ namespace Anja
 			Rectangle boundingBoxTrim() const noexcept
 				{return m_details_right.boundingBox();}
 
+			void progressLoad(WaveformProxy& waveform,float status);
+
 		private:
 			struct Vtable
 				{
@@ -185,6 +188,7 @@ namespace Anja
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
 			std::unique_ptr<Dialog<Message,DialogOk>> m_err_dlg;
 			std::unique_ptr<Dialog<Message,DialogConfirmSave>> m_confirm_dlg;
+			std::unique_ptr<Dialog<ProgressBar,DialogCancel>> m_progress;
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
 			Box m_box;
