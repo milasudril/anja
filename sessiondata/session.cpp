@@ -64,7 +64,7 @@ static String string_from_color_presets(const Range& r)
 	}
 
 
-Session::Session(const char* filename):m_slot_active(0)
+Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_active(0)
 	{
 	clear();
 	SessionFileReader reader(filename);
@@ -113,12 +113,22 @@ Session::Session(const char* filename):m_slot_active(0)
 	//	TODO Store other data not interpreted by Anja
 		}
 
+
 //	Read records
+	std::vector<SessionFileRecordImpl> records;
+	auto n_slots=0;
 	while(reader.recordNextGet(record))
 		{
 		if(record.levelGet()==0)
 			{break;}
+		if(strncmp(record.titleGet().begin(),"Slot ",5)==0)
+			{++n_slots;}
+		records.push_back(record);
+		}
 
+	std::for_each(records.begin(),records.end()
+		,[this,filename,cb,obj,n_slots](const SessionFileRecordImpl& record)
+		{
 		auto title_ptr=record.titleGet().begin();
 		if(strncmp(title_ptr,"Slot ",5)==0)
 			{
@@ -134,6 +144,7 @@ Session::Session(const char* filename):m_slot_active(0)
 
 			WaveformProxy(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
 				,slot_num).load(record);
+			cb(obj,*this,static_cast<float>(slot_num)/static_cast<float>(n_slots));
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -149,7 +160,7 @@ Session::Session(const char* filename):m_slot_active(0)
 			--ch;
 			ChannelProxy(m_channels[ch],m_channel_data[ch]).load(record);
 			}
-		}
+		});
 	dirtyClear();
 	}
 

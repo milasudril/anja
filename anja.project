@@ -176,6 +176,8 @@
       <File Name="ui/application.cpp"/>
       <File Name="ui/memview.hpp"/>
       <File Name="ui/memview.cpp"/>
+      <File Name="ui/progressbar.hpp"/>
+      <File Name="ui/progressbar.cpp"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>

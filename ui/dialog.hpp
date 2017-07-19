@@ -31,6 +31,24 @@ namespace Anja
 			{return nullptr;}
 		};
 
+	struct DialogCancel
+		{
+		static constexpr const char* dismiss() noexcept
+			{return "Cancel";}
+
+		static constexpr const char* confirmPositive() noexcept
+			{return nullptr;}
+
+		static constexpr const char* confirmNegative() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user1() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user2() noexcept
+			{return nullptr;}
+		};
+
 	struct DialogOk
 		{
 		static constexpr const char* dismiss() noexcept

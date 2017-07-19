@@ -318,10 +318,16 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 		}
 	}
 
-void Application::progress(Session& session,float status)
+void Application::progressSampleRate(Session& session,float status)
 	{
 	fprintf(stderr,"#");
 	}
+
+void Application::progressLoad(Session& session,float status)
+	{
+	fprintf(stderr,"#");
+	}
+
 
 void Application::engine_start()
 	{
@@ -900,7 +906,9 @@ Application& Application::sessionLoad(const char* filename)
 	engine_stop();
 	try
 		{
-		m_session.load(filename);
+	//	m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_mainwin,"Anja loading session"));
+		m_session.load(filename,*this);
+	//	m_progress.reset();
 		m_session_editor.sessionUpdated();
 		title_update(m_session,m_mainwin);
 		chlabels_update(m_session,m_ch_status_img);

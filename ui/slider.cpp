@@ -24,7 +24,7 @@ class Slider::Impl:private Slider
 			{return gtk_range_get_value(GTK_RANGE(m_handle));}
 
 		void value(double x) noexcept
-			{return gtk_range_set_value(GTK_RANGE(m_handle),x);}
+			{gtk_range_set_value(GTK_RANGE(m_handle),x);}
 
 		int id() const noexcept
 			{return m_id;}
@@ -80,10 +80,6 @@ Slider::Impl::Impl(Container& cnt,bool vertical):Slider(*this),m_id(0)
 	gtk_range_set_inverted(GTK_RANGE(widget),vertical); //GTK draws the slider upside down
 	gtk_scale_set_draw_value(GTK_SCALE(widget),FALSE);
 	gtk_widget_set_size_request(widget,vertical?32:96,vertical?96:32);
-
-	GtkRequisition minsize;
-	GtkRequisition natsize;
-	gtk_widget_get_preferred_size(widget,&minsize,&natsize);
 
 	g_signal_connect(widget,"value-changed",G_CALLBACK(changed_callback),this);
 	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);

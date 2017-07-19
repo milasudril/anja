@@ -13,7 +13,7 @@
 
 namespace Anja
 	{
-	class SessionFileRecordImpl:public SessionFileRecord
+	class SessionFileRecordImpl final:public SessionFileRecord
 		{
 		public:
 			SessionFileRecordImpl();

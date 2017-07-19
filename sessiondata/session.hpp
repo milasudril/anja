@@ -17,14 +17,26 @@ namespace Anja
 	{
 	class Session
 		{
+		private:
+			typedef void (*progress_callback)(void*,Session&,float);
 		public:
 			Session():m_slot_active(0),m_state_flags(0)
 				{clear();}
 
-			explicit Session(const char* filename);
+			template<class ProgressCallback>
+			explicit Session(const char* filename,ProgressCallback& cb):
+				Session(filename,[](void* obj,Session& self,float status)
+					{
+					auto cb=reinterpret_cast<ProgressCallback*>(obj);
+					cb->progressLoad(self,status);
+					},&cb)
+				{}
 
-			void load(const char* filename)
-				{*this=Session(filename);}
+			explicit Session(const char* filename,progress_callback cb,void* obj);
+
+			template<class ProgressCallback>
+			void load(const char* filename,ProgressCallback& cb)
+				{*this=Session(filename,cb);}
 
 			void save(const char* filename);
 
@@ -206,7 +218,7 @@ namespace Anja
 				auto cb=[](void* obj,Session& self,float status)
 					{
 					auto cb=reinterpret_cast<ProgressCallback*>(obj);
-					cb->progress(self,status);
+					cb->progressSampleRate(self,status);
 					};
 				return sampleRate(fs,cb,&cb_obj);
 				}
@@ -235,7 +247,7 @@ namespace Anja
 			void keyHighlight(uint8_t scancode);
 			void keyReset(uint8_t scancode);
 
-			Session& sampleRate(double fs,void (*cb)(void* obj,Session&,float),void* obj);
+			Session& sampleRate(double fs,progress_callback,void* obj);
 		};
 	}
 #endif
