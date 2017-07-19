@@ -154,24 +154,6 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 	{
 	switch(id)
 		{
-		case MessageId::SESSION_LOADED:
-			try
-				{
-				m_bg_task.reset();
-				m_progress.reset();
-				m_session_editor.sessionUpdated();
-				title_update(m_session,m_mainwin);
-				chlabels_update(m_session,m_ch_status_img);
-				engine_start();
-				}
-			catch(...)
-				{}
-			break;
-
-		case MessageId::PROGRESS:
-			m_progress->widget().value(static_cast<double>(param)/0x8000);
-			break;
-
 		case MessageId::CHANNEL_MUTED:
 			assert(param>=0 && param<16);
 			if(m_engine->waveOutCount()>2 ) //Multi-channel mode
@@ -345,14 +327,11 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 		}
 	}
 
-void Application::progressSampleRate(Session& session,float status)
+void Application::progressSampleRate(WaveformProxy& waveform,float status)
 	{
 	}
 
-void Application::progressLoad(Session& session,float status)
-	{
-	m_ctx.messagePost(MessageId::PROGRESS,status*0x8000);
-	}
+
 
 
 void Application::engine_start()
@@ -372,8 +351,8 @@ void Application::engine_start()
 		,statusIcon(StatusIcon::WAIT));
 	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 		,statusIcon(StatusIcon::WAIT));
-	m_session.sampleRate(m_engine->sampleRate(),*this);
-	fprintf(stderr,"\n");
+//	m_session.sampleRate(m_engine->sampleRate(),*this);
+//	fprintf(stderr,"\n");
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
@@ -921,21 +900,10 @@ void Application::optionChanged(SessionPropertiesEditor& editor,int id,int optio
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
-
-namespace Anja
+void Application::progressLoad(WaveformProxy& waveform,float status)
 	{
-	template<>
-	void Application::run<Application::TaskId::LOAD>()
-		{
-		fprintf(stderr,"Hello\n");
-		try
-			{
-			m_session.load(m_filename_new.begin(),*this);
-			m_ctx.messagePost(MessageId::SESSION_LOADED,0);
-			}
-		catch(...)
-			{}
-		}
+	m_progress->widget().value(status);
+	m_ctx.flush();
 	}
 
 Application& Application::sessionLoad(const char* filename)
@@ -943,22 +911,27 @@ Application& Application::sessionLoad(const char* filename)
 	engine_stop();
 	try
 		{
-		m_filename_new=String( filename );
 		m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_mainwin,"Anja loading session"));
-		m_bg_task.reset(new Thread(*this,std::integral_constant<TaskId,TaskId::LOAD>{}) );
+		m_ctx.flush();
+		m_session.load(filename,*this);
+		m_progress.reset();
+		m_session_editor.sessionUpdated();
+		title_update(m_session,m_mainwin);
+		chlabels_update(m_session,m_ch_status_img);
 		}
 	catch(...)
 		{
 		try
-			{
-			m_progress.reset();
-			engine_start();
-			}
+			{engine_start();}
 		catch(...)
 			{}
 		throw;
 		}
-	return *this;
+	try
+		{engine_start();}
+	catch(...)
+		{}
+return *this;
 	}
 
 void Application::nameChanged(ChannelStrip& strip,int id)

@@ -18,7 +18,7 @@ static String filename_get(const char* filename,const String& load_path)
 	return fullpath;
 	}
 
-WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec)
+WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec,progress_callback cb,void* cb_obj)
 	{
 	r_waveform_data->load(rec);
 	if(r_waveform_data->filenameGet().length()==0)
@@ -26,7 +26,15 @@ WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec)
 	else
 		{
 		auto f=::filename_get(r_waveform_data->filenameGet().begin(),*r_dir_current);
-		r_waveform->load(rec,f.begin());
+		struct load_callback
+			{
+			decltype(cb) m_cb;
+			decltype(cb_obj) m_cb_obj;
+			WaveformProxy& r_proxy;
+			void progressLoad(Waveform& wf,float status)
+				{m_cb(m_cb_obj,r_proxy,status);}
+			} load_cb{cb,cb_obj,*this};
+		r_waveform->load(rec,f.begin(),load_cb);
 		r_waveform_data->filename(f.begin());
 		r_waveform_data->dirtyClear();
 		}

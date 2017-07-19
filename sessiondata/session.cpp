@@ -142,9 +142,16 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
 			--slot_num;
 
+			struct cb_obj
+				{
+				decltype(cb) m_cb;
+				decltype(obj) m_obj;
+				void progressLoad(WaveformProxy& waveform,float status)
+					{m_cb(m_obj,waveform,status);}
+				} cb_fwd{cb,obj};
+
 			WaveformProxy(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
-				,slot_num).load(record);
-			cb(obj,*this,static_cast<float>(slot_num)/static_cast<float>(n_slots));
+				,slot_num).load(record,cb_fwd);
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -355,8 +362,7 @@ bool Session::dirtyIs() const noexcept
 	return 0;
 	}
 
-Session& Session::sampleRate(double fs,void (*cb)(void* obj,Session&,float)
-	,void* obj)
+Session& Session::sampleRate(double fs,progress_callback cb,void* obj)
 	{
 	auto fs_float=static_cast<float>(fs);
 	auto N_samples=std::accumulate(m_waveforms.begin(),m_waveforms.end(),0
@@ -369,7 +375,7 @@ Session& Session::sampleRate(double fs,void (*cb)(void* obj,Session&,float)
 		{
 		if(m_waveforms[k].sampleRate()!=fs_float && m_waveforms[k].lengthFull()!=0)
 			{
-			cb(obj,*this,static_cast<float>(samp_count)/static_cast<float>(N_samples));
+		//	cb(obj,*this,static_cast<float>(samp_count)/static_cast<float>(N_samples));
 			samp_count+=m_waveforms[k].lengthFull();
 			}
 		}

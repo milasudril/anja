@@ -20,10 +20,11 @@ static constexpr const char* FLAG_NAMES[]=
 const char* const* Waveform::flagNames() noexcept
 	{return FLAG_NAMES;}
 
-Waveform::Waveform(const SessionFileRecord& record,const char* filename)
+Waveform::Waveform(const SessionFileRecord& record,const char* filename
+	,progress_callback cb,void* cb_obj)
 	{
 	reset();
-	waveformLoad(filename);
+	waveformLoad(filename,cb,cb_obj);
 	auto value=record.propertyGet(String("Gain/dB"));
 	if(value!=nullptr)
 		{gain(convert(value->begin()));}
@@ -123,7 +124,7 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 	return *this;
 	}
 
-Waveform& Waveform::waveformLoad(const char* filename)
+Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void* cb_obj)
 	{
 	Mutex::LockGuardNonblocking lock(m_mtx);
 
@@ -146,6 +147,8 @@ Waveform& Waveform::waveformLoad(const char* filename)
 		{
 		n_read=reader.dataRead(buffer_tmp.begin(),BUFFER_SIZE);
 		append(buffer_tmp.begin(),n_read);
+		if(cb!=nullptr)
+			{cb(cb_obj,*this,static_cast<float>(lengthFull())/static_cast<float>(info.n_frames));}
 		}
 	while(n_read==BUFFER_SIZE);
 	offsetsReset();

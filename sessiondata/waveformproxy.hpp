@@ -21,7 +21,14 @@ namespace Anja
 				r_waveform(&wf),r_waveform_data(&wd),r_dir_current(&dir_current),m_index(index)
 				{}
 
-			WaveformProxy& load(const SessionFileRecord& rec);
+			template<class ProgressCallback>
+			WaveformProxy& load(const SessionFileRecord& rec,ProgressCallback& cb)
+				{
+				return load(rec,[](void* cb_obj,WaveformProxy& waveform,float status)
+					{
+					reinterpret_cast<ProgressCallback*>(cb_obj)->progressLoad(waveform,status);
+					},&cb);
+				}
 
 			const WaveformProxy& store(SessionFileRecord& rec) const;
 
@@ -220,6 +227,9 @@ namespace Anja
 			WaveformData* r_waveform_data;
 			const String* r_dir_current;
 			int m_index;
+
+			typedef void (*progress_callback)(void* cb_obj,WaveformProxy& waveform,float status);
+			WaveformProxy& load(const SessionFileRecord& rec,progress_callback cb,void* cb_obj);
 		};
 	}
 

@@ -17,22 +17,18 @@ namespace Anja
 	{
 	class Session
 		{
-		private:
-			typedef void (*progress_callback)(void*,Session&,float);
 		public:
 			Session():m_slot_active(0),m_state_flags(0)
 				{clear();}
 
 			template<class ProgressCallback>
 			explicit Session(const char* filename,ProgressCallback& cb):
-				Session(filename,[](void* obj,Session& self,float status)
+				Session(filename,[](void* obj,WaveformProxy& self,float status)
 					{
 					auto cb=reinterpret_cast<ProgressCallback*>(obj);
 					cb->progressLoad(self,status);
 					},&cb)
 				{}
-
-			explicit Session(const char* filename,progress_callback cb,void* obj);
 
 			template<class ProgressCallback>
 			void load(const char* filename,ProgressCallback& cb)
@@ -247,6 +243,8 @@ namespace Anja
 			void keyHighlight(uint8_t scancode);
 			void keyReset(uint8_t scancode);
 
+			typedef void (*progress_callback)(void* obj,WaveformProxy& self,float status);
+			explicit Session(const char* filename,progress_callback cb,void* obj);
 			Session& sampleRate(double fs,progress_callback,void* obj);
 		};
 	}

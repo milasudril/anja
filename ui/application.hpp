@@ -127,15 +127,14 @@ namespace Anja
 			void portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
 
 			void clicked(ImageList& imglist,int id,ImageView& img);
-			void progressSampleRate(Session& session,float status);
-			void progressLoad(Session& session,float status);
+			void progressSampleRate(WaveformProxy& waveform,float status);
+			void progressLoad(WaveformProxy& waveform,float status);
 
 
 			enum MessageId:int32_t
 				{
 				 CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED
-				,PORT_DISCONNECTED,INVOKE,SESSION_LOADED,SAMPLE_RATE_CHANGED
-				,PROGRESS
+				,PORT_DISCONNECTED,INVOKE
 				};
 			typedef int32_t MessageParam;
 
@@ -150,15 +149,6 @@ namespace Anja
 				cb(3,m_status_row.boundingBox());
 				cb(4,m_session_editor.boundingBoxTrim());
 				}
-
-
-			enum TaskId:int32_t
-				{
-				LOAD,RESAMPLE
-				};
-
-			template<TaskId id>
-			void run();
 
 		private:
 			ImageRepository m_images;
@@ -194,9 +184,7 @@ namespace Anja
 			std::unique_ptr<Dialog<Message,DialogOk> > m_error;
 			std::unique_ptr<Dialog<PortSelector,DialogOkCancel> >m_port_selector;
 
-			std::unique_ptr<Thread> m_bg_task;
 			std::unique_ptr<Dialog<ProgressBar,DialogCancel>> m_progress;
-			String m_filename_new;
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;

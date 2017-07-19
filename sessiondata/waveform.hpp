@@ -30,9 +30,8 @@ namespace Anja
 				offsetsReset();
 				}
 
-			explicit Waveform(const SessionFileRecord& record,const char* filename=nullptr);
-
-			Waveform& waveformLoad(const char* filename);
+			Waveform& waveformLoad(const char* filename)
+				{return waveformLoad(filename,nullptr,nullptr);}
 
 			const Waveform& waveformSave(const char* filename) const;
 
@@ -43,15 +42,18 @@ namespace Anja
 			Waveform& load(const SessionFileRecord& rec)
 				{
 				Mutex::LockGuardNonblocking lock(m_mtx);
-				*this=Waveform(rec);
+				*this=Waveform(rec,nullptr,nullptr,nullptr);
 				return *this;
 				}
 
-			Waveform& load(const SessionFileRecord& rec,const char* filename)
+			template<class ProgressCallback>
+			Waveform& load(const SessionFileRecord& rec,const char* filename
+				,ProgressCallback& cb)
 				{
-				Mutex::LockGuardNonblocking lock(m_mtx);
-				*this=Waveform(rec,filename);
-				return *this;
+				return load(rec,filename,[](void* cb_obj,Waveform& self,float status)
+					{
+					reinterpret_cast<ProgressCallback*>(cb_obj)->progressLoad(self,status);
+					},&cb);
 				}
 
 			enum class Cursor:int32_t{BEGIN,BEGIN_LOOP,END_LOOP,END};
@@ -304,6 +306,22 @@ namespace Anja
 				return clamp(b,a,x);
 				}
 			mutable Mutex m_mtx;
+
+			typedef void (*progress_callback)(void*,Waveform&,float);
+
+
+			Waveform& load(const SessionFileRecord& rec,const char* filename,progress_callback cb
+				,void* cb_obj)
+				{
+				Mutex::LockGuardNonblocking lock(m_mtx);
+				*this=Waveform(rec,filename,cb,cb_obj);
+				return *this;
+				}
+
+			explicit Waveform(const SessionFileRecord& record,const char* filename
+				,progress_callback cb,void* cb_obj);
+
+			Waveform& waveformLoad(const char* filename,progress_callback cb,void* cb_obj);
 		};
 	}
 #endif

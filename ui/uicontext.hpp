@@ -50,6 +50,8 @@ namespace Anja
 
 			UiContext& messagePost(int32_t id,int32_t param);
 
+			UiContext& flush();
+
 		private:
 			class Impl;
 			Impl* m_impl;
