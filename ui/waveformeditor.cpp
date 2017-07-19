@@ -393,6 +393,7 @@ void WaveformEditor::waveform_load(int method)
 
 void WaveformEditor::waveform_load(const char* filename)
 	{
+
 	m_waveform.waveformLoad(filename);
 	m_waveform.dirtyClear();
 	m_waveform_db=filename_update(m_waveform,m_filename_input,m_options_input,m_plot);

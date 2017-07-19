@@ -906,11 +906,13 @@ void Application::progressLoad(WaveformProxy& waveform,float status)
 	{
 	if(!m_progress)
 		{throw ProgressAborted{};}
-	m_progress->widget().value(status);
+	String label("Loading ");
+	label.append(waveform.filename());
+	m_progress->widget().value(status).label(label.begin());
 	m_ctx.flush();
 	}
 
-void Application::dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id)
+void Application::dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id)
 	{
 	m_progress.reset();
 	}
@@ -921,7 +923,7 @@ Application& Application::sessionLoad(const char* filename)
 	engine_stop();
 	try
 		{
-		m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_mainwin,"Anja loading session"));
+		m_progress.reset(new Dialog<ProgressBox,DialogCancel>(m_mainwin,"Anja loading session"));
 		m_progress->callback(*this,0);
 		m_ctx.flush();
 		m_session.load(filename,*this);

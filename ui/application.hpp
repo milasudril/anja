@@ -17,7 +17,7 @@
 #include "imagelist.hpp"
 #include "portselector.hpp"
 #include "memview.hpp"
-#include "progressbar.hpp"
+#include "progressbox.hpp"
 #include "../sessiondata/session.hpp"
 #include "../engine/engine.hpp"
 #include <memory>
@@ -129,7 +129,7 @@ namespace Anja
 			void clicked(ImageList& imglist,int id,ImageView& img);
 			void progressSampleRate(WaveformProxy& waveform,float status);
 			void progressLoad(WaveformProxy& waveform,float status);
-			void dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id);
+			void dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id);
 
 
 			enum MessageId:int32_t
@@ -185,7 +185,7 @@ namespace Anja
 			std::unique_ptr<Dialog<Message,DialogOk> > m_error;
 			std::unique_ptr<Dialog<PortSelector,DialogOkCancel> >m_port_selector;
 
-			std::unique_ptr<Dialog<ProgressBar,DialogCancel>> m_progress;
+			std::unique_ptr<Dialog<ProgressBox,DialogCancel>> m_progress;
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;
