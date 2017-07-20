@@ -933,7 +933,7 @@ Application& Application::sessionLoad(const char* filename)
 	engine_stop();
 	try
 		{
-		String dlgcaption("Anja loading session ");
+		String dlgcaption("Anja: Loading session ");
 		dlgcaption.append(filename);
 		m_progress.reset(new Dialog<ProgressBox,DialogCancel>(m_mainwin,dlgcaption.begin()));
 		m_progress->callback(*this,0);
@@ -953,6 +953,7 @@ Application& Application::sessionLoad(const char* filename)
 			{engine_start();}
 		catch(...)
 			{}
+		m_progress.reset();
 		throw;
 		}
 	try
