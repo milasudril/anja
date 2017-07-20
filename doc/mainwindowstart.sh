@@ -52,35 +52,90 @@
 #@		}]
 #@	}
 
-abort()
-	{
-	exit -1
-	}
-trap 'abort' 0
+
 set -eo pipefail
+
+x11_init()
+	{
+	Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
+	xserver=$!
+	export DISPLAY=:5
+	while ! xdpyinfo >/dev/null 2>&1; do
+		sleep 1
+	done
+	}
+
+x11_kill()
+	{
+	kill $xserver 2>/dev/null
+	}
+
+jack_init()
+	{
+	export JACK_DEFAULT_SERVER=dummy
+	jackd --no-mlock -p 64 --no-realtime -d dummy -p 4096 &
+	jack=$!
+	timeout 10 jack_wait -w --server $JACK_DEFAULT_SERVER
+	}
+
+jack_kill()
+	{
+	kill -9 $jack 2>/dev/null
+	}
+
+fifo_init()
+	{
+	tmpdir=$(mktemp -d)
+	mkfifo "$tmpdir/anja_fifo"
+	}
+
+fifo_kill()
+	{
+	rm -rf "$tmpdir" 2>/dev/null
+	}
+
+anja_kill()
+	{
+	kill $anja 2>/dev/null
+	}
+
+cleanup()
+	{
+	set +e
+	anja_kill
+	fifo_kill
+	jack_kill
+	x11_kill
+	}
+
+anja_wait()
+	{
+	for i in `seq 1 5`; do
+		sleep 1
+		if ! jack_lsp | grep anja >/dev/null 2>&1; then
+			>&2 echo "Waiting for Anja"
+		else
+			return 0
+		fi
+	done
+	>&2 echo "No Anja ports in JACK. Killed?"
+	return 1
+	}
 
 target_dir=$1
 in_dir=$2
 
-Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
-server=$!
-export DISPLAY=:5
-while ! xdpyinfo >/dev/null 2>&1; do
-	sleep 1
-done
+trap 'cleanup;exit -1' EXIT INT TERM HUP
 
-export JACK_DEFAULT_SERVER=dummy
-jackd --no-mlock -p 64 --no-realtime -d dummy -p 4096 &
-jack=$!
-jack_wait -w --server $JACK_DEFAULT_SERVER
-tmpdir=$(mktemp -d)
-trap 'rm -rf "$tmpdir"' EXIT INT TERM HUP
-mkfifo "$tmpdir/anja_fifo"
+x11_init
+jack_init
+fifo_init
+
 "$target_dir"/anja --theme=light --script="$tmpdir/anja_fifo" > "$target_dir"/"$in_dir"/anja_layout.txt &
 anja=$!
-while ! jack_lsp | grep anja >/dev/null 2>&1; do
-	sleep 1
-done
+anja_wait
+>&2 echo "Anja is alive"
+
 jack_lsp | grep '\.anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --all --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
@@ -104,7 +159,5 @@ import -window $anjawin "$target_dir"/"$in_dir"/sessfull.png
 echo "exit" >&3
 exec 3<&-
 wait $anja
-kill -9 $jack
-kill $server
-
+cleanup
 trap : 0
