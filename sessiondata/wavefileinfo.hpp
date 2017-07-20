@@ -10,8 +10,8 @@ namespace Anja
 	struct WavefileInfo
 		{
 		uint32_t n_frames;
-		float fs;
 		uint32_t n_channels;
+		double fs;
 		};
 	}
 

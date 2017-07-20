@@ -115,7 +115,7 @@ namespace Anja
 			const float* endFull() const noexcept
 				{return m_data.end();}
 
-			float sampleRate() const noexcept
+			double sampleRate() const noexcept
 				{return m_fs;}
 
 			Waveform& sampleRate(float fs) noexcept
@@ -301,7 +301,7 @@ namespace Anja
 			int32_t m_channel;
 			float m_gain;
 			float m_gain_random;
-			float m_fs;
+			double m_fs; //Set this to
 			mutable uint32_t m_flags;
 
 			template<class T>

@@ -113,21 +113,7 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 	//	TODO Store other data not interpreted by Anja
 		}
 
-
-//	Read records
-	std::vector<SessionFileRecordImpl> records;
-	auto n_slots=0;
 	while(reader.recordNextGet(record))
-		{
-		if(record.levelGet()==0)
-			{break;}
-		if(strncmp(record.titleGet().begin(),"Slot ",5)==0)
-			{++n_slots;}
-		records.push_back(record);
-		}
-
-	std::for_each(records.begin(),records.end()
-		,[this,filename,cb,obj,n_slots](const SessionFileRecordImpl& record)
 		{
 		auto title_ptr=record.titleGet().begin();
 		if(strncmp(title_ptr,"Slot ",5)==0)
@@ -167,7 +153,7 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 			--ch;
 			ChannelProxy(m_channels[ch],m_channel_data[ch]).load(record);
 			}
-		});
+		}
 	dirtyClear();
 	}
 

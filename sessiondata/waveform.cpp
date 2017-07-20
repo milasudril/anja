@@ -164,7 +164,7 @@ const Waveform& Waveform::waveformSave(const char* filename) const
 	{
 	Mutex::LockGuardNonblocking lock(m_mtx);
 
-	WavefileInfo info{lengthFull(),sampleRate(),1};
+	WavefileInfo info{lengthFull(),1,sampleRate()};
 
 	WavefileWriter writer(filename,info);
 	auto ptr=beginFull();
