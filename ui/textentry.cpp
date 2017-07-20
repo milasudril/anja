@@ -153,6 +153,7 @@ TextEntry::Impl::~Impl()
 		}
 
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}
 
 gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)

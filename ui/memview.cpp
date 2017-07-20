@@ -177,6 +177,7 @@ MemView::Impl::~Impl()
 	g_source_remove(m_timer);
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}
 
 static inline int dark_check(GtkWidget* widget)

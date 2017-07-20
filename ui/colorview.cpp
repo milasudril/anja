@@ -89,6 +89,7 @@ ColorView::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}
 
 gboolean ColorView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)

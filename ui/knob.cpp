@@ -157,6 +157,7 @@ Knob::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	if(s_usecount==0)
 		{
 		cairo_surface_destroy(s_diffuse);

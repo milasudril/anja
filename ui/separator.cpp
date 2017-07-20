@@ -36,4 +36,5 @@ Separator::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}

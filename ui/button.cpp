@@ -104,6 +104,7 @@ Button::Impl::~Impl()
 	m_impl=nullptr;
 	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}
 
 void Button::Impl::clicked_callback(GtkWidget* widget,gpointer data)

@@ -52,7 +52,7 @@ ProgressBar::Impl::Impl(Container& cnt):ProgressBar(*this)
 	{
 	auto widget=gtk_progress_bar_new();
 	gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(widget),FALSE);
-	gtk_widget_set_size_request(widget,96,32);
+	gtk_widget_set_size_request(widget,320,-1);
 
 	m_handle=GTK_PROGRESS_BAR(widget);
 	g_object_ref_sink(widget);
@@ -64,4 +64,5 @@ ProgressBar::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	}

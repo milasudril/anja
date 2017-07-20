@@ -163,7 +163,9 @@ SourceView::Impl::~Impl()
 		}
 
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	g_object_unref(m_handle);
 	gtk_widget_destroy(GTK_WIDGET(m_scroll));
+	g_object_unref(m_scroll);
 	}
 
 const char* SourceView::Impl::content() const

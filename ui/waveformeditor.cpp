@@ -426,9 +426,12 @@ void WaveformEditor::waveform_load(const char* filename)
 		m_plot.showAll();
 		}
 	catch(const Aborted&)
-		{}
+		{m_progress.reset();}
 	catch(...)
-		{throw;}
+		{
+		m_progress.reset();
+		throw;
+		}
 	}
 
 void WaveformEditor::clicked(Button& src,ButtonId id)

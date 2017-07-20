@@ -297,6 +297,7 @@ XYPlot::Impl::~Impl()
 	for(int k=0;k<CURSOR_INDEX_MAX;++k)
 		{g_object_unref(m_cursors[k]);}
 	gtk_widget_destroy(GTK_WIDGET(m_canvas));
+	g_object_unref(m_canvas);
 	}
 
 void XYPlot::Impl::curve(const Point* begin,const Point* end,float hue)
