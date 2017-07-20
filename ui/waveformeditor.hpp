@@ -26,6 +26,7 @@
 namespace Anja
 	{
 	class Session;
+	class MeanSquare;
 
 	template<class T,class SizeType>
 	class ArraySimple;
@@ -148,6 +149,8 @@ namespace Anja
 				{return m_details_right.boundingBox();}
 
 			void progressLoad(WaveformProxy& waveform,float status);
+			void progressCompute(MeanSquare& meansquare,float status);
+
 
 		private:
 			struct Vtable
@@ -183,12 +186,19 @@ namespace Anja
 			void waveform_load(int method);
 			void waveform_load(const char* filename_new);
 
+			ArraySimple<float> mean_square(const float* begin,const float* end,int length);
+			ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntry& e
+				,OptionList& options,XYPlot& plot);
+
+
 			WaveformProxy m_waveform;
 			ArraySimple<float> m_waveform_db;
 			std::unique_ptr<Dialog<ColorPicker>> m_color_dlg;
 			std::unique_ptr<Dialog<Message,DialogOk>> m_err_dlg;
 			std::unique_ptr<Dialog<Message,DialogConfirmSave>> m_confirm_dlg;
 			std::unique_ptr<Dialog<ProgressBar,DialogCancel>> m_progress;
+			std::unique_ptr<Dialog<ProgressBar,DialogNull>> m_progress_null;
+
 			const ColorRGBA* r_color_presets_begin;
 			const ColorRGBA* r_color_presets_end;
 			Box m_box;

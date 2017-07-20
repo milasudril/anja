@@ -148,11 +148,19 @@ void WaveformEditor::changed(Slider& slider,SliderId id)
 		}
 	}
 
-static ArraySimple<float> mean_square(const float* begin,const float* end,int length)
+void WaveformEditor::progressCompute(MeanSquare& meansquare,float status)
+	{
+	if(m_progress_null)
+		{m_progress_null->widget().value(status);}
+	}
+
+ArraySimple<float> WaveformEditor::mean_square(const float* begin,const float* end,int length)
 	{
 	ArraySimple<float> vals_ms(end - begin);
 	MeanSquare ms(length);
-	ms.compute(begin,vals_ms.begin(),end - begin);
+	m_progress_null.reset(new Dialog<ProgressBar,DialogNull>(m_box,"Anja: Computing signal levels"));
+	ms.compute(begin,vals_ms.begin(),end - begin,*this);
+	m_progress_null.reset();
 	return std::move(vals_ms);
 	}
 
@@ -170,7 +178,7 @@ static ArraySimple<float> decimate(const ArraySimple<float>& src,double dt)
 	return std::move(ret);
 	}
 
-void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
+static void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 	{
 	ArraySimple<XYPlot::Point> points(end - begin);
 	size_t k=0;
@@ -183,7 +191,7 @@ void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
 	plot.curve(points,0.66f);
 	}
 
-static ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntry& e
+ArraySimple<float> WaveformEditor::filename_update(const WaveformProxy& waveform,TextEntry& e
 	,OptionList& options,XYPlot& plot)
 	{
 	e.content(waveform.filename().begin());

@@ -49,6 +49,25 @@ namespace Anja
 			{return nullptr;}
 		};
 
+
+	struct DialogNull
+		{
+		static constexpr const char* dismiss() noexcept
+			{return nullptr;}
+
+		static constexpr const char* confirmPositive() noexcept
+			{return nullptr;}
+
+		static constexpr const char* confirmNegative() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user1() noexcept
+			{return nullptr;}
+
+		static constexpr const char* user2() noexcept
+			{return nullptr;}
+		};
+
 	struct DialogOk
 		{
 		static constexpr const char* dismiss() noexcept
@@ -71,6 +90,10 @@ namespace Anja
 	std::array<Button,N> buttons_create(Container& cnt);
 
 	template<>
+	inline std::array<Button,0> buttons_create<0>(Container& cnt)
+		{return std::array<Button,0>{};}
+
+	template<>
 	inline std::array<Button,1> buttons_create<1>(Container& cnt)
 		{return std::array<Button,1>{Button(cnt,"")};}
 
@@ -90,9 +113,8 @@ namespace Anja
 	inline std::array<Button,5> buttons_create<5>(Container& cnt)
 		{
 		return std::array<Button,5>
-				{Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,"")};
+			{Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,""),Button(cnt,"")};
 		}
-
 
 	template<class Widget,class DialogTraits=DialogOkCancel>
 	class Dialog
@@ -145,6 +167,7 @@ namespace Anja
 			template<class Callback,class IdType>
 			Dialog& callback(Callback& cb_obj,IdType id)
 				{
+				static_assert(button_count()!=0,"");
 				m_vtable=Vtable(cb_obj,id);
 				r_cb_obj=&cb_obj;
 				m_id=static_cast<int>(id);
