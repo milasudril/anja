@@ -43,7 +43,6 @@ WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec,progress_callbac
 
 String WaveformProxy::filename() const
 	{
-	fprintf(stderr,"%s %s\n",r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	}
 
