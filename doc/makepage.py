@@ -534,6 +534,7 @@ def main(argv):
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>''' + document.findall('title')[0].text + '''</title>''')
 	if 'stylesheets' in args:
 		for style in args['stylesheets']:
