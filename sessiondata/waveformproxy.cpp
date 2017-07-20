@@ -34,8 +34,8 @@ WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec,progress_callbac
 			void progressLoad(Waveform& wf,float status)
 				{m_cb(m_cb_obj,r_proxy,status);}
 			} load_cb{cb,cb_obj,*this};
-		r_waveform->load(rec,f.begin(),load_cb);
 		r_waveform_data->filename(f.begin());
+		r_waveform->load(rec,f.begin(),load_cb);
 		r_waveform_data->dirtyClear();
 		}
 	return *this;
@@ -43,6 +43,7 @@ WaveformProxy& WaveformProxy::load(const SessionFileRecord& rec,progress_callbac
 
 String WaveformProxy::filename() const
 	{
+	fprintf(stderr,"%s %s\n",r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	return makeRelativeTo(r_waveform_data->filenameGet().begin(),r_dir_current->begin());
 	}
 
