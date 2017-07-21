@@ -188,9 +188,9 @@ try:
 	substitutes['description']=projinfo['description']
 
 	externals=load(target_dir + '/externals.json')
-	substitutes['libraries']='","'.join(externals['libraries'])
-	substitutes['libstring']=', '.join(externals['libraries'])
-	substitutes['tools']='","'.join(externals['tools'])
+	substitutes['libraries']='","'.join(sorted( externals['libraries']) )
+	substitutes['libstring']=', '.join(sorted( externals['libraries']) )
+	substitutes['tools']='","'.join(sorted( externals['tools']) )
 
 	config=load(target_dir + '/maikeconfig.json')
 	substitutes['compiler']=compiler_version(compiler_name(config)).replace(' ','\xa0')
