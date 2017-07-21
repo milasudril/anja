@@ -6,6 +6,7 @@
 #include "wavefileinfo.hpp"
 #include "wavefilewriter.hpp"
 #include "sessionfilerecord.hpp"
+#include "samplerateconverter.hpp"
 #include "../common/arraysimple.hpp"
 #include "../common/floatconv.hpp"
 #include "../common/localeguard.hpp"
@@ -181,6 +182,8 @@ const Waveform& Waveform::waveformSave(const char* filename) const
 
 Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
 	{
-#warning Unimplemented
+	ArraySimple<float> buffer_tmp(BUFFER_SIZE);
+	SampleRateConverter conv(SampleRateConverter::Converter::SINC_BEST,fs/m_fs);
+
 	return *this;
 	}
