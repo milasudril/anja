@@ -40,6 +40,8 @@
       <File Name="sessiondata/waveformproxy.cpp"/>
       <File Name="sessiondata/waveformproxy.hpp"/>
       <File Name="sessiondata/parser.dot"/>
+      <File Name="sessiondata/samplerateconverter.hpp"/>
+      <File Name="sessiondata/samplerateconverter.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

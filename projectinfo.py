@@ -122,10 +122,18 @@ def compiler_name(config):
 			return hook['config']['objcompile']['name']
 
 def compiler_version(exename):
-	compiler=subprocess.Popen([exename,'--version'] \
-		,stdout=subprocess.PIPE)
-	for lines in compiler.stdout:
-		return lines.decode('utf8').rstrip()
+	with subprocess.Popen([exename,'--version'] \
+		,stdout=subprocess.PIPE) as compiler:
+		for lines in compiler.stdout:
+			return lines.decode('utf8').rstrip()
+
+def git_changes():
+	with subprocess.Popen(('git', 'status','--porcelain'),stdout=subprocess.PIPE) \
+		as git:
+		result=[];
+		for k in filter(None,git.stdout.read().decode().split('\n')):
+			result.append( k[3:].split(' ')[0] )
+		return result
 
 def get_revision(target_dir):
 	if shutil.which('git')==None:
@@ -146,11 +154,13 @@ def get_revision(target_dir):
 			with open(target_dir+'/versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
 		else:
+			project_changed=( len(list(filter(lambda x:x!='versioninfo.txt',git_changes()))) > 0)
 			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') \
 				as verfile:
 				result_old=verfile.read().strip()
 				if result==result_old \
-					and os.path.isfile(target_dir + '/projectinfo.hpp'):
+					and os.path.isfile(target_dir + '/projectinfo.hpp') \
+					and not project_changed:
 					sys.exit(0)
 
 			with open('versioninfo.txt','w') as versionfile:
