@@ -155,9 +155,9 @@ Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void*
 	offsetsReset();
 
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
-	flagsSet(Waveform::READONLY|Waveform::DIRTY);
-	flagsUnset(Waveform::RECORDED);
-
+	flagsSet(READONLY|DIRTY);
+	flagsUnset(RECORDED);
+	m_flags&=(~RESAMPLED); //Waveform is fresh from disk
 	return *this;
 	}
 
@@ -230,6 +230,7 @@ Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
 	std::swap(data_new,m_data);
 	std::swap(offsets,m_offsets);
 	m_fs=fs;
+	m_flags|=RESAMPLED;
 
 	return *this;
 	}

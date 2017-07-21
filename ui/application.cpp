@@ -303,7 +303,7 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			if(scancode==0xff)
 				{return;}
 			m_session.waveformGet(param).sampleRate(m_engine->sampleRate())
-				.offsetsReset().flagsSet(Waveform::RECORDED);
+				.offsetsReset().recorded(true);
 			if(m_keystate[scancode])
 				{
 				auto note=slotToMIDI(param);
@@ -936,6 +936,7 @@ void Application::dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id)
 
 Application& Application::sessionLoad(const char* filename)
 	{
+	auto engine_running=( m_engine.get()!=nullptr );
 	engine_stop();
 	try
 		{
@@ -955,17 +956,23 @@ Application& Application::sessionLoad(const char* filename)
 		}
 	catch(...)
 		{
+		m_progress.reset();
+		if(engine_running)
+			{
+			try
+				{engine_start();}
+			catch(...)
+				{}
+			}
+		throw;
+		}
+	if(engine_running)
+		{
 		try
 			{engine_start();}
 		catch(...)
 			{}
-		m_progress.reset();
-		throw;
 		}
-	try
-		{engine_start();}
-	catch(...)
-		{}
 	return *this;
 	}
 

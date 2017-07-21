@@ -236,7 +236,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 			if(*entry.content()!='\0'
 				&& !m_waveform.waveformLoaded(entry.content()))
 				{
-				if(m_waveform.flags()&Waveform::RECORDED)
+				if(m_waveform.recorded())
 					{waveform_confirm_load(1);}
 				else
 					{waveform_load(1);}
@@ -326,7 +326,7 @@ void WaveformEditor::confirmPositive(Dialog<Message,DialogOk>& dlg,int id)
 
 bool WaveformEditor::waveform_saved()
 	{
-	if(!(m_waveform.flags()&Waveform::RECORDED))
+	if(!m_waveform.recorded())
 		{return 1;}
 	std::string temp(m_waveform.filename().begin());
 	if(filenameSelect(m_filename,m_waveform.directory().begin(),temp
@@ -446,14 +446,14 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 			return;
 
 		case ButtonId::FILENAME_BROWSE:
-			if(m_waveform.flags()&Waveform::RECORDED)
+			if(m_waveform.recorded())
 				{waveform_confirm_load(0);}
 			else
 				{waveform_load(0);}
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
-			if(m_waveform.flags()&Waveform::RECORDED)
+			if(m_waveform.recorded())
 				{waveform_confirm_load(1);}
 			else
 				{waveform_load(1);}

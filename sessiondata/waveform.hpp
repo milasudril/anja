@@ -204,17 +204,16 @@ namespace Anja
 			static constexpr uint32_t SUSTAIN=0x2;
 			static constexpr uint32_t READONLY=0x4;
 			static constexpr uint32_t GAIN_ONLOOP_SET=0x8;
-			static constexpr uint32_t RECORDED=0x10000000;
 
 			uint32_t flags() const noexcept
-				{return m_flags& ( ~(DIRTY|RESAMPLED) );}
+				{return m_flags& ( ~DIRTY );}
 
 			uint32_t flag(uint32_t flag_index) const noexcept
 				{return m_flags&(1<<flag_index);}
 
 			Waveform& flagsSet(uint32_t f) noexcept
 				{
-				auto flags_old=flags();
+				auto flags_old=(m_flags & ~(RESAMPLED|DIRTY)) ;
 				m_flags|=f;
 				m_flags|=( flags_old==m_flags )? 0 : DIRTY;
 				return *this;
@@ -225,7 +224,7 @@ namespace Anja
 
 			Waveform& flagsUnset(uint32_t f) noexcept
 				{
-				auto flags_old=flags();
+				auto flags_old=(m_flags & ~(RESAMPLED|DIRTY)) ;
 				m_flags&=~f;
 				m_flags|=( flags_old==m_flags )? 0 : DIRTY;
 				return *this;
@@ -295,6 +294,27 @@ namespace Anja
 				return *this;
 				}
 
+			bool recorded() const noexcept
+				{return m_flags&RECORDED;}
+
+			bool resampled() const noexcept
+				{return m_flags&RESAMPLED;}
+
+			Waveform& recorded(bool status) noexcept
+				{
+				if(status)
+					{
+					m_flags|=RECORDED|DIRTY;
+					m_flags&=~RESAMPLED;
+					}
+				else
+					{
+					m_flags|=DIRTY;
+					m_flags&=~RECORDED;
+					}
+				return *this;
+				}
+
 		private:
 			ArrayDynamicShort<float> m_data;
 			ArrayFixed<int32_t,4> m_offsets;
@@ -303,8 +323,10 @@ namespace Anja
 			float m_gain_random;
 			double m_fs; //Set this to
 			mutable uint32_t m_flags;
-			static constexpr uint32_t DIRTY=0x80000000;
+
+			static constexpr uint32_t RECORDED=0x20000000;
 			static constexpr uint32_t RESAMPLED=0x40000000;
+			static constexpr uint32_t DIRTY=0x80000000;
 
 			template<class T>
 			static inline T clamp(T a,T b,T x) noexcept

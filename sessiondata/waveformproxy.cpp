@@ -56,7 +56,7 @@ WaveformProxy& WaveformProxy::filename(const Anja::String& str)
 
 const WaveformProxy& WaveformProxy::store(SessionFileRecord& rec) const
 	{
-	if(r_waveform->flags()&Waveform::RECORDED)
+	if(r_waveform->recorded())
 		{r_waveform->waveformSave(r_waveform_data->filenameGet().begin());}
 
 	rec.propertySet(String("Filename"),filename());
