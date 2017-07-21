@@ -350,21 +350,15 @@ bool Session::dirtyIs() const noexcept
 
 Session& Session::sampleRate(double fs,progress_callback cb,void* obj)
 	{
-	auto fs_float=static_cast<float>(fs);
-	auto N_samples=std::accumulate(m_waveforms.begin(),m_waveforms.end(),0
-		,[fs_float](size_t n_tot,const Waveform& waveform)
-		{return waveform.sampleRate()!=fs_float?n_tot + waveform.lengthFull():n_tot;});
-
-	auto N=m_waveforms.length();
-	auto samp_count=size_t(0);
-	for(size_t k=0;k<N;++k)
+	struct
 		{
-		if(m_waveforms[k].sampleRate()!=fs_float && m_waveforms[k].lengthFull()!=0)
-			{
-		//	cb(obj,*this,static_cast<float>(samp_count)/static_cast<float>(N_samples));
-			samp_count+=m_waveforms[k].lengthFull();
-			}
-		}
+		progress_callback cb;
+		void* obj;
+		void progressResample(WaveformProxy& waveform,float status)
+			{cb(obj,waveform,status);}
+		} cbobj{cb,obj};
 
+	for(size_t k=0;k<m_waveforms.length();++k)
+		{waveformViewGet(k).resample(fs,cbobj);}
 	return *this;
 	}

@@ -62,6 +62,16 @@ namespace Anja
 					},&cb);
 				}
 
+			template<class ProgressCallback>
+			Waveform& resample(double fs,ProgressCallback& cb)
+				{
+				return resample(fs,[](void* cb_obj,Waveform& self,float status)
+					{
+					reinterpret_cast<ProgressCallback*>(cb_obj)->progressResample(self,status);
+					},&cb);
+				}
+
+
 			enum class Cursor:int32_t{BEGIN,BEGIN_LOOP,END_LOOP,END};
 
 			template<Cursor c>
@@ -328,6 +338,7 @@ namespace Anja
 				,progress_callback cb,void* cb_obj);
 
 			Waveform& waveformLoad(const char* filename,progress_callback cb,void* cb_obj);
+			Waveform& resample(double fs,progress_callback cb,void* cb_obj);
 		};
 	}
 #endif

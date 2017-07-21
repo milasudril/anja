@@ -178,3 +178,9 @@ const Waveform& Waveform::waveformSave(const char* filename) const
 	m_flags&=~RECORDED;
 	return *this;
 	}
+
+Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
+	{
+#warning Unimplemented
+	return *this;
+	}

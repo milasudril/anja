@@ -75,6 +75,20 @@ namespace Anja
 					},&cb);
 				}
 
+			template<class ProgressCallback>
+			WaveformProxy& resample(double fs,ProgressCallback& cb)
+				{
+				struct
+					{
+					ProgressCallback& cb;
+					WaveformProxy& self;
+					void progressResample(Waveform& w,float status)
+						{cb.progressResample(self,status);}
+					} cbobj{cb,*this};
+				r_waveform->resample(fs,cbobj);
+				return *this;
+				}
+
 
 			const WaveformProxy& waveformSave(const char* filename) const;
 

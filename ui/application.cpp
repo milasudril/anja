@@ -329,12 +329,9 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 		}
 	}
 
-void Application::progressSampleRate(WaveformProxy& waveform,float status)
+void Application::progressResample(WaveformProxy& waveform,float status)
 	{
 	}
-
-
-
 
 void Application::engine_start()
 	{
@@ -353,7 +350,7 @@ void Application::engine_start()
 		,statusIcon(StatusIcon::WAIT));
 	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 		,statusIcon(StatusIcon::WAIT));
-//	m_session.sampleRate(m_engine->sampleRate(),*this);
+	m_session.sampleRate(m_engine->sampleRate(),*this);
 //	fprintf(stderr,"\n");
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}

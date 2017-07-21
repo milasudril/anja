@@ -211,10 +211,10 @@ namespace Anja
 			template<class ProgressCallback>
 			Session& sampleRate(double fs,ProgressCallback& cb_obj)
 				{
-				auto cb=[](void* obj,Session& self,float status)
+				auto cb=[](void* obj,WaveformProxy& self,float status)
 					{
 					auto cb=reinterpret_cast<ProgressCallback*>(obj);
-					cb->progressSampleRate(self,status);
+					cb->progressResample(self,status);
 					};
 				return sampleRate(fs,cb,&cb_obj);
 				}

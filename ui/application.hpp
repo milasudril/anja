@@ -127,7 +127,7 @@ namespace Anja
 			void portDisconnected(Engine& engine,AudioClient::PortType type,int index) noexcept;
 
 			void clicked(ImageList& imglist,int id,ImageView& img);
-			void progressSampleRate(WaveformProxy& waveform,float status);
+			void progressResample(WaveformProxy& waveform,float status);
 			void progressLoad(WaveformProxy& waveform,float status);
 			void dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id);
 
