@@ -200,41 +200,34 @@ namespace Anja
 				}
 
 
-
 			static constexpr uint32_t LOOP=0x1;
 			static constexpr uint32_t SUSTAIN=0x2;
 			static constexpr uint32_t READONLY=0x4;
 			static constexpr uint32_t GAIN_ONLOOP_SET=0x8;
 			static constexpr uint32_t RECORDED=0x10000000;
-			static constexpr uint32_t PLAYBACK_RUNNING=0x20000000;
-			static constexpr uint32_t RECORD_RUNNING=0x40000000;
 
 			uint32_t flags() const noexcept
-				{return m_flags;}
+				{return m_flags& ( ~(DIRTY|RESAMPLED) );}
 
 			uint32_t flag(uint32_t flag_index) const noexcept
 				{return m_flags&(1<<flag_index);}
 
-			Waveform& flagsSet(uint32_t flags) noexcept
+			Waveform& flagsSet(uint32_t f) noexcept
 				{
-				auto flags_new=m_flags|flags;
-				auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
-
-				m_flags=flags_new;
-				m_flags|=( (flags_old== (flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
+				auto flags_old=flags();
+				m_flags|=f;
+				m_flags|=( flags_old==m_flags )? 0 : DIRTY;
 				return *this;
 				}
 
 			Waveform& flagSet(uint32_t flag_index) noexcept
 				{return flagsSet(1<<flag_index);}
 
-			Waveform& flagsUnset(uint32_t flags) noexcept
+			Waveform& flagsUnset(uint32_t f) noexcept
 				{
-				auto flags_new=m_flags&~flags;
-				auto flags_old=m_flags&~MASK_CHANGE_IGNORE;
-
-				m_flags=flags_new;
-				m_flags|=( (flags_old==(flags_new&~MASK_CHANGE_IGNORE) )? 0 : DIRTY);
+				auto flags_old=flags();
+				m_flags&=~f;
+				m_flags|=( flags_old==m_flags )? 0 : DIRTY;
 				return *this;
 				}
 
@@ -303,9 +296,6 @@ namespace Anja
 				}
 
 		private:
-			static constexpr uint32_t DIRTY=0x80000000;
-			static constexpr uint32_t MASK_CHANGE_IGNORE=DIRTY|RECORD_RUNNING|PLAYBACK_RUNNING;
-
 			ArrayDynamicShort<float> m_data;
 			ArrayFixed<int32_t,4> m_offsets;
 			int32_t m_channel;
@@ -313,6 +303,8 @@ namespace Anja
 			float m_gain_random;
 			double m_fs; //Set this to
 			mutable uint32_t m_flags;
+			static constexpr uint32_t DIRTY=0x80000000;
+			static constexpr uint32_t RESAMPLED=0x40000000;
 
 			template<class T>
 			static inline T clamp(T a,T b,T x) noexcept
