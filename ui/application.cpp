@@ -885,7 +885,7 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 		}
 	catch(const Error& e)
 		{
-		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja error",m_images
+		m_error.reset(new Dialog<Message,DialogOk>(m_mainwin,"Anja: Error",m_images
 			,e.message(),Message::Type::ERROR));
 		m_error->callback(*this,0);
 		}

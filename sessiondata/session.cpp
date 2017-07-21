@@ -309,6 +309,7 @@ void Session::save(const char* filename)
 			}
 		}
 	m_directory=dir;
+	m_filename=String(filename);
 	dirtyClear();
 	}
 
