@@ -137,7 +137,7 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 				} cb_fwd{cb,obj};
 
 			WaveformProxy(m_waveforms[slot_num],m_waveform_data[slot_num],m_directory
-				,slot_num).load(record,cb_fwd);
+				,m_fs,slot_num).load(record,cb_fwd);
 			}
 		else
 		if(strncmp(title_ptr,"Channel ",8)==0)
@@ -220,6 +220,7 @@ Session& Session::colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end)
 
 void Session::clear()
 	{
+	m_fs=0;
 	waveformsClear();
 	channelsClear();
 	m_filename.clear();
@@ -280,7 +281,7 @@ void Session::save(const char* filename)
 			sprintf(buffer,"Slot %u",k+1);
 			record_out.titleSet(String(buffer));
 
-			WaveformProxy wv(m_waveforms[k],*waveform,dir,k);
+			WaveformProxy wv(m_waveforms[k],*waveform,dir,m_fs,k);
 			wv.store(record_out);
 			writer.recordWrite(record_out);
 			wv.dirtyClear();
@@ -351,6 +352,7 @@ bool Session::dirtyIs() const noexcept
 
 Session& Session::sampleRate(double fs,progress_callback cb,void* obj)
 	{
+	m_fs=fs;
 	struct
 		{
 		progress_callback cb;

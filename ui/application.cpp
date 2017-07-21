@@ -373,6 +373,7 @@ void Application::engine_stop()
 		{
 		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
+	m_session.engineStopped();
 	}
 
 

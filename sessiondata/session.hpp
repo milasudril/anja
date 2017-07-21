@@ -131,7 +131,7 @@ namespace Anja
 				{return m_waveforms[slot];}
 
 			WaveformProxy waveformViewGet(uint8_t slot) noexcept
-				{return WaveformProxy(m_waveforms[slot],m_waveform_data[slot],m_directory,slot);}
+				{return WaveformProxy(m_waveforms[slot],m_waveform_data[slot],m_directory,m_fs,slot);}
 
 			WaveformData& waveformData(uint8_t slot) noexcept
 				{return m_waveform_data[slot];}
@@ -219,6 +219,12 @@ namespace Anja
 				return sampleRate(fs,cb,&cb_obj);
 				}
 
+			Session& engineStopped() noexcept
+				{
+				m_fs=0;
+				return *this;
+				}
+
 		private:
 			Wavetable m_waveforms;
 			ChannelMixer m_channels;
@@ -235,6 +241,7 @@ namespace Anja
 			ArrayDynamicShort<ColorRGBA> m_color_presets;
 
 			unsigned int m_flags;
+			double m_fs;
 
 			static constexpr unsigned int SESSION_DIRTY=0x2;
 

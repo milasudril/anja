@@ -17,8 +17,8 @@ namespace Anja
 		{
 		public:
 			explicit WaveformProxy(Waveform& wf,WaveformData& wd
-				,const String& dir_current,int index) noexcept:
-				r_waveform(&wf),r_waveform_data(&wd),r_dir_current(&dir_current),m_index(index)
+				,const String& dir_current,const double& fs,int index) noexcept:
+				r_waveform(&wf),r_waveform_data(&wd),r_dir_current(&dir_current),r_fs(&fs),m_index(index)
 				{}
 
 			template<class ProgressCallback>
@@ -263,6 +263,7 @@ namespace Anja
 			Waveform* r_waveform;
 			WaveformData* r_waveform_data;
 			const String* r_dir_current;
+			const double* r_fs;
 			int m_index;
 
 			typedef void (*progress_callback)(void* cb_obj,WaveformProxy& waveform,float status);
