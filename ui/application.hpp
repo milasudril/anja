@@ -186,6 +186,7 @@ namespace Anja
 			std::unique_ptr<Dialog<PortSelector,DialogOkCancel> >m_port_selector;
 
 			std::unique_ptr<Dialog<ProgressBox,DialogCancel>> m_progress;
+			std::unique_ptr<Dialog<ProgressBox,DialogNull>> m_progress_null;
 
 			std::unique_ptr<Engine> m_engine;
 			std::bitset<256> m_keystate;

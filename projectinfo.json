@@ -6,7 +6,7 @@
 ,"description":"A live sampler for use with JACK"
 ,"acknowledgement":
 	[
-	 "Erik de Castro Lopo—for libsndfile"
+	 "Erik de Castro Lopo—for libsamplerate and libsndfile"
 	,"Jason Evans—for the jemalloc library"
 	,"Melissa O'Neill—for the PCG32 random number generator"
 	,"Paul Davis et.al.—for JACK"

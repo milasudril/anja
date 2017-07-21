@@ -182,8 +182,54 @@ const Waveform& Waveform::waveformSave(const char* filename) const
 
 Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
 	{
+	auto ratio=fs/m_fs;
+	if(ratio==1.0 || lengthFull()==0)
+		{return *this;}
+
 	ArraySimple<float> buffer_tmp(BUFFER_SIZE);
-	SampleRateConverter conv(SampleRateConverter::Converter::SINC_BEST,fs/m_fs);
+
+	SampleRateConverter conv(SampleRateConverter::Converter::SINC_BEST,ratio);
+	ArrayDynamicShort<float> data_new;
+
+	Mutex::LockGuard lock(m_mtx);
+
+	auto ptr=beginFull();
+	auto n=lengthFull();
+	auto length_out=static_cast<float>( ratio*n );
+
+	while(n!=0)
+		{
+		auto n_in=static_cast<size_t>(n);
+		auto n_out=static_cast<size_t>(BUFFER_SIZE);
+
+		conv.compute(ptr,n_in,n_in<BUFFER_SIZE,buffer_tmp.begin(),n_out);
+		data_new.append(buffer_tmp.begin(),n_out);
+		cb(cb_obj,*this,static_cast<float>(data_new.length())/length_out);
+		n-=n_in;
+		ptr+=n_in;
+		}
+
+	auto n_out=static_cast<size_t>(BUFFER_SIZE);
+	while(n_out!=0)
+		{
+		auto n_in=static_cast<size_t>(n);
+		n_out=static_cast<size_t>(BUFFER_SIZE);
+		conv.compute(ptr,n_in,1,buffer_tmp.begin(),n_out);
+		data_new.append(buffer_tmp.begin(),n_out);
+		cb(cb_obj,*this,static_cast<float>(data_new.length())/length_out);
+		}
+
+	ArrayFixed<int32_t,4> offsets=
+		{
+		 static_cast<int32_t>( ratio*m_offsets[0] )
+		,static_cast<int32_t>( ratio*m_offsets[1] )
+		,static_cast<int32_t>( ratio*m_offsets[2] )
+		,static_cast<int32_t>( ratio*m_offsets[3] )
+		};
+
+	std::swap(data_new,m_data);
+	std::swap(offsets,m_offsets);
+	m_fs=fs;
 
 	return *this;
 	}

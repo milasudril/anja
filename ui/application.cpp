@@ -331,6 +331,12 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 
 void Application::progressResample(WaveformProxy& waveform,float status)
 	{
+	if(m_progress_null)
+		{
+		String label("Resampling ");
+		label.append(waveform.filename());
+		m_progress_null->widget().value(status).label(label.begin());
+		}
 	}
 
 void Application::engine_start()
@@ -350,8 +356,12 @@ void Application::engine_start()
 		,statusIcon(StatusIcon::WAIT));
 	m_ch_status_img[2 + 16 + 2].showPng(m_images,static_cast<size_t>(StatusIcon::WAIT)
 		,statusIcon(StatusIcon::WAIT));
+
+	String dlgcaption("Anja: Resampling waveforms");
+	m_progress_null.reset(new Dialog<ProgressBox,DialogNull>(m_mainwin,dlgcaption.begin()));
 	m_session.sampleRate(m_engine->sampleRate(),*this);
-//	fprintf(stderr,"\n");
+	m_progress_null.reset();
+	m_session_editor.sessionUpdated();
 	m_status.message(ANJA_ONLINE).type(Message::Type::READY);
 	}
 
@@ -363,7 +373,6 @@ void Application::engine_stop()
 		{
 		v.showPng(m_images,static_cast<size_t>(StatusIcon::OFF),statusIcon(StatusIcon::OFF));
 		});
-
 	}
 
 
