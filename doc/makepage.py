@@ -265,7 +265,7 @@ def quantity(node):
 	printWrapper(node.text + '&#160;' + node.attrib["unit"] + node.tail)
 
 def chapstr(chapter):
-	chapnum=['A','B','C','D','E','F','G','H']
+	chapnum=['A','B','C','D','E','F','G','H','I','J','K']
 	if countmode:
 		return chapnum[chapter-1]
 	else:

@@ -2,7 +2,7 @@
  "author":"Torbjörn Rathsman"
 ,"years":[2015,2017]
 ,"name":"Anja"
-,"legal_brief":"This program comes with ABSOLUTELY NO WARRANTY; for details see section 15 and 16 in the GNU General Public License version 3. This is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, either version 3, or at your option, any later version."
+,"legal_brief":"Anja comes with ABSOLUTELY NO WARRANTY; for details see section 15 and 16 in the GNU General Public License version 3. Anja is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, either version 3, or at your option, any later version."
 ,"description":"A live sampler for use with JACK"
 ,"acknowledgement":
 	[

@@ -232,6 +232,7 @@
       <File Name="doc/signalflow.sh"/>
       <File Name="doc/dependencies.py"/>
       <File Name="doc/acknowledgements.py"/>
+      <File Name="doc/legalbreif.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
