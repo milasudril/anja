@@ -31,59 +31,66 @@ namespace Anja
 				{}
 
 			template<class ProgressCallback>
-			void load(const char* filename,ProgressCallback& cb)
-				{*this=Session(filename,cb);}
+			Session& load(const char* filename,ProgressCallback& cb)
+				{
+				*this=Session(filename,cb);
+				return *this;
+				}
 
-			void save(const char* filename);
+			Session& save(const char* filename);
 
-			const String& filenameGet() const noexcept
+			const String& filename() const noexcept
 				{return m_filename;}
 
-			const String& directoryGet() const noexcept
+			const String& directory() const noexcept
 				{return m_directory;}
 
 
 
-			void titleSet(String&& title_new) noexcept
+			Session& title(String&& title_new) noexcept
 				{
 				if(title_new!=m_title)
 					{
 					m_title=std::move(title_new);
 					m_state_flags|=SESSION_DIRTY;
 					}
+				return *this;
 				}
 
-			void titleSet(const char* title_new) noexcept
+			Session& titleSet(const char* title_new)
 				{
 				if(m_title!=title_new)
 					{
 					m_title=String(title_new);
 					m_state_flags|=SESSION_DIRTY;
 					}
+				return *this;
 				}
 
-			const String& titleGet() const noexcept
+			const String& title() const noexcept
 				{return m_title;}
 
-			void descriptionSet(String&& description_new) noexcept
+			Session& description(String&& description_new) noexcept
 				{
 				if(m_description!=description_new)
 					{
 					m_description=std::move(description_new);
 					m_state_flags|=SESSION_DIRTY;
 					}
+				return *this;
 				}
 
-			void descriptionSet(const char* description_new) noexcept
+			Session& description(const char* description_new)
 				{
 				if(m_description!=description_new)
 					{
 					m_description=String(description_new);
 					m_state_flags|=SESSION_DIRTY;
 					}
+				return *this;
 				}
 
-			const String& descriptionGet() const noexcept
+			const String& description() const noexcept
 				{return m_description;}
 
 
@@ -92,10 +99,10 @@ namespace Anja
 
 			static const char* const* flagNames() noexcept;
 
-			unsigned int flagsGet() const noexcept
+			unsigned int flags() const noexcept
 				{return m_flags;}
 
-			unsigned int flagGet(unsigned int index) noexcept
+			unsigned int flag(unsigned int index) const noexcept
 				{return m_flags&index;}
 
 
@@ -122,15 +129,15 @@ namespace Anja
 
 
 
-			void waveformsClear();
+			Session& waveformsClear();
 
-			Waveform& waveformGet(uint8_t slot) noexcept
+			Waveform& waveform(uint8_t slot) noexcept
 				{return m_waveforms[slot];}
 
-			const Waveform& waveformGet(uint8_t slot) const noexcept
+			const Waveform& waveform(uint8_t slot) const noexcept
 				{return m_waveforms[slot];}
 
-			WaveformProxy waveformViewGet(uint8_t slot) noexcept
+			WaveformProxy waveformProxy(uint8_t slot) noexcept
 				{return WaveformProxy(m_waveforms[slot],m_waveform_data[slot],m_directory,m_fs,slot);}
 
 			WaveformData& waveformData(uint8_t slot) noexcept
@@ -139,20 +146,20 @@ namespace Anja
 			const WaveformData& waveformData(uint8_t slot) const noexcept
 				{return m_waveform_data[slot];}
 
-			ChannelProxy channelViewGet(int ch) noexcept
+			ChannelProxy channelProxy(int ch) noexcept
 				{return ChannelProxy(m_channels[ch],m_channel_data[ch]);}
 
-			ArraySimple<String> channelLabelsGet() const;
+			ArraySimple<String> channelLabels() const;
 
-			const String& channelLabelGet(int ch) const noexcept
+			const String& channelLabel(int ch) const noexcept
 				{
 				assert(ch>=0 && ch<16);
 				return m_channel_data[ch].label();
 				}
 
-			ArraySimple<ColorRGBA> channelColorsGet() const;
+			ArraySimple<ColorRGBA> channelColors() const;
 
-			int channelsCountGet() noexcept
+			int channelsCount() noexcept
 				{return m_channel_data.length();}
 
 			const Channel& channel(unsigned int index) const noexcept
@@ -162,16 +169,14 @@ namespace Anja
 				{return m_channels[index];}
 
 
-
-
-
-
-
-			uint8_t slotActiveGet() const noexcept
+			uint8_t slotActive() const noexcept
 				{return m_slot_active;}
 
-			void slotActiveSet(uint8_t slot)
-				{m_slot_active=slot;}
+			Session& slotActive(uint8_t slot)
+				{
+				m_slot_active=slot;
+				return *this;
+				}
 
 			int slotsCountGet() const noexcept
 				{return Wavetable::length();}
@@ -185,26 +190,30 @@ namespace Anja
 
 
 
-			const auto& colorPresetsGet() const noexcept
+			const auto& colorPresets() const noexcept
 				{return m_color_presets;}
 
 
 
-			float gainGet() const noexcept
+			float gain() const noexcept
 				{return m_gain;}
 
-			void gainSet(float value) noexcept
+			Session& gain(float value) noexcept
 				{
 				m_state_flags|=(std::abs(value - m_gain)>1e-4? SESSION_DIRTY : 0);
 				m_gain=value;
+				return *this;
 				}
 
-			bool dirtyIs() const noexcept;
+			bool dirty() const noexcept;
 
-			void dirtyClear() noexcept
-				{m_state_flags&=~SESSION_DIRTY;}
+			Session& dirtyClear() noexcept
+				{
+				m_state_flags&=~SESSION_DIRTY;
+				return *this;
+				}
 
-			Session& colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end);
+			Session& colorPresets(const ColorRGBA* begin,const ColorRGBA* end);
 
 			bool loadPossible(const char* filename) const;
 

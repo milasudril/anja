@@ -33,14 +33,14 @@ void SessionEditor::gainChanged(ChannelStrip& strip,int id)
 
 void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	{
-	auto slot=r_session.slotActiveGet();
+	auto slot=r_session.slotActive();
 	auto scancode=slotToScancode(slot);
 	if(scancode!=0xff);
 		{
-		m_keyboard.keyLabel(scancode,r_session.waveformViewGet(slot).keyLabel().begin())
+		m_keyboard.keyLabel(scancode,r_session.waveformProxy(slot).keyLabel().begin())
 			.keyLabel(Keys::AUDITION
 				,Anja::String("Audition: ")
-					.append(r_session.waveformViewGet(slot)
+					.append(r_session.waveformProxy(slot)
 					.keyLabel()).begin())
 			.redraw();
 		}
@@ -49,25 +49,25 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 
 void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
-	auto slot=r_session.slotActiveGet();
+	auto slot=r_session.slotActive();
 	auto scancode=slotToScancode(slot);
 	if(scancode!=0xff)
 		{
-		m_keyboard.keyColor(scancode,r_session.waveformViewGet(slot).keyColor())
+		m_keyboard.keyColor(scancode,r_session.waveformProxy(slot).keyColor())
 			.redraw();
 		}
 	}
 
 void SessionEditor::colorPresetsChanged(ColorPicker& picker)
 	{
-	r_session.colorPresetsSet(picker.presetsBegin(),picker.presetsEnd());
-	m_waveform.colorPresets(r_session.colorPresetsGet());
-	m_mixer.colorPresets(r_session.colorPresetsGet());
+	r_session.colorPresets(picker.presetsBegin(),picker.presetsEnd());
+	m_waveform.colorPresets(r_session.colorPresets());
+	m_mixer.colorPresets(r_session.colorPresets());
 	}
 
 void SessionEditor::masterGainChanged(MixerConsole& mixer,MixerId id)
 	{
-	r_session.gainSet(mixer.masterGain());
+	r_session.gain(mixer.masterGain());
 	}
 
 void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
@@ -84,16 +84,16 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 	if(index!=0xff)
 		{
 		m_tabs.activate(0);
-		m_waveform.waveform(r_session.waveformViewGet(index));
-		r_session.slotActiveSet(index);
+		m_waveform.waveform(r_session.waveformProxy(index));
+		r_session.slotActive(index);
 		}
 
-	auto slot=r_session.slotActiveGet();
+	auto slot=r_session.slotActive();
 	scancode=slotToScancode(slot);
 	if(scancode!=0xff);
 		{
 		keyboard.selection(scancode).keyLabel(Keys::AUDITION
-			,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
+			,Anja::String("Audition: ").append(r_session.waveformProxy(slot).keyLabel()).begin());
 		}
 	}
 
@@ -101,11 +101,11 @@ SessionEditor& SessionEditor::sessionUpdated()
 	{
 	m_keyboard.reset().keyLabel(Keys::AUDITION,"Audition");
 		{
-		auto N=std::min(r_session.channelsCountGet(),12);
+		auto N=std::min(r_session.channelsCount(),12);
 		for(decltype(N) k=0;k<N;++k)
 			{
 			auto key=channelToScancode(k);
-			auto ch=r_session.channelViewGet(k);
+			auto ch=r_session.channelProxy(k);
 			m_keyboard.keyColor(key,ch.color()).keyLabel(key,ch.label().begin());
 			}
 		}
@@ -117,7 +117,7 @@ SessionEditor& SessionEditor::sessionUpdated()
 			auto scancode=slotToScancode(k);
 			if(scancode==0xff)
 				{break;}
-			auto wf=r_session.waveformViewGet(k);
+			auto wf=r_session.waveformProxy(k);
 			m_keyboard.keyColor(scancode,wf.keyColor());
 			if(wf.keyLabel().length()!=0)
 				{m_keyboard.keyLabel(scancode,wf.keyLabel().begin());}
@@ -125,22 +125,22 @@ SessionEditor& SessionEditor::sessionUpdated()
 		}
 
 		{
-		auto slot=r_session.slotActiveGet();
+		auto slot=r_session.slotActive();
 		auto scancode=slotToScancode(slot);
 		if(scancode!=0xff)
 			{
 			m_keyboard.selection(scancode).keyLabel(Keys::AUDITION
-				,Anja::String("Audition: ").append(r_session.waveformViewGet(slot).keyLabel()).begin());
+				,Anja::String("Audition: ").append(r_session.waveformProxy(slot).keyLabel()).begin());
 			}
 		}
 	m_keyboard.redraw();
 
-	auto& color_presets=r_session.colorPresetsGet();
-	auto channel_names=r_session.channelLabelsGet();
+	auto& color_presets=r_session.colorPresets();
+	auto channel_names=r_session.channelLabels();
 
 	m_waveform.colorPresets(color_presets)
 		.channelNames(channel_names)
-		.waveform(r_session.waveformViewGet(r_session.slotActiveGet()))
+		.waveform(r_session.waveformProxy(r_session.slotActive()))
 		.waveformUpdate();
 
 	m_mixer.colorPresets(color_presets).channels(r_session);
@@ -157,8 +157,8 @@ SessionEditor::SessionEditor(Container& cnt,const ImageRepository& images,Sessio
 		,m_keyboard(m_hsplit.insertMode({Anja::Paned::SHRINK_ALLOWED|Anja::Paned::RESIZE}))
 		,m_tabs(m_hsplit)
 			,m_waveform(m_tabs.tabTitle("Waveform"),images
-				,session.waveformViewGet(session.slotActiveGet())
-				,session.channelLabelsGet())
+				,session.waveformProxy(session.slotActive())
+				,session.channelLabels())
 			,m_mixer(m_tabs.tabTitle("Channel mixer"),session)
 			,m_settings(m_tabs.tabTitle("Session"),session)
 	{
@@ -166,9 +166,9 @@ SessionEditor::SessionEditor(Container& cnt,const ImageRepository& images,Sessio
 	sessionUpdated();
 
 	m_keyboard.callback(*this,KeyboardViewId::KEYBOARD_MAIN);
-	m_waveform.colorPresets(session.colorPresetsGet())
+	m_waveform.colorPresets(session.colorPresets())
 		.callback(*this,WaveformEditId::WAVEFORM_CURRENT);
-	m_mixer.colorPresets(session.colorPresetsGet());
+	m_mixer.colorPresets(session.colorPresets());
 	m_mixer.channelsCallback(*this)
 		.callback(*this,MixerId::CHANNEL_MIXER);
 	}

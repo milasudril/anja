@@ -22,7 +22,7 @@ void SessionPropertiesEditor::changed(SourceView& entry,SourceViewId id)
 	switch(id)
 		{
 		case SourceViewId::DESCRIPTION:
-			r_session->descriptionSet(entry.content());
+			r_session->description(entry.content());
 			if(r_cb_obj!=nullptr)
 				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
 			break;
@@ -46,9 +46,9 @@ void SessionPropertiesEditor::clicked(OptionList& options,OptionListId id,Checkb
 
 void SessionPropertiesEditor::sessionUpdated()
 	{
-	m_title_input.content(r_session->titleGet().begin());
-	m_description_input.content(r_session->descriptionGet().begin());
-	m_options_input.selected(r_session->flagsGet());
+	m_title_input.content(r_session->title().begin());
+	m_description_input.content(r_session->description().begin());
+	m_options_input.selected(r_session->flags());
 	}
 
 SessionPropertiesEditor::SessionPropertiesEditor(Container& cnt,Session& session):

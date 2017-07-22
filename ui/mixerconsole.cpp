@@ -66,7 +66,7 @@ MixerConsole& MixerConsole::channels(Session& session)
 	int k=0;
 	std::for_each(m_strips.begin(),m_strips.end(),[&session,&k](ChannelStrip& strip)
 		{
-		strip.channel(session.channelViewGet(k));
+		strip.channel(session.channelProxy(k));
 		++k;
 		});
 	return *this;
@@ -74,14 +74,14 @@ MixerConsole& MixerConsole::channels(Session& session)
 
 MixerConsole::MixerConsole(Container& cnt,Session& session):
 	 r_cb_obj(nullptr)
-	,m_master_gain(session.gainGet())
+	,m_master_gain(session.gain())
 	,m_sections(cnt,false)
 		,m_channels(m_sections.insertMode({0,Box::EXPAND|Box::FILL}))
 			,m_strip_box(m_channels,false)
-				,m_strips(session.channelsCountGet()
+				,m_strips(session.channelsCount()
 					,[this,&session](ChannelStrip* mem,int k)
 						{
-						new(mem)ChannelStrip(m_strip_box.insertMode({0,Box::EXPAND|Box::FILL}),session.channelViewGet(k));
+						new(mem)ChannelStrip(m_strip_box.insertMode({0,Box::EXPAND|Box::FILL}),session.channelProxy(k));
 						m_separators.append(Separator(m_strip_box.insertMode({2,Box::EXPAND|Box::FILL}),true));
 						})
 		,m_master(m_sections.insertMode({2,0}),true)

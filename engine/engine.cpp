@@ -43,7 +43,7 @@ Engine::Engine(Session& session):r_session(&session)
 	,m_rec_write_offset(0)
 	,m_ch_state(0xffff)
 	,m_rec_length(0)
-	,m_client(client_name(session.titleGet()).begin(),*this)
+	,m_client(client_name(session.title()).begin(),*this)
 	,m_rec_thread(*this,TaskType<Engine::TaskId::RECORD>{})
 	{
 	m_voices_alloc.fill();
@@ -96,7 +96,7 @@ void Engine::portDisconnected(AudioClient& client,AudioClient::PortType type,int
 void Engine::playbackDone(Voice& voice,int event_offset) noexcept
 	{
 	m_voices_alloc.idRelease(voice.id());
-	r_session->waveformGet(midiToSlot(voice.key())).unlock();
+	r_session->waveform(midiToSlot(voice.key())).unlock();
 	voice=Voice{}; //Reset voice so we do not get here any more.
 	}
 
@@ -130,7 +130,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			//TODO: Same note different channels should be OK?
 			if(m_key_to_voice_index[ msg.value1()&0x7f ]==m_voices_alloc.null())
 				{
-				auto& waveform=r_session->waveformGet(midiToSlot(msg.value1()&0x7f));
+				auto& waveform=r_session->waveform(midiToSlot(msg.value1()&0x7f));
 				if(waveform.lockTry())
 					{
 					if(waveform.length()==0)
@@ -151,7 +151,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					m_voices[i]=Voice(waveform
 						,msg.value1()&0x80?
 							 17
-							:(r_session->flagsGet()&Session::ALLOW_CHANNEL_OVERRIDE)?
+							:(r_session->flags()&Session::ALLOW_CHANNEL_OVERRIDE)?
 								 msg.channel()
 								:waveform.channel()
 						,msg.value2()/127.0,offset,*this,i,msg.value1()&0x7f);
@@ -216,7 +216,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 				case RECORD_START:
 					{
 					auto slot=midiToSlot(msg.value2()&0x7f);
-					if(!(r_session->waveformGet(slot).flags()&Waveform::READONLY))
+					if(!(r_session->waveform(slot).flags()&Waveform::READONLY))
 						{
 						m_rec_message_in=RecordMessage(RecAction::BEGIN
 							,midiToSlot(msg.value2()&0x7f),m_rec_write_offset);
@@ -371,7 +371,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 
 //	Adjust master gain
 		{
-		auto g=dBToAmplitude( r_session->gainGet() );
+		auto g=dBToAmplitude( r_session->gain() );
 		auto g_vec=vec4_t<float>{g,g,g,g};
 		std::for_each(master,master + n_frames/4,[g_vec](vec4_t<float>& vec)
 			{vec*=g_vec;});
@@ -437,7 +437,7 @@ void Engine::run<Engine::TaskId::RECORD>()
 				auto l=rec_message.longval();
 				auto rs=rec_message.shortval();
 				assert(rs>=0 && rs<128);
-				auto r_waveform_in=&r_session->waveformGet(rs);
+				auto r_waveform_in=&r_session->waveform(rs);
 				if(r_waveform_in->lockTry())
 					{
 					r_waveform_in->clear();
@@ -472,10 +472,10 @@ const char* Engine::port(AudioClient::PortType type,int index) const noexcept
 		case AudioClient::PortType::WAVE_IN:
 			return index==0?"Wave in":nullptr;
 		case AudioClient::PortType::WAVE_OUT:
-			if(r_session->flagsGet()&Session::MULTIOUTPUT)
+			if(r_session->flags()&Session::MULTIOUTPUT)
 				{
 				if(index>=0 && index<16)
-					{return r_session->channelLabelGet(index).begin();}
+					{return r_session->channelLabel(index).begin();}
 				if(index==16)
 					{return "Master out";}
 				if(index==17)

@@ -88,16 +88,16 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 			auto slot_num=atol(slot_num_str->begin());
 			if(slot_num<1 || slot_num>128)
 				{throw Error(filename," contains invalid data. Slot numbers must be between 1 to 128 inclusive.");}
-			slotActiveSet(slot_num-1);
+			slotActive(slot_num-1);
 			}
 
 		auto value=record.propertyGet(String("Description"));
 		if(value!=nullptr)
-			{descriptionSet(value->begin());}
+			{description(value->begin());}
 
 		value=record.propertyGet(String("Master gain/dB"));
 		if(value!=nullptr)
-			{gainSet(convert(value->begin()));}
+			{gain(convert(value->begin()));}
 
 		value=record.propertyGet(String("Options"));
 		if(value!=nullptr)
@@ -157,7 +157,7 @@ Session::Session(const char* filename,progress_callback cb,void* obj):m_slot_act
 	dirtyClear();
 	}
 
-void Session::waveformsClear()
+Session& Session::waveformsClear()
 	{
 	std::for_each(m_waveforms.begin(),m_waveforms.end(),[](Waveform& wf)
 		{wf.reset();});
@@ -165,10 +165,11 @@ void Session::waveformsClear()
 	std::for_each(m_waveform_data.begin(),m_waveform_data.end(),[](WaveformData& wd)
 		{wd.clear();});
 
-	slotActiveSet(0);
+	slotActive(0);
+	return *this;
 	}
 
-ArraySimple<String> Session::channelLabelsGet() const
+ArraySimple<String> Session::channelLabels() const
 	{
 	ArraySimple<String> ret(m_channel_data.length());
 	auto k=0;
@@ -180,7 +181,7 @@ ArraySimple<String> Session::channelLabelsGet() const
 	return std::move(ret);
 	}
 
-ArraySimple<ColorRGBA> Session::channelColorsGet() const
+ArraySimple<ColorRGBA> Session::channelColors() const
 	{
 	ArraySimple<ColorRGBA> ret(m_channel_data.length());
 	auto k=0;
@@ -208,7 +209,7 @@ void Session::channelsClear()
 		{x.gain(0.0f).fadeTime(1e-3f).dirtyClear();});
 	}
 
-Session& Session::colorPresetsSet(const ColorRGBA* begin,const ColorRGBA* end)
+Session& Session::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
 	{
 	m_color_presets.clear();
 	std::for_each(begin,end,[this](const ColorRGBA& c)
@@ -240,7 +241,7 @@ bool Session::loadPossible(const char* filename) const
 	return SessionFileReader::check(filename);
 	}
 
-void Session::save(const char* filename)
+Session& Session::save(const char* filename)
 	{
 	char buffer[32];
 	SessionFileRecordImpl record_out;
@@ -253,11 +254,11 @@ void Session::save(const char* filename)
 	record_out.propertySet(String("Description")
 		,m_description);
 
-	sprintf(buffer,"%.7g",gainGet());
+	sprintf(buffer,"%.7g",gain());
 	record_out.propertySet(String("Master gain/dB")
 		,String(buffer));
 	record_out.propertySet(String("Options")
-		,stringFromOptions(flagsGet(),FLAG_NAMES));
+		,stringFromOptions(flags(),FLAG_NAMES));
 	if(m_color_presets.length()!=0)
 		{
 		record_out.propertySet(String("Color presets")
@@ -312,9 +313,11 @@ void Session::save(const char* filename)
 	m_directory=dir;
 	m_filename=String(filename);
 	dirtyClear();
+
+	return *this;
 	}
 
-bool Session::dirtyIs() const noexcept
+bool Session::dirty() const noexcept
 	{
 	if(m_state_flags&SESSION_DIRTY)
 		{return 1;}
@@ -362,6 +365,6 @@ Session& Session::sampleRate(double fs,progress_callback cb,void* obj)
 		} cbobj{cb,obj};
 
 	for(size_t k=0;k<m_waveforms.length();++k)
-		{waveformViewGet(k).resample(fs,cbobj);}
+		{waveformProxy(k).resample(fs,cbobj);}
 	return *this;
 	}
