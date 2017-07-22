@@ -7,7 +7,7 @@
 		<includegraphics src="logo_3.png" media="(max-width:128px)" />
 		<includegraphics src="logo_2.png" media="(max-width:256px)" />
 		<includegraphics src="logo_1.png" media="(max-width:512px)" />
-		<includegraphics src="logo.png" media="(min-width:512spx)" />
+		<includegraphics src="logo.png" media="(min-width:512px)" />
 	</titlepic>
 
 	<abstract>

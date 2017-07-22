@@ -63,10 +63,16 @@ Some sort of electric [pump] From pdsounds.org.
 ~Channel: 3
 
 ##Slot 7
-Description: Swedish televerket "Dialog" [Ring]tone
+~Description: Swedish televerket "Dialog" [Ring]tone
 ~Filename:    dialog.wav
 ~Color:       0;0.5;1
 ~Options:     Loop|Sustain
+
+##Slot 8
+~Description: [Sine multi]. 2 channel sine wave. 440 Hz + 880 Hz
+~Filename:    sine-440-660.flac
+~Color:       0;0.25;1
+~Channel:     3
 
 ##Channel 1
 ~Label: Fx

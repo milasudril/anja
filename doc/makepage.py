@@ -60,11 +60,10 @@ def includegraphics2(node):
 def titlepic(node):
 	printWrapper('''<div class="titlepic">
 <picture>''')
-	for altgraphics in node.findall('includegraphics'):
+	alts=list(node.findall('includegraphics'))
+	for altgraphics in alts:
 		includegraphics(altgraphics)
-
-	last=node.findall('includegraphics[last()]')[0]
-	printWrapper('<img src="' + last.attrib["src"] + '" alt="Title picture">')
+	printWrapper('<img src="' + alts[int( len(alts)/2 )].attrib["src"] + '" alt="Title picture">')
 	printWrapper('''</picture>
 </div>''')
 

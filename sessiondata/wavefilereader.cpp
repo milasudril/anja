@@ -63,7 +63,10 @@ unsigned int WavefileReader::Impl::dataRead(float* buffer, unsigned int n_frames
 	auto ptr_buffer=buffer_tmp.begin();
 	while(N!=0)
 		{
-		*buffer=*ptr_buffer;
+		auto sum=0.0f;
+		for(int k=0;k<n_channels;++k)
+			{sum+=ptr_buffer[k];}
+		*buffer=sum/n_channels;
 		ptr_buffer+=n_channels;
 		++buffer;
 		--N;
