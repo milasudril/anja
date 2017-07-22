@@ -111,10 +111,20 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 	record.propertySet(String("Gain/dB"),String(buffer));
 	sprintf(buffer,"%.7g",gainRandom());
 	record.propertySet(String("Gain random level/dB"),String(buffer));
+
 	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::BEGIN>()/m_length_ratio + 0.5 ) );
 	record.propertySet(String("Begin position/frames"),String(buffer));
+
 	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::END>()/m_length_ratio + 0.5 ) );
 	record.propertySet(String("End position/frames"),String(buffer));
+
+	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::BEGIN_LOOP>()/m_length_ratio + 0.5 ) );
+	record.propertySet(String("Loop begin position/frames"),String(buffer));
+
+	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::END_LOOP>()/m_length_ratio + 0.5 ) );
+	record.propertySet(String("Loop end position/frames"),String(buffer));
+
+	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::BEGIN_LOOP>()/m_length_ratio + 0.5 ) );
 	record.propertySet(String("Options"),stringFromOptions(flags(),FLAG_NAMES));
 	return *this;
 	}

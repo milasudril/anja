@@ -85,8 +85,8 @@ namespace Anja
 			Waveform& offset(int32_t value_new) noexcept
 				{
 				static_assert(static_cast<int32_t>(c)>=0 && static_cast<int32_t>(c)<4,"");
-				value_new= value_new/m_length_ratio + 0.5;
 				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
+				value_new=value_new/m_length_ratio + 0.5;
 				m_flags|=(temp!=m_offsets[ static_cast<int32_t>(c) ]? DIRTY : 0);
 				m_offsets[ static_cast<int32_t>(c) ]=temp;
 
