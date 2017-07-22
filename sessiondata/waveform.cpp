@@ -124,7 +124,6 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::END_LOOP>()/m_length_ratio + 0.5 ) );
 	record.propertySet(String("Loop end position/frames"),String(buffer));
 
-	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::BEGIN_LOOP>()/m_length_ratio + 0.5 ) );
 	record.propertySet(String("Options"),stringFromOptions(flags(),FLAG_NAMES));
 	return *this;
 	}
