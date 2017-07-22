@@ -113,8 +113,10 @@ make</code>
 <section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
 
-	<infobox type="info">In case a multi-channel audio file is loaded, only the data for the first (usually the "left" channel) will be loaded. This is because Anja uses mono waveforms. What you would do, is to separate the channels of the input file with a tool such as <prgname>ffmpeg</prgname> and load the resulting tracks into different slots, mapped to different channels. Then use multi-channel output (see <ref>multichannel</ref>) and trigger playback of these slots simultaneously.
-	</infobox>
+<infobox type="info">In case a multi-channel audio file is loaded, all channels in the input stream are mixed into one. This is because Anja uses mono waveforms. If you want to preserve individual channles, separate the channels of the input file with a tool such as <prgname>ffmpeg</prgname> and load the resulting files into different slots, mapped to different channels. Then use multi-channel output (see <ref>multichannel</ref>) and trigger playback of these slots simultaneously.</infobox>
+
+<infobox type="warning">Anja does not resample any waveform during playback. Instead, it will resample waveforms that do not match the current sample rate when the engine is started. If the engine has to be restarted and the new sample rate differs (the only reason for this is that JACK itself was restarted using another sample rate), it is recommended to save the current session and reload it rather than restarting the engine. This is because multiple resample steps can be lossy.
+</infobox>
 
 	<section id="play">Playing waveforms</section>
 	<p>Before any sound can be heard from Anja, the following conditions has to be met:</p>
