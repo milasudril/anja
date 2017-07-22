@@ -394,12 +394,14 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 		switch(m_rec_message_in.action())
 			{
 			case RecAction::END:
+			case RecAction::BEGIN:
 				m_rec_length=m_rec_write_offset;
 				m_rec_write_offset=0;
 				m_rec_buffers.swap<0,1>();
 				memset(m_rec_buffers.begin<0>(),0,m_rec_buffers.length()*sizeof(float));
 				m_rec_message=m_rec_message_in;
 				m_ready.set();
+				m_rec_message_in=RecordMessage(RecAction::NOP,0,0);
 				break;
 
 			default:
@@ -441,7 +443,8 @@ void Engine::run<Engine::TaskId::RECORD>()
 				if(r_waveform_in->lockTry())
 					{
 					r_waveform_in->clear();
-					r_waveform_in->append(m_rec_buffers.begin<1>() + l,m_rec_buffers.length() - l);
+					assert(m_rec_length > l);
+					r_waveform_in->append(m_rec_buffers.begin<1>() + l,m_rec_length - l);
 					rec_slot=rs;
 					r_waveform=r_waveform_in;
 					}
@@ -451,7 +454,8 @@ void Engine::run<Engine::TaskId::RECORD>()
 			case RecAction::END:
 				if(r_waveform!=nullptr)
 					{
-					r_waveform->append(m_rec_buffers.begin<1>(),m_rec_length).unlock();
+					r_waveform->append(m_rec_buffers.begin<1>(),m_rec_length);
+					r_waveform->unlock();
 					r_waveform=nullptr;
 					m_vt.record_done(r_cb_obj,*this,rec_slot);
 					}
