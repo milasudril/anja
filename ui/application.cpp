@@ -496,6 +496,10 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 							{m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
 						break;
 
+					case Keys::KILL_AUDITION:
+						m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,0,1});
+						break;
+
 					case 1:
 						m_keyb_status_view.showPng(m_images
 							,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));

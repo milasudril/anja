@@ -50,6 +50,7 @@ namespace Anja
 		static constexpr int FADE_IN_FAST=106;
 		static constexpr int FADE_OUT_FAST=105;
 		static constexpr int KILL_ALL=111;
+		static constexpr int KILL_AUDITION=109;
 		static constexpr int RECORD_START_L=29;
 		static constexpr int RECORD_START_R=97;
 		}

@@ -43,7 +43,11 @@
 
 
 	<section id="requirements">System requirements</section>
-	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname> and <libname>GTK+</libname> version 3. Anja currently only builds on x86-64. Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
+	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname>, <libname>libsamplerate</libname> and <libname>GTK+</libname> version 3, together with <libname>gtksourceview</libname> version 3. A complete list of dependencies are found in <ref>deps</ref>.</p>
+
+	<p>Anja currently only builds on x86-64. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. Notice that a version that has been compiled for such a CPU cannot run on a CPU without AVX support. This is because only one version of the audio engine is build during compilation.</p>
+
+	<p>Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
 
 
 	<section id="comparison">Anja compared to other software</section>
@@ -370,17 +374,18 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <chapter id="fileformats">Supported file formats</chapter>
-	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>.</p>
+	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular wave file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
 
 	<chapter id="keybindings">Key bindings</chapter>
 	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>ESC</kbd> requires that the computer keyboard is active.</p>
 	<tabular>
 		<colheaders><col>Key combination</col><col>Function</col></colheaders>
 		<row><col><kbd>Ctrl</kbd>+<kbd><var>key</var></kbd></col><col>Record to <kbd><var>key</var></kbd></col></row>
-		<row><col><kbd>DEL</kbd></col><col>Stop all audio playback</col></row>
-			<row><col><kbd>Space</kbd></col><col>Start audition playback of current slot</col></row>
-		<row><col><kbd>ESC</kbd></col><col>Activate the computer keyboard</col></row>
+		<row><col><kbd>ESC</kbd></col><col>Activate the computer keyboard. Hit this key if other keys in this list have no effect.</col></row>
+		<row><col><kbd>DEL</kbd></col><col>Stop all audio playback on <dirname>Master out</dirname> or channel ports</col></row>
 		<row><col><kbd><var>key</var></kbd></col><col>Start playback of the slot associated with <var>key</var></col></row>
+		<row><col><kbd>Page Down</kbd></col><col>Stop all audio playback on <dirname>Audition</dirname></col></row>
+		<row><col><kbd>Space</kbd></col><col>Start audition playback of current slot</col></row>
 		<row><col><kbd>↑</kbd> + <kbd>F<var>k</var></kbd></col><col>Fade in channel <var>k</var></col></row>
 		<row><col><kbd>↓</kbd> + <kbd>F<var>k</var></kbd></col><col>Fade out channel <var>k</var></col></row>
 		<row><col><kbd>←</kbd> + <kbd>F<var>k</var></kbd></col><col>Mute channel <var>k</var></col></row>
@@ -398,7 +403,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	<row><col>NOTE_OFF</col><col>N/A</col><col>Stop all playback that is associated with the given key</col></row>
 	<row><col>NOTE_ON</col><col>N/A</col><col>If possible, start playback using the slot given by the first data byte. If channel override is allowed (see <ref>midi</ref>), the mapped waveform will be played through the channel given by the message. Otherwise, the it is played through the channel set by anja (see <ref>pbchannel</ref>).</col></row>
 	<row><col>CONTROL_CHANGE</col><col>CHANNEL_VOLUME</col><col>Set playback channel volume. Notice that Anja assumes that the value is a linearly mapped dB value (0 corresponds to <quantity unit="dB">-72</quantity>, 127 corresponds to <quantity unit="dB">6</quantity>), as opposed to General MIDI, which says that the value should be a regular gain. The reason for this implementation is to make better use of the seven bits available in a single channel volume message.</col></row>
-	<row><col> </col><col>SOUND_OFF</col><col>Stop all ongoing playback</col></row>
+	<row><col> </col><col>SOUND_OFF</col><col>Stop all ongoing playback. If The last data byte is non-zero, it stops all <dirname>Audiotion</dirname> playback. Otherwise, all other playback is stopped.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_1</col><col>Start a fade out on the given channel. The second data byte controls the decay rate.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_2</col><col>Start a fade in on the given channel. The second data byte controls the decay rate.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_3</col><col>If possible, enable recording to the slot given by the second data byte. If recording is already enabled, the last block of the current recording is discarded.</col></row>
@@ -414,7 +419,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 
 <ul>
 <li class="cmdoption"><p><cmdoption>layout inspect</cmdoption></p>
-<p>prints coordinates of bounding boxes for various parts of the GUI to standard output. The outline in <ref>anjaworkspace</ref> has been generated by using this option.</p></li>
+<p>prints coordinates of bounding boxes for various parts of the GUI to standard output. The outline in <ref>anjaworkspace</ref> has been generated by using this command.</p></li>
 
 <li class="cmdoption"><p><cmdoption>port selector open</cmdoption>,<em>port indicator index</em></p>
 

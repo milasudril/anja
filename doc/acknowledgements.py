@@ -18,7 +18,7 @@ def write_error(*args, **kwargs):
 
 doc=string.Template('''<?xml version="1.0"?>
 <content>
-<chapter-star id="deps">Acknowledgements</chapter-star>
+<chapter-star id="ack">Acknowledgements</chapter-star>
 <p>Anja would not have been possible without these people:</p>
 
 <ul><li>$acks</li></ul>

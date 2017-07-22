@@ -169,14 +169,17 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 					break;
 
 				case MIDI::ControlCodes::SOUND_OFF:
-					std::for_each(m_voices.begin(),m_voices.end(),[msg,offset,this](Voice& voice)
+					{
+					auto ch=msg.value2()?17:msg.channel();
+					std::for_each(m_voices.begin(),m_voices.end(),[offset,this,ch](Voice& voice)
 						{
-						if(!voice.done() && voice.channel()==msg.channel())
+						if(!voice.done() && voice.channel()==ch)
 							{
 							voice.flagsUnset(Waveform::SUSTAIN).stop(offset);
 							m_key_to_voice_index[voice.key()]=m_voices_alloc.null();
 							}
 						});
+					}
 					break;
 
 				case FADE_IN:
