@@ -106,22 +106,16 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 	{
 	char buffer[32];
 	sprintf(buffer,"%u",channel() + 1);
-	record.propertySet(String("Channel")
-		,String(buffer));
+	record.propertySet(String("Channel"),String(buffer));
 	sprintf(buffer,"%.7g",gain());
-	record.propertySet(String("Gain/dB")
-		,String(buffer));
+	record.propertySet(String("Gain/dB"),String(buffer));
 	sprintf(buffer,"%.7g",gainRandom());
-	record.propertySet(String("Gain random level/dB")
-		,String(buffer));
-	sprintf(buffer,"%u",offset<Cursor::BEGIN>());
-	record.propertySet(String("Begin position/frames")
-		,String(buffer));
-	sprintf(buffer,"%u",offset<Cursor::END>());
-	record.propertySet(String("End position/frames")
-		,String(buffer));
-	record.propertySet(String("Options")
-		,stringFromOptions(flags(),FLAG_NAMES));
+	record.propertySet(String("Gain random level/dB"),String(buffer));
+	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::BEGIN>()/m_length_ratio + 0.5 ) );
+	record.propertySet(String("Begin position/frames"),String(buffer));
+	sprintf(buffer,"%u",static_cast<unsigned int>( offset<Cursor::END>()/m_length_ratio + 0.5 ) );
+	record.propertySet(String("End position/frames"),String(buffer));
+	record.propertySet(String("Options"),stringFromOptions(flags(),FLAG_NAMES));
 	return *this;
 	}
 
@@ -141,6 +135,7 @@ Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void*
 	WavefileReader reader(filename,info);
 	reset();
 	sampleRate(info.fs);
+	m_length_ratio=1.0;
 	capacity(info.n_frames);
 	ArraySimple<float> buffer_tmp(BUFFER_SIZE);
 	uint32_t n_read=0;
@@ -152,12 +147,13 @@ Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void*
 			{cb(cb_obj,*this,static_cast<float>(lengthFull())/static_cast<float>(info.n_frames));}
 		}
 	while(n_read==BUFFER_SIZE);
-	offsetsReset();
 
+	offsetsReset();
 //	When a wavefile is loaded, we do not want to overwrite data by accident.
 	flagsSet(READONLY|DIRTY);
 	flagsUnset(RECORDED);
 	m_flags&=(~RESAMPLED); //Waveform is fresh from disk
+
 	return *this;
 	}
 
@@ -219,17 +215,9 @@ Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
 		cb(cb_obj,*this,static_cast<float>(data_new.length())/length_out);
 		}
 
-	ArrayFixed<int32_t,4> offsets=
-		{
-		 static_cast<int32_t>( ratio*m_offsets[0] )
-		,static_cast<int32_t>( ratio*m_offsets[1] )
-		,static_cast<int32_t>( ratio*m_offsets[2] )
-		,static_cast<int32_t>( ratio*m_offsets[3] )
-		};
-
 	std::swap(data_new,m_data);
-	std::swap(offsets,m_offsets);
 	m_fs=fs;
+	m_length_ratio=ratio;
 	m_flags|=RESAMPLED;
 
 	return *this;

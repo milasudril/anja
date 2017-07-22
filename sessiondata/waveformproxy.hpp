@@ -84,19 +84,8 @@ namespace Anja
 					WaveformProxy& self;
 					void progressResample(Waveform& w,float status)
 						{cb.progressResample(self,status);}
-					void progressLoad(WaveformProxy& w,float status)
-						{cb.progressResample(w,status);}
 					} cbobj{cb,*this};
 
-			/*	Reload. FIXME: Reloading waveform must also reset the cursors
-				if(r_waveform->resampled())
-					{
-					fprintf(stderr,"Dirty %d    ",r_waveform->dirty());
-					waveformLoad(r_waveform_data->filenameGet().begin(),cbobj);
-					r_waveform->dirtyClear();
-					fprintf(stderr,"Dirty %d\n",r_waveform->dirty());
-
-					}*/
 				r_waveform->resample(fs,cbobj);
 				return *this;
 				}

@@ -75,6 +75,9 @@ WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callbac
 		WaveformProxy& r_proxy;
 		void progressLoad(Waveform& wf,float status)
 			{m_cb(m_cb_obj,r_proxy,status);}
+
+		void progressResample(Waveform& wf,float status)
+			{m_cb(m_cb_obj,r_proxy,status);}
 		} load_cb{cb,cb_obj,*this};
 
 	if(absoluteIs(filename))
@@ -88,6 +91,12 @@ WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callbac
 		r_waveform->waveformLoad(fullpath.begin(),load_cb);
 		r_waveform_data->filename(std::move(fullpath));
 		}
+
+	if(*r_fs>0.0)
+		{
+		r_waveform->resample(*r_fs,load_cb);
+		}
+
 	return *this;
 	}
 

@@ -20,11 +20,11 @@ namespace Anja
 		{
 		public:
 			Waveform() noexcept:m_channel(0)
-				,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_flags(0)
+				,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_length_ratio(1.0),m_flags(0)
 				{}
 
 			explicit Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
-				m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_flags(READONLY)
+				m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_length_ratio(1.0),m_flags(READONLY)
 				{
 				m_data.append(buffer,buffer_size);
 				offsetsReset();
@@ -78,14 +78,14 @@ namespace Anja
 			int32_t offset() const noexcept
 				{
 				static_assert(static_cast<int>(c)>=0 && static_cast<int>(c)<4,"");
-				return m_offsets[ static_cast<int32_t>(c) ];
+				return m_offsets[ static_cast<int32_t>(c) ]*m_length_ratio;
 				}
 
 			template<Cursor c>
 			Waveform& offset(int32_t value_new) noexcept
 				{
 				static_assert(static_cast<int32_t>(c)>=0 && static_cast<int32_t>(c)<4,"");
-
+				value_new= value_new/m_length_ratio + 0.5;
 				auto temp=std::max(std::min(value_new,static_cast<int32_t>(m_data.length())),0);
 				m_flags|=(temp!=m_offsets[ static_cast<int32_t>(c) ]? DIRTY : 0);
 				m_offsets[ static_cast<int32_t>(c) ]=temp;
@@ -139,8 +139,8 @@ namespace Anja
 				{
 				m_offsets[0]=0;
 				m_offsets[1]=0;
-				m_offsets[2]=m_data.length();
-				m_offsets[3]=m_data.length();
+				m_offsets[2]=m_data.length()/m_length_ratio;
+				m_offsets[3]=m_data.length()/m_length_ratio;
 				m_flags|=DIRTY;
 				return *this;
 				}
@@ -259,6 +259,7 @@ namespace Anja
 				m_data.clear();
 				offsetsReset();
 				m_flags=0;
+				m_length_ratio=1.0;
 				return *this;
 				}
 
@@ -306,6 +307,7 @@ namespace Anja
 					{
 					m_flags|=RECORDED|DIRTY;
 					m_flags&=~RESAMPLED;
+					m_length_ratio=1.0;
 					}
 				else
 					{
@@ -321,7 +323,8 @@ namespace Anja
 			int32_t m_channel;
 			float m_gain;
 			float m_gain_random;
-			double m_fs; //Set this to
+			double m_fs;
+			double m_length_ratio;
 			mutable uint32_t m_flags;
 
 			static constexpr uint32_t RECORDED=0x20000000;
