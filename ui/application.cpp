@@ -380,15 +380,19 @@ void Application::engine_stop()
 
 Application& Application::sessionNew()
 	{
+	auto running=(m_engine.get()!=nullptr);
 	engine_stop();
 	m_session.clear();
 	m_session_editor.sessionUpdated();
 	title_update(m_session,m_mainwin);
 	chlabels_update(m_session,m_ch_status_img);
-	try
-		{engine_start();}
-	catch(...)
-		{}
+	if(running)
+		{
+		try
+			{engine_start();}
+		catch(...)
+			{}
+		}
 	return *this;
 	}
 
@@ -843,7 +847,8 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				break;
 			case 1:
 				if(m_session.dirty())
-					{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}				else
+					{save_ask(ConfirmSaveDialogId::SESSION_LOAD);}
+				else
 					{sessionLoad();}
 				break;
 			case 2:
@@ -919,7 +924,7 @@ void Application::descriptionChanged(SessionPropertiesEditor& editor,int id)
 
 void Application::optionChanged(SessionPropertiesEditor& editor,int id,int option)
 	{
-	if(id==0 && (1<<option)==Session::MULTIOUTPUT)
+	if(id==0 && (1<<option)==Session::MULTIOUTPUT && m_engine)
 		{m_status.message(ANJA_RESTART_NEEDED).type(Message::Type::WAIT);}
 	}
 
