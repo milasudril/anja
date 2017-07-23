@@ -446,7 +446,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <section id="modintract">Module interaction</section>
 <p>It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data module. This direct approach makes the code easier to understand, but requires changes to more places in the code, compared to an orthodox MVC approach, where the model updates all views upon change.</p>
 
-<p>When the user triggers the engine, the UI posts a MIDI message to a ringbuffer, which is read by the realtime thread in the engine. The messages are then processed by the engine.</p>
+<p>When the user triggers the engine, the UI posts a MIDI message to a ringbuffer, which is read by the realtime thread in the engine. The messages are then processed by the engine. </p>
 
 <input src="legalbrief.xml" />
 </document>
