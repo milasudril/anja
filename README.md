@@ -71,6 +71,8 @@ use the following PPA:
 
  * https://launchpad.net/~thomas-schiex/+archive/ubuntu/blender
 
+It can be added through the commands
+
     sudo add-apt-repository ppa:thomas-schiex/blender
     sudo apt-get update
 
