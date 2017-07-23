@@ -8,6 +8,8 @@
             "__targets_inst",
             ".",
             "__targets_rel",
+            "__maike_bin",
+            "__pycache__",
             "testbank"
         ],
         "recursive":1

@@ -1,9 +1,14 @@
 #!/bin/bash
 
-#Detect Maike
 set -eo pipefail
+
+configfile="$1"
+
+#Detect Maike
 if command -v maike; then
-	maike --configfiles=maikeconfig-rel.json
+	maike_cmd=maike
+elif command -v __maike_bin/maike; then
+	maike_cmd=__maike_bin/maike
 else
 	if [ -z "$WINDIR" ]; then
 		if ! command -v jq; then
@@ -24,10 +29,11 @@ else
 		cd ..
 		mv __maike_src/__targets __maike_bin
 		rm -rf __maike_src
-		__maike_bin/maike --configfiles=maikeconfig-rel.json
-		rm -rf __maike_bin
+		maike_cmd=__maike_bin/maike
 	else
 		echo "The Windows platorm is not yet supported"
 		exit 1
 	fi
 fi
+
+$maike_cmd "--configfiles=$configfile"
