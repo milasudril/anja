@@ -121,4 +121,5 @@ not mentioned in any particular order.
            doStuff();
 
 [1] https://github.com/milasudril/anja/issues
+
 [2] http://www.mingw.org/wiki/c99
