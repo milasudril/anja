@@ -64,6 +64,8 @@
 	<section id="compile">Compiling Anja</section>
 	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in <ref>deps</ref>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
 
+	<infobox type="information">In addition to the general instructions given here, there are some additional information regarding build preparation in the file <dirname>README.md</dirname>.</infobox>
+
 <p>As mentioned above, the Anja source package can be obtained from<cite>anjasrc</cite>. Following this link gives a link to a gzipped tarball. In order to extract that tarball issue the command</p>
 
 	<code language="bash">tar -xf anja-src.tar.gz</code>
