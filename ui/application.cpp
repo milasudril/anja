@@ -1052,8 +1052,4 @@ Application::Application():
 	m_keyb_status_view.minHeight(18);
 
 	m_mainwin.icon(m_images,StatusIconEnd,{s_logo_begin,s_logo_end}).show();
-	try
-		{engine_start();}
-	catch(...)
-		{}
 	}

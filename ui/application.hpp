@@ -92,6 +92,23 @@ namespace Anja
 				m_ctx.messagePost(MessageId::INVOKE,0);
 				return *this;
 				}
+			
+			Application& engineStart() noexcept
+				{
+				try
+					{engine_start();}
+				catch(...)
+					{}
+				return *this;
+				}
+
+			Application& engineStop() noexcept
+				{
+				engine_stop();
+				return *this;
+				}
+
+
 
 			UiContext::RunStatus idle(UiContext& ctx);
 
