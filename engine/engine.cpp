@@ -243,8 +243,26 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 
 static void write(MIDI::Message msg,int offset,AudioClient::MidiMessageWriter& writer)
 	{
-	if(!(msg.value1()&0x80))
-		{writer.write(msg,offset);}
+	if(msg.value1()&0x80)
+		{return;}
+
+	switch(msg.status())
+		{
+		case MIDI::StatusCodes::CONTROL_CHANGE:
+			switch(msg.ctrlCode())
+				{
+				case Engine::FADE_IN: return;
+				case Engine::FADE_OUT: return;
+				case Engine::RECORD_START: return;
+				case Engine::RECORD_STOP: return;
+				default: break;
+				}
+			break;
+
+		default:
+			break;
+		}
+	writer.write(msg,offset);
 	}
 
 int Engine::indexAudition(const AudioClient& client) const noexcept
