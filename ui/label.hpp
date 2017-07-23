@@ -35,6 +35,8 @@ namespace Anja
 
 			Label& small(bool status);
 
+			Label& alignment(float x);
+
 
 		protected:
 			class Impl;

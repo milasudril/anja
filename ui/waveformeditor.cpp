@@ -218,7 +218,7 @@ ArraySimple<float> WaveformEditor::filename_update(const WaveformProxy& waveform
 		}
 	}
 
-static void description_update(const WaveformProxy& waveform,TextEntry& e)
+static void description_update(const WaveformProxy& waveform,SourceView& e)
 	{
 	e.content(waveform.description().begin());
 	}
@@ -226,6 +226,19 @@ static void description_update(const WaveformProxy& waveform,TextEntry& e)
 static void color_update(const WaveformProxy& waveform,TextEntry& e)
 	{
 	e.content(ColorString(waveform.keyColor()).begin());
+	}
+
+void WaveformEditor::changed(SourceView& entry,SourceViewId id)
+	{
+	switch(id)
+		{
+		case SourceViewId::DESCRIPTION:
+			m_waveform.description(String(entry.content()));
+			if(r_cb_obj!=nullptr)
+				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
+			description_update(m_waveform,entry);
+			break;
+		}
 	}
 
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
@@ -241,13 +254,6 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				else
 					{waveform_load(1);}
 				}
-			break;
-
-		case TextEntryId::DESCRIPTION:
-			m_waveform.description(String(entry.content()));
-			if(r_cb_obj!=nullptr)
-				{m_vtable.description_changed(r_cb_obj,*this,m_id);}
-			description_update(m_waveform,entry);
 			break;
 
 		case TextEntryId::COLOR:
@@ -611,31 +617,34 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
 			,m_filename_browse(m_filename.insertMode({0,0}),"Browse…")
 			,m_filename_reload(m_filename.insertMode({2,0}),"↺")
-		,m_description(m_box,false)
-			,m_description_label(m_description.insertMode({2,0}),"Description:")
-			,m_description_input(m_description.insertMode({2,Box::EXPAND|Box::FILL}))
 		,m_details(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
-			,m_details_left(m_details.insertMode({Paned::SHRINK_ALLOWED}),true)
-				,m_color(m_details_left.insertMode({2,0}),false)
-					,m_color_label(m_color.insertMode({2,0}),"Color:")
-					,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}))
-					,m_color_pick(m_color.insertMode({2,0}),"…")
-				,m_channel(m_details_left,false)
-					,m_channel_label(m_channel.insertMode({2,0}),"Channel:")
-					,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}))
-				,m_gain(m_details_left,false)
-					,m_gain_label(m_gain.insertMode({2,0}),"Gain/dBFS:")
-					,m_gain_input(m_gain.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_gain_input_text(m_gain_input.insertMode({0,0}))
-						,m_gain_input_slider(m_gain_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
-				,m_gain_random(m_details_left,false)
-					,m_gain_random_label(m_gain_random.insertMode({2,0}),"Gain random/dBFS:")
-					,m_gain_random_input(m_gain_random.insertMode({2,Box::EXPAND|Box::FILL}),false)
-						,m_gain_random_input_text(m_gain_random_input.insertMode({0,0}))
-						,m_gain_random_input_slider(m_gain_random_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
-				,m_options(m_details_left,false)
-					,m_options_label(m_options.insertMode({2,0}),"Options:")
-				,m_options_input(m_details_left.insertMode({0,Box::EXPAND|Box::FILL}),true)
+			,m_scroll_left(m_details.insertMode({Paned::SHRINK_ALLOWED}))
+				,m_details_left(m_scroll_left,true)
+					,m_desc_horz(m_details_left.insertMode({2,0}),false)
+						,m_description(m_desc_horz.insertMode({2,Box::EXPAND|Box::FILL}),true)
+							,m_description_label(m_description.insertMode({0,0}),"Description:")
+							,m_description_input(m_description.insertMode({0,Box::EXPAND|Box::FILL}))
+					,m_color(m_details_left,false)
+						,m_color_label(m_color.insertMode({2,0}),"Color:")
+						,m_color_input(m_color.insertMode({2,Box::EXPAND|Box::FILL}))
+						,m_color_pick(m_color.insertMode({2,0}),"…")
+					,m_channel(m_details_left,false)
+						,m_channel_label(m_channel.insertMode({2,0}),"Channel:")
+						,m_channel_input(m_channel.insertMode({2,Box::EXPAND|Box::FILL}))
+					,m_gain(m_details_left,false)
+						,m_gain_label(m_gain.insertMode({2,0}),"Gain/dBFS:")
+						,m_gain_input(m_gain.insertMode({2,Box::EXPAND|Box::FILL}),false)
+							,m_gain_input_text(m_gain_input.insertMode({0,0}))
+							,m_gain_input_slider(m_gain_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
+					,m_gain_random(m_details_left,false)
+						,m_gain_random_label(m_gain_random.insertMode({2,0}),"Gain random/dBFS:")
+						,m_gain_random_input(m_gain_random.insertMode({2,Box::EXPAND|Box::FILL}),false)
+							,m_gain_random_input_text(m_gain_random_input.insertMode({0,0}))
+							,m_gain_random_input_slider(m_gain_random_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
+					,m_options_horz(m_details_left,false)
+						,m_options(m_options_horz.insertMode({2,Box::EXPAND|Box::FILL}),true)
+							,m_options_label(m_options.insertMode({2,0}),"Options:")
+							,m_options_input(m_options.insertMode({0,Box::EXPAND|Box::FILL}),true)
 			,m_details_right(m_details.insertMode({Paned::SHRINK_ALLOWED|Paned::RESIZE}),true)
 				,m_plot(m_details_right.insertMode({2,Box::EXPAND|Box::FILL}))
 				,m_trim_panel(m_details_right.insertMode({0,0}),false)
@@ -666,11 +675,14 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 	m_cursor_end_entry.width(7).alignment(1.0f);
 	m_plot.cursorY(XYPlot::Cursor{-70.0,0.14f});
 	m_options_input.append(waveform.flagNames());
+	m_options_label.alignment(0.0f);
+	m_description_input.wordwrap(1);
+	m_description_label.alignment(0.0f);
 
 	m_filename_input.callback(*this,TextEntryId::FILENAME);
 	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
 	m_filename_reload.callback(*this,ButtonId::FILENAME_RELOAD);
-	m_description_input.callback(*this,TextEntryId::DESCRIPTION);
+	m_description_input.callback(*this,SourceViewId::DESCRIPTION);
 	m_color_input.callback(*this,TextEntryId::COLOR);
 	m_color_pick.callback(*this,ButtonId::COLOR_PICK);
 	m_channel_input.callback(*this,ListboxId::CHANNEL);

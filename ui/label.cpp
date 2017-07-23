@@ -48,6 +48,10 @@ class Label::Impl:private Label
 				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
 			}
 
+
+		void alignment(float x)
+			{gtk_label_set_xalign(m_handle,x);}
+
 	private:
 		GtkLabel* m_handle;
 	};
@@ -76,6 +80,12 @@ Label& Label::wordwrap(bool status)
 Label& Label::small(bool status)
 	{
 	m_impl->small(status);
+	return *this;
+	}
+
+Label& Label::alignment(float x)
+	{
+	m_impl->alignment(x);
 	return *this;
 	}
 

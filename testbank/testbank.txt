@@ -28,6 +28,9 @@ Two newlines are written as is.\
 
 ##Slot 2
 ~Description:      [Rooster] from pdsounds.org.
+
+Testing newline in slot description.
+
 ~Filename:         medium rooster crowing.aiff
 ~Color:            0.65;1;0
 ~Options:          Sustain|Set gain on loop

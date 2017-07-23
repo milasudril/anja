@@ -63,7 +63,7 @@ SessionPropertiesEditor::SessionPropertiesEditor(Container& cnt,Session& session
 		,m_description_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}))
 		,m_options(m_box.insertMode({2,0}),false)
 			,m_options_label(m_options.insertMode({2,0}),"Options:")
-		,m_options_input(m_box.insertMode({0,0}),true)
+		,m_options_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}),true)
 	{
 	m_options_input.append(session.flagNames());
 	m_description_input.wordwrap(1);

@@ -20,6 +20,7 @@
 #include "message.hpp"
 #include "separator.hpp"
 #include "progressbar.hpp"
+#include "sourceview.hpp"
 #include "../sessiondata/waveformproxy.hpp"
 #include "../common/arraysimple.hpp"
 
@@ -64,9 +65,12 @@ namespace Anja
 
 			enum class TextEntryId:int
 				{
-				 FILENAME,DESCRIPTION,COLOR,GAIN,GAIN_RANDOM,CURSOR_BEGIN
+				 FILENAME,COLOR,GAIN,GAIN_RANDOM,CURSOR_BEGIN
 				,CURSOR_BEGIN_LOOP,CURSOR_END_LOOP,CURSOR_END
 				};
+
+			enum class SourceViewId:int
+				{DESCRIPTION};
 
 			enum class OptionListId:int
 				{OPTIONS};
@@ -127,6 +131,7 @@ namespace Anja
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
+			void changed(SourceView& entry,SourceViewId id);
 			void changed(Combobox& lb,ListboxId id);
 			void cursorXMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
 			void cursorYMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
@@ -207,31 +212,34 @@ namespace Anja
 					TextEntry m_filename_input;
 					Button m_filename_browse;
 					Button m_filename_reload;
-				Box m_description;
-					Label m_description_label;
-					TextEntry m_description_input;
 				Paned m_details;
-					Box m_details_left;
-						Box m_color;
-							Label m_color_label;
-							TextEntry m_color_input;
-							Button m_color_pick;
-						Box m_channel;
-							Label m_channel_label;
-							Combobox m_channel_input;
-						Box m_gain;
-							Label m_gain_label;
-							Box m_gain_input;
-								TextEntry m_gain_input_text;
-								Slider m_gain_input_slider;
-						Box m_gain_random;
-							Label m_gain_random_label;
-							Box m_gain_random_input;
-								TextEntry m_gain_random_input_text;
-								Slider m_gain_random_input_slider;
-						Box m_options;
-							Label m_options_label;
-						OptionList m_options_input;
+					ScrolledWindow m_scroll_left;
+						Box m_details_left;
+							Box m_desc_horz;
+								Box m_description;
+									Label m_description_label;
+									SourceView m_description_input;
+							Box m_color;
+								Label m_color_label;
+								TextEntry m_color_input;
+								Button m_color_pick;
+							Box m_channel;
+								Label m_channel_label;
+								Combobox m_channel_input;
+							Box m_gain;
+								Label m_gain_label;
+								Box m_gain_input;
+									TextEntry m_gain_input_text;
+									Slider m_gain_input_slider;
+							Box m_gain_random;
+								Label m_gain_random_label;
+								Box m_gain_random_input;
+									TextEntry m_gain_random_input_text;
+									Slider m_gain_random_input_slider;
+							Box m_options_horz;
+								Box m_options;
+									Label m_options_label;
+									OptionList m_options_input;
 					Box m_details_right;
 						XYPlot m_plot;
 						Box m_trim_panel;

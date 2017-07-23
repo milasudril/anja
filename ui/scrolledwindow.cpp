@@ -14,7 +14,10 @@ class ScrolledWindow::Impl:private ScrolledWindow
 		~Impl();
 
 		void _add(GtkWidget* handle) noexcept
-			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
+			{
+			gtk_widget_set_margin_end(handle,2);
+			gtk_container_add(GTK_CONTAINER(m_handle),handle);
+			}
 
 		void _show() noexcept
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
