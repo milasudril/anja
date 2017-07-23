@@ -641,7 +641,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 						,m_gain_random_input(m_gain_random.insertMode({2,Box::EXPAND|Box::FILL}),false)
 							,m_gain_random_input_text(m_gain_random_input.insertMode({0,0}))
 							,m_gain_random_input_slider(m_gain_random_input.insertMode({0,Box::EXPAND|Box::FILL}),false)
-					,m_options_horz(m_details_left,false)
+					,m_options_horz(m_details_left.insertMode({2,Box::EXPAND|Box::FILL}),false)
 						,m_options(m_options_horz.insertMode({2,Box::EXPAND|Box::FILL}),true)
 							,m_options_label(m_options.insertMode({2,0}),"Options:")
 							,m_options_input(m_options.insertMode({0,Box::EXPAND|Box::FILL}),true)

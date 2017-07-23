@@ -55,18 +55,22 @@ SessionPropertiesEditor::SessionPropertiesEditor(Container& cnt,Session& session
 	 r_cb_obj(nullptr)
 	,r_session(&session)
 	,m_box(cnt,true)
-		,m_title(m_box.insertMode({1,0}),false)
+		,m_title(m_box.insertMode({2,0}),false)
 			,m_title_label(m_title.insertMode({2,0}),"Title:")
 			,m_title_input(m_title.insertMode({2,Box::EXPAND|Box::FILL}))
-		,m_description(m_box.insertMode({2,0}),false)
-			,m_description_label(m_description.insertMode({2,0}),"Description:")
-		,m_description_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}))
-		,m_options(m_box.insertMode({2,0}),false)
-			,m_options_label(m_options.insertMode({2,0}),"Options:")
-		,m_options_input(m_box.insertMode({0,Box::EXPAND|Box::FILL}),true)
+		,m_desc_horz(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
+			,m_description(m_desc_horz.insertMode({2,Box::EXPAND|Box::FILL}),true)
+				,m_description_label(m_description.insertMode({0,0}),"Description:")
+				,m_description_input(m_description.insertMode({0,Box::EXPAND|Box::FILL}))
+		,m_opts_horz(m_box,false)
+			,m_options(m_opts_horz.insertMode({2,Box::EXPAND|Box::FILL}),true)
+				,m_options_label(m_options.insertMode({0,0}),"Options:")
+				,m_options_input(m_options.insertMode({0,Box::EXPAND|Box::FILL}),true)
 	{
 	m_options_input.append(session.flagNames());
 	m_description_input.wordwrap(1);
+	m_description_label.alignment(0.0f);
+	m_options_label.alignment(0.0f);
 	m_title_input.callback(*this,TextEntryId::TITLE);
 	m_description_input.callback(*this,SourceViewId::DESCRIPTION);
 	m_options_input.callback(*this,OptionListId::OPTIONS);

@@ -72,12 +72,14 @@ namespace Anja
 				Box m_title;
 					Label m_title_label;
 					TextEntry m_title_input;
-				Box m_description;
-					Label m_description_label;
-				SourceView m_description_input;
-				Box m_options;
-					Label m_options_label;
-				OptionList m_options_input;
+				Box m_desc_horz;
+					Box m_description;
+						Label m_description_label;
+						SourceView m_description_input;
+				Box m_opts_horz;
+					Box m_options;
+						Label m_options_label;
+						OptionList m_options_input;
 		};
 	}
 
