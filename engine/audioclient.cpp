@@ -259,13 +259,13 @@ AudioClient::MidiEvent AudioClient::MidiEventIterator::operator[](int k) noexcep
 		switch(e.size)
 			{
 			case 3:
-				return MIDI::Message(e.buffer[0],e.buffer[1],e.buffer[2]);
+				return MIDIConstants::Message(e.buffer[0],e.buffer[1],e.buffer[2]);
 			case 2:
-				return MIDI::Message(e.buffer[0],e.buffer[1],0);
+				return MIDIConstants::Message(e.buffer[0],e.buffer[1],0);
 			case 1:
-				return MIDI::Message(e.buffer[0],0,0);
+				return MIDIConstants::Message(e.buffer[0],0,0);
 			default:
-				return MIDI::Message(0,0,0);
+				return MIDIConstants::Message(0,0,0);
 			}
 		}();
 
@@ -277,7 +277,7 @@ AudioClient::MidiMessageWriter AudioClient::midiOut(int port,int n_frames) const
 	{return m_impl->midiOut(port,n_frames);}
 
 
-AudioClient::MidiMessageWriter& AudioClient::MidiMessageWriter::write(MIDI::Message msg,int frame) noexcept
+AudioClient::MidiMessageWriter& AudioClient::MidiMessageWriter::write(MIDIConstants::Message msg,int frame) noexcept
 	{
 	jack_midi_data_t data[3]={msg.statusRaw(),msg.value1(),msg.value2()};
 	jack_midi_event_write(r_buffer,frame,data,3);

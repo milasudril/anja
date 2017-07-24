@@ -131,7 +131,7 @@ namespace Anja
 
 			template<TaskId id> void run();
 
-			Engine& messagePost(MIDI::Message msg) noexcept
+			Engine& messagePost(MIDIConstants::Message msg) noexcept
 				{
 				if(!m_ui_events.full())
 					{m_ui_events.push_back(AudioClient::MidiEvent{static_cast<uint32_t>(now_ms() + 1 - m_time_init),msg});}
@@ -143,32 +143,32 @@ namespace Anja
 			Engine& channelGain(int channel,float value) noexcept
 				{
 				assert(channel>=0 && channel<16);
-				return messagePost(MIDI::Message(MIDI::ControlCodes::CHANNEL_VOLUME,channel,dB_to_MIDI_val(value)));
+				return messagePost(MIDIConstants::Message(MIDIConstants::ControlCodes::CHANNEL_VOLUME,channel,dB_to_MIDI_val(value)));
 				}
 
 			Engine& fadeOut(int channel,float time) noexcept
 				{
 				assert(channel>=0 && channel<16);
-				return messagePost(MIDI::Message(FADE_OUT,channel,sec_to_MIDI_val(time)));
+				return messagePost(MIDIConstants::Message(FADE_OUT,channel,sec_to_MIDI_val(time)));
 				}
 
 
 			Engine& fadeIn(int channel,float time) noexcept
 				{
 				assert(channel>=0 && channel<16);
-				return messagePost(MIDI::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
+				return messagePost(MIDIConstants::Message(FADE_IN,channel,sec_to_MIDI_val(time)));
 				}
 
 			Engine& recordStart(int slot) noexcept
 				{
 				assert(slot>=0 && slot<128);
-				return messagePost(MIDI::Message(RECORD_START,0,slot));
+				return messagePost(MIDIConstants::Message(RECORD_START,0,slot));
 				}
 
 			Engine& recordStop(int slot) noexcept
 				{
 				assert(slot>=0 && slot<128);
-				return messagePost(MIDI::Message{RECORD_STOP,0,slot});
+				return messagePost(MIDIConstants::Message{RECORD_STOP,0,slot});
 				}
 
 			double sampleRate() const noexcept
@@ -211,10 +211,10 @@ namespace Anja
 				{return m_client.waveOutConnectionsEnum(index,std::move(cb));}
 
 
-			static constexpr auto FADE_OUT=MIDI::ControlCodes::GENERAL_PURPOSE_1;
-			static constexpr auto FADE_IN=MIDI::ControlCodes::GENERAL_PURPOSE_2;
-			static constexpr auto RECORD_START=MIDI::ControlCodes::GENERAL_PURPOSE_3;
-			static constexpr auto RECORD_STOP=MIDI::ControlCodes::GENERAL_PURPOSE_4;
+			static constexpr auto FADE_OUT=MIDIConstants::ControlCodes::GENERAL_PURPOSE_1;
+			static constexpr auto FADE_IN=MIDIConstants::ControlCodes::GENERAL_PURPOSE_2;
+			static constexpr auto RECORD_START=MIDIConstants::ControlCodes::GENERAL_PURPOSE_3;
+			static constexpr auto RECORD_STOP=MIDIConstants::ControlCodes::GENERAL_PURPOSE_4;
 
 		private:
 
@@ -287,7 +287,7 @@ namespace Anja
 			ReadySignal m_ready;
 			Thread m_rec_thread;
 
-			void process(MIDI::Message msg,int offset,double fs) noexcept;
+			void process(MIDIConstants::Message msg,int offset,double fs) noexcept;
 
 			static float dB_to_MIDI_val(float val) noexcept
 				{return 127.0f*(val + 72.0f)/78.0f;}

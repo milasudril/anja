@@ -10,30 +10,27 @@ $srcfile on $date.
 Any changes to this file may be overwritten during compilation.
 */
 
-#ifndef ANJA_${FILENAME_NO_EXT}_HPP
-#define ANJA_${FILENAME_NO_EXT}_HPP
+#ifndef MIDICONSTANTS_${FILENAME_NO_EXT}_HPP
+#define MIDICONSTANTS_${FILENAME_NO_EXT}_HPP
 
 #include <utility>
 
-namespace Anja
+namespace MIDIConstants
 	{
-	namespace MIDI
+	enum class $FilenameNoExt:int
 		{
-		enum class $FilenameNoExt:int
-			{
-			 $constants
-			};
+		 $constants
+		};
 
-		constexpr std::pair<$FilenameNoExt,const char*> ${FILENAME_NO_EXT}_VALUE_NAME[]=
-			{
-			 {$value_name}
-			};
+	constexpr std::pair<$FilenameNoExt,const char*> ${FILENAME_NO_EXT}_VALUE_NAME[]=
+		{
+		 {$value_name}
+		};
 
-		constexpr std::pair<const char*,$FilenameNoExt> ${FILENAME_NO_EXT}_NAME_VALUE[]=
-			{
-			 {$name_value}
-			};
-		}
+	constexpr std::pair<const char*,$FilenameNoExt> ${FILENAME_NO_EXT}_NAME_VALUE[]=
+		{
+		 {$name_value}
+		};
 	}
 
 #endif

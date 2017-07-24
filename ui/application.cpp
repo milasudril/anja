@@ -307,9 +307,9 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			if(m_keystate[scancode])
 				{
 				auto note=slotToMIDI(param);
-				m_engine->messagePost(MIDI::Message
+				m_engine->messagePost(MIDIConstants::Message
 					{
-					 MIDI::StatusCodes::NOTE_ON
+					 MIDIConstants::StatusCodes::NOTE_ON
 					,static_cast<int>(m_session.waveform(param).channel())
 					,note
 					,127
@@ -456,9 +456,9 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 				{m_engine->recordStop(note).recordStart(note);}
 			else
 				{
-				m_engine->messagePost(MIDI::Message
+				m_engine->messagePost(MIDIConstants::Message
 					{
-					 MIDI::StatusCodes::NOTE_ON
+					 MIDIConstants::StatusCodes::NOTE_ON
 					,static_cast<int>(m_session.waveform(slot).channel())
 					,note
 					,127
@@ -491,17 +491,17 @@ void Application::keyDown(Anja::Window& win,int scancode,Anja::keymask_t keymask
 						auto slot_current=m_session.slotActive();
 						assert(slot_current>=0 && slot_current<128);
 						note=slotToMIDI(slot_current);
-						m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_ON,0,note|0x80,127});
+						m_engine->messagePost(MIDIConstants::Message{MIDIConstants::StatusCodes::NOTE_ON,0,note|0x80,127});
 						}
 						break;
 
 					case Keys::KILL_ALL:
 						for(size_t k=0;k<ChannelMixer::length();++k)
-							{m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
+							{m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
 						break;
 
 					case Keys::KILL_AUDITION:
-						m_engine->messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,0,1});
+						m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,0,1});
 						break;
 
 					case 1:
@@ -540,9 +540,9 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 				{m_engine->recordStop(note);}
 			else
 				{
-				m_engine->messagePost(MIDI::Message
+				m_engine->messagePost(MIDIConstants::Message
 					{
-					 MIDI::StatusCodes::NOTE_OFF
+					 MIDIConstants::StatusCodes::NOTE_OFF
 					,static_cast<int>(m_session.waveform(slot).channel())
 					,note
 					,127
@@ -558,7 +558,7 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 					auto slot_current=m_session.slotActive();
 					assert(slot_current>=0 && slot_current<128);
 					note=slotToMIDI(slot_current);
-					m_engine->messagePost(MIDI::Message{MIDI::StatusCodes::NOTE_OFF,0,note,127});
+					m_engine->messagePost(MIDIConstants::Message{MIDIConstants::StatusCodes::NOTE_OFF,0,note,127});
 					}
 					break;
 

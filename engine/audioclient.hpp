@@ -82,7 +82,7 @@ namespace Anja
 				public:
 					MidiEvent()=default;
 
-					MidiEvent(uint32_t time_offset,MIDI::Message msg) noexcept
+					MidiEvent(uint32_t time_offset,MIDIConstants::Message msg) noexcept
 						{timeOffset(time_offset).message(msg);}
 
 					uint32_t timeOffset() const noexcept
@@ -94,10 +94,10 @@ namespace Anja
 						return *this;
 						}
 
-					MIDI::Message message() const noexcept
+					MIDIConstants::Message message() const noexcept
 						{return m_message;}
 
-					MidiEvent& message(MIDI::Message msg) noexcept
+					MidiEvent& message(MIDIConstants::Message msg) noexcept
 						{
 						m_message=msg;
 						return *this;
@@ -111,7 +111,7 @@ namespace Anja
 
 				private:
 					uint32_t m_time_offset;
-					MIDI::Message m_message;
+					MIDIConstants::Message m_message;
 				};
 
 			class MidiEventIterator
@@ -146,7 +146,7 @@ namespace Anja
 			class MidiMessageWriter
 				{
 				public:
-					MidiMessageWriter& write(MIDI::Message msg,int frame) noexcept;
+					MidiMessageWriter& write(MIDIConstants::Message msg,int frame) noexcept;
 
 				private:
 					friend class Impl;

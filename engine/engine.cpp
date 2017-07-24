@@ -25,7 +25,7 @@ static void midi_reset(Engine& e,Session& session)
 	{
 	for(int k=0;k<16;++k)
 		{
-		e.messagePost(MIDI::Message(MIDI::ControlCodes::SOUND_OFF,k,0));
+		e.messagePost(MIDIConstants::Message(MIDIConstants::ControlCodes::SOUND_OFF,k,0));
 		e.channelGain(k,session.channel(k).gain());
 		}
 	}
@@ -73,7 +73,7 @@ Engine::~Engine()
 	//TODO: Special message to stop all recording processes?
 	recordStop(0);
 	for(int k=0;k<16;++k)
-		{messagePost(MIDI::Message{MIDI::ControlCodes::SOUND_OFF,k,0});}
+		{messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,k,0});}
 
 //	Poll event queue state to make sure there are no more events left when we
 //	destroy the engine.
@@ -110,11 +110,11 @@ void Engine::loop(Voice& voice,int event_offset) noexcept
 		}
 	}
 
-void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
+void Engine::process(MIDIConstants::Message msg,int offset,double fs) noexcept
 	{
 	switch(msg.status())
 		{
-		case MIDI::StatusCodes::NOTE_OFF:
+		case MIDIConstants::StatusCodes::NOTE_OFF:
 			{
 			//TODO: Same note different channels should be OK?
 			auto i=m_key_to_voice_index[ msg.value1() ];
@@ -126,7 +126,7 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			}
 			break;
 
-		case MIDI::StatusCodes::NOTE_ON:
+		case MIDIConstants::StatusCodes::NOTE_ON:
 			//TODO: Same note different channels should be OK?
 			if(m_key_to_voice_index[ msg.value1()&0x7f ]==m_voices_alloc.null())
 				{
@@ -161,14 +161,14 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 			break;
 
 
-		case MIDI::StatusCodes::CONTROL_CHANGE:
+		case MIDIConstants::StatusCodes::CONTROL_CHANGE:
 			switch(msg.ctrlCode())
 				{
-				case MIDI::ControlCodes::CHANNEL_VOLUME:
+				case MIDIConstants::ControlCodes::CHANNEL_VOLUME:
 					m_channel_gain.get<0>(msg.channel())=dBToAmplitude(MIDI_val_to_dB(msg.value2()));
 					break;
 
-				case MIDI::ControlCodes::SOUND_OFF:
+				case MIDIConstants::ControlCodes::SOUND_OFF:
 					{
 					auto ch=msg.value2()?17:msg.channel();
 					std::for_each(m_voices.begin(),m_voices.end(),[offset,this,ch](Voice& voice)
@@ -241,14 +241,14 @@ void Engine::process(MIDI::Message msg,int offset,double fs) noexcept
 		}
 	}
 
-static void write(MIDI::Message msg,int offset,AudioClient::MidiMessageWriter& writer)
+static void write(MIDIConstants::Message msg,int offset,AudioClient::MidiMessageWriter& writer)
 	{
 	if(msg.value1()&0x80)
 		{return;}
 
 	switch(msg.status())
 		{
-		case MIDI::StatusCodes::CONTROL_CHANGE:
+		case MIDIConstants::StatusCodes::CONTROL_CHANGE:
 			switch(msg.ctrlCode())
 				{
 				case Engine::FADE_IN: return;
@@ -356,7 +356,7 @@ void Engine::process(AudioClient& client,int n_frames) noexcept
 				{
 				m_ch_state&=~(1<<k);
 				m_vt.muted(r_cb_obj,*this,k);
-				auto msg=MIDI::Message{MIDI::ControlCodes::SOUND_OFF,static_cast<int>(k),0};
+				auto msg=MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,static_cast<int>(k),0};
 				process(msg,n_frames-1,fs);
 				write(msg,n_frames-1,midi_out);
 				}
