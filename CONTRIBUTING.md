@@ -62,7 +62,7 @@ To do so
  7. Make a pull request
 
 Before doing anything, you will probably benefit from reading the source code 
-overview in the manual. In addition to that text, here are some coding practices
+overview in the manual [2]. In addition to that text, here are some coding practices
 that are followed withinthis project. Items are not mentioned in any particular
 order.
 
@@ -94,7 +94,7 @@ order.
  * Prefer ISO C or C++ function over system specific functions, but be careful with
    C99 functions, as it is possible that C99 is not supported out-of-the-box
    everywhere (MinGW links to the old MSVCRT which is C89 only + Microsoft
-   specific extensions [2]).
+   specific extensions [3]).
 
  * Remember when you are in a realtime context. When you hacking on a function
    that is called from a realtime context, it must not call malloc/free or any
@@ -122,6 +122,8 @@ order.
        if(foo)
            doStuff();
 
-[1] https://github.com/milasudril/anja/issues
+[1] https://milasudril.github.io/anja#srcview
 
-[2] http://www.mingw.org/wiki/c99
+[2] https://github.com/milasudril/anja/issues
+
+[3] http://www.mingw.org/wiki/c99
