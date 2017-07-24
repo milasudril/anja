@@ -440,8 +440,8 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <p>Reveals <em>tab</em>, where <em>tab</em> is one of <cmdoption>waveform</cmdoption>, <cmdoption>channels</cmdoption> and <cmdoption>session</cmdoption></p></li>
 </ul>
 
-<chapter id="srcstruct">About the source code</chapter>
-<p>The source code of Anja is divided into three major components: Engine, Session data storage, and UI. The engine is the component that communicates with JACK. The session data is responsible for disk I/O of session and waveform files. The UI code handles the user interface. In addition to these components, there are in the repository, some more general classes, MIDI interaction helper files, test data, and also the source files for this manual.</p>
+<chapter id="srcview">Source code overview</chapter>
+<p>The source code of Anja is divided into three major components: Engine, Session data storage, and UI. The engine is the component that communicates with JACK. The session data is responsible for disk I/O of session and waveform files. The UI code handles the user interface. In addition to these components, there are in the repository, some more general classes, MIDI interaction helper files, resource files, test data, and also the source files for this manual. These file categories are represented by a directory, which contains all of its files.</p>
 
 <section id="modintract">Module interaction</section>
 <p>It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data module. This direct approach makes the code easier to follow and keeps the session data component clean, but requires changes to more places in the code, compared to an orthodox MVC approach, where the model updates all registered views upon a succeeded change request.</p>
