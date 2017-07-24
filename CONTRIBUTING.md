@@ -12,7 +12,7 @@ When posting a bug record, include the following information:
 
  1. The exact procedure to reproduce the bad behaviour
 
- 2. The session file used, together with all waveform files. This may 
+ 2. The session file used, together with all waveform files. This may
     require some online file sharing service.
 
  3. Your hardware specification. Do you have AVX or not? How much RAM do you have?
@@ -38,8 +38,8 @@ they will only be implemented if it can be done within lowlatency realtime
 constraints. This means that **a feature request that says "add PulseAudio support"
 will be rejected** unless PulseAudio gets a better realtime behaviour, but it is
 fine to suggest a seamingly more radical change that the UI should be ported to
-another API such as *modern* versions of Qt, the classic GTK+2.0 or the upcoming
-GTK+4.0.
+another API such as *modern* versions of Qt, the classic GTK+-2.0 or the upcoming
+GTK+-4.0.
 
 
 Code contributions
@@ -89,9 +89,9 @@ not mentioned in any particular order.
 
  * Make constructors explicit
 
- * Prefer ISO C or C++ function over system specific functions, but be careful with 
+ * Prefer ISO C or C++ function over system specific functions, but be careful with
    C99 functions, as it is possible that C99 is not supported out-of-the-box
-   everywhere (MinGW links to the old MSVCRT which is C89 only + Microsoft 
+   everywhere (MinGW links to the old MSVCRT which is C89 only + Microsoft
    specific extensions [2]).
 
  * Remember when you are in a realtime context. When you hacking on a function
@@ -103,7 +103,7 @@ not mentioned in any particular order.
    terms of asymptotic complexity
 
  * Use `long` if and only if a function from an external library uses it. If you
-   want a pointer-sized integer, user `intptr_t` or `size_t`. If it is another 
+   want a pointer-sized integer, user `intptr_t` or `size_t`. If it is another
    integer you should use `int` or, if larger range is required, `long long`.
 
  * Use tabs for indentation, except in markdown files
