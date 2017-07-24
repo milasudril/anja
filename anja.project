@@ -233,6 +233,8 @@
       <File Name="doc/dependencies.py"/>
       <File Name="doc/acknowledgements.py"/>
       <File Name="doc/legalbreif.py"/>
+      <File Name="doc/modinteract.dot"/>
+      <File Name="doc/modinteract.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
@@ -279,9 +281,9 @@
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <RebuildCommand>rm -rf __targets &amp;&amp; maike</RebuildCommand>
+        <RebuildCommand>rm -rf __targets &amp;&amp; make debug</RebuildCommand>
         <CleanCommand>rm -rf __targets_dbg</CleanCommand>
-        <BuildCommand>maike</BuildCommand>
+        <BuildCommand>make debug</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
@@ -337,9 +339,9 @@ I/usr/include/at-spi2-atk/2.0
       <PreBuild/>
       <PostBuild/>
       <CustomBuild Enabled="yes">
-        <RebuildCommand>rm -rf __targets_rel &amp;&amp; maike --configfiles=maikeconfig-rel.json</RebuildCommand>
+        <RebuildCommand>rm -rf __targets_rel &amp;&amp; make release</RebuildCommand>
         <CleanCommand>rm -rf __targets_rel</CleanCommand>
-        <BuildCommand>maike --configfiles=maikeconfig-rel.json</BuildCommand>
+        <BuildCommand>make release</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
