@@ -1,0 +1,31 @@
+digraph "G"
+	{
+	rankdir="LR"
+	splines="polyline"
+	
+	
+	callsite[label="Callsite",shape="none"]
+	info[label="Information flow",shape="none"]
+	
+	ui[label="UI",shape="box"]
+	engine[shape="box",label="Engine"]
+	pump_0[shape="circle",label="MIDI\ninput\nqueue"]
+	pump_1[shape="circle",label="UI\ninput\nqueue"]
+	session[label="Session data",shape="box"]
+	
+	
+	ui->session[arrowtail="dot",dir=both,constraint="false"]
+	ui:s->pump_0:e[arrowtail="dot",dir=both,constraint="false"]
+	
+	engine->pump_0[style="invis"]
+	engine->session[arrowtail="dot",dir=both]
+	engine->pump_1:w[arrowtail="dot",dir=both]
+	
+	pump_0:w->engine:s[arrowhead="dot",dir=both,arrowtail="inv"]
+	pump_1:e->ui[arrowtail="dot",dir=both,style="dashed"]
+	
+	session->ui[arrowhead="dot",dir=both,arrowtail="inv",constraint="false"]
+	session->engine[arrowhead="dot",dir=both,arrowtail="inv"]
+	
+	callsite->info[arrowtail="dot",dir="both"]
+	}

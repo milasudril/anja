@@ -446,6 +446,11 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <section id="modintract">Module interaction</section>
 <p>It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data module. This direct approach makes the code easier to understand, but requires changes to more places in the code, compared to an orthodox MVC approach, where the model updates all views upon a succeeded change request.</p>
 
+<!--figure id="modinteractfig">
+	<includegraphics src="modinteractfig.svg" />
+	<caption>Module interaction in anja</caption>
+</figure-->
+
 <p>When the user triggers the engine, the UI posts a MIDI message, by calling <function>Engine::messagePost</function>, to a ringbuffer, which is read by the realtime thread in the engine. The messages are then processed by the engine. Some actions requires that the engine updates the UI. This problem is solved by another FIFO with two post methods: <function>UiContext::messagePost</function> and <function>UiContext::messagePostTry</function>. The former will block until the message can be processed, while the latter will simply fail if it cannot. Thus, from any realtime context, the latter must be used.</p>
 
 <p>Some requests to the session data module may take a longer time. In this case it is possible to pass a progress callback object to the affected method. Typically, the callback object will be some of the UI objects, but there is explicit association between the UI component and the session data component.</p>
