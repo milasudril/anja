@@ -485,7 +485,11 @@ def processElements(document):
 			libname(node)
 		elif node.tag=='cmdoption':
 			libname(node)
+		elif node.tag=='function':
+			libname(node)
 		elif node.tag=='env':
+			libname(node)
+		elif node.tag=='class':
 			libname(node)
 		elif node.tag=='figure':
 			figure(node)

@@ -440,13 +440,20 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <p>Reveals <em>tab</em>, where <em>tab</em> is one of <cmdoption>waveform</cmdoption>, <cmdoption>channels</cmdoption> and <cmdoption>session</cmdoption></p></li>
 </ul>
 
-<chapter id="srcstruct">Source code organization</chapter>
-<p>The source code of Anja is divided into three major components: Engine, Session data storage, and UI. In addition to these components, there are some MIDI helper files, and his manual. The engine is the component that communicates with JACK. The session data is resposible for disk I/O of session and waveform files. The UI code handles the user interface.</p>
+<chapter id="srcstruct">About the source code</chapter>
+<p>The source code of Anja is divided into three major components: Engine, Session data storage, and UI. In addition to these components, there are some MIDI helper files, and his manual. The engine is the component that communicates with JACK. The session data is responsible for disk I/O of session and waveform files. The UI code handles the user interface.</p>
 
 <section id="modintract">Module interaction</section>
-<p>It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data module. This direct approach makes the code easier to understand, but requires changes to more places in the code, compared to an orthodox MVC approach, where the model updates all views upon change.</p>
+<p>It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data module. This direct approach makes the code easier to understand, but requires changes to more places in the code, compared to an orthodox MVC approach, where the model updates all views upon a succeeded change request.</p>
 
-<p>When the user triggers the engine, the UI posts a MIDI message to a ringbuffer, which is read by the realtime thread in the engine. The messages are then processed by the engine. </p>
+<p>When the user triggers the engine, the UI posts a MIDI message, by calling <function>Engine::messagePost</function>, to a ringbuffer, which is read by the realtime thread in the engine. The messages are then processed by the engine. Some actions requires that the engine updates the UI. This problem is solved by another FIFO with two post methods: <function>UiContext::messagePost</function> and <function>UiContext::messagePostTry</function>. The former will block until the message can be processed, while the latter will simply fail if it cannot. Thus, from any realtime context, the latter must be used.</p>
+
+<p>Some requests to the session data module may take a longer time. In this case it is possible to pass a progress callback object to the affected method. Typically, the callback object will be some of the UI objects, but there is explicit association between the UI component and the session data component.</p>
+
+<section id="uiframework">The design of the UI component</section>
+<p>The UI component has been designed to hide as much as possible about the underlying framework, while trying to preserve the native look and feel. This means that the most common UI widgets, i.e. buttons, checkboxes, comboboxes, labels, sliders, and text input fields, are nothing more than thin wrappers on top of the framework. Also, the file selection dialog belongs to this category. Widgets that have a sematic difference between different platforms, are emulated using these basic widgets. As an example, listboxes are emulated using a <class>ButtonList</class>, which itself consists of a set of buttons. Some widgets such as the <class>XYPlot</class> are completely missing from common UI frameworks. In this case, they have been implemented directly at top of the framework. This is because it is hard to construct a general abstraction on top of a drawing API.</p>
+
+
 
 <input src="legalbrief.xml" />
 </document>
