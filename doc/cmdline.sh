@@ -32,6 +32,7 @@ sed 's/\. For.*/. The different argument types accepted by the different options
 	| cat - "$dir_target"/"$in_dir"/cmdline_01_00 \
 	| sed 's/\(^--[a-z][a-z\-]*\)\(\[\?=\)\([a-z ]*\)/ * `\1`\2*\3*/g' \
 	| sed 's/^    \(.*\)/\n \1/' \
+	| sed 's/\(JACK_DEFAULT_SERVER\)/`\1`/' \
 	| markdown \
 	| (cat <<EOF
 <content>

@@ -61,8 +61,10 @@ To do so
 
  7. Make a pull request
 
-Here are some coding practices that are followed within this project. Items are
-not mentioned in any particular order.
+Before doing anything, you will probably benefit from reading the source code 
+overview in the manual. In addition to that text, here are some coding practices
+that are followed withinthis project. Items are not mentioned in any particular
+order.
 
  * Declare each variable separately
 
