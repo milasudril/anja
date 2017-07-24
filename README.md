@@ -28,7 +28,7 @@ O'Neill. Currently, her repository is kept as a git submodule. To process the
 command line, the ALICE library is used. This is also refered to by a submodule.
 
 ### Tools
-These tools are required in order to compile Anja. The list only includes tools 
+These tools are required in order to compile Anja. The list only includes tools
 that are not POSIX standard command line tools. For a more complete list, see
 https://milasudril.github.io/anja#deps.
 
@@ -40,7 +40,7 @@ https://milasudril.github.io/anja#deps.
  * import -- command-line utility from ImageMagick that is for creating screenshots
  * inkscape -- SVG (Scalable Vector Graphics) editing program
  * maike -- Automated build tool. You must use version 0.15.9 or later.
-	In case this tool is missing, the build script will download the latest 
+	In case this tool is missing, the build script will download the latest
     release	from https://github.com/milasudril/maike/. This step requires `wget`
     and the `jq` command-line JSON processor. maike itself requires libjansson
     to be installed
@@ -83,10 +83,9 @@ found here: http://kxstudio.linuxaudio.org/Repositories.
 After adding this PPA, install all tools and libraries
 
     sudo apt-get install jackd2 pkg-config libgtk-3-dev g++ blender inkscape \
-		libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev python3 \
-		libjemalloc-dev xvfb octave xdotool xsltproc libsamplerate0-dev \
-        dot imagemagick
-
-	make
+        libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev python3 \
+        libjemalloc-dev xvfb octave xdotool xsltproc libsamplerate0-dev \
+        graphviz imagemagick
+    make
 
 After compling Anja, the binary will be located in `__targets_rel` or `__targets_dbg`.
