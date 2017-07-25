@@ -72,7 +72,7 @@ Some sort of electric [pump] From pdsounds.org.
 ~Options:     Loop|Sustain
 
 ##Slot 8
-~Description: [Sine multi]. 2 channel sine wave. 440 Hz + 880 Hz
+~Description: [Sine multi]. 2 channel sine wave. 440 Hz + 660 Hz
 ~Filename:    sine-440-660.flac
 ~Color:       0;0.25;1
 ~Channel:     3

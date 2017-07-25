@@ -260,6 +260,16 @@ def libname(node):
 	printWrapper('</code>')
 	if node.tail != None:
 		printWrapper(node.tail)
+		
+def char(node):
+	printWrapper('<code>')
+	if node.text != None:
+		printWrapper(node.text)
+	processElements(node)
+	printWrapper('</code>')
+	printWrapper('&nbsp;(U+' + format( ord(node.text[0]),'04x' ) + ')')
+	if node.tail != None:
+		printWrapper(node.tail)
 
 def quantity(node):
 	printWrapper(node.text + '&#160;' + node.attrib["unit"] + node.tail)
@@ -463,6 +473,8 @@ def processElements(document):
 			cite(node)
 		elif node.tag=='libname':
 			libname(node)
+		elif node.tag=='char':
+			char(node)
 		elif node.tag=='quantity':
 			quantity(node)
 		elif node.tag=='listing':

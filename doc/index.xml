@@ -39,7 +39,7 @@
 
 	<p>The backend of Anja is JACK, the low-latency audio server<cite>jack</cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
 
-	<p>The session file format of Anja is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
+	<p>The session file format of Anja described in more detail in <ref>sessfile</ref> is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
 
 
 	<section id="requirements">System requirements</section>
@@ -413,6 +413,15 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <input src="cmdline.xml" />
+
+<chapter id="sessfile">Session file format</chapter>
+<p>Anja session files are plain text files, that contains all session properties, waveform settings, and channel settings. Session files do not contain any waveforms. Instead they refer to the file that contains the actual waveform. The idea is that the session file acts as a machine-readable readme file, that is somehow bundled with the waveform files. Thus, the session file should be very easy to be read by humans.</p>
+
+<p>For an example of what a session file might look like, see <dirname>testbank/testbank.txt</dirname>. The file is organized as a hierarchical key-value store. Section headers begins with a number of consecutive <char>#</char>, which have to appear as the first non-whitespace character on a line. The header ends with a newline. The section level is the same as the number of characters used to begin the header. A key begins with a <char>~</char>, which also has to be at the first the first non-whitespace character on a line, and ends with <char>:</char> or a newline character, and after the delimiter, comes the associated value. At any point, a <char>\</char> can be used if a delimiter should be processed literally.</p>
+
+<p>In general, any character that has no particular meaning in the current context, can be used directly. To make it possible to write session files in a more readable way, some sepecial rules applies to whitespaces. Whitespaces immediatly following a delimiter, or repeated are ignored. As mentioned above, newline characters cannot appear unescaped in keys. In values, two or more newlines that only are separated by other whitespace characters, are collapsed into two newlines. Unescaped single newlines are treated in the same way as any whitespace.</p>
+
+<p>If the first key in a section is <dirname>Description</dirname>, it is possible to ommit the key, and write its value right after the section header. This makes it possible to write session files more like a regular document</p>
 
 <input src="dependencies.xml" />
 
