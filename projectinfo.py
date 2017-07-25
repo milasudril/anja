@@ -198,7 +198,8 @@ def get_revision(target_dir):
 			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') \
 				as verfile:
 				result_old=verfile.read().strip()
-				if result==result_old and newer_than_all(target_dir + '/projectinfo.hpp' \
+				if (result==result_old or not project_changed) \
+					and newer_than_all(target_dir + '/projectinfo.hpp' \
 						,('projectinfo.json' \
 							,target_dir + '/maikeconfig.json' \
 							,target_dir + '/externals.json' \
