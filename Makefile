@@ -5,3 +5,7 @@ debug:
 	./build.sh maikeconfig.json
 
 all: release debug
+
+install: release
+	mkdir -p $(DESTDIR)/usr/bin
+	cp __targets_rel/anja $(DESTDIR)/usr/bin
