@@ -155,6 +155,14 @@ def newer_than_all(file_a, files):
 			return False
 	return True
 
+def git_changes():
+	with subprocess.Popen(('git', 'status','--porcelain'),stdout=subprocess.PIPE) \
+		as git:
+		result=[];
+		for k in filter(None,git.stdout.read().decode().split('\n')):
+			result.append( k[3:].split(' ')[0] )
+	return result
+
 
 def get_revision(target_dir):
 	if shutil.which('git')==None:
@@ -185,6 +193,8 @@ def get_revision(target_dir):
 			with open(target_dir+'/versioninfo.txt','w') as versionfile:
 				versionfile.write(result)
 		else:
+			project_changed=( len(list(filter(lambda x:x!='versioninfo.txt',git_changes()))) > 0)
+			print(project_changed)
 			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') \
 				as verfile:
 				result_old=verfile.read().strip()
