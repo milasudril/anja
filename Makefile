@@ -6,6 +6,6 @@ debug:
 
 all: release debug
 
-install: release
+install:
 	mkdir -p $(DESTDIR)/usr/bin
 	cp __targets_rel/anja $(DESTDIR)/usr/bin

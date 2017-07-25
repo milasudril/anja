@@ -7,6 +7,7 @@
 #@			,{"ref":"find","rel":"tool"}
 #@			,{"ref":"grep","rel":"tool"}
 #@			,{"ref":"tar","rel":"tool"}]
+#@		,"status_check":"dynamic"
 #@		}]
 #@	}
 
