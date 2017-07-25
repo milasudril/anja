@@ -27,7 +27,7 @@ stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| "$in_dir"/makepage.py "$stylesheets" > "$dest"
 
-if [ -d gh-pages ]; then #Test if we have cloned the gh-pages repo
+if [[ -d gh-pages ]]; then #Test if we have cloned the gh-pages repo
 	rm -r gh-pages/*
 	for k in "${@:4}"
 	do
