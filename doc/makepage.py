@@ -206,7 +206,7 @@ def section(node):
 	sections=sections + 1
 	name=chapstr(chapters)+'.'+str(sections)
 	printWrapper('<h3 id="' + node.attrib["id"] + '"><span class="fill">' \
-		+ name + '</span>')
+		+ name + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -221,7 +221,7 @@ def subsection(node):
 	subsections=subsections + 1
 	name=chapstr(chapters)+'.'+str(sections)+'.'+str(subsections)
 	printWrapper('<h4 id="' + node.attrib["id"] + '"><span class="fill">' \
-		+ name + '</span>')
+		+ name + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -234,7 +234,7 @@ def subsubsection(node):
 	subsubsections=subsubsections + 1
 	name=chapstr(chapters)+'.'+str(sections)+'.'+str(subsections)+'.'+str(subsubsections)
 	printWrapper('<h5 id="' + node.attrib["id"] + '"><span class="fill">'
-		+ name + '</span>')
+		+ name + '</span> ')
 	if node.text != None:
 		printWrapper(node.text)
 	processElements(node)
@@ -260,7 +260,7 @@ def libname(node):
 	printWrapper('</code>')
 	if node.tail != None:
 		printWrapper(node.tail)
-		
+
 def char(node):
 	printWrapper('<code>')
 	if node.text != None:

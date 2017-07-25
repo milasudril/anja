@@ -182,7 +182,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 </figure>
 
 <subsection id="wavesource">Source file selection</subsection>
-<p>The source file is chosen through the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse…</ui-button>, a file selection dialog appears. When a different wave file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
+<p>The source file is chosen through the <ui-formfield>Source</ui-formfield> field. By clicking <ui-button>Browse…</ui-button>, a file selection dialog appears. When a different waveform file is selected Anja replaces the waveform associated with current slot, with the waveform loaded from the chosen file. For information about supported file formats, see <ref>fileformats</ref>.</p>
 
 <infobox type="info">
 	It is not possible to load another waveform when the current slot is in use by the engine.
@@ -376,7 +376,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <chapter id="fileformats">Supported file formats</chapter>
-	<p>Anja uses <libname>libsndfile</libname> in order to load wave files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular wave file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
+	<p>Anja uses <libname>libsndfile</libname> in order to load waveform files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular waveform file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
 
 	<chapter id="keybindings">Key bindings</chapter>
 	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>ESC</kbd> requires that the computer keyboard is active.</p>
@@ -417,11 +417,11 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <chapter id="sessfile">Session file format</chapter>
 <p>Anja session files are plain text files, that contains all session properties, waveform settings, and channel settings. Session files do not contain any waveforms. Instead they refer to the file that contains the actual waveform. The idea is that the session file acts as a machine-readable readme file, that is somehow bundled with the waveform files. Thus, the session file should be very easy to be read by humans.</p>
 
-<p>For an example of what a session file might look like, see <dirname>testbank/testbank.txt</dirname>. The file is organized as a hierarchical key-value store. Section headers begins with a number of consecutive <char>#</char>, which have to appear as the first non-whitespace character on a line. The header ends with a newline. The section level is the same as the number of characters used to begin the header. A key begins with a <char>~</char>, which also has to be at the first the first non-whitespace character on a line, and ends with <char>:</char> or a newline character, and after the delimiter, comes the associated value. At any point, a <char>\</char> can be used if a delimiter should be processed literally.</p>
+<p>For an example of what a session file might look like, see <dirname>testbank/testbank.txt</dirname> in the source repository. The file is organized as a hierarchical key-value store. Section headers begin with a number of consecutive <char>#</char>, which have to appear as the first non-whitespace character on a line. The header ends with a newline character. The section level is the same as the number of characters used to begin the header. A key begins with a <char>~</char>, which similarly to the section header delimiter, has to be the first non-whitespace character on the line, and ends with <char>:</char> or a newline character. After the ending delimiter, follows the associated value. At any point, a <char>\</char> can be used if a delimiter should be processed literally.</p>
 
-<p>In general, any character that has no particular meaning in the current context, can be used directly. To make it possible to write session files in a more readable way, some sepecial rules applies to whitespaces. Whitespaces immediatly following a delimiter, or repeated are ignored. As mentioned above, newline characters cannot appear unescaped in keys. In values, two or more newlines that only are separated by other whitespace characters, are collapsed into two newlines. Unescaped single newlines are treated in the same way as any whitespace.</p>
+<p>In general, any character that has no particular meaning in the current context, can be used without escaping. To make it possible to write session files in a more readable way, some special rules apply to whitespaces. Whitespaces immediatly following a delimiter or another whitespace, are ignored. As mentioned above, newline characters cannot appear unescaped in keys. In values, two or more newline characters that are only separated by other whitespace characters, are collapsed into two newline characters. Unescaped single newlines are treated in the same way as any whitespace.</p>
 
-<p>If the first key in a section is <dirname>Description</dirname>, it is possible to ommit the key, and write its value right after the section header. This makes it possible to write session files more like a regular document</p>
+<p>If the first key in a section is <dirname>Description</dirname>, it is possible to ommit the key, and write its value right after the section header. This makes it possible to write session files more like a regular document.</p>
 
 <input src="dependencies.xml" />
 
