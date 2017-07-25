@@ -7,7 +7,7 @@
 
 using namespace Anja;
 
-class Paned::Impl:private Paned
+class Paned::Impl final:private Paned
 	{
 	public:
 		Impl(Container& cnt,bool vertical);

@@ -7,7 +7,7 @@
 
 using namespace Anja;
 
-class Box::Impl:private Box
+class Box::Impl final:private Box
 	{
 	public:
 		Impl(Container& cnt,bool vertical,int global_spacing);

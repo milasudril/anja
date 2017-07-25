@@ -9,7 +9,7 @@
 
 using namespace Anja;
 
-class TabView::Impl:private TabView
+class TabView::Impl final:private TabView
 	{
 	public:
 		Impl(Container& cnt);

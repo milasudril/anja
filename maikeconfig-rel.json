@@ -25,6 +25,7 @@
                         "-O3",
                         "{cxxversion}",
                         "-Wall",
+                        "-Wsuggest-final-types",
                         "-fno-stack-protector",
                         "-flto",
                         "{cflags_extra}",
@@ -55,6 +56,7 @@
                         "-O3",
                         "-fpic",
                         "-fno-stack-protector",
+						"-Wsuggest-final-types",
                         "{cxxversion}",
                         "-Wall",
                         "-flto",
@@ -98,6 +100,7 @@
                     "args":[
                         "-c",
                         "-O3",
+						"-Wsuggest-final-types",
                         "-fpic",
                         "-march=native",
                         "--fast-math",

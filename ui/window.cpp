@@ -10,7 +10,7 @@
 
 using namespace Anja;
 
-class Window::Impl:private Window
+class Window::Impl final:private Window
 	{
 	public:
 		Impl(const char* ti,Container* owner);

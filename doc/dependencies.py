@@ -26,7 +26,7 @@ doc=string.Template('''<?xml version="1.0"?>
 <ul><li>$libs</li></ul>
 
 <section id="tools">Tools</section>
-<p>The following list contains all tools except for the C++ development toolchain, required in order to compile Anja.</p>
+<p>The following list contains all tools, required in order to compile Anja.</p>
 <ul><li>$tools</li></ul>
 
 </content>

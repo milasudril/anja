@@ -7,7 +7,7 @@
 
 using namespace Anja;
 
-class ScrolledWindow::Impl:private ScrolledWindow
+class ScrolledWindow::Impl final:private ScrolledWindow
 	{
 	public:
 		Impl(Container& cnt);
