@@ -1,7 +1,7 @@
 #@	{
 #@	"targets":
 #@		[{
-#@		"name":"anja.1.man","dependencies":
+#@		"name":"anja.man1","dependencies":
 #@			[
 #@			 {"ref":"../projectinfo.json","rel":"misc"}
 #@			,{"ref":"options.troff","rel":"misc"}
@@ -13,11 +13,12 @@ import sys
 import string
 import json
 import os
+import time
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
 
-doc=string.Template('''.TH $NAME 1 2017-07-26 $source "General Commands"
+doc=string.Template('''.TH $NAME 1 $now $source "General Commands"
 .SH NAME
 $name \- $description
 .SH SYNOPSIS
@@ -26,6 +27,20 @@ $name \- $description
 $description_long
 .SH OPTIONS
 $options
+.SH ENVIRONMENT
+.B $name
+is affected by the same environment variables as any GTK+\-3. For a complete list of these, see
+https://developer.gnome.org/gtk3/stable/gtk-running.html. $name is also affected by \\fBJACK_DEFAULT_SERVER\\fR, which sets the name of the default JACK(1) server.
+.SH BUGS
+.IP \(bu 4
+The \\fB\-\-theme\\fR only works when the current GTK+\-3 theme supports different variants.
+.IP \(bu 4
+$name does not fully honour right-to-left layouts. This means that the user interface may look strange under certain locals.
+.SH SEE ALSO
+.IP \(bu 4
+\\fBjackd\\fR(1)
+.IP \(bu 4
+Anja user's guide availible at https://milasudril.github.io/anja
 ''')
 
 
@@ -45,9 +60,9 @@ try:
 	subst['name_lowercase']=subst['name'].lower()
 	subst['NAME']=subst['name'].upper()
 	subst['options']=options(target_dir+'/'+in_dir+'/options.troff')
+	subst['now']=time.strftime('%Y-%m-%d')
 
-
-	with open(target_dir + '/' + in_dir + '/anja.1.man','wb') as output:
+	with open(target_dir + '/' + in_dir + '/anja.man1','wb') as output:
 		output.write(doc.substitute(subst).encode('utf-8'))
 
 	sys.exit(0)

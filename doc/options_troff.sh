@@ -22,6 +22,6 @@ in_dir="$2"
 	| sed 's/\(^--[a-z][a-z\-]*\)\(\[\?=\)\([a-z ]*\)/`\1`\2*\3*/g' \
 	| sed 's/\(JACK_DEFAULT_SERVER\)/`\1`/' \
 	| ronn \
-	| sed 's/^.P$/.TP/' > "$dir_target"/"$in_dir"/options.troff
+	| sed 's/^ \.SH/.SS/'> "$dir_target"/"$in_dir"/options.troff
 
 trap : 0
