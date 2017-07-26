@@ -28,6 +28,7 @@
 			<row><col><kbd>Key</kbd></col><col>A key on the computer keyboard</col></row>
 			<row><col><ui-button>Button</ui-button></col><col>A button in the user interface</col></row>
 			<row><col><ui-formfield>Formfield</ui-formfield></col><col>An input field within the user interface</col></row>
+			<row><col><char>#</char></col><col>A symbol with its Unicode® codepoint</col></row>
 	</tabular>
 
 	<chapter id="intro">Introduction</chapter>

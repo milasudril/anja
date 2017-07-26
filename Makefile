@@ -13,3 +13,7 @@ install:
 #	Install user's guide
 	tar -xf __targets_rel/doc/anja-usersguide.tar.gz -C $(DESTDIR)/usr/share/help/C
 	mv $(DESTDIR)/usr/share/help/C/anja-usersguide $(DESTDIR)/usr/share/help/C/anja
+#	Install desktop icon
+	mkdir -p $(DESTDIR)/usr/share/anja
+	cp __targets_rel/logo_3.png $(DESTDIR)/usr/share/anja/logo.png
+	cp __targets_rel/anja.desktop $(DESTDIR)/usr/share/applications/anja.desktop
