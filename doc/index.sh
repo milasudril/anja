@@ -12,6 +12,8 @@
 #@			,{"ref":"sort","rel":"tool"}
 #@			,{"ref":"uniq","rel":"tool"}
 #@			,{"ref":"xargs","rel":"tool"}
+#@			,{"ref":"tar","rel":"tool"}
+#@			,{"ref":"cat","rel":"tool"}
 #@		]
 #@	}
 
@@ -28,7 +30,7 @@ export LANG=C.UTF-8
 
 for k in "${@:4}"; do
 	echo "$k"
-done | tee >(grep -v '^__' | tee >(xargs cp -t "$dest_dir") \
+done | tee >(grep -v '^__' | tee >(xargs -d '\n' cp -t "$dest_dir") \
 	| awk -v prefix="$target_dir" '{print prefix "/" $0}' ) \
 	| grep '^__' | sort | uniq > "$dest_dir"/archive.txt
 
@@ -41,5 +43,6 @@ xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 extract_dir=`basename "${dest%%.*}"`
 tar "--transform=s|^$target_dir/$in_dir|$extract_dir|" -czf "$1" -T "$dest_dir"/archive.txt
 
-#
-#"--transform=s,^$target_dir,,"
+if [[ -d gh-pages ]]; then
+	cat "$dest_dir"/archive.txt| xargs -d'\n' cp -t gh-pages
+fi
