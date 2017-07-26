@@ -32,8 +32,14 @@ done | tee >(grep -v '^__' | tee >(xargs cp -t "$dest_dir") \
 	| awk -v prefix="$target_dir" '{print prefix "/" $0}' ) \
 	| grep '^__' | sort | uniq > "$dest_dir"/archive.txt
 
-echo "$dest" >> "$dest_dir"/archive.txt
+echo "$dest_dir"/index.html >> "$dest_dir"/archive.txt
 
 stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
-	| "$in_dir"/makepage.py "$stylesheets" > "$dest"
+	| "$in_dir"/makepage.py "$stylesheets" > "$dest_dir"/index.html
+
+extract_dir=`basename "${dest%%.*}"`
+tar "--transform=s|^$target_dir/$in_dir|$extract_dir|" -czf "$1" -T "$dest_dir"/archive.txt
+
+#
+#"--transform=s,^$target_dir,,"

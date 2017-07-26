@@ -16,7 +16,7 @@
 <xsl:template match="/">{
 "targets":
 	[{
-	 "name":"index.html"
+	 "name":"anja-usersguide.tar.gz"
 	,"compiler":
 		{
 		 "name":"bash"

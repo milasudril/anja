@@ -180,6 +180,7 @@
       <File Name="ui/progressbar.hpp"/>
       <File Name="ui/progressbar.cpp"/>
       <File Name="ui/progressbox.hpp"/>
+      <File Name="anja-src.sh"/>
     </VirtualDirectory>
     <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>
@@ -250,7 +251,6 @@
       <File Name="icons/message_usererror.svg"/>
     </VirtualDirectory>
     <File Name="cmdtypes.hpp"/>
-    <File Name="anja-src.sh"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
