@@ -8,7 +8,7 @@
 
 ,"description":"A live sampler for use with JACK"
 
-,"description_long":"Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server."
+,"description_long":"Anja is a sampler designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server."
 
 ,"acknowledgement":
 	[
@@ -20,4 +20,5 @@
 	,"The GTK+ team—for the UI toolkit"
 	]
 ,"categories":["LivePerformance","JACK","Audio","Player","Recorder","Midi","Music"]
+,"license":"gpl3"
 }

@@ -1,0 +1,47 @@
+#!/usr/bin/python3
+
+import sys
+import json
+import subprocess
+import shutil
+import os
+
+def get_revision():
+	if shutil.which('git')==None:
+		with open('versioninfo.txt') as versionfile:
+			result=versionfile.read().decode().strip()
+	else:
+		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always') \
+			,stdout=subprocess.PIPE) as git:
+			result=git.stdout.read().decode().strip()
+			git.wait()
+			status=git.returncode
+
+		if status:
+			with open('versioninfo.txt') as versionfile:
+				result=versionfile.read().strip()
+	return result
+
+def load_json(filename):
+	with open(filename,encoding='utf-8') as input:
+		return json.load(input)
+
+def deb_init(projinfo,maintainer,email):
+	cmd=['dh_make','-c',projinfo['license'],'-d','-e',email \
+		,'-p',projinfo['name'].lower() + '_' + get_revision(),'--createorig','-C','s']
+
+	environ=dict()
+	environ['DEBFULLNAME']=maintainer
+	with subprocess.run(cmd,env=environ) as dh_make:
+		dh_make.wait()
+		if dh_make.returncode:
+			return False
+		return True
+
+projinfo=load_json('projectinfo.json')
+maintainer='John Doe'
+email='john.doe@example.com'
+
+if not deb_init(projinfo,maintainer,email):
+	sys.exit(-1)
+
