@@ -5,6 +5,7 @@ import json
 import subprocess
 import shutil
 import os
+import glob
 
 def get_revision():
 	if shutil.which('git')==None:
@@ -27,21 +28,55 @@ def load_json(filename):
 		return json.load(input)
 
 def deb_init(projinfo,maintainer,email):
-	cmd=['dh_make','-c',projinfo['license'],'-d','-e',email \
-		,'-p',projinfo['name'].lower() + '_' + get_revision(),'--createorig','-C','s']
+	cmd=['dh_make','-c',projinfo['license'],'-e',email \
+		,'-p',projinfo['name'].lower() + '_' + projinfo['version'],'--createorig','-C','s']
 
 	environ=dict()
 	environ['DEBFULLNAME']=maintainer
-	with subprocess.run(cmd,env=environ) as dh_make:
-		dh_make.wait()
-		if dh_make.returncode:
-			return False
+	if subprocess.call(cmd,env=environ)==0:
 		return True
+	return False
+
+def remove_templates():
+	for example in glob.glob('debian/*.ex'):
+		os.remove(example)
+
+	for example in glob.glob('debian/*.EX'):
+		os.remove(example)
+
+	os.remove('debian/README.Debian')
+	os.remove('debian/README.source')
+	os.remove('debian/anja-docs.docs')
+
+def changelog_fix(projinfo,distro,release):
+	with open('debian/changelog') as f:
+		lines = f.readlines()
+
+	lines = [line.rstrip('\n') for line in lines]
+
+	if distro=='debian':
+		ubuntu=''
+		debian=1
+	else:
+		ubuntu='ubuntu1'
+		debian=0
+
+	lines[0]='%s (%s-%d%s) %s; urgency=medium'\
+		%(projinfo['name'].lower(),projinfo['version'],debian,ubuntu,release)
+	lines[2]=' * Initial release'
+
+	with open('debian/changelog','w') as f:
+		f.writelines('\n'.join(lines))
 
 projinfo=load_json('projectinfo.json')
+projinfo['version']=get_revision()
 maintainer='John Doe'
 email='john.doe@example.com'
+distro='ubuntu'
+release='xenial'
 
 if not deb_init(projinfo,maintainer,email):
 	sys.exit(-1)
 
+remove_templates()
+changelog_fix(projinfo,distro,release)
