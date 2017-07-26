@@ -172,7 +172,7 @@ def get_revision(target_dir):
 			sys.exit(0)
 
 		with open('versioninfo.txt') as versionfile:
-			result=versionfile.read().strip()
+			result=versionfile.read().decode().strip()
 		with open(target_dir+'/versioninfo.txt','w') as versionfile:
 			versionfile.write(result)
 	else:

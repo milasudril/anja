@@ -237,6 +237,8 @@
       <File Name="doc/modinteract.dot"/>
       <File Name="doc/modinteract.sh"/>
       <File Name="doc/abstract.py"/>
+      <File Name="doc/anja-manpage.py"/>
+      <File Name="doc/options_troff.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
