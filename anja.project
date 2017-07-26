@@ -236,6 +236,7 @@
       <File Name="doc/legalbreif.py"/>
       <File Name="doc/modinteract.dot"/>
       <File Name="doc/modinteract.sh"/>
+      <File Name="doc/abstract.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

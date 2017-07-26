@@ -10,9 +10,7 @@
 		<includegraphics src="logo.png" media="(min-width:512px)" />
 	</titlepic>
 
-	<abstract>
-		<p>Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels, making it possible to fade a group of sound effects together. The backend of Anja is JACK, the low-latency audio server. The session file format of Anja is in a formalized text format, optimized for human readability.</p>
-	</abstract>
+	<input src="abstract.xml" />
 
 	<input src="acknowledgements.xml" />
 

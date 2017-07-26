@@ -3,7 +3,11 @@
 ,"years":[2015,2017]
 ,"name":"Anja"
 ,"legal_brief":"Anja comes with ABSOLUTELY NO WARRANTY; for details see section 15 and 16 in the GNU General Public License version 3. Anja is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, either version 3, or at your option, any later version."
+
 ,"description":"A live sampler for use with JACK"
+
+,"description_long":"Anja is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels, making it possible to fade a group of sound effects together, as well as MIDI capabilities, for remote control. The backend of Anja is JACK, the low-latency audio server."
+
 ,"acknowledgement":
 	[
 	 "Erik de Castro Lopo—for libsamplerate and libsndfile"

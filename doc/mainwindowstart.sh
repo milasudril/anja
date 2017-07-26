@@ -53,7 +53,7 @@
 #@	}
 
 
-set -xeo pipefail
+set -eo pipefail
 
 x11_init()
 	{
@@ -113,7 +113,6 @@ anja_wait()
 	{
 	for i in `seq 1 5`; do
 		sleep 1
-		echo $JACK_DEFAULT_SERVER
 		if ! jack_lsp | grep anja >/dev/null 2>&1; then
 			>&2 echo "Waiting for Anja"
 		else
