@@ -252,6 +252,7 @@
       <File Name="icons/message_usererror.svg"/>
     </VirtualDirectory>
     <File Name="cmdtypes.hpp"/>
+    <File Name="anja-desktop.py"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
