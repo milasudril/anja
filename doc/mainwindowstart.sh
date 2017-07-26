@@ -53,7 +53,7 @@
 #@	}
 
 
-set -eo pipefail
+set -xeo pipefail
 
 x11_init()
 	{
@@ -75,7 +75,8 @@ jack_init()
 	export JACK_DEFAULT_SERVER=dummy
 	jackd --no-mlock -p 64 --no-realtime -d dummy -p 4096 &
 	jack=$!
-	timeout 10 jack_wait -w --server $JACK_DEFAULT_SERVER
+	>&2 echo "Waiting for JACK"
+	timeout 60 jack_wait -w
 	}
 
 jack_kill()
@@ -112,6 +113,7 @@ anja_wait()
 	{
 	for i in `seq 1 5`; do
 		sleep 1
+		echo $JACK_DEFAULT_SERVER
 		if ! jack_lsp | grep anja >/dev/null 2>&1; then
 			>&2 echo "Waiting for Anja"
 		else
@@ -138,6 +140,7 @@ anja_wait
 
 jack_lsp | grep '\.anja' > "$target_dir"/"$in_dir"/anja_jackports.txt
 anjawin=$(xdotool search --all --onlyvisible --pid $anja)
+
 import -window $anjawin "$target_dir"/"$in_dir"/mainwindowstart.png
 exec 3>"$tmpdir/anja_fifo"
 echo "layout inspect" >&3
@@ -147,7 +150,7 @@ anjawin=$(xdotool search --all --name "Master out: Port selection")
 import -window $anjawin "$target_dir"/"$in_dir"/portselector.png
 echo "port selector close" >&3
 echo "waveform load,0,testbank/alien_scanner.wav" >&3
-sleep 1
+sleep 5
 anjawin=$(xdotool search --all --onlyvisible --pid $anja)
 import -window $anjawin "$target_dir"/"$in_dir"/waveformloaded.png
 echo "settings,channels" >&3
