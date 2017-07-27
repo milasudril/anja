@@ -21,7 +21,9 @@ xsaveopt
 Core_ix
 ) | grep '^>' >/dev/null
 if [ $? ]; then
-	echo "Hello"
-else
-	echo "Goodbye"
+	./anja-coreix "$@"
+	exit $?
 fi
+
+./anja-presc2m "$@"
+exit $?
