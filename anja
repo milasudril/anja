@@ -19,8 +19,9 @@ ssse3
 xsave
 xsaveopt
 Core_ix
-) | grep '^>'
-if [ $? ]; then
+) | grep '^>' >/dev/null
+
+if [ $? -eq 1 ]; then
 	./anja-coreix "$@"
 	exit $?
 fi
