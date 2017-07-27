@@ -1,8 +1,10 @@
 release:
-	./build.sh maikeconfig-rel.json
+	./build.sh maikeconfig-rel-ivy.json
+	./build.sh maikeconfig-rel-presc2m.json
 
 debug:
-	./build.sh maikeconfig.json
+	./build.sh maikeconfig-dbg-ivy.json
+	./build.sh maikeconfig-dbg-presc2m.json
 
 all: release debug
 

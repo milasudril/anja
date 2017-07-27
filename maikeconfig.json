@@ -5,14 +5,15 @@
             "..",
             ".git",
             ".",
-            "__targets_presc2m_dbg",
-            "__targets_presc2m_rel",
-            "__targets_ivy_dbg",
-            "__targets_ivy_rel",
+            "__targets_dbg_presc2m",
+            "__targets_rel_presc2m",
+            "__targets_dbg_ivy",
+            "__targets_dbg_ivy",
             "__maike_bin",
             "__pycache__",
             "testbank",
-            "debian"
+            "debian",
+            "doc"
         ],
         "recursive":1
     },

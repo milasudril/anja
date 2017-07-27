@@ -36,4 +36,4 @@ else
 	fi
 fi
 
-$maike_cmd "--configfiles=$configfile"
+$maike_cmd --configfiles=maikeconfig.json,"$configfile"
