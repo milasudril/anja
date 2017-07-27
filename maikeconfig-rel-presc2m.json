@@ -1,14 +1,4 @@
 {
-    "target_hooks":[
-        {
-            "config":{
-                "cflags_extra":["O3","mcx16","mfxsr","mmmx","msse2","msse3","msse","flto","fno-stack-protector"]
-            },
-            "filename_exts":[],
-            "name":"targetcxx_default",
-            "plugin":"targetcxx"
-        }
-    ],
     "targetinfo":{
         "project_root":"",
         "target_directory":"__targets_rel_presc2m"

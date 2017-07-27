@@ -7,13 +7,12 @@
             ".",
             "__targets_dbg_presc2m",
             "__targets_rel_presc2m",
-            "__targets_dbg_ivy",
-            "__targets_dbg_ivy",
+            "__targets_dbg_coreix",
+            "__targets_rel_coreix",
             "__maike_bin",
             "__pycache__",
             "testbank",
             "debian",
-            "doc"
         ],
         "recursive":1
     },
@@ -23,55 +22,11 @@
     "target_hooks":[
         {
             "config":{
-                "appcompile":{
-                    "args":[
-                        "-fpic",
-                        "--fast-math",
-                        "{cxxversion}",
-                        "-Wall",
-                        "{cflags_extra}",
-                        "{iquote}",
-                        "{includedir}",
-                        "-DMAIKE_TARGET_DIRECTORY={target_directory}",
-                        "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-                        "{includes_extra}",
-                        "-o",
-                        "{target}",
-                        "{source}",
-                        "{libdir}",
-                        "{dependencies}"
-                    ],
-                    "name":"g++"
-                },
-                "cflags_extra":[],
                 "cflags_format":"-^",
                 "cxxversion_max":-1,
                 "cxxversion_min":201402,
-                "dllcompile":{
-                    "args":[
-                        "-fpic",
-                        "--fast-math",
-                        "{cxxversion}",
-                        "-Wall",
-                        "{cflags_extra}",
-                        "{iquote}",
-                        "{includedir}",
-                        "-DMAIKE_TARGET_DIRECTORY={target_directory}",
-                        "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-                        "{includes_extra}",
-                        "-shared",
-                        "-o",
-                        "{target}",
-                        "{source}",
-                        "{libdir}",
-                        "{dependencies}"
-                    ],
-                    "name":"g++"
-                },
                 "include_format":"-include^",
-                "includedir":[],
                 "includedir_format":"-I^",
-                "includedir_noscan":[],
                 "iquote":[
                     "."
                 ],
@@ -84,29 +39,9 @@
                     ],
                     "name":"ar"
                 },
-                "libdir":[],
                 "libdir_format":"-L^",
                 "libext_format":"-l^",
                 "libint_format":"-l:^",
-                "objcompile":{
-                    "args":[
-                        "-c",
-                        "-fpic",
-                        "-ffast-math",
-                        "{cxxversion}",
-                        "-Wall",
-                        "{cflags_extra}",
-                        "{iquote}",
-                        "{includedir}",
-                        "-DMAIKE_TARGET_DIRECTORY={target_directory}",
-                        "-DMAIKE_CURRENT_DIRECTORY={current_directory}",
-                        "{includes_extra}",
-                        "-o",
-                        "{target}",
-                        "{source}"
-                    ],
-                    "name":"g++"
-                },
                 "pkgconfig":{
                     "args":[
                         "{action}",
