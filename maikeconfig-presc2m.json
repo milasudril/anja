@@ -1,0 +1,12 @@
+{
+    "target_hooks":[
+        {
+            "config":{
+                "cflags_extra":["mcx16","mfxsr","mmmx","msse2","msse3","msse"]
+            },
+            "filename_exts":[],
+            "name":"targetcxx_default",
+            "plugin":"targetcxx"
+        }
+    ]
+}

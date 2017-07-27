@@ -5,7 +5,6 @@
   <VirtualDirectory Name="src">
     <File Name="anja.cpp"/>
     <File Name="build.sh"/>
-    <File Name="maikeconfig.json"/>
     <VirtualDirectory Name="sessiondata">
       <File Name="sessiondata/session.hpp"/>
       <File Name="sessiondata/wavetable.hpp"/>
@@ -254,6 +253,14 @@
     <File Name="cmdtypes.hpp"/>
     <File Name="anja-desktop.py"/>
     <File Name="deb_prepare"/>
+    <File Name="maikeconfig-coreix.json"/>
+    <File Name="maikeconfig-dbg-coreix.json"/>
+    <File Name="maikeconfig-rel-coreix.json"/>
+    <File Name="maikeconfig-dbg-presc2m.json"/>
+    <File Name="maieconfig-presc2m.json"/>
+    <File Name="maikeconfig-rel-presc2m.json"/>
+    <File Name="maikeconfig-base.json"/>
+    <File Name="maikeconfig-dbg.json"/>
     <File Name="maikeconfig-rel.json"/>
     <File Name="anja-src.sh"/>
     <File Name=".gitignore"/>

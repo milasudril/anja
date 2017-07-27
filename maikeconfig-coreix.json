@@ -2,8 +2,8 @@
     "target_hooks":[
         {
             "config":{
-                "cflags_extra":["g","maes","mavx","mcx16","mf16c","mfsgsbase"
-					,"mfxsr","mmmx","mpclmul","mpopcnt","mrdrnd","msahf"
+                "cflags_extra":["maes","mavx","mcx16","mfsgsbase"
+					,"mfxsr","mmmx","mpclmul","mpopcnt","msahf"
 					,"msse","msse2","msse3","msse4","msse4.1","msse4.2"
 					,"mssse3","mxsave","mxsaveopt"]
             },
@@ -11,9 +11,5 @@
             "name":"targetcxx_default",
             "plugin":"targetcxx"
         }
-    ],
-    "targetinfo":{
-        "project_root":"",
-        "target_directory":"__targets_dbg_ivy"
-    }
+    ]
 }

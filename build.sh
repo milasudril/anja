@@ -2,8 +2,6 @@
 
 set -eo pipefail
 
-configfile="$1"
-
 #Detect Maike
 if command -v maike; then
 	maike_cmd=maike
@@ -36,4 +34,4 @@ else
 	fi
 fi
 
-$maike_cmd --configfiles=maikeconfig.json,"$configfile"
+$maike_cmd "$@"

@@ -1,10 +1,10 @@
 release:
-	./build.sh maikeconfig-rel-ivy.json
-	./build.sh maikeconfig-rel-presc2m.json
+	./build.sh --configfiles=maikeconfig-base.json,maikeconfig-rel.json,maikeconfig-presc2m.json,maikeconfig-rel-presc2m.json
+	./build.sh --targets=anja --configfiles=maikeconfig-base.json,maikeconfig-rel.json,maikeconfig-coreix.json,maikeconfig-rel-coreix.json
 
 debug:
-	./build.sh maikeconfig-dbg-ivy.json
-	./build.sh maikeconfig-dbg-presc2m.json
+	./build.sh --configfiles=maikeconfig-base.json,maikeconfig-dbg.json,maikeconfig-presc2m.json,maikeconfig-dbg-presc2m.json
+	./build.sh --targets=anja --configfiles=maikeconfig-base.json,maikeconfig-dbg.json,maikeconfig-coreix.json,maikeconfig-dbg-coreix.json
 
 all: release debug
 
