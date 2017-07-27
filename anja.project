@@ -262,7 +262,6 @@
     <File Name="maikeconfig-base.json"/>
     <File Name="maikeconfig-dbg.json"/>
     <File Name="maikeconfig-rel.json"/>
-    <File Name="maikeconfig-rel.json"/>
     <File Name="anja-src.sh"/>
     <File Name=".gitignore"/>
   </VirtualDirectory>
