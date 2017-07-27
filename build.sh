@@ -2,10 +2,6 @@
 
 set -eo pipefail
 
-echo "$@"
-
-exit 0
-
 #Detect Maike
 if command -v maike; then
 	maike_cmd=maike
