@@ -1,6 +1,6 @@
 {
     "targetinfo":{
         "project_root":"",
-        "target_directory":"__targets_dbg_coreix"
+        "target_directory":"__targets_rel_coreix"
     }
 }

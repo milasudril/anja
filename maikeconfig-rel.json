@@ -1,6 +1,6 @@
 {
 "target_hooks":[
-	"config":{
+	{"config":{
 		"appcompile":{
 			"args":[
 				"-O3",
@@ -73,5 +73,5 @@
 	"filename_exts":[],
 	"name":"targetcxx_default",
 	"plugin":"targetcxx"
-	]
+	}]
 }
