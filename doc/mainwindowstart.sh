@@ -111,7 +111,7 @@ cleanup()
 
 anja_wait()
 	{
-	for i in `seq 1 5`; do
+	for i in `seq 1 10`; do
 		sleep 1
 		if ! jack_lsp | grep anja >/dev/null 2>&1; then
 			>&2 echo "Waiting for Anja"
