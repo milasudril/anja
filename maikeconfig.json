@@ -4,13 +4,15 @@
         "paths_reject":[
             "..",
             ".git",
-            "__targets_dbg",
-            "__targets_inst",
             ".",
-            "__targets_rel",
+            "__targets_presc2m_dbg",
+            "__targets_presc2m_rel",
+            "__targets_ivy_dbg",
+            "__targets_ivy_rel",
             "__maike_bin",
             "__pycache__",
-            "testbank"
+            "testbank",
+            "debian"
         ],
         "recursive":1
     },
@@ -22,9 +24,7 @@
             "config":{
                 "appcompile":{
                     "args":[
-                        "-g",
                         "-fpic",
-                        "-march=native",
                         "--fast-math",
                         "{cxxversion}",
                         "-Wall",
@@ -48,9 +48,7 @@
                 "cxxversion_min":201402,
                 "dllcompile":{
                     "args":[
-                        "-g",
                         "-fpic",
-                        "-march=native",
                         "--fast-math",
                         "{cxxversion}",
                         "-Wall",
@@ -92,10 +90,8 @@
                 "objcompile":{
                     "args":[
                         "-c",
-                        "-g",
                         "-fpic",
-                        "-march=native",
-                        "--fast-math",
+                        "-ffast-math",
                         "{cxxversion}",
                         "-Wall",
                         "{cflags_extra}",
@@ -262,9 +258,5 @@
             "name":"targetoctave_default",
             "plugin":"targetoctave"
         }
-    ],
-    "targetinfo":{
-        "project_root":"",
-        "target_directory":"__targets_dbg"
-    }
+    ]
 }

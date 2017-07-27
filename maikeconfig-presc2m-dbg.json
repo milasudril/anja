@@ -1,0 +1,16 @@
+{
+    "target_hooks":[
+        {
+            "config":{
+                "cflags_extra":["g","mcx16","mfxsr","mmmx","msse2","msse3","msse"]
+            },
+            "filename_exts":[],
+            "name":"targetcxx_default",
+            "plugin":"targetcxx"
+        }
+    ],
+    "targetinfo":{
+        "project_root":"",
+        "target_directory":"__targets_presc2m_dbg"
+    }
+}
