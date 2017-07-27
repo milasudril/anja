@@ -181,7 +181,6 @@
       <File Name="ui/progressbar.cpp"/>
       <File Name="ui/progressbox.hpp"/>
     </VirtualDirectory>
-    <File Name="maikeconfig-rel.json"/>
     <File Name="projectinfo.json"/>
     <VirtualDirectory Name="testbank">
       <File Name="testbank/testbank.txt"/>
@@ -255,7 +254,6 @@
     <File Name="cmdtypes.hpp"/>
     <File Name="anja-desktop.py"/>
     <File Name="deb_prepare"/>
-    <File Name="maikeconfig-dbg.json"/>
     <File Name="maikeconfig-rel.json"/>
     <File Name="anja-src.sh"/>
     <File Name=".gitignore"/>
