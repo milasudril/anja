@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
-
-if diff <(grep 'flags' /proc/cpuinfo | head -n1 | sed 's/^.*: \(.*\)/\1/' | tr ' ' '\n' | sort) <(sort << Core_ix
+diff <(grep 'flags' /proc/cpuinfo | head -n1 | sed 's/^.*: \(.*\)/\1/' | tr ' ' '\n' | sort) <(sort << Core_ix
 aes
 avx
 cx16
@@ -21,7 +19,8 @@ ssse3
 xsave
 xsaveopt
 Core_ix
-) | grep '^>'; then
+) | grep '^>' >/dev/null
+if [ $? ]; then
 	echo "Hello"
 else
 	echo "Goodbye"
