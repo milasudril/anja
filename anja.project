@@ -255,6 +255,7 @@
     </VirtualDirectory>
     <File Name="cmdtypes.hpp"/>
     <File Name="anja-desktop.py"/>
+    <File Name="deb_prepare"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

@@ -47,6 +47,7 @@ https://milasudril.github.io/anja#deps.
  * markdown -- converts markdown to (x)html
  * octave -- Package for numerical analysis. MATLAB should work, but it requires
 	some changes to `maikeconfig` files.
+ * ronn -- converts Markdown to troff
  * pkg-config -- return metainformation about installed libraries
  * python3 -- an interpreted, interactive, object-oriented programming language
  * xdotool -- tool for manipulating X clients
@@ -85,7 +86,7 @@ After adding this PPA, install all tools and libraries
     sudo apt-get install jackd2 pkg-config libgtk-3-dev g++ blender inkscape \
         libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev python3 \
         libjemalloc-dev xvfb octave xdotool xsltproc libsamplerate0-dev \
-        graphviz imagemagick
+        graphviz imagemagick ruby-ronn
     make
 
 After compling Anja, the binary will be located in `__targets_rel` or `__targets_dbg`.
