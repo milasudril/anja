@@ -1,7 +1,10 @@
 {
  "author":"Torbjörn Rathsman"
+,"author_email":"milasudril@gmail.com"
 ,"years":[2015,2017]
 ,"name":"Anja"
+,"homepage":"https://github.com/milasudril/anja"
+,"vcs":"https://github.com/milasudril/anja.git"
 ,"main_executable":"anja"
 ,"icon":"/usr/share/anja/logo.png"
 ,"legal_brief":"Anja comes with ABSOLUTELY NO WARRANTY; for details see section 15 and 16 in the GNU General Public License version 3. Anja is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, either version 3, or at your option, any later version."
@@ -20,5 +23,7 @@
 	,"The GTK+ team—for the UI toolkit"
 	]
 ,"categories":["LivePerformance","JACK","Audio","Player","Recorder","Midi","Music"]
-,"license":"gpl3"
+,"license_name":"GPL-3.0+"
+,"license_file":"GPL-3"
+,"license_short":"This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>."
 }

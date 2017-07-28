@@ -1,15 +1,66 @@
 #!/usr/bin/python3
 
 import sys
-import json
-import subprocess
-import shutil
 import os
-import glob
+import json
+import string
+import time
+import shutil
+import subprocess
+import email.utils
+
+changelog=string.Template('''$name_lower ($version-$package_distro_suffix) $package_distro_release; urgency=low
+
+  * Packaged for $package_distro
+  
+ -- $packager_name <$packager_email>  $package_date''')
+
+
+copyright=string.Template('''Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: $name_lower
+Source: $homepage
+
+Files: *
+Copyright: $years $author <$author_email>
+
+License: $license_name
+
+Files: debian/*
+Copyright: $package_year $packager_name <$packager_email>
+License: $license_name
+$license_short
+ .
+ On Debian systems, you should find the complete license text in /usr/share/common-licenses/$license_file
+''')
+
+control=string.Template('''Source: $name_lower
+Section: Multimedia
+Priority: optional
+Maintainer: $packager_name <$packager_email>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.6
+Homepage: $homepage
+Vcs-Git: $vcs
+
+Package: $name_lower
+Architecture: any
+Depends: $${shlibs:Depends}, $${misc:Depends}
+Description: $description
+ $description_long''')
+
+compat='''9
+'''
+
+rules='''%:
+	dh $@'''
+
+source_format='''3.0 (quilt)
+'''
+
 
 def get_revision():
 	if shutil.which('git')==None:
-		with open('versioninfo.txt') as versionfile:
+		with open('versioninfo-in.txt') as versionfile:
 			result=versionfile.read().decode().strip()
 	else:
 		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always') \
@@ -19,64 +70,43 @@ def get_revision():
 			status=git.returncode
 
 		if status:
-			with open('versioninfo.txt') as versionfile:
+			with open('versioninfo-in.txt') as versionfile:
 				result=versionfile.read().strip()
 	return result
+
 
 def load_json(filename):
 	with open(filename,encoding='utf-8') as input:
 		return json.load(input)
-
-def deb_init(projinfo,maintainer,email):
-	cmd=['dh_make','-c',projinfo['license'],'-e',email \
-		,'-p',projinfo['name'].lower() + '_' + projinfo['version'],'--createorig','-C','s']
-
-	environ=dict()
-	environ['DEBFULLNAME']=maintainer
-	if subprocess.call(cmd,env=environ)==0:
-		return True
-	return False
-
-def remove_templates():
-	for example in glob.glob('debian/*.ex'):
-		os.remove(example)
-
-	for example in glob.glob('debian/*.EX'):
-		os.remove(example)
-
-	os.remove('debian/README.Debian')
-	os.remove('debian/README.source')
-	os.remove('debian/anja-docs.docs')
-
-def changelog_fix(projinfo,distro,release):
-	with open('debian/changelog') as f:
-		lines = f.readlines()
-
-	lines = [line.rstrip('\n') for line in lines]
-
-	if distro=='debian':
-		ubuntu=''
-		debian=1
-	else:
-		ubuntu='ubuntu1'
-		debian=0
-
-	lines[0]='%s (%s-%d%s) %s; urgency=medium'\
-		%(projinfo['name'].lower(),projinfo['version'],debian,ubuntu,release)
-	lines[2]=' * Initial release'
-
-	with open('debian/changelog','w') as f:
-		f.writelines('\n'.join(lines))
+	
+def write_file(filename,content):
+	with open(filename,'wb') as f:
+		f.write(content.encode('utf-8'))
 
 projinfo=load_json('projectinfo.json')
 projinfo['version']=get_revision()
-maintainer='John Doe'
-email='john.doe@example.com'
-distro='ubuntu'
-release='xenial'
+projinfo['name_lower']=projinfo['name'].lower()
+now=time.time();
+projinfo['package_date']=email.utils.formatdate(now)
+projinfo['package_year']=time.strftime('%Y',time.gmtime(now))
+projinfo['packager_name']='John Doe'
+projinfo['packager_email']='john.doe@example.com'
+projinfo['package_distro']='Ubuntu'
+projinfo['package_distro_suffix']='0ubuntu1'
+projinfo['package_distro_release']='xenial'
+projinfo['license_short']=' '+'\n .\n '.join(projinfo['license_short'].split('\n\n'))
 
-if not deb_init(projinfo,maintainer,email):
-	sys.exit(-1)
+try:
+	shutil.rmtree('debian')
+except:
+	pass
 
-remove_templates()
-changelog_fix(projinfo,distro,release)
+os.mkdir('debian')
+
+write_file('debian/compat',compat)
+write_file('debian/copyright',copyright.substitute(projinfo))
+write_file('debian/changelog',changelog.substitute(projinfo))
+write_file('debian/control',control.substitute(projinfo))
+write_file('debian/rules',rules)
+os.mkdir('debian/source')
+write_file('debian/source/format',source_format)
