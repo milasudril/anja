@@ -88,7 +88,7 @@ for k in __anja_*; do
 	cp "$k"/anja ~/bin/"$k"
 done</code>
 
-<p>You can also run the</p>
+<p>You can also run</p>
 <code>./install ~</code>
 <p>In order to install everything to your home directory</p>
 

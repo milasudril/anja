@@ -16,7 +16,7 @@ run-debug: debug
 
 clean:
 	rm -r __anja_*
-
 DESTDIR?=""
+.PHONY: install
 install:
 	./install $(DESTDIR)/usr
