@@ -34,7 +34,7 @@ $license_short
 ''')
 
 control=string.Template('''Source: $name_lower
-Section: Multimedia
+Section: $debian_section
 Priority: optional
 Maintainer: $packager_name <$packager_email>
 Build-Depends: debhelper (>=9)
