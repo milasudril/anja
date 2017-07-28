@@ -83,7 +83,7 @@ make</code>
 	<p>To make it easier to launch Anja, you can move (or copy) the script, <em>and the binaries it refers to</em> to a place mentioned in the <env>PATH</env> variable. For example, a simple install (without desktop icon and manpage) could look like</p>
 
 <code language="bash">cp ./anja ~/bin/anja
-for k in __targets_*; do
+for k in __anja_*; do
 	mkdir ~/bin/"$k"
 	cp "$k"/anja ~/bin/"$k"
 done</code>

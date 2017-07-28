@@ -1,0 +1,25 @@
+prefix="$1"
+
+mkdir -p "$prefix"
+
+#	Install the application
+cp ./anja "$prefix"/anja
+
+for k in __anja_*; do
+	mkdir "$prefix"/"$k"
+	cp "$k"/anja "$prefix"/"$k"/anja
+done
+
+#	Install user's guide
+mkdir -p "$prefix"/share/help/C
+tar -xf __anja_rel_presc2m/doc/anja-usersguide.tar.gz -C "$prefix"/share/help/C
+mv "$prefix"/share/help/C/anja-usersguide "$prefix"/share/help/C/anja
+
+#	Install man page
+mkdir -p "$preffix"/share/man/man1
+cp __targets_rel/doc/anja.man1 "$prefix"/usr/share/man/man1/anja.1
+
+#	Install desktop icon
+mkdir -p "$prefix"/share/anja
+cp __targets_rel_presc2m/logo_3.png "$prefix"/share/anja/logo.png
+cp __targets_rel_presc2m/anja.desktop "$prefix"/share/applications/anja.desktop
