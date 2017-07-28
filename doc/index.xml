@@ -74,15 +74,24 @@
 	<code language="bash">cd anja-src
 make</code>
 
-<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_rel</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
-<code language="bash">__targets_rel/anja</code>
+<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_*</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
+<code language="bash">./anja</code>
 
 <infobox type="warning">Normally, Anja is distributed with pre-rendered images. It may happen that the corresponding <prgname>blender</prgname> file has been updated and the render. In this case, it will take a much longer time than normal to compile Anja, since the images will need to be rerendered.</infobox>
 
-	<p>To make it easier to launch Anja, you can move it to a place mentioned in the <env>PATH</env> variable. For example, if you have <prgname>sudo</prgname> permissions, you can do</p>
-<code language="bash">sudo mv __targets_rel/anja /usr/local/bin</code>
-<p>If you do not have <prgname>sudo</prgname> permissions, you can move it to <dirname>~/bin</dirname> instead:</p>
-<code language="bash">mv __targets_rel/anja ~/bin</code>
+	<p>To make it easier to launch Anja, you can move (or copy) the script, <em>and the binaries it refers to</em> to a place mentioned in the <env>PATH</env> variable. For example, a simple install (without desktop icon and manpage) could look like</p>
+
+	<code language="bash">
+		cp ./anja ~/bin/anja
+		for k in __targets_*; do
+			mkdir ~/bin/"$k"
+			cp "$k"/anja ~/bin/"$k"
+		done;
+	</code>
+
+	<p>If you have <prgname>sudo</prgname> permissions, you can do</p>
+<code language="bash">sudo make install</code>
+<p>This will perform a regular install, for all users.</p>
 
 	<chapter id="using">Using Anja</chapter>
 

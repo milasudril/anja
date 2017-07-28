@@ -89,4 +89,6 @@ After adding this PPA, install all tools and libraries
         graphviz imagemagick ruby-ronn
     make
 
-After compling Anja, the binary will be located in `__targets_rel` or `__targets_dbg`.
+After compling Anja, you can test it by using the command
+
+    ./anja
