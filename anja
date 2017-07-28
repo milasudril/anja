@@ -21,9 +21,29 @@ xsaveopt
 Core_ix
 ) | grep '^>' >/dev/null
 
-current_dir=$(dirname "`readlink -f "${BASH_SOURCE[0]}"`")
-
 if [ $? -eq 1 ]; then
-	exec "$current_dir"/__anja_rel_coreix/anja "$@"
+	arch="coreix"
+else
+	arch="presc2m"
 fi
-exec "$current_dir"/__anja_rel_presc2m/anja "$@"
+
+options=()
+debug=0
+mode="rel"
+for option in "$@"; do
+	if [ "$option" == "--debug" ]; then
+		debug=1
+		mode="dbg"
+	else
+		options+=("$option")
+	fi
+done
+
+current_dir=$(dirname "`readlink -f "${BASH_SOURCE[0]}"`")
+binary="$current_dir"/__anja_"$mode"_"$arch"/anja
+
+if [ $debug -eq 1 ]; then
+	gdb --args "$binary" "${options[@]}"
+else
+	exec "$binary" "${options[@]}"
+fi
