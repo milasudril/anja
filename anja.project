@@ -266,6 +266,8 @@
     <File Name="cpuflags.sh"/>
     <File Name="maikeconfig-presc2m.json"/>
     <File Name="anja"/>
+    <File Name="install"/>
+    <File Name="CONTRIBUTING.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

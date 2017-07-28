@@ -19,6 +19,19 @@ When posting a bug record, include the following information:
 
  4. If you experience strange look and feel, state what GTK+3 theme you are using.
 
+Finally, if there was a crash, deadlock, or CPU spinning. Run anja with the debug
+option
+
+    anja --debug [options]
+
+This will launch the debugger. Start anja by typing
+
+    catch throw
+    run
+
+If the program crashed, type `backtrace`, and add the information retrieved to
+the bug report. In the two other cases, press Ctrl+C when it hangs, and then type
+`backtrace`. Add the retrieved information to the bug report.
 
 Feature requests
 ----------------
@@ -61,7 +74,7 @@ To do so
 
  7. Make a pull request
 
-Before doing anything, you will probably benefit from reading the source code 
+Before doing anything, you will probably benefit from reading the source code
 overview in the manual [2]. In addition to that text, here are some coding practices
 that are followed withinthis project. Items are not mentioned in any particular
 order.
