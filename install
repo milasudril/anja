@@ -23,4 +23,5 @@ cp __anja_rel_presc2m/doc/anja.man1 "$prefix"/share/man/man1/anja.1
 #	Install desktop icon
 mkdir -p "$prefix"/share/anja
 cp __anja_rel_presc2m/logo_3.png "$prefix"/share/anja/logo.png
+mkdir -p "$prefix"/share/applications
 cp __anja_rel_presc2m/anja.desktop "$prefix"/share/applications/anja.desktop

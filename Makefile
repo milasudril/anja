@@ -15,7 +15,7 @@ run-debug: debug
 	./anja --debug
 
 clean:
-	rm -r __anja_*
+	rm -rf __anja_*
 DESTDIR?=""
 .PHONY: install
 install:
