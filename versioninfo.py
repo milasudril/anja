@@ -69,21 +69,21 @@ def get_revision():
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
 
+def get_rev_old():
+	with os.fdopen(os.open(target_dir + '/versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r+') \
+		as verfile:
+		return verfile.read().strip()
+
 try:
 	target_dir=sys.argv[1]
 	in_dir=sys.argv[2]
 	revision=get_revision()
-	print(modified_time(target_dir + '/versioninfo.txt'))
-	with os.fdopen(os.open(target_dir + '/versioninfo.txt',os.O_RDWR|os.O_CREAT),'r+') \
-		as verfile:
-		rev_old=verfile.read().strip()
-		print('%s %s\n'%(rev_old,revision))
-		if rev_old!=revision:
-			verfile.write(revision)
-		else:
-			print('\nNot updated')
+	rev_old=get_rev_old()
 
-	print(modified_time(target_dir + '/versioninfo.txt'))
+	if rev_old!=revision:
+		with open(target_dir + '/versioninfo.txt','w') as verfile:
+			verfile.write(revision)
+
 	sys.exit(0)
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))
