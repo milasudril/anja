@@ -2,5 +2,5 @@ __*
 gh-pages
 .codelite
 *.blend1
-versioninfo.txt
+versioninfo-in.txt
 debian

@@ -4,14 +4,8 @@
 #@		 "name":"projectinfo.hpp"
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
 #@			,{"ref":"maikeconfig.json","rel":"misc"}
-#@			,{"ref":"projectinfo.json","rel":"misc"}]
-#@		,"status_check":"static"
-#@		},{
-#@		 "name":"versioninfo.txt"
-#@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
-#@			,{"ref":"maikeconfig.json","rel":"misc"}
-#@			,{"ref":"projectinfo.json","rel":"misc"}]
-#@		,"status_check":"dynamic"
+#@			,{"ref":"projectinfo.json","rel":"misc"}
+#@			,{"ref":"versioninfo.txt","rel":"misc"}]
 #@		}]
 #@  }
 
@@ -20,7 +14,6 @@ import json
 import string
 import time
 import subprocess
-import shutil
 import os
 
 def write_error(*args, **kwargs):
@@ -126,91 +119,11 @@ def compiler_version(exename):
 		,stdout=subprocess.PIPE) as compiler:
 		for lines in compiler.stdout:
 			return lines.decode('utf8').rstrip()
-
-def modified_time(filename):
-	try:
-		return (os.path.getmtime(filename),True)
-	except (KeyboardInterrupt, SystemExit):
-		raise
-	except:
-		return (0,False)
-
-def newer(file_a,file_b):
-	mod_a=modified_time(file_a)
-	mod_b=modified_time(file_b)
-	if mod_a[1]==False and mod_b[1]==False:
-		raise OSError('Error: None of the files %s, and %s are accessible.'%(file_a,file_b))
-
-	if not mod_a[1]:
-		return False
-
-	if not mod_b[1]:
-		return True
-
-	return mod_a[0] > mod_b[0]
-
-def newer_than_all(file_a, files):
-	for file in files:
-		if newer(file,file_a):
-			return False
-	return True
-
-def git_changes():
-	with subprocess.Popen(('git', 'status','--porcelain'),stdout=subprocess.PIPE) \
-		as git:
-		result=[];
-		for k in filter(None,git.stdout.read().decode().split('\n')):
-			result.append( k[3:].split(' ')[0] )
 	return result
-
 
 def get_revision(target_dir):
-	if shutil.which('git')==None:
-		if newer_than_all(target_dir + '/projectinfo.hpp' \
-			,('projectinfo.json',target_dir + '/maikeconfig.json'\
-				,target_dir + '/externals.json','projectinfo.py')):
-			sys.exit(0)
-
-		with open('versioninfo.txt') as versionfile:
-			result=versionfile.read().decode().strip()
-		with open(target_dir+'/versioninfo.txt','w') as versionfile:
-			versionfile.write(result)
-	else:
-		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always') \
-			,stdout=subprocess.PIPE) as git:
-			result=git.stdout.read().decode().strip()
-			git.wait()
-			status=git.returncode
-
-		if status:
-			if newer_than_all(target_dir + '/projectinfo.hpp' \
-				,('projectinfo.json',target_dir + '/maikeconfig.json'\
-					,target_dir + '/externals.json','projectinfo.py')):
-				sys.exit(0)
-
-			with open('versioninfo.txt') as versionfile:
-				result=versionfile.read().strip()
-			with open(target_dir+'/versioninfo.txt','w') as versionfile:
-				versionfile.write(result)
-		else:
-			project_changed=( len(list(filter(lambda x:x!='versioninfo.txt',git_changes()))) > 0)
-			with os.fdopen(os.open('versioninfo.txt',os.O_RDONLY|os.O_CREAT),'r') \
-				as verfile:
-				result_old=verfile.read().strip()
-				if (result==result_old or (not project_changed and 'dirty' in result) ) \
-					and newer_than_all(target_dir + '/projectinfo.hpp' \
-						,('projectinfo.json' \
-							,target_dir + '/maikeconfig.json' \
-							,target_dir + '/externals.json' \
-							,'projectinfo.py')):
-					sys.exit(0)
-
-			with open('versioninfo.txt','w') as versionfile:
-				versionfile.write(result)
-			with open(target_dir+'/versioninfo.txt','w') as versionfile:
-				versionfile.write(result)
-
-	return result
+	with open(target_dir + '/versioninfo.txt') as versionfile:
+		return versionfile.read().strip()
 
 try:
 	target_dir=sys.argv[1]

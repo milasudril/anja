@@ -36,7 +36,7 @@ done | tee >(grep -v '^__' | tee >(xargs -d '\n' cp -t "$dest_dir") \
 
 echo "$dest_dir"/index.html >> "$dest_dir"/archive.txt
 
-stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$in_dir"'"}'
+stylesheets='{"stylesheets":["format.css","color.css"],"in_dir":"'"$target_dir"/"$in_dir"'"}'
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| "$in_dir"/makepage.py "$stylesheets" > "$dest_dir"/index.html
 
