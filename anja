@@ -21,10 +21,9 @@ xsaveopt
 Core_ix
 ) | grep '^>' >/dev/null
 
-if [ $? -eq 1 ]; then
-	./anja-coreix "$@"
-	exit $?
-fi
+current_dir=$(dirname "`readlink -f "${BASH_SOURCE[0]}"`")
 
-./anja-presc2m "$@"
-exit $?
+if [ $? -eq 1 ]; then
+	exec "$current_dir"/__anja_rel_coreix/anja "$@"
+fi
+exec "$current_dir"/__anja_rel_presc2m/anja "$@"

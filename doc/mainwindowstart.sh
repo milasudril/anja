@@ -81,7 +81,7 @@ jack_init()
 
 jack_kill()
 	{
-	kill -9 $jack 2>/dev/null #KxStudio buggy
+	kill $jack 2>/dev/null
 	}
 
 fifo_init()
