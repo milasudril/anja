@@ -5,7 +5,7 @@
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
 #@			,{"ref":"maikeconfig.json","rel":"misc"}
 #@			,{"ref":"projectinfo.json","rel":"misc"}]
-#@		,"status_check":"static"
+#@		,"status_check":"dynamic"
 #@		},{
 #@		 "name":"versioninfo.txt"
 #@		,"dependencies":[{"ref":"externals.json","rel":"misc"}
@@ -151,8 +151,11 @@ def newer(file_a,file_b):
 
 def newer_than_all(file_a, files):
 	for file in files:
+		print('Is %s newer than %s?'%(file,file_a))
 		if newer(file,file_a):
+			print('Yes')
 			return False
+	print('No')
 	return True
 
 def git_changes():
@@ -168,7 +171,7 @@ def get_revision(target_dir):
 	if shutil.which('git')==None:
 		if newer_than_all(target_dir + '/projectinfo.hpp' \
 			,('projectinfo.json',target_dir + '/maikeconfig.json'\
-				,target_dir + '/externals.json','projectinfo.py')):
+				,target_dir + '/externals.json','projectinfo.py','versioninfo.txt')):
 			sys.exit(0)
 
 		with open('versioninfo.txt') as versionfile:
@@ -185,7 +188,7 @@ def get_revision(target_dir):
 		if status:
 			if newer_than_all(target_dir + '/projectinfo.hpp' \
 				,('projectinfo.json',target_dir + '/maikeconfig.json'\
-					,target_dir + '/externals.json','projectinfo.py')):
+					,target_dir + '/externals.json','projectinfo.py','versioninfo.txt')):
 				sys.exit(0)
 
 			with open('versioninfo.txt') as versionfile:
@@ -202,7 +205,7 @@ def get_revision(target_dir):
 						,('projectinfo.json' \
 							,target_dir + '/maikeconfig.json' \
 							,target_dir + '/externals.json' \
-							,'projectinfo.py')):
+							,'projectinfo.py','versioninfo.txt')):
 					sys.exit(0)
 
 			with open('versioninfo.txt','w') as versionfile:
