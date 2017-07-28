@@ -17,6 +17,14 @@ run-debug: debug
 clean:
 	rm -rf __anja_*
 
+distclean: clean
+	rm -rf __maike_bin
+
+deb:
+	./debinit.py
+	debuild -us -uc
+	
+
 DESTDIR?=""
 .PHONY: install
 install:

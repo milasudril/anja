@@ -8,6 +8,8 @@ import time
 import shutil
 import subprocess
 import email.utils
+import readline
+import stat
 
 changelog=string.Template('''$name_lower ($version-$package_distro_suffix) $package_distro_release; urgency=low
 
@@ -51,7 +53,9 @@ Description: $description
 compat='''9
 '''
 
-rules='''%:
+rules='''#!/usr/bin/make -f
+
+%:
 	dh $@'''
 
 source_format='''3.0 (quilt)
@@ -82,6 +86,14 @@ def load_json(filename):
 def write_file(filename,content):
 	with open(filename,'wb') as f:
 		f.write(content.encode('utf-8'))
+		
+def get(projinfo,caption,key):
+	res=input(caption%projinfo[key]).strip()
+	if not res:
+		return
+	projinfo[key]=res
+	print(projinfo[key])	
+
 
 projinfo=load_json('projectinfo.json')
 projinfo['version']=get_revision()
@@ -96,6 +108,12 @@ projinfo['package_distro_suffix']='0ubuntu1'
 projinfo['package_distro_release']='xenial'
 projinfo['license_short']=' '+'\n .\n '.join(projinfo['license_short'].split('\n\n'))
 
+get(projinfo,'Your name (%s): ','packager_name')
+get(projinfo,'Your e-mail (%s): ','packager_email')
+get(projinfo,'Target distribution (%s): ','package_distro')
+get(projinfo,'Target distribution suffix (%s): ','package_distro_suffix')
+get(projinfo,'Target distribution release (%s): ','package_distro_release')
+
 try:
 	shutil.rmtree('debian')
 except:
@@ -108,5 +126,7 @@ write_file('debian/copyright',copyright.substitute(projinfo))
 write_file('debian/changelog',changelog.substitute(projinfo))
 write_file('debian/control',control.substitute(projinfo))
 write_file('debian/rules',rules)
+st = os.stat('debian/rules') #debian/ruls should be executable
+os.chmod('debian/rules', st.st_mode | stat.S_IEXEC)
 os.mkdir('debian/source')
 write_file('debian/source/format',source_format)
