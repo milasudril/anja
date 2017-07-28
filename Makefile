@@ -15,7 +15,7 @@ run-debug: debug
 	./anja --debug
 
 clean:
-	rm -r __targets_*
+	rm -r __anja_*
 
 install:
 #	Install the binary
