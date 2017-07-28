@@ -14,6 +14,9 @@ run: release
 run-debug: debug
 	./anja --debug
 
+clean:
+	rm -r __targets_*
+
 install:
 #	Install the binary
 	mkdir -p $(DESTDIR)/usr/bin
