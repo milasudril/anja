@@ -60,7 +60,7 @@ def get_revision():
 			status=git.returncode
 
 		if status:
-			with open('versioninfo.txt') as versionfile:
+			with open('versioninfo-in.txt') as versionfile:
 				return versionfile.read().strip()
 
 		else:
@@ -82,6 +82,8 @@ try:
 
 	if rev_old!=revision:
 		with open(target_dir + '/versioninfo.txt','w') as verfile:
+			verfile.write(revision)
+		with open('versioninfo-in.txt','w') as verfile:
 			verfile.write(revision)
 
 	sys.exit(0)
