@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>Anja user's guide</h1><title>Anja user's guide</title>
-	<sub-title>version 1.9-beta.15</sub-title>
+	<sub-title>version 1.9-beta.16</sub-title>
 	<p class="titlepage">Torbjörn Rathsman</p><div class="titlepic">
 <picture><source srcset="logo_3.png" media="(max-width:128px)"><source srcset="logo_2.png" media="(max-width:256px)"><source srcset="logo_1.png" media="(max-width:512px)"><source srcset="logo.png" media="(min-width:512px)"><img src="logo_1.png" alt="Title picture"></picture>
 </div><div class="abstract"><p>Anja is a sampler designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server.</p>
@@ -99,12 +99,19 @@ for k in __anja_*; do
 done</code></pre>
 
 <p>You can also run</p>
-<pre><code>./install ~</code></pre>
+<pre><code class="bash">./install ~</code></pre>
 <p>In order to install everything to your home directory</p>
 
 	<p>If you have <code>sudo</code> permissions, you can do</p>
 <pre><code class="bash">sudo make install</code></pre>
 <p>This will perform a regular install, for all users.</p>
+
+	<p>If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
+
+	<pre><code class="bash">make deb
+cd ..
+dpkg -i anja_$version-$distro_$architecture.deb
+</code></pre>
 
 	<h2 id="using"><span class="fill">3</span> Using Anja</h2><p>Starting Anja brings up a window that looks like the one presented in <a href="#anjastart">Figure 3.1</a>. The workspace consists of four main parts outlined in <a href="#anjaworkspace">Figure 3.2</a>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>keyboard view</dfn> is located, and below that, there is a <dfn>settings panel</dfn>, controlling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
