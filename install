@@ -23,7 +23,7 @@ mv "$prefix"/share/help/C/anja-usersguide "$prefix"/share/help/C/anja
 
 #	Install man page
 mkdir -p "$prefix"/share/man/man1
-cp _targets_rel_presc2m/doc/anja.man1 "$prefix"/share/man/man1/anja.1
+cp __targets_rel_presc2m/doc/anja.man1 "$prefix"/share/man/man1/anja.1
 
 #	Install desktop icon
 mkdir -p "$prefix"/share/anja
