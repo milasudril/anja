@@ -23,7 +23,7 @@ cd anja-src
 ./debinit.py
 debuild -us -uc
 
-popd .
-cp "$dir"/* ..
+popd
+cp "$dir"/* .. || :
 rm -r "$dir"
-trap :0
+trap : 0

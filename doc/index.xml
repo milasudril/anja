@@ -89,12 +89,19 @@ for k in __anja_*; do
 done</code>
 
 <p>You can also run</p>
-<code>./install ~</code>
+<code language="bash">./install ~</code>
 <p>In order to install everything to your home directory</p>
 
 	<p>If you have <prgname>sudo</prgname> permissions, you can do</p>
 <code language="bash">sudo make install</code>
 <p>This will perform a regular install, for all users.</p>
+
+	<p>If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
+
+	<code language="bash">make deb
+cd ..
+dpkg -i anja_$version-$distro_$architecture.deb
+</code>
 
 	<chapter id="using">Using Anja</chapter>
 

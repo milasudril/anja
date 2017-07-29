@@ -20,6 +20,9 @@ clean:
 distclean: clean
 	rm -rf __maike_bin
 
+deb:
+	./debpack.sh
+
 DESTDIR?=""
 .PHONY: install
 install:

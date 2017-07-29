@@ -14,7 +14,7 @@ for k in __targets_*; do
 	cp "$k"/anja "$prefix"/lib/anja/"$k"/anja
 done
 mkdir "$prefix"/bin
-ln -s -T "$prefix"/lib/anja/anja "$prefix"/bin/anja
+ln -s -T ../lib/anja/anja "$prefix"/bin/anja
 
 #	Install user's guide
 mkdir -p "$prefix"/share/help/C

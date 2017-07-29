@@ -269,7 +269,7 @@
     <File Name="versioninfo.py"/>
     <File Name="debinit.py"/>
     <File Name="install"/>
-    <File Name="debpack"/>
+    <File Name="debpack.sh"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

@@ -60,7 +60,7 @@ https://milasudril.github.io/anja#deps.
 Anja uses the font *Linux Libertine* in some of the SVG files. If this font
 is not installed, a serif substitude will be used instead.
 
-Build instructions (Ubuntu or debian-like systems)
+Build instructions (Ubuntu or Debian based systems)
 --------------------------------------------------
 
 If `maike` is not installed, prepare for bootstrapping it
@@ -81,7 +81,7 @@ In addition to that, the KxStudio repositories may contain a more up-to-date
 version of JACK, as well as some other useful utilities. More information can be
 found here: http://kxstudio.linuxaudio.org/Repositories.
 
-After adding this PPA, install all tools and libraries
+After adding this PPA, install all tools and libraries, and compile the program
 
     sudo apt-get install jackd2 pkg-config libgtk-3-dev g++ blender inkscape \
         libjack-jackd2-dev libsndfile-dev libgtksourceview-3.0-dev python3 \
@@ -92,3 +92,9 @@ After adding this PPA, install all tools and libraries
 After compling Anja, you can test it by using the command
 
     ./anja
+
+If you like to generate a `deb` package, you can run
+
+    make deb
+
+This requires the presence of the `debuild` command.
