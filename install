@@ -1,27 +1,32 @@
+#!/bin/bash
+
+set -eo pipefail
 prefix="$1"
 
 mkdir -p "$prefix"
 
 #	Install the application
-mkdir -p "$prefix"/bin
-cp ./anja "$prefix"/bin/anja
+mkdir -p "$prefix"/lib/anja
+cp ./anja "$prefix"/lib/anja/anja
 
-for k in __anja_*; do
-	mkdir "$prefix"/bin/"$k"
-	cp "$k"/anja "$prefix"/bin/"$k"/anja
+for k in __targets_*; do
+	mkdir "$prefix"/lib/anja/"$k"
+	cp "$k"/anja "$prefix"/lib/anja/"$k"/anja
 done
+mkdir "$prefix"/bin
+ln -s -T "$prefix"/lib/anja/anja "$prefix"/bin/anja
 
 #	Install user's guide
 mkdir -p "$prefix"/share/help/C
-tar -xf __anja_rel_presc2m/doc/anja-usersguide.tar.gz -C "$prefix"/share/help/C
+tar -xf __targets_rel_presc2m/doc/anja-usersguide.tar.gz -C "$prefix"/share/help/C
 mv "$prefix"/share/help/C/anja-usersguide "$prefix"/share/help/C/anja
 
 #	Install man page
 mkdir -p "$prefix"/share/man/man1
-cp __anja_rel_presc2m/doc/anja.man1 "$prefix"/share/man/man1/anja.1
+cp _targets_rel_presc2m/doc/anja.man1 "$prefix"/share/man/man1/anja.1
 
 #	Install desktop icon
 mkdir -p "$prefix"/share/anja
-cp __anja_rel_presc2m/logo_3.png "$prefix"/share/anja/logo.png
+cp __targets_rel_presc2m/logo_3.png "$prefix"/share/anja/logo.png
 mkdir -p "$prefix"/share/applications
-cp __anja_rel_presc2m/anja.desktop "$prefix"/share/applications/anja.desktop
+cp __targets_rel_presc2m/anja.desktop "$prefix"/share/applications/anja.desktop

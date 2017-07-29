@@ -15,15 +15,10 @@ run-debug: debug
 	./anja --debug
 
 clean:
-	rm -rf __anja_*
+	rm -rf __targets*
 
 distclean: clean
 	rm -rf __maike_bin
-
-deb:
-	./debinit.py
-	debuild -us -uc
-	
 
 DESTDIR?=""
 .PHONY: install

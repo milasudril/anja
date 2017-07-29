@@ -252,7 +252,6 @@
     </VirtualDirectory>
     <File Name="cmdtypes.hpp"/>
     <File Name="anja-desktop.py"/>
-    <File Name="deb_prepare"/>
     <File Name="maikeconfig-coreix.json"/>
     <File Name="maikeconfig-dbg-coreix.json"/>
     <File Name="maikeconfig-rel-coreix.json"/>
@@ -266,9 +265,11 @@
     <File Name="cpuflags.sh"/>
     <File Name="maikeconfig-presc2m.json"/>
     <File Name="anja"/>
-    <File Name="install"/>
     <File Name="CONTRIBUTING.md"/>
     <File Name="versioninfo.py"/>
+    <File Name="debinit.py"/>
+    <File Name="install"/>
+    <File Name="debpack"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

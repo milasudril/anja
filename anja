@@ -40,7 +40,7 @@ for option in "$@"; do
 done
 
 current_dir=$(dirname "`readlink -f "${BASH_SOURCE[0]}"`")
-binary="$current_dir"/__anja_"$mode"_"$arch"/anja
+binary="$current_dir"/__targets_"$mode"_"$arch"/anja
 
 if [ $debug -eq 1 ]; then
 	gdb --args "$binary" "${options[@]}"
