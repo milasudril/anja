@@ -163,17 +163,17 @@ def get_deps(projinfo,caption,deps,key,vercache):
 
 	deps_out=dict()
 	if key=='build_deps':
-		for tool in deps['tools']:
+		for tool in sorted( deps['tools'] ):
 			dep=get_dep('tool',tool,vercache)
 			if dep[0]!='':
 				deps_out[dep[0]]=dep[1]
 
-		for lib in deps['libraries']:
+		for lib in sorted( deps['libraries'] ):
 			dep=get_dep('dev files for',lib,vercache)
 			if dep[0]!='':
 				deps_out[dep[0]]=dep[1]
 	else:
-		for lib in deps['runtime_deps']:
+		for lib in sorted( deps['runtime_deps'] ):
 			dep=get_dep('dev files for',lib,vercache)
 			if dep[0]!='':
 				deps_out[dep[0]]=dep[1]
