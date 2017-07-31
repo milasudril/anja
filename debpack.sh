@@ -14,7 +14,6 @@ trap 'abort' 0
 
 maike --configfiles=maikeconfig-base.json --targets=anja-src.tar.gz
 version=`cat versioninfo-in.txt`
-dir=`mktemp -d`
 cp __targets/anja-src.tar.gz "$dir"/anja_"$version".orig.tar.gz
 pushd .
 cd "$dir"
