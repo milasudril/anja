@@ -6,7 +6,8 @@
 #@			[{"ref":"versioninfo.txt","rel":"misc"}
 #@			,{"ref":"find","rel":"tool"}
 #@			,{"ref":"grep","rel":"tool"}
-#@			,{"ref":"tar","rel":"tool"}]
+#@			,{"ref":"tar","rel":"tool"}
+#@			,{"ref":"externals.json","rel":"misc"}]
 #@		,"status_check":"dynamic"
 #@		}]
 #@	}
@@ -21,7 +22,7 @@ trap 'abort' 0
 set -eo pipefail
 
 dir_target="$1"
-
+cp "$dir_target"/externals.json externals-in.json
 find . | grep -v '^.$' | grep -v '__.*' | grep -v 'gh-pages' | grep -v 'debian' \
 	| grep -v '/\..*' | grep -v '.*\.blend1' \
 	| tar '--transform=s,^\.,anja-src,' -czf "$dir_target"/anja-src.tar.gz -T -

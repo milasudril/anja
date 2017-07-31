@@ -4,3 +4,4 @@ gh-pages
 *.blend1
 versioninfo-in.txt
 debian
+externals-in.json

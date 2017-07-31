@@ -20,7 +20,7 @@ pushd .
 cd "$dir"
 tar -xf "$dir"/anja_"$version".orig.tar.gz
 cd anja-src
-./debinit.py
+./debinit.py __targets
 debuild -us -uc
 
 popd
