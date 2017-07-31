@@ -3,6 +3,7 @@
 #@      [{
 #@		 "name":"versioninfo.txt"
 #@		,"status_check":"dynamic"
+#@		,"dependencies":[{"ref":"maike","rel":"tool"}]
 #@		}]
 #@  }
 
