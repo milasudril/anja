@@ -229,7 +229,8 @@ try:
 	try:
 		packinfo=load_json(sys.argv[1] + "/packageinfo.json")
 		for key,value in packinfo.items():
-			projinfo[key]=value
+			if key.startswith('package') or key.endswith('deps'):
+				projinfo[key]=value
 	except:
 		pass
 

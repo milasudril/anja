@@ -64,7 +64,8 @@ set -eo pipefail
 
 x11_init()
 	{
-	Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
+	x11dir=`mktemp -d`
+	Xvfb :5 -screen 0 1366x768x24 -fbdir "$x11dir" &
 	xserver=$!
 	export DISPLAY=:5
 
@@ -83,6 +84,7 @@ x11_init()
 x11_kill()
 	{
 	kill $xserver 2>/dev/null
+	rmdir "$x11dir"
 	}
 
 jack_init()
