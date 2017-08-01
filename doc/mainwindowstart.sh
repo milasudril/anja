@@ -6,13 +6,15 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"jackd","rel":"tool"}]
 #@		},{
 #@		"name":"waveformloaded.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"mixerfull.png","dependencies":
@@ -20,6 +22,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"sessfull.png","dependencies":
@@ -27,6 +30,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"portselector.png","dependencies":
@@ -34,6 +38,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"anja_layout.txt","dependencies":
@@ -41,6 +46,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		},{
 #@		"name":"anja_jackports.txt","dependencies":
@@ -48,6 +54,7 @@
 #@			,{"ref":"import","rel":"tool"}
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
+#@			,{"ref":"jackd","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}]
 #@		}]
 #@	}
