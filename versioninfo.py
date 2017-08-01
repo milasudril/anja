@@ -51,7 +51,7 @@ def git_changes():
 def get_revision():
 	if shutil.which('git')==None:
 		with open('versioninfo-in.txt') as versionfile:
-			return versionfile.read().decode().strip()
+			return versionfile.read().strip()
 
 	else:
 		with subprocess.Popen(('git', 'describe','--tags','--dirty','--always') \
