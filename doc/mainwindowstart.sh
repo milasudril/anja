@@ -67,9 +67,17 @@ x11_init()
 	Xvfb :5 -screen 0 1366x768x24 -fbdir /dev/shm &
 	xserver=$!
 	export DISPLAY=:5
-	while ! xdpyinfo >/dev/null 2>&1; do
+
+	for i in `seq 1 10`; do
 		sleep 1
+		if ! xdpyinfo >/dev/null 2>&1; then
+			>&2 echo "Xvfb"
+		else
+			return 0
+		fi
 	done
+	>&2 echo "No X. Killed?"
+	return 1
 	}
 
 x11_kill()
