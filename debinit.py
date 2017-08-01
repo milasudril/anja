@@ -88,6 +88,10 @@ def load_json(filename):
 	with open(filename,encoding='utf-8') as input:
 		return json.load(input)
 
+def save_json(filename,data):
+	with open(filename,mode='w',encoding='utf-8') as output:
+		return json.dump(data,output)
+
 def write_file(filename,content):
 	with open(filename,'wb') as f:
 		f.write(content.encode('utf-8'))
@@ -201,7 +205,6 @@ def get_distinfo(projinfo):
 				projinfo['package_distro_release']=val
 
 
-
 try:
 	projinfo=load_json('projectinfo.json')
 	projinfo['version']=get_revision()
@@ -222,16 +225,24 @@ try:
 	deps=load_json('externals-in.json')
 	print('''\nBefore creating the debian directory, I need some information about this package. Leave blank to keep the default value. To answer with blank enter *.\n''')
 
-	get(projinfo,'  Your name (%s): ','packager_name')
-	get(projinfo,'  Your e-mail (%s): ','packager_email')
-	get(projinfo,'  Target distribution (%s): ','package_distro')
-	get(projinfo,'  Package version suffix (%s): ','package_version')
-	get(projinfo,'  Target distribution release (%s): ','package_distro_release')
-	vercache=dict()
-	get_deps(projinfo,'Build dependencies',deps,'build_deps',vercache)
-	get_deps(projinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
-	get(projinfo,'  Recommended packages (%s): ','package_recommends')
+	packinfo=dict()
+	try:
+		packinfo=load_json(sys.argv[1] + "/packageinfo.json")
+		for key,value in packinfo.items():
+			projinfo[key]=value
+	except:
+		pass
 
+	vercache=dict()
+	if not packinfo:
+		get(projinfo,'  Your name (%s): ','packager_name')
+		get(projinfo,'  Your e-mail (%s): ','packager_email')
+		get(projinfo,'  Target distribution (%s): ','package_distro')
+		get(projinfo,'  Package version suffix (%s): ','package_version')
+		get(projinfo,'  Target distribution release (%s): ','package_distro_release')
+		get_deps(projinfo,'Build dependencies',deps,'build_deps',vercache)
+		get_deps(projinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
+		get(projinfo,'  Recommended packages (%s): ','package_recommends')
 
 	changefield=1
 	while changefield!=0:
@@ -262,7 +273,7 @@ try:
 		pass
 
 	os.mkdir('debian')
-
+	save_json(sys.argv[1] + "/packageinfo.json",projinfo)
 	write_file('debian/compat',compat)
 	write_file('debian/copyright',copyright.substitute(projinfo))
 	write_file('debian/changelog',changelog.substitute(projinfo))
@@ -272,6 +283,7 @@ try:
 	os.chmod('debian/rules', st.st_mode | stat.S_IEXEC)
 	os.mkdir('debian/source')
 	write_file('debian/source/format',source_format)
+
 except Exception:
 	write_error('%s:%d: error: %s\n'%(sys.argv[0],sys.exc_info()[2].tb_lineno,sys.exc_info()[1]))
 	sys.exit(-1)
