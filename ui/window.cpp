@@ -155,6 +155,8 @@ Window& Window::icon(const ImageRepository& repo,ImageRepository::IdType id
 Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	,r_cb_obj(nullptr),r_focus_old(nullptr)
 	{
+/*	while (g_main_context_pending(NULL))
+		{g_main_context_iteration(NULL,FALSE);}*/
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	g_signal_connect(widget,"delete-event",G_CALLBACK(delete_callback),this);
 	g_signal_connect(widget,"key-press-event",G_CALLBACK(key_down),this);
