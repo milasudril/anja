@@ -89,11 +89,18 @@ x11_kill()
 
 jack_init()
 	{
+	if echo "shmtest" > /dev/shm/anja_build_shmtest; then
+		rm /dev/shm/anja_build_shmtest
+	else
+		>&2 echo "Error: Failed to use shared memory"
+		return 1
+	fi
 	export JACK_DEFAULT_SERVER=dummy
 	jackd --no-mlock -p 64 --no-realtime -d dummy -p 4096 &
 	jack=$!
 	>&2 echo "Waiting for JACK"
-	timeout 60 jack_wait -w
+	timeout 30 jack_wait -w 2>/dev/null
+	return 0
 	}
 
 jack_kill()
