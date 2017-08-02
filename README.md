@@ -67,6 +67,13 @@ If `maike` is not installed, prepare for bootstrapping it
 
     sudo apt-get install libjansson-dev jq wget
 
+or install it from the following PPA
+
+    sudo add-apt-repository ppa:milasudril/maike
+    sudo apt-get update
+
+the former is currently only available for xenial.
+
 In any case, **make sure you have access to the latest `blender`**. Ubuntu users can
 use the following PPA:
 
