@@ -4,6 +4,7 @@
 #include "sessionfilerecord.hpp"
 #include "../common/string.hpp"
 #include "../common/floatconv.hpp"
+#include <cstdio>
 
 using namespace Anja;
 
