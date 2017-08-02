@@ -257,6 +257,9 @@ try:
 		if change=='':
 			break
 		changefield=int(change)
+		if changefield!=0:
+			packinfo['package_year']=time.strftime('%Y',time.gmtime(now))
+
 		if changefield==1: get(packinfo,'  Your name (%s): ','packager_name')
 		if changefield==2: get(packinfo,'  Your e-mail (%s): ','packager_email')
 		if changefield==3: get(packinfo,'  Target distribution (%s): ','package_distro')
