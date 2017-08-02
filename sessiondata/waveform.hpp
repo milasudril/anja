@@ -10,6 +10,7 @@
 #include "../common/mutex.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 
 namespace Anja
@@ -128,7 +129,7 @@ namespace Anja
 			double sampleRate() const noexcept
 				{return m_fs;}
 
-			Waveform& sampleRate(float fs) noexcept
+			Waveform& sampleRate(double fs) noexcept
 				{
 				m_flags|=(std::abs(fs-m_fs)>1e-2? DIRTY : 0);
 				m_fs=fs;

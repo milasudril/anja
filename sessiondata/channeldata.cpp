@@ -4,7 +4,7 @@
 #include "sessionfilerecord.hpp"
 #include "../common/colorstring.hpp"
 #include "../common/floatconv.hpp"
-
+#include <cmath>
 #include <cstring>
 
 using namespace Anja;

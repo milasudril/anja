@@ -35,7 +35,7 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActive();
 	auto scancode=slotToScancode(slot);
-	if(scancode!=0xff);
+	if(scancode!=0xff)
 		{
 		m_keyboard.keyLabel(scancode,r_session.waveformProxy(slot).keyLabel().begin())
 			.keyLabel(Keys::AUDITION
@@ -90,7 +90,7 @@ void SessionEditor::indexSelected(KeyboardView& keyboard,KeyboardViewId id)
 
 	auto slot=r_session.slotActive();
 	scancode=slotToScancode(slot);
-	if(scancode!=0xff);
+	if(scancode!=0xff)
 		{
 		keyboard.selection(scancode).keyLabel(Keys::AUDITION
 			,Anja::String("Audition: ").append(r_session.waveformProxy(slot).keyLabel()).begin());
