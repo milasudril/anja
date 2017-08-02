@@ -209,41 +209,40 @@ try:
 	projinfo=load_json('projectinfo.json')
 	projinfo['version']=get_revision()
 	projinfo['name_lower']=projinfo['name'].lower()
-	now=time.time();
-	projinfo['package_date']=email.utils.formatdate(now)
-	projinfo['package_year']=time.strftime('%Y',time.gmtime(now))
-	projinfo['packager_name']='John Doe'
-	projinfo['packager_email']='john.doe@example.com'
-	projinfo['package_distro']='Ubuntu'
-	projinfo['package_version']='-1a1'
-	projinfo['package_distro_release']='xenial'
-	projinfo['build_deps']=''
-	projinfo['runtime_deps']=''
-	projinfo['package_recommends']=''
-	projinfo['license_short']=' '+'\n .\n '.join(projinfo['license_short'].split('\n\n'))
+	now=time.time()
 
 	deps=load_json('externals-in.json')
 	print('''\nBefore creating the debian directory, I need some information about this package. Leave blank to keep the default value. To answer with blank enter *.\n''')
 
-	packinfo=dict()
+
 	try:
 		packinfo=load_json(sys.argv[1] + "/packageinfo.json")
-		for key,value in packinfo.items():
-			if key.startswith('package') or key.endswith('deps'):
-				projinfo[key]=value
 	except:
+		packinfo=dict()
 		pass
 
 	vercache=dict()
 	if not packinfo:
-		get(projinfo,'  Your name (%s): ','packager_name')
-		get(projinfo,'  Your e-mail (%s): ','packager_email')
-		get(projinfo,'  Target distribution (%s): ','package_distro')
-		get(projinfo,'  Package version suffix (%s): ','package_version')
-		get(projinfo,'  Target distribution release (%s): ','package_distro_release')
-		get_deps(projinfo,'Build dependencies',deps,'build_deps',vercache)
-		get_deps(projinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
-		get(projinfo,'  Recommended packages (%s): ','package_recommends')
+		packinfo['package_date']=email.utils.formatdate(now)
+		packinfo['package_year']=time.strftime('%Y',time.gmtime(now))
+		packinfo['packager_name']='John Doe'
+		packinfo['packager_email']='john.doe@example.com'
+		packinfo['package_distro']='Ubuntu'
+		packinfo['package_version']='-1a1'
+		packinfo['package_distro_release']='xenial'
+		packinfo['build_deps']=''
+		packinfo['runtime_deps']=''
+		packinfo['package_recommends']=''
+		packinfo['license_short']=' '+'\n .\n '.join(projinfo['license_short'].split('\n\n'))
+
+		get(packinfo,'  Your name (%s): ','packager_name')
+		get(packinfo,'  Your e-mail (%s): ','packager_email')
+		get(packinfo,'  Target distribution (%s): ','package_distro')
+		get(packinfo,'  Package version suffix (%s): ','package_version')
+		get(packinfo,'  Target distribution release (%s): ','package_distro_release')
+		get_deps(packinfo,'Build dependencies',deps,'build_deps',vercache)
+		get_deps(packinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
+		get(packinfo,'  Recommended packages (%s): ','package_recommends')
 
 	changefield=1
 	while changefield!=0:
@@ -251,21 +250,21 @@ try:
 		index=1
 		for k in ['packager_name','packager_email','package_distro','package_version'\
 			,'package_distro_release','build_deps','runtime_deps','package_recommends']:
-			print('%d.  %s: %s'%(index,k,projinfo[k]))
+			print('%d.  %s: %s'%(index,k,packinfo[k]))
 			index=index+1
 
 		change=input('\nDo you want to change any field? Enter 0 or leave blank to continue. ')
 		if change=='':
 			break
 		changefield=int(change)
-		if changefield==1: get(projinfo,'  Your name (%s): ','packager_name')
-		if changefield==2: get(projinfo,'  Your e-mail (%s): ','packager_email')
-		if changefield==3: get(projinfo,'  Target distribution (%s): ','package_distro')
-		if changefield==4: get(projinfo,'  Package version suffix (%s): ','package_version')
-		if changefield==5: get(projinfo,'  Target distribution release (%s): ','package_distro_release')
-		if changefield==6: get_deps(projinfo,'Build dependencies',deps,'build_deps',vercache)
-		if changefield==7: get_deps(projinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
-		if changefield==8: get(projinfo,'  Recommended packages (%s): ','package_recommends')
+		if changefield==1: get(packinfo,'  Your name (%s): ','packager_name')
+		if changefield==2: get(packinfo,'  Your e-mail (%s): ','packager_email')
+		if changefield==3: get(packinfo,'  Target distribution (%s): ','package_distro')
+		if changefield==4: get(packinfo,'  Package version suffix (%s): ','package_version')
+		if changefield==5: get(packinfo,'  Target distribution release (%s): ','package_distro_release')
+		if changefield==6: get_deps(packinfo,'Build dependencies',deps,'build_deps',vercache)
+		if changefield==7: get_deps(packinfo,'Runtime dependencies',deps,'runtime_deps',vercache)
+		if changefield==8: get(packinfo,'  Recommended packages (%s): ','package_recommends')
 
 
 	try:
@@ -274,7 +273,10 @@ try:
 		pass
 
 	os.mkdir('debian')
-	save_json(sys.argv[1] + "/packageinfo.json",projinfo)
+	save_json(sys.argv[1] + "/packageinfo.json",packinfo)
+	for key,value in packinfo.items():
+		projinfo[key]=value
+
 	write_file('debian/compat',compat)
 	write_file('debian/copyright',copyright.substitute(projinfo))
 	write_file('debian/changelog',changelog.substitute(projinfo))
