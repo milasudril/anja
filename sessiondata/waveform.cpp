@@ -22,7 +22,7 @@ const char* const* Waveform::flagNames() noexcept
 	{return FLAG_NAMES;}
 
 Waveform::Waveform(const SessionFileRecord& record,const char* filename
-	,progress_callback cb,void* cb_obj)
+	,progress_callback cb,void* cb_obj):m_mtx(new Mutex)
 	{
 	reset();
 	waveformLoad(filename,cb,cb_obj);
@@ -130,7 +130,7 @@ const Waveform& Waveform::store(SessionFileRecord& record) const
 
 Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void* cb_obj)
 	{
-	Mutex::LockGuardNonblocking lock(m_mtx);
+	Mutex::LockGuardNonblocking lock(*m_mtx);
 
 //	If filename is empty or nullptr, clear the slot
 	if(filename==nullptr || *filename=='\0')
@@ -168,7 +168,7 @@ Waveform& Waveform::waveformLoad(const char* filename,progress_callback cb,void*
 
 const Waveform& Waveform::waveformSave(const char* filename) const
 	{
-	Mutex::LockGuardNonblocking lock(m_mtx);
+	Mutex::LockGuardNonblocking lock(*m_mtx);
 
 	WavefileInfo info{lengthFull(),1,sampleRate()};
 
@@ -196,7 +196,7 @@ Waveform& Waveform::resample(double fs,progress_callback cb,void* cb_obj)
 	SampleRateConverter conv(SampleRateConverter::Converter::SINC_BEST,ratio);
 	ArrayDynamicShort<float> data_new;
 
-	Mutex::LockGuard lock(m_mtx);
+	Mutex::LockGuard lock(*m_mtx);
 
 	auto ptr=beginFull();
 	auto n=lengthFull();

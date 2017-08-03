@@ -241,11 +241,13 @@ void WaveformEditor::changed(SourceView& entry,SourceViewId id)
 		}
 	}
 
-void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
+void WaveformEditor::changeCommit(TextEntryId id)
 	{
 	switch(id)
 		{
 		case TextEntryId::FILENAME:
+			{
+			auto& entry=m_filename_input;
 			if(*entry.content()!='\0'
 				&& !m_waveform.waveformLoaded(entry.content()))
 				{
@@ -254,11 +256,13 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				else
 					{waveform_load(1);}
 				}
+			}
 			break;
 
 		case TextEntryId::COLOR:
 			{
 			ColorRGBA c;
+			auto& entry=m_color_input;
 			if(colorFromString(entry.content(),c))
 				{
 				m_waveform.keyColorSet(c);
@@ -272,6 +276,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::GAIN:
 			{
 			double val_new;
+			auto& entry=m_gain_input_text;
 			if(convert(entry.content(),val_new))
 				{m_waveform.gainSet(val_new);}
 			gain_update(m_waveform,entry,m_gain_input_slider);
@@ -281,6 +286,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::GAIN_RANDOM:
 			{
 			double val_new;
+			auto& entry=m_gain_random_input_text;
 			if(convert(entry.content(),val_new))
 				{m_waveform.gainRandomSet(val_new);}
 			gain_random_update(m_waveform,entry,m_gain_random_input_slider);
@@ -290,6 +296,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::CURSOR_BEGIN:
 			{
 			double val_new;
+			auto& entry=m_cursor_begin_entry;
 			if(convert(entry.content(),val_new))
 				{m_waveform.offset<Waveform::Cursor::BEGIN>(val_new);}
 			offsets_update();
@@ -299,6 +306,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::CURSOR_BEGIN_LOOP:
 			{
 			double val_new;
+			auto& entry=m_cursor_begin_loop_entry;
 			if(convert(entry.content(),val_new))
 				{m_waveform.offset<Waveform::Cursor::BEGIN_LOOP>(val_new);}
 			offsets_update();
@@ -308,6 +316,7 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::CURSOR_END_LOOP:
 			{
 			double val_new;
+			auto& entry=m_cursor_end_loop_entry;
 			if(convert(entry.content(),val_new))
 				{m_waveform.offset<Waveform::Cursor::END_LOOP>(val_new);}
 			offsets_update();
@@ -317,12 +326,19 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 		case TextEntryId::CURSOR_END:
 			{
 			double val_new;
+			auto& entry=m_cursor_end_entry;
 			if(convert(entry.content(),val_new))
 				{m_waveform.offset<Waveform::Cursor::END>(val_new);}
 			offsets_update();
 			}
 			break;
 		}
+	}
+
+void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
+	{
+	if(r_cb_obj!=nullptr)
+		{m_vtable.entry_changed(r_cb_obj,*this,m_id,id);}
 	}
 
 void WaveformEditor::confirmPositive(Dialog<Message,DialogOk>& dlg,int id)
@@ -416,6 +432,9 @@ void WaveformEditor::progressLoad(WaveformProxy& waveform,float status)
 	m_progress->widget().value(status);
 	}
 
+void WaveformEditor::dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id)
+	{m_progress.reset();}
+
 void WaveformEditor::waveform_load(const char* filename)
 	{
 	try
@@ -423,6 +442,7 @@ void WaveformEditor::waveform_load(const char* filename)
 		String dlgcaption("Anja loading ");
 		dlgcaption.append(filename);
 		m_progress.reset(new Dialog<ProgressBar,DialogCancel>(m_box,dlgcaption.begin()));
+		m_progress->callback(*this,0);
 		m_waveform.waveformLoad(filename,*this);
 		m_progress.reset();
 		m_waveform.dirtyClear();

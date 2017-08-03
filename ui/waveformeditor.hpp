@@ -131,6 +131,8 @@ namespace Anja
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
+			void changeCommit(TextEntryId id);
+
 			void changed(SourceView& entry,SourceViewId id);
 			void changed(Combobox& lb,ListboxId id);
 			void cursorXMove(XYPlot& plot,PlotId id,int index,keymask_t keymask);
@@ -147,6 +149,8 @@ namespace Anja
 			void confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,int id);
 			void confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,int id);
 
+			void dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id);
+
 			WaveformEditor& waveform(const WaveformProxy& waveform);
 			WaveformEditor& waveformUpdate();
 
@@ -160,7 +164,8 @@ namespace Anja
 		private:
 			struct Vtable
 				{
-				Vtable():description_changed(nullptr),color_changed(nullptr),color_presets_changed(nullptr)
+				Vtable():description_changed(nullptr),color_changed(nullptr)
+					,color_presets_changed(nullptr),entry_changed(nullptr)
 					{}
 
 				template<class Callback,class IdType>
@@ -172,11 +177,15 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->colorChanged(self,static_cast<IdType>(id));};
 					color_presets_changed=[](void* cb_obj,ColorPicker& self)
 						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
+					entry_changed=[](void* cb_obj,WaveformEditor& self,int id,TextEntryId textid)
+						{reinterpret_cast<Callback*>(cb_obj)->entryChanged(self,static_cast<IdType>(id),static_cast<int>(textid));};
 					}
 
 				void (*description_changed)(void* cb_obj,WaveformEditor& self,int id);
 				void (*color_changed)(void* cb_obj,WaveformEditor& self,int id);
 				void (*color_presets_changed)(void* cb_obj,ColorPicker& self);
+
+				void (*entry_changed)(void* cb_obj,WaveformEditor& self,int id,TextEntryId textid);
 				};
 
 			int m_id;
