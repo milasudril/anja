@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 #include <vector>
 #include <cstring>
+#include <cmath>
 
 ANJA_BLOB(uint8_t,knob_ambient,ANJA_TARGET(knob_ambient.png));
 ANJA_BLOB(uint8_t,knob_diffuse,ANJA_TARGET(knob_diffuse.png));
@@ -197,7 +198,7 @@ static void image_render(cairo_t* cr,cairo_surface_t* img,double w_out,double h_
 	cairo_restore(cr);
 	}
 
-static constexpr double pi=std::acos(-1);
+static constexpr double pi=std::acos(-1.0);
 
 static double value_to_angle(double val)
 	{

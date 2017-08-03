@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cmath>
 
 namespace Anja
 	{
