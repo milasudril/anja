@@ -77,7 +77,9 @@ class UiContext::Impl:private UiContext
 			m_stop=0;
 			Thread idle_loop(*this,std::integral_constant<int,0>{});
 			while(!m_stop)
-				{gtk_main_iteration_do(m_vt.idle(cb_obj,*this)==RunStatus::WAIT);}
+				{
+				gtk_main_iteration_do(m_vt.idle(cb_obj,*this)==RunStatus::WAIT);
+				}
 			}
 
 		template<int id>

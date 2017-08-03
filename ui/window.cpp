@@ -54,7 +54,9 @@ class Window::Impl final:private Window
 			{return m_id;}
 
 		void modal(bool state)
-			{gtk_window_set_modal(m_handle,state);}
+			{
+			gtk_window_set_modal(m_handle,state);
+			}
 
 		void fullscreen(bool state)
 			{

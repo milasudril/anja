@@ -9,6 +9,7 @@
 #include "../common/arraydynamicshort.hpp"
 #include "../common/mutex.hpp"
 
+#include <memory>
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -22,10 +23,12 @@ namespace Anja
 		public:
 			Waveform() noexcept:m_channel(0)
 				,m_gain(0.0f),m_gain_random(0.0f),m_fs(0),m_length_ratio(1.0),m_flags(0)
+				,m_mtx(new Mutex)
 				{}
 
 			explicit Waveform(const float* buffer,uint32_t buffer_size,float fs) noexcept:
 				m_gain(0.0f),m_gain_random(0.0f),m_fs(fs),m_length_ratio(1.0),m_flags(READONLY)
+				,m_mtx(new Mutex)
 				{
 				m_data.append(buffer,buffer_size);
 				offsetsReset();
@@ -39,7 +42,7 @@ namespace Anja
 
 			Waveform& load(const SessionFileRecord& rec)
 				{
-				Mutex::LockGuardNonblocking lock(m_mtx);
+				Mutex::LockGuardNonblocking lock(*m_mtx);
 				*this=Waveform(rec,nullptr,nullptr,nullptr);
 				return *this;
 				}
@@ -251,7 +254,7 @@ namespace Anja
 
 			Waveform& reset() noexcept
 				{
-				Mutex::LockGuardNonblocking lock(m_mtx);
+				Mutex::LockGuardNonblocking lock(*m_mtx);
 				m_gain=0.0f;
 				m_gain_random=0.0f;
 				m_channel=0;
@@ -288,11 +291,11 @@ namespace Anja
 				}
 
 			bool lockTry() const noexcept
-				{return m_mtx.lockTry();}
+				{return m_mtx->lockTry();}
 
 			const Waveform& unlock() const noexcept
 				{
-				m_mtx.unlock();
+				m_mtx->unlock();
 				return *this;
 				}
 
@@ -339,7 +342,7 @@ namespace Anja
 					{return std::max(a,std::min(x,b));}
 				return clamp(b,a,x);
 				}
-			mutable Mutex m_mtx;
+			std::unique_ptr<Mutex> m_mtx;
 
 			typedef void (*progress_callback)(void*,Waveform&,float);
 
@@ -347,7 +350,7 @@ namespace Anja
 			Waveform& load(const SessionFileRecord& rec,const char* filename,progress_callback cb
 				,void* cb_obj)
 				{
-				Mutex::LockGuardNonblocking lock(m_mtx);
+				Mutex::LockGuardNonblocking lock(*m_mtx);
 				*this=Waveform(rec,filename,cb,cb_obj);
 				return *this;
 				}
