@@ -6,7 +6,7 @@ set -eo pipefail
 if command -v maike; then
 	maike_cmd=maike
 elif command -v __maike_bin/maike; then
-	maike_cmd=__maike_bin/maike
+	PATH="`realpath __maike_bin`":"$PATH"
 else
 	if [ -z "$WINDIR" ]; then
 		if ! command -v jq; then
@@ -28,11 +28,11 @@ else
 		cd ..
 		mv __maike_src/__targets __maike_bin
 		rm -rf __maike_src
-		maike_cmd=__maike_bin/maike
+		PATH="`realpath __maike_bin`":"$PATH"
 	else
 		echo "The Windows platorm is not yet supported"
 		exit 1
 	fi
 fi
 
-$maike_cmd "$@"
+maike "$@"
