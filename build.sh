@@ -20,7 +20,8 @@ else
 		echo "(!) Maike is not available. Downloading the source archive."
 		mkdir -p __maike_src
 		wget -O - https://api.github.com/repos/milasudril/maike/releases/latest \
-			| jq --raw-output '.assets[0].browser_download_url' | wget -O - -i - | gzip -dc \
+			| jq --raw-output '.assets[0].browser_download_url' \
+			| wget -O - -i - | gzip -dc \
 			| tar --strip-components=1 -C __maike_src -xf -
 		cd __maike_src
 		./build.sh

@@ -26,8 +26,8 @@ class ProgressBar::Impl:private ProgressBar
 				{
 				m_then=now;
 				gtk_progress_bar_set_fraction(m_handle,x);
-				while (g_main_context_pending(NULL))
-					{g_main_context_iteration(NULL,FALSE);}
+				while(gtk_events_pending())
+					{gtk_main_iteration_do(FALSE);}
 				}
 			}
 

@@ -65,6 +65,10 @@ const WaveformProxy& WaveformProxy::store(SessionFileRecord& rec) const
 	return *this;
 	}
 
+static String filename_resolved(const char* filename,const String& dircurrent)
+	{
+	return absoluteIs(filename)?String(filename):filename_get(filename,dircurrent);
+	}
 
 WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callback cb,void* cb_obj)
 	{
@@ -80,22 +84,13 @@ WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callbac
 			{m_cb(m_cb_obj,r_proxy,status);}
 		} load_cb{cb,cb_obj,*this};
 
-	if(absoluteIs(filename))
-		{
-		r_waveform->waveformLoad(filename,load_cb);
-		r_waveform_data->filename(filename);
-		}
-	else
-		{
-		auto fullpath=::filename_get(filename,*r_dir_current);
-		r_waveform->waveformLoad(fullpath.begin(),load_cb);
-		r_waveform_data->filename(std::move(fullpath));
-		}
-
+	Waveform temp;
+	auto fullpath=filename_resolved(filename,*r_dir_current);
+	temp.waveformLoad(filename,load_cb);
 	if(*r_fs>0.0)
-		{
-		r_waveform->resample(*r_fs,load_cb);
-		}
+		{temp.resample(*r_fs,load_cb);}
+	r_waveform_data->filename(std::move(fullpath));
+	*r_waveform=std::move(temp);
 
 	return *this;
 	}
