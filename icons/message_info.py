@@ -4,7 +4,8 @@
 #@           {
 #@			 "name":"message_info.png","dependencies":
 #@				[{"ref":"message_info.svg","rel":"misc"}
-#@				,{"ref":"inkscape.py","rel":"misc"}]
+#@				,{"ref":"inkscape.py","rel":"misc"}
+#@				,{"ref":"linux-libertine","rel":"external_resource"}]
 #@			 }
 #@      ]
 #@  }

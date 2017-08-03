@@ -7,6 +7,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		},{
 #@		"name":"statusarea.png","dependencies":
@@ -15,6 +16,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		},{
 #@		"name":"waveformsettings.png","dependencies":
@@ -23,6 +25,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		},{
 #@		"name":"waveformtrim.png","dependencies":
@@ -31,6 +34,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		},{
 #@		"name":"channels.png","dependencies":
@@ -39,6 +43,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"mixerfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		},{
 #@		"name":"session.png","dependencies":
@@ -47,6 +52,7 @@
 #@			,{"ref":"mainwindowstart.png","rel":"misc"}
 #@			,{"ref":"waveformloaded.png","rel":"misc"}
 #@			,{"ref":"sessfull.png","rel":"misc"}
+#@			,{"ref":"numpy","rel":"external_resource"}
 #@			]
 #@		}]
 #@	}

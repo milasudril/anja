@@ -143,6 +143,8 @@ def package_guess(kind,name,vercache):
 		if res[0]=='':
 			return dpkg_search('*/'+name+'.h*',vercache)
 		return res
+	if kind=='package or resource':
+		return dpkg_search('*/'+name,vercache)
 	return dpkg_search(str(Path(shutil.which(name)).resolve()),vercache)
 
 def get_dep(kind,name,vercache):
@@ -167,6 +169,11 @@ def get_deps(projinfo,caption,deps,key,vercache):
 
 	deps_out=dict()
 	if key=='build_deps':
+		for res in sorted(deps['resources']):
+			dep=get_dep('package or resource',res,vercache)
+			if dep[0]!='':
+				deps_out[dep[0]]=dep[1]
+
 		for tool in sorted( deps['tools'] ):
 			dep=get_dep('tool',tool,vercache)
 			if dep[0]!='':
