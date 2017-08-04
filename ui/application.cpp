@@ -62,11 +62,6 @@ void Application::save_ask(ConfirmSaveDialogId id)
 	m_confirm->callback(*this,id);
 	}
 
-void Application::waveformEntryChanged(int textbox_id)
-	{
-	m_ctx.messagePost(MessageId::WAVEFORM_ENTRY_CHANGED,textbox_id);
-	}
-
 void Application::dismiss(Dialog<Message,ConfirmSaveDialog>& dlg,ConfirmSaveDialogId id)
 	{
 	m_confirm.reset();
@@ -330,10 +325,6 @@ void Application::process(UiContext& ctx,MessageId id,MessageParam param)
 			std::swap(m_cmd_buffer[0],m_cmd_buffer[1]);
 			m_cmd_ready.set();
 			command_process(m_cmd_buffer[1]);
-			break;
-
-		case MessageId::WAVEFORM_ENTRY_CHANGED:
-			m_session_editor.waveformEntryChangeCommit(param);
 			break;
 		}
 	}

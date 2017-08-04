@@ -131,7 +131,6 @@ namespace Anja
 			void clicked(OptionList& src,OptionListId id,Checkbox& opt);
 			void changed(Slider& slider,SliderId id);
 			void changed(TextEntry& entry,TextEntryId id);
-			void changeCommit(TextEntryId id);
 
 			void changed(SourceView& entry,SourceViewId id);
 			void changed(Combobox& lb,ListboxId id);
@@ -165,7 +164,7 @@ namespace Anja
 			struct Vtable
 				{
 				Vtable():description_changed(nullptr),color_changed(nullptr)
-					,color_presets_changed(nullptr),entry_changed(nullptr)
+					,color_presets_changed(nullptr)
 					{}
 
 				template<class Callback,class IdType>
@@ -177,15 +176,11 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->colorChanged(self,static_cast<IdType>(id));};
 					color_presets_changed=[](void* cb_obj,ColorPicker& self)
 						{reinterpret_cast<Callback*>(cb_obj)->colorPresetsChanged(self);};
-					entry_changed=[](void* cb_obj,WaveformEditor& self,int id,TextEntryId textid)
-						{reinterpret_cast<Callback*>(cb_obj)->entryChanged(self,static_cast<IdType>(id),static_cast<int>(textid));};
 					}
 
 				void (*description_changed)(void* cb_obj,WaveformEditor& self,int id);
 				void (*color_changed)(void* cb_obj,WaveformEditor& self,int id);
 				void (*color_presets_changed)(void* cb_obj,ColorPicker& self);
-
-				void (*entry_changed)(void* cb_obj,WaveformEditor& self,int id,TextEntryId textid);
 				};
 
 			int m_id;

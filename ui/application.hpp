@@ -148,13 +148,10 @@ namespace Anja
 			void progressLoad(WaveformProxy& waveform,float status);
 			void dismiss(Dialog<ProgressBox,DialogCancel>& dlg,int id);
 
-			void waveformEntryChanged(int textbox_id);
-
-
 			enum MessageId:int32_t
 				{
 				 CHANNEL_MUTED,CHANNEL_UNMUTED,RECORD_DONE,PORT_CONNECTED
-				,PORT_DISCONNECTED,INVOKE,WAVEFORM_ENTRY_CHANGED
+				,PORT_DISCONNECTED,INVOKE
 				};
 			typedef int32_t MessageParam;
 

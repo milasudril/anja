@@ -158,6 +158,7 @@ TextEntry::Impl::~Impl()
 
 gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)
 	{
+	//We must defer the event signal until next pass, otherwise GTK widgets break
 	g_idle_add([](void* impl)
 		{
 		auto self=reinterpret_cast<Impl*>(impl);

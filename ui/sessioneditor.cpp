@@ -46,18 +46,6 @@ void SessionEditor::descriptionChanged(WaveformEditor& wf,WaveformEditId id)
 		}
 	}
 
-void SessionEditor::entryChanged(WaveformEditor& wf,WaveformEditId id,int textbox_id)
-	{
-	if(r_cb_obj!=nullptr)
-		{m_waveform_entry_changed(r_cb_obj,textbox_id);}
-	}
-
-void SessionEditor::waveformEntryChangeCommit(int textbox_id)
-	{
-	m_waveform.changeCommit(static_cast<WaveformEditor::TextEntryId>(textbox_id));
-	}
-
-
 void SessionEditor::colorChanged(WaveformEditor& wf,WaveformEditId id)
 	{
 	auto slot=r_session.slotActive();
