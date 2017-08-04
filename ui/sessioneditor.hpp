@@ -40,7 +40,6 @@ namespace Anja
 			void descriptionChanged(WaveformEditor& wf,WaveformEditId id);
 			void colorChanged(WaveformEditor& wf,WaveformEditId id);
 			void entryChanged(WaveformEditor& wf,WaveformEditId id,int textbox_id);
-			void waveformEntryChangeCommit(int textbox_id);
 
 			SessionEditor& sessionUpdated();
 
@@ -70,8 +69,6 @@ namespace Anja
 					{reinterpret_cast<Callback*>(cb_obj)->nameChanged(self,id);};
 				m_channel_gain_callback=[](void* cb_obj,ChannelStrip& self,int id)
 					{reinterpret_cast<Callback*>(cb_obj)->gainChanged(self,id);};
-				m_waveform_entry_changed=[](void* cb_obj,int textbox_id)
-					{reinterpret_cast<Callback*>(cb_obj)->waveformEntryChanged(textbox_id);};
 
 				r_cb_obj=&cb;
 				return *this;
@@ -95,7 +92,6 @@ namespace Anja
 		private:
 			void (*m_channel_name_callback)(void* cb_obj,ChannelStrip& self,int id);
 			void (*m_channel_gain_callback)(void* cb_obj,ChannelStrip& self,int id);
-			void (*m_waveform_entry_changed)(void* cb_obj,int textbox_id);
 
 			void* r_cb_obj;
 			Session& r_session;

@@ -191,15 +191,20 @@ void SourceView::Impl::highlight(const char* filename_pattern)
 
 gboolean SourceView::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)
 	{
-	auto self=reinterpret_cast<Impl*>(data);
-	if(self->r_cb!=nullptr)
+	//We must defer the event signal until next pass, otherwise GTK widgets break
+	g_idle_add([](void* impl)
 		{
-		if(self->m_content!=nullptr)
+		auto self=reinterpret_cast<Impl*>(impl);
+		if(self->r_cb!=nullptr)
 			{
-			g_free(self->m_content);
-			self->m_content=nullptr;
+			if(self->m_content!=nullptr)
+				{
+				g_free(self->m_content);
+				self->m_content=nullptr;
+				}
+			self->r_cb(self->r_cb_obj,*self);
 			}
-		self->r_cb(self->r_cb_obj,*self);
-		}
+		return G_SOURCE_REMOVE;
+		},data);
 	return FALSE;
 	}
