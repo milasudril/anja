@@ -131,13 +131,12 @@ Combobox::Impl::Impl(Container& cnt):Combobox(*this),m_id(0),r_cb(nullptr)
 	m_handle=GTK_COMBO_BOX_TEXT(widget);
 	g_signal_connect(widget,"changed",G_CALLBACK(changed_callback),this);
 	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
-	g_object_ref_sink(widget);
 	cnt.add(widget);
 	}
 
 Combobox::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	g_object_unref(m_handle);
+    g_signal_handlers_disconnect_by_func(m_handle,reinterpret_cast<void*>(changed_callback),this);
+    g_signal_handlers_disconnect_by_func(m_handle,reinterpret_cast<void*>(focus_in_callback),this);
 	}

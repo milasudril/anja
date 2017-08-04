@@ -107,9 +107,9 @@ TabView::Impl::Impl(Container& cnt):TabView(*this)
 	{
 	auto widget=gtk_notebook_new();
 	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
-	cnt.add(widget);
-	g_object_ref_sink(widget);
+    g_object_ref_sink(widget);
 	m_handle=GTK_NOTEBOOK(widget);
+	cnt.add(widget);
 	gtk_notebook_set_show_border(m_handle,FALSE);
 	}
 

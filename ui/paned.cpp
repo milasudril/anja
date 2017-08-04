@@ -135,8 +135,8 @@ Paned::Impl::Impl(Container& cnt,bool vertical):Paned(*this)
 	,m_mode{0},m_vertical(vertical),m_position{Index::FIRST}
 	{
 	auto widget=gtk_paned_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL);
+    g_object_ref_sink(widget);
 	cnt.add(widget);
-	g_object_ref_sink(widget);
 	m_handle=GTK_PANED(widget);
 	}
 

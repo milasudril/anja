@@ -113,8 +113,8 @@ Rectangle Box::boundingBox() const noexcept
 Box::Impl::Impl(Container& cnt,bool vertical,int global_spacing):Box(*this),m_mode{0,0}
 	{
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,global_spacing);
-	cnt.add(widget);
 	g_object_ref_sink(widget);
+	cnt.add(widget);
 	m_handle=GTK_BOX(widget);
 	}
 

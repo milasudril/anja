@@ -122,8 +122,8 @@ Rectangle ScrolledWindow::boundingBox() const noexcept
 ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{
 	auto widget=gtk_scrolled_window_new(NULL,NULL);
-	cnt.add(widget);
 	g_object_ref_sink(widget);
+    cnt.add(widget);
 	m_handle=GTK_SCROLLED_WINDOW(widget);
 	directions(VERTICAL);
 	}

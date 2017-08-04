@@ -124,7 +124,7 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
 
-	g_object_ref_sink(widget);
+//	g_object_ref_sink(widget);
 
 	if(s_style_refcount==0)
 		{
@@ -140,6 +140,9 @@ TextEntry::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	r_cb=nullptr;
+//Cleanup by resetting callbacks. GTK+ 3.22 screws up the heap if we call gtk_widget_destroy here
+    g_signal_handlers_disconnect_by_func(m_handle,reinterpret_cast<void*>( focus_callback ),this);
+    g_signal_handlers_disconnect_by_func(m_handle,reinterpret_cast<void*>( focus_in_callback ),this);
 	if(s_style_refcount!=0)
 		{
 		auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
@@ -151,9 +154,6 @@ TextEntry::Impl::~Impl()
 		if(s_style_refcount==0)
 			{g_object_unref(s_smallstyle);}
 		}
-
-	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	g_object_unref(m_handle);
 	}
 
 gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data)
