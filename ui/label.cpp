@@ -68,6 +68,7 @@ class Label::Impl:private Label
 		PangoRectangle m_content_rect;
 		static gboolean draw(GtkWidget* object,cairo_t* cr,void* obj);
 		static void size_changed(GtkWidget* widget,GtkAllocation* allocation,void* obj);
+		static void screen_changed(GtkWidget* widget,GdkScreen *previous_screen,void* obj);
 	};
 
 Label::Label(Container& cnt,const char* text)
@@ -122,6 +123,8 @@ Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 
 	g_signal_connect(m_handle,"draw",G_CALLBACK(draw),this);
 	g_signal_connect(widget,"size-allocate", G_CALLBACK(size_changed),this);
+	g_signal_connect(widget,"screen-changed", G_CALLBACK(screen_changed),this);
+
 
 	m_content=gtk_widget_create_pango_layout(widget,text);
 	pango_layout_set_wrap(m_content,PANGO_WRAP_WORD); //We can always word wrap now...
@@ -134,6 +137,8 @@ Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 
 //	Request size based on the size of the layout
 	gtk_widget_set_size_request(widget,w,m_content_rect.height);
+
+	fprintf(stderr,"Ctor done\n");
 	}
 
 Label::Impl::~Impl()
@@ -180,4 +185,27 @@ gboolean Label::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	auto y=-self->m_content_rect.y + 0.5*(h - self->m_content_rect.height);
 	gtk_render_layout(context,cr,x,y,self->m_content);
 	return TRUE;
+	}
+
+void Label::Impl::screen_changed(GtkWidget* widget,GdkScreen *previous_screen,void* obj)
+	{
+	auto self=reinterpret_cast<Impl*>(obj);
+	if(self->m_impl!=nullptr)
+		{
+		auto text=pango_layout_get_text(self->m_content);
+		auto content=gtk_widget_create_pango_layout(GTK_WIDGET(self->m_handle),text);
+		pango_layout_set_wrap(content,PANGO_WRAP_WORD); //We can always word wrap now...
+		pango_layout_get_pixel_extents(content,NULL,&self->m_content_rect);
+
+	//	Change with so the rendered text is at most 500 px
+		auto w=std::min(self->m_content_rect.width,500);
+		pango_layout_set_width(content,PANGO_SCALE*w);
+		pango_layout_get_pixel_extents(content,NULL,&self->m_content_rect);
+
+	//	Request size based on the size of the layout
+		gtk_widget_set_size_request(GTK_WIDGET(self->m_handle),w,self->m_content_rect.height);
+
+		g_object_unref(self->m_content);
+		self->m_content=content;
+		}
 	}
