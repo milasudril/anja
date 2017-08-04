@@ -104,6 +104,7 @@ x11_init()
 x11_kill()
 	{
 	kill $xserver 2>/dev/null
+	wait $xerver
 	rmdir "$x11dir"
 	}
 
