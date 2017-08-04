@@ -84,7 +84,7 @@ x11_init()
 x11_kill()
 	{
 	kill $xserver 2>/dev/null
-	rm -r "$x11dir"
+	rmdir "$x11dir"
 	}
 
 jack_init()
