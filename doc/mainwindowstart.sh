@@ -7,7 +7,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"../anja","rel":"misc"}
-#@			,{"ref":"jackd","rel":"tool"}]
+#@			,{"ref":"jackd","rel":"tool"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"waveformloaded.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -15,7 +18,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"mixerfull.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -23,7 +29,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"sessfull.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -31,7 +40,9 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"portselector.png","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -39,7 +50,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"anja_layout.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -47,7 +61,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		},{
 #@		"name":"anja_jackports.txt","dependencies":
 #@			[{"ref":"Xvfb","rel":"tool"}
@@ -55,7 +72,10 @@
 #@			,{"ref":"xdotool","rel":"tool"}
 #@			,{"ref":"xdpyinfo","rel":"tool"}
 #@			,{"ref":"jackd","rel":"tool"}
-#@			,{"ref":"../anja","rel":"misc"}]
+#@			,{"ref":"../anja","rel":"misc"}
+#@			,{"ref":"rmdir","rel":"tool"}
+#@			,{"ref":"rm","rel":"tool"}
+#@			,{"ref":"sleep","rel":"tool"}]
 #@		}]
 #@	}
 
