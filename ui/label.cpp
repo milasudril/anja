@@ -137,8 +137,6 @@ Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 
 //	Request size based on the size of the layout
 	gtk_widget_set_size_request(widget,w,m_content_rect.height);
-
-	fprintf(stderr,"Ctor done\n");
 	}
 
 Label::Impl::~Impl()
