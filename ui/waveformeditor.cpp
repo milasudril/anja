@@ -337,6 +337,19 @@ void WaveformEditor::changeCommit(TextEntryId id)
 
 void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 	{
+	if(id==TextEntryId::FILENAME)
+		{
+		auto& entry=m_filename_input;
+		if(*entry.content()!='\0'
+			&& !m_waveform.waveformLoaded(entry.content()))
+			{
+			if(m_waveform.recorded())
+				{waveform_confirm_load(1);}
+			else
+				{waveform_load(1);}
+			}
+		return;
+		}
 	if(r_cb_obj!=nullptr)
 		{m_vtable.entry_changed(r_cb_obj,*this,m_id,id);}
 	}
