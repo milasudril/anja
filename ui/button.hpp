@@ -49,6 +49,8 @@ namespace Anja
 
 			bool state() const noexcept;
 
+			Button& focus() noexcept;
+
 		protected:
 			class Impl;
 			explicit Button(Impl& impl):m_impl(&impl){}

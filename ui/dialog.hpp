@@ -161,6 +161,10 @@ namespace Anja
 					assert(ButtonIndex::user2()!=-1);
 					m_buttons[ButtonIndex::user2()].label(DialogTraits::user2());
 					}
+
+				focus_select();
+
+
 				m_window.modal(true).show();
 				}
 
@@ -207,7 +211,7 @@ namespace Anja
 						m_vtable.user_2(r_cb_obj,*this,m_id);
 						break;
 					}
-				//	We are dead now
+			//	We are potentially dead now. Therfore, do not touch button.
 				}
 
 			void closing(Window& win,int id)
@@ -447,6 +451,41 @@ namespace Anja
 						};
 				};
 
+			void focus_select()
+				{
+			/*	 ButtonId::CONFIRM_NEGATIVE
+				,ButtonId::DISMISS
+				,ButtonId::USER_1
+				,ButtonId::USER_2
+				,ButtonId::CONFIRM_POSITIVE*/
+
+				if(has_confirm_pos())
+					{
+					m_buttons[ButtonIndex::confirmPositive()].focus();
+					return;
+					}
+				if(has_dismiss())
+					{
+					m_buttons[ButtonIndex::dismiss()].focus();
+					return;
+					}
+				if(has_user_1())
+					{
+					m_buttons[ButtonIndex::user1()].focus();
+					return;
+					}
+				if(has_user_2())
+					{
+					m_buttons[ButtonIndex::user2()].focus();
+					return;
+					}
+				if(has_confirm_neg())
+					{
+					m_buttons[ButtonIndex::confirmNegative()].focus();
+					return;
+					}
+				}
+
 			int m_id;
 			void* r_cb_obj;
 			Vtable m_vtable;
@@ -460,6 +499,7 @@ namespace Anja
 							std::array<Button,button_count()> m_buttons;
 						Filler m_filler_r;
 		};
+
 	}
 
 #endif

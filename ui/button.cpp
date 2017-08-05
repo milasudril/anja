@@ -40,6 +40,9 @@ class Button::Impl:private Button
 		bool state() const noexcept
 			{return gtk_toggle_button_get_active(m_handle);}
 
+		void focus() noexcept
+			{gtk_widget_grab_focus(GTK_WIDGET(m_handle));}
+
 	private:
 		int m_id;
 		Callback r_cb;
@@ -79,6 +82,13 @@ Button& Button::state(bool s) noexcept
 	m_impl->state(s);
 	return *this;
 	}
+
+Button& Button::focus() noexcept
+	{
+	m_impl->focus();
+	return *this;
+	}
+
 
 bool Button::state() const noexcept
 	{
