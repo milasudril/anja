@@ -31,8 +31,6 @@ namespace Anja
 
 			const char* content() const noexcept;
 
-			Label& wordwrap(bool status);
-
 			Label& small(bool status);
 
 			Label& alignment(float x);

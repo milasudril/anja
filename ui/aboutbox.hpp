@@ -16,12 +16,6 @@ namespace Anja
 	{
 	class AboutBox
 		{
-		struct LabelWrap
-			{
-			LabelWrap(Container& cnt,const char* text):m_label(cnt,text)
-				{m_label.wordwrap(1);}
-			Label m_label;
-			};
 		public:
 			template<class Appinfo>
 			AboutBox(Container& cnt,const Appinfo& info):
@@ -42,19 +36,19 @@ namespace Anja
 
 			void legalBrief()
 				{
-				m_legal_brief.reset(new Dialog<LabelWrap,DialogOk>(m_box,"Legal Information"
+				m_legal_brief.reset(new Dialog<Label,DialogOk>(m_box,"Legal Information"
 					,r_legal_brief));
 				m_legal_brief->callback(*this,DialogId::LEGAL_BREIF);
 				}
 
 			void techstring()
 				{
-				m_techstring.reset(new Dialog<LabelWrap,DialogOk>(m_box,"Technical Information"
+				m_techstring.reset(new Dialog<Label,DialogOk>(m_box,"Technical Information"
 					,r_techstring));
 				m_techstring->callback(*this,DialogId::TECHSTRING);
 				}
 
-			void confirmPositive(Dialog<LabelWrap,DialogOk>& dlg,DialogId id)
+			void confirmPositive(Dialog<Label,DialogOk>& dlg,DialogId id)
 				{
 				switch(id)
 					{
@@ -86,8 +80,8 @@ namespace Anja
 				Label m_acknowlegement_title;
 				Label m_acknowlegement;
 
-			std::unique_ptr< Dialog<LabelWrap,DialogOk> > m_legal_brief;
-			std::unique_ptr< Dialog<LabelWrap,DialogOk> > m_techstring;
+			std::unique_ptr< Dialog<Label,DialogOk> > m_legal_brief;
+			std::unique_ptr< Dialog<Label,DialogOk> > m_techstring;
 
 		};
 	}

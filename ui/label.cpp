@@ -37,9 +37,6 @@ class Label::Impl:private Label
 			gtk_widget_queue_draw(GTK_WIDGET(m_handle));
 			}
 
-		void wordwrap(bool status)
-			{}
-
 		void small(bool status)
 			{
 			auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
@@ -83,12 +80,6 @@ const char* Label::content() const noexcept
 Label& Label::content(const char* x)
 	{
 	m_impl->content(x);
-	return *this;
-	}
-
-Label& Label::wordwrap(bool status)
-	{
-	m_impl->wordwrap(status);
 	return *this;
 	}
 

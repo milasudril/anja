@@ -23,7 +23,6 @@ Message::Message(Container& cnt,const ImageRepository& images,const char* messag
 			,message)
 	,r_images(images)
 	{
-	m_text.wordwrap(wordwrap);
 	if(!wordwrap)
 		{m_icon.minHeight(18);}
 	type(t);
