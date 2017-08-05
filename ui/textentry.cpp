@@ -41,7 +41,7 @@ class TextEntry::Impl:private TextEntry
 			if(status)
 				{
 				gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(s_smallstyle),
-					GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+					GTK_STYLE_PROVIDER_PRIORITY_APPLICATION+50);
 				}
 			else
 				{gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(s_smallstyle));}
@@ -129,7 +129,7 @@ TextEntry::Impl::Impl(Container& cnt):TextEntry(*this),m_id(0)
 	if(s_style_refcount==0)
 		{
 		s_smallstyle=gtk_css_provider_new();
-		gtk_css_provider_load_from_data(s_smallstyle,"*{font-size:0.8em;padding:1px}",-1,NULL);
+		gtk_css_provider_load_from_data(s_smallstyle,"*{font-size:0.8em;padding:1px;min-height:0px}",-1,NULL);
 		}
 	++s_style_refcount;
 

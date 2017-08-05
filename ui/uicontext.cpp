@@ -12,38 +12,61 @@
 using namespace Anja;
 
 static const char* STYLESHEET=R"EOF(
-GtkEntry,GtkButton,.tooltip{padding-top:2px;padding-bottom:2px;padding-left:4px}
-GtkButton{padding-right:4px}
-GtkComboBox > * {padding-top:0px;padding-bottom:0px}
-GtkNotebook > *
+entry,button,combobox,tab,scale,.tooltip{min-height:0px}
+GtkEntry,GtkButton,.tooltip,button,entry{padding-top:2px;padding-bottom:2px;padding-left:4px;}
+GtkButton,button{padding-right:4px}
+
+GtkComboBox > *,combobox > * {padding-top:0px;padding-bottom:0px}
+
+GtkNotebook > *,notebook > *
 	{
 	background-color:rgba(0,0,0,0.0);
 	border:0px solid rgba(0,0,0,0);
 	}
 
-GtkNotebook
+GtkNotebook,notebook
 	{
-	background-color:shade(@theme_bg_color,1.2);
+	background-color:shade(@theme_bg_color,1.1);
 	}
 
-GtkNotebook > tab
+GtkNotebook > tab, tab
 	{
 	padding:2px;border-top:1px rgba(160,160,160,0.5) solid;
 	border-left:1px rgba(160,160,160,0.5) solid;
 	border-right:1px rgba(160,160,160,0.5) solid;
 	border-bottom:0px rgba(160,160,160,0.5) solid;
 	border-radius:4px 4px 0px 0px;
-	background-color:rgba(0,0,0,0)
+	background-color:rgba(0,0,0,0);
+	text-decoration:none;
+	font-weight:bold;
 	}
 
-GtkNotebook > tab:active
+GtkNotebook > tab:active, tab:checked
 	{
 	border-top:2px rgba(160,160,160,1) solid;
 	border-left:2px rgba(160,160,160,1) solid;
 	border-right:2px rgba(160,160,160,1) solid;
 	border-bottom:0px rgba(160,160,160,1) solid;
 	padding:3px;
+    text-decoration:none;
+    font-weight:bold;
 	}
+	
+label{text-decoration:none}
+
+tab:checked,stack
+    {
+    background-color:shade(@theme_bg_color,1.2);
+    }
+
+stack
+    {
+    border-top:1px rgba(160,160,160,1) solid;
+	border-left:2px rgba(160,160,160,1) solid;
+	border-right:2px rgba(160,160,160,1) solid;
+    border-bottom:2px rgba(160,160,160,1) solid;
+    border-radius:0px 4px 4px 4px;
+    }
 
 )EOF";
 
@@ -78,10 +101,16 @@ class UiContext::Impl:private UiContext
 			Thread idle_loop(*this,std::integral_constant<int,0>{});
 			while(!m_stop)
 				{
-				while(gtk_events_pending())
-					{gtk_main_iteration_do(m_vt.idle(cb_obj,*this)==RunStatus::WAIT);}
-				gdk_flush();
+                auto status=m_vt.idle(cb_obj,*this);
+                if(status==RunStatus::WAIT)
+                    {gtk_main_iteration_do(TRUE);}
+                else
+                    {
+                    while(gtk_events_pending())
+                        {gtk_main_iteration_do(FALSE);}                    
+                    }
 				}
+            gdk_flush();
 			}
 
 		template<int id>
