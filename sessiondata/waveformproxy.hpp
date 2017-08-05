@@ -248,6 +248,12 @@ namespace Anja
 			int index() const noexcept
 				{return m_index;}
 
+			WaveformProxy& clear()
+				{
+				r_waveform->clear();
+				return *this;
+				}
+
 		private:
 			Waveform* r_waveform;
 			WaveformData* r_waveform_data;

@@ -260,7 +260,7 @@ namespace Anja
 				m_channel=0;
 				m_flags=0.0f;
 				m_fs=1000.0f;
-				m_data.clear();
+				m_data=ArrayDynamicShort<float>();
 				offsetsReset();
 				m_flags=0;
 				m_length_ratio=1.0;
@@ -269,7 +269,11 @@ namespace Anja
 
 			Waveform& clear() noexcept
 				{
-				m_data.clear();
+				Mutex::LockGuardNonblocking lock(*m_mtx);
+				m_fs=1000.0f;
+				m_data=ArrayDynamicShort<float>();
+				offsetsReset();
+				m_length_ratio=1.0;
 				return *this;
 				}
 

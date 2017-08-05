@@ -1024,9 +1024,9 @@ Application::Application():
 	,m_fullscreen(0)
 	,m_rec_count(0)
 	{
-	m_session_control.append("New session","Load session","Reload session","Save session"
-		,"Save session as","","Start engine","Stop engine","","Fullscreen","Dark UI",""
-		,"Exit","About Anja");
+	m_session_control.append("New session","Load session…","Reload session","Save session"
+		,"Save session as…","","Start engine","Stop engine","","Fullscreen","Dark UI",""
+		,"Exit","About Anja…");
 	m_session_control.callback(*this,0);
 	m_mainwin.callback(*this,0);
 	m_session_editor.callback(*this,0);

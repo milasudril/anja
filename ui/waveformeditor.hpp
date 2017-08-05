@@ -55,7 +55,7 @@ namespace Anja
 
 
 			enum class ButtonId:int
-				{FILENAME_BROWSE,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
+				{FILENAME_BROWSE,FILENAME_CLEAR,FILENAME_RELOAD,COLOR_PICK,CURSORS_SWAP};
 
 			enum class ListboxId:int
 				{CHANNEL};
@@ -194,6 +194,7 @@ namespace Anja
 			void waveform_confirm_load(int method);
 			void waveform_load(int method);
 			void waveform_load(const char* filename_new);
+			void waveform_clear();
 
 			ArraySimple<float> mean_square(const float* begin,const float* end,int length);
 			ArraySimple<float> filename_update(const WaveformProxy& waveform,TextEntry& e
@@ -215,7 +216,10 @@ namespace Anja
 					Label m_filename_label;
 					TextEntry m_filename_input;
 					Button m_filename_browse;
+					Button m_filename_clear;
 					Button m_filename_reload;
+
+
 				Paned m_details;
 					ScrolledWindow m_scroll_left;
 						Box m_details_left;

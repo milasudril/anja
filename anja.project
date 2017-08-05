@@ -31,7 +31,6 @@
       <File Name="sessiondata/sessionfilerecordimpl.hpp"/>
       <File Name="sessiondata/sessionfilewriter-stdio.cpp"/>
       <File Name="sessiondata/sessionfilerecordimpl.cpp"/>
-      <File Name="sessiondata/channel.cpp"/>
       <File Name="sessiondata/keymap.hpp"/>
       <File Name="sessiondata/keymap.cpp"/>
       <File Name="sessiondata/channelproxy.hpp"/>
@@ -41,6 +40,7 @@
       <File Name="sessiondata/parser.dot"/>
       <File Name="sessiondata/samplerateconverter.hpp"/>
       <File Name="sessiondata/samplerateconverter.cpp"/>
+      <File Name="sessiondata/channel.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="common">
       <File Name="common/arrayfixed.hpp"/>

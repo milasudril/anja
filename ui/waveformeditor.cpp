@@ -446,6 +446,27 @@ void WaveformEditor::waveform_load(const char* filename)
 		}
 	}
 
+void WaveformEditor::waveform_clear()
+	{
+	try
+		{
+		m_waveform.clear();
+		m_filename_input.content("");
+		m_waveform_db=ArraySimple<float>(2);
+		m_waveform_db[0]=-145.0f;
+		m_waveform_db[1]=-145.0f;
+		m_plot.curvesRemove();
+		m_plot.showAll();
+		offsets_update();
+		}
+	catch(const Error& err)
+		{
+		m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+			,r_images,err.message(),Message::Type::ERROR));
+		m_err_dlg->callback(*this,0);
+		}
+	}
+
 void WaveformEditor::clicked(Button& src,ButtonId id)
 	{
 	switch(id)
@@ -462,6 +483,13 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 				{waveform_confirm_load(0);}
 			else
 				{waveform_load(0);}
+			break;
+
+		case ButtonId::FILENAME_CLEAR:
+			if(m_waveform.recorded())
+				{}
+			else
+				{waveform_clear();}
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
@@ -599,7 +627,6 @@ WaveformEditor& WaveformEditor::waveform(const WaveformProxy& waveform)
 
 WaveformEditor& WaveformEditor::waveformUpdate()
 	{
-	//TODO: rerender RMS plot?
 	m_plot.showAll();
 	return *this;
 	}
@@ -622,7 +649,8 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 			,m_filename_label(m_filename.insertMode({2,0}),"Source:")
 			,m_filename_input(m_filename.insertMode({2,Box::EXPAND|Box::FILL}))
 			,m_filename_browse(m_filename.insertMode({0,0}),"Browse…")
-			,m_filename_reload(m_filename.insertMode({2,0}),"↺")
+			,m_filename_clear(m_filename.insertMode({0,0}),"✗")
+			,m_filename_reload(m_filename.insertMode({0,0}),"↺")
 		,m_details(m_box.insertMode({2,Box::EXPAND|Box::FILL}),false)
 			,m_scroll_left(m_details.insertMode({Paned::SHRINK_ALLOWED}))
 				,m_details_left(m_scroll_left,true)
@@ -687,6 +715,7 @@ WaveformEditor::WaveformEditor(Container& cnt,const ImageRepository& images,cons
 
 	m_filename_input.callback(*this,TextEntryId::FILENAME);
 	m_filename_browse.callback(*this,ButtonId::FILENAME_BROWSE);
+	m_filename_clear.callback(*this,ButtonId::FILENAME_CLEAR);
 	m_filename_reload.callback(*this,ButtonId::FILENAME_RELOAD);
 	m_description_input.callback(*this,SourceViewId::DESCRIPTION);
 	m_color_input.callback(*this,TextEntryId::COLOR);
