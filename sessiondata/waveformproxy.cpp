@@ -84,9 +84,14 @@ WaveformProxy& WaveformProxy::waveformLoad(const char* filename,progress_callbac
 			{m_cb(m_cb_obj,r_proxy,status);}
 		} load_cb{cb,cb_obj,*this};
 
+	auto lock=r_waveform->lockTryWithGuard();
 	Waveform temp;
 	auto fullpath=filename_resolved(filename,*r_dir_current);
-	temp.waveformLoad(filename,load_cb);
+	temp.waveformLoad(filename,load_cb)
+		.flagsSet(r_waveform->flags())
+		.gain(r_waveform->gain())
+		.channel(r_waveform->channel())
+		.gainRandom(r_waveform->gainRandom());
 	if(*r_fs>0.0)
 		{temp.resample(*r_fs,load_cb);}
 	r_waveform_data->filename(std::move(fullpath));

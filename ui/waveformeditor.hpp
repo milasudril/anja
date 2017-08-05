@@ -144,9 +144,12 @@ namespace Anja
 			void confirmPositive(Dialog<Message,DialogOk>& dlg,int id);
 
 
-			void dismiss(Dialog<Message,DialogConfirmSave>& dlg,int id);
-			void confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,int id);
-			void confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,int id);
+
+			enum class AskSaveId{LOAD,LOAD_BROWSE,CLEAR};
+
+			void dismiss(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id);
+			void confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id);
+			void confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id);
 
 			void dismiss(Dialog<ProgressBar,DialogCancel>& dlg,int id);
 
@@ -191,8 +194,8 @@ namespace Anja
 			void cursor_begin_auto() noexcept;
 			void cursor_end_auto() noexcept;
 			bool waveform_saved();
-			void waveform_confirm_load(int method);
-			void waveform_load(int method);
+			void waveform_ask_save(AskSaveId id);
+			void waveform_load();
 			void waveform_load(const char* filename_new);
 			void waveform_clear();
 

@@ -251,9 +251,9 @@ void WaveformEditor::changed(TextEntry& entry,TextEntryId id)
 				&& !m_waveform.waveformLoaded(entry.content()))
 				{
 				if(m_waveform.recorded())
-					{waveform_confirm_load(1);}
+					{waveform_ask_save(AskSaveId::LOAD);}
 				else
-					{waveform_load(1);}
+					{waveform_load(entry.content());}
 				}
 			}
 			break;
@@ -346,67 +346,71 @@ bool WaveformEditor::waveform_saved()
 	return 0;
 	}
 
-void WaveformEditor::waveform_confirm_load(int method)
+void WaveformEditor::waveform_ask_save(AskSaveId id)
 	{
+	auto caption=(id==AskSaveId::LOAD)?"Anja: Load new waveform":"Anja: Remove waveform";
 	m_confirm_dlg.reset(new Dialog<Message,DialogConfirmSave>(m_box
-		,"Load new waveform"
+		,caption
 		,r_images
 		,"The current slot has been used for recording. Do you "
 		 "want to save this recording?",Message::Type::WARNING));
-	m_confirm_dlg->callback(*this,method);
+	m_confirm_dlg->callback(*this,id);
 	}
 
 
-void WaveformEditor::dismiss(Dialog<Message,DialogConfirmSave>& dlg,int id)
+void WaveformEditor::dismiss(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id)
 	{m_confirm_dlg.reset();}
 
-void WaveformEditor::confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,int id)
+void WaveformEditor::confirmPositive(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id)
 	{
 	m_confirm_dlg.reset();
+
 	std::string temp(m_waveform.filename().begin());
 	if(filenameSelect(m_box,m_waveform.directory().begin(),temp
 		,FilenameSelectMode::SAVE))
+		{m_waveform.waveformSave(temp.c_str());}
+	else
+		{return;}
+
+
+	switch(id)
 		{
-		m_waveform.waveformSave(temp.c_str());
-		waveform_load(id);
+		case AskSaveId::LOAD:
+			waveform_load(m_filename_input.content());
+			break;
+		case AskSaveId::LOAD_BROWSE:
+			waveform_load();
+			break;
+		case AskSaveId::CLEAR:
+			waveform_clear();
+			break;
 		}
 	}
 
-void WaveformEditor::confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,int id)
+void WaveformEditor::confirmNegative(Dialog<Message,DialogConfirmSave>& dlg,AskSaveId id)
 	{
 	m_confirm_dlg.reset();
-	waveform_load(id);
+	switch(id)
+		{
+		case AskSaveId::LOAD:
+			waveform_load(m_filename_input.content());
+			break;
+		case AskSaveId::LOAD_BROWSE:
+			waveform_load();
+			break;
+		case AskSaveId::CLEAR:
+			waveform_clear();
+			break;
+		}
 	}
 
-void WaveformEditor::waveform_load(int method)
+void WaveformEditor::waveform_load()
 	{
-	try
-		{
-		switch(method)
-			{
-			case 0:
-				{
-				std::string temp(m_waveform.filename().begin());
-				if(filenameSelect(m_box,m_waveform.directory().begin(),temp
-					,FilenameSelectMode::OPEN,[this](const char* filename)
-						{return m_waveform.loadPossible(filename);},"Waveform audio"))
-					{waveform_load(temp.c_str());}
-				else
-					{return;}
-				}
-				break;
-
-			case 1:
-				waveform_load(m_filename_input.content());
-				break;
-			}
-		}
-	catch(const Error& err)
-		{
-		m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
-			,r_images,err.message(),Message::Type::ERROR));
-		m_err_dlg->callback(*this,0);
-		}
+	std::string temp(m_waveform.filename().begin());
+	if(filenameSelect(m_box,m_waveform.directory().begin(),temp
+		,FilenameSelectMode::OPEN,[this](const char* filename)
+			{return m_waveform.loadPossible(filename);},"Waveform audio"))
+		{waveform_load(temp.c_str());}
 	}
 
 
@@ -439,10 +443,12 @@ void WaveformEditor::waveform_load(const char* filename)
 		}
 	catch(const Aborted&)
 		{m_progress.reset();}
-	catch(...)
+	catch(const Error& err)
 		{
 		m_progress.reset();
-		throw;
+		m_err_dlg.reset(new Dialog<Message,DialogOk>(m_box,"Anja"
+			,r_images,err.message(),Message::Type::ERROR));
+		m_err_dlg->callback(*this,0);
 		}
 	}
 
@@ -480,23 +486,23 @@ void WaveformEditor::clicked(Button& src,ButtonId id)
 
 		case ButtonId::FILENAME_BROWSE:
 			if(m_waveform.recorded())
-				{waveform_confirm_load(0);}
+				{waveform_ask_save(AskSaveId::LOAD_BROWSE);}
 			else
-				{waveform_load(0);}
+				{waveform_load();}
 			break;
 
 		case ButtonId::FILENAME_CLEAR:
 			if(m_waveform.recorded())
-				{}
+				{waveform_ask_save(AskSaveId::CLEAR);}
 			else
 				{waveform_clear();}
 			break;
 
 		case ButtonId::FILENAME_RELOAD:
 			if(m_waveform.recorded())
-				{waveform_confirm_load(1);}
+				{waveform_ask_save(AskSaveId::LOAD);}
 			else
-				{waveform_load(1);}
+				{waveform_load(m_filename_input.content());}
 			break;
 
 		case ButtonId::COLOR_PICK:

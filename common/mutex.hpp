@@ -33,16 +33,20 @@ namespace Anja
 				public:
 					LockGuardNonblocking(const LockGuardNonblocking&)=delete;
 					LockGuardNonblocking& operator=(const LockGuardNonblocking&)=delete;
-					explicit LockGuardNonblocking(Mutex& m):r_m(m)
+
+					LockGuardNonblocking(LockGuardNonblocking&&)=default;
+					LockGuardNonblocking& operator=(LockGuardNonblocking&&)=default;
+
+					explicit LockGuardNonblocking(Mutex& m):r_m(&m)
 						{
 						if(!m.lockTry())
 							{throw Error("The current resource is temporary busy. Please try again later.");}
 						}
 
 					~LockGuardNonblocking()
-						{r_m.unlock();}
+						{r_m->unlock();}
 				private:
-					Mutex& r_m;
+					Mutex* r_m;
 				};
 
 			Mutex();

@@ -252,7 +252,7 @@ namespace Anja
 				return *this;
 				}
 
-			Waveform& reset() noexcept
+			Waveform& reset()
 				{
 				Mutex::LockGuardNonblocking lock(*m_mtx);
 				m_gain=0.0f;
@@ -267,7 +267,7 @@ namespace Anja
 				return *this;
 				}
 
-			Waveform& clear() noexcept
+			Waveform& clear()
 				{
 				Mutex::LockGuardNonblocking lock(*m_mtx);
 				m_fs=1000.0f;
@@ -296,6 +296,9 @@ namespace Anja
 
 			bool lockTry() const noexcept
 				{return m_mtx->lockTry();}
+
+			Mutex::LockGuardNonblocking lockTryWithGuard() const
+				{return Mutex::LockGuardNonblocking(*m_mtx);}
 
 			const Waveform& unlock() const noexcept
 				{
