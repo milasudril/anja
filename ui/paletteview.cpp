@@ -156,9 +156,16 @@ void PaletteView::Impl::palette(const ColorRGBA* colors_begin,const ColorRGBA* c
 
 gboolean PaletteView::Impl::mouse_up(GtkWidget* widget,GdkEventButton* event,void* obj)
 	{
-	auto pos_x=static_cast<int>( event->x/24 );
-	auto pos_y=static_cast<int>( event->y/24 );
+	auto w=gtk_widget_get_allocated_width(widget);
+
 	auto self=reinterpret_cast<Impl*>(obj);
+	auto n_cols=self->m_n_cols;
+	auto w_grid=n_cols*24;
+	auto offset=0.5*(w - w_grid);
+
+	auto pos_x=static_cast<int>( (event->x - offset)/24 );
+	auto pos_y=static_cast<int>( event->y/24 );
+
 	if(pos_x>=0 && pos_y>=0)
 		{
 		self->selection(pos_y*self->m_n_cols + pos_x);
@@ -174,27 +181,13 @@ void PaletteView::Impl::size_changed(GtkWidget* widget,GtkAllocation* allocation
 	auto w=gtk_widget_get_allocated_width(widget);
 	auto h=gtk_widget_get_allocated_height(widget);
 
-	if(w%24!=0)
-		{
-		auto self=reinterpret_cast<Impl*>(obj);
-		w=24*(w/24 + 1);
-		auto n_cols=w/24;
-		self->m_n_cols=n_cols;
-		auto rem=self->m_colors.size()%n_cols==0?0:1;
-		auto n_rows=std::max(self->m_colors.size()/n_cols + rem,size_t(1));
-		h=24*n_rows;
-		gtk_widget_set_size_request(widget,w,h);
-		}
-	else
-		{
-		auto self=reinterpret_cast<Impl*>(obj);
-		auto n_cols=w/24;
-		self->m_n_cols=n_cols;
-		auto rem=self->m_colors.size()%n_cols==0?0:1;
-		auto n_rows=std::max(self->m_colors.size()/n_cols + rem,size_t(1));
-		h=24*n_rows;
-		gtk_widget_set_size_request(widget,std::max(w-24,24),h);
-		}
+	auto self=reinterpret_cast<Impl*>(obj);
+	auto n_cols=w/24;
+	self->m_n_cols=n_cols;
+	auto rem=self->m_colors.size()%n_cols==0?0:1;
+	auto n_rows=std::max(self->m_colors.size()/n_cols + rem,size_t(1));
+	h=24*n_rows;
+	gtk_widget_set_size_request(widget,-1,h);
 	}
 
 
@@ -202,24 +195,24 @@ gboolean PaletteView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 	{
 	auto w=gtk_widget_get_allocated_width(widget);
 	auto h=gtk_widget_get_allocated_height(widget);
-	if(w%24!=0)
-		{;}
 
 	cairo_set_source_rgba(cr,0.5,0.5,0.5,1); //Set neutral background
 	cairo_rectangle(cr,0,0,w,h);
 	cairo_fill(cr);
 
 	auto self=reinterpret_cast<Impl*>(obj);
-	auto n_cols=w/24;
+	auto n_cols=self->m_n_cols;
+	auto w_grid=n_cols*24;
+	auto offset=0.5*(w - w_grid);
 	int pos=0;
 	std::for_each(self->m_colors.begin(),self->m_colors.end()
-		,[cr,&pos,n_cols](const ColorRGBA& c)
+		,[cr,&pos,n_cols,offset](const ColorRGBA& c)
 		{
 		auto row=pos/n_cols;
 		auto col=pos%n_cols;
 
 		cairo_set_source_rgba(cr,c.red,c.green,c.blue,c.alpha);
-		cairo_rectangle(cr,1+col*24,1+row*24,22,22);
+		cairo_rectangle(cr,offset + 1+col*24,1+row*24,22,22);
 		cairo_fill(cr);
 		++pos;
 		});
@@ -231,7 +224,7 @@ gboolean PaletteView::Impl::draw(GtkWidget* widget,cairo_t* cr,void* obj)
 		auto color_sel=self->m_colors[self->m_index_sel];
 		cairo_set_source_rgba(cr,1.0 - color_sel.red
 			,1.0 - color_sel.green,1.0 - color_sel.blue,1.0);
-		cairo_rectangle(cr,col_sel*24,row_sel*24,24,24);
+		cairo_rectangle(cr,offset + col_sel*24,row_sel*24,24,24);
 		cairo_set_line_width(cr,2);
 		cairo_stroke(cr);
 		}
