@@ -14,7 +14,7 @@
 
 	<xsl:template match="h2">
 		<section>
-			<xsl:attribute name="id">cmdline_<xsl:value-of select="position()"/></xsl:attribute>
+			<xsl:attribute name="id">cmdline<xsl:value-of select="position()"/></xsl:attribute>
             <xsl:apply-templates select="@*|node()"/>
         </section>
 	</xsl:template>

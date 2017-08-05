@@ -89,6 +89,7 @@
       <File Name="common/filein.hpp"/>
       <File Name="common/fileout.hpp"/>
       <File Name="common/targetinclude.hpp"/>
+      <File Name="ui/imagelist.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/sessioneditor.hpp"/>
@@ -164,7 +165,6 @@
       <File Name="ui/imagerepository.cpp"/>
       <File Name="ui/statusicons.hpp"/>
       <File Name="ui/statusicons.cpp"/>
-      <File Name="ui/imagelist.hpp"/>
       <File Name="ui/imagelist.cpp"/>
       <File Name="ui/knob_sprites.py"/>
       <File Name="ui/box.hpp"/>
@@ -236,6 +236,7 @@
       <File Name="doc/abstract.py"/>
       <File Name="doc/anja-manpage.py"/>
       <File Name="doc/options_troff.sh"/>
+      <File Name="doc/xetex.xsl"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
