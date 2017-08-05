@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
   <xsl:output method="text" indent="no"/>
-<xsl:strip-space elements="*[not(self::code)] "/>
+<xsl:strip-space elements="*"/>
+<xsl:preserve-space elements="code"/>
 
 <!--xsl:template match="verbatiminput" >\verbatiminput{<xsl:value-of select="@src"/>}</xsl:template-->
 <xsl:template match="verbatiminput" />
+
+
+<xsl:template match="text()" mode="verbatim">
+<xsl:value-of select="." />
+</xsl:template>
+
+<xsl:template match="text()"><xsl:choose>
+<xsl:when test=".='\' or .='{' or .='}' or .='$' or .='&amp;' or .='#' or .='^' or .='_' or .='%'">\verb|<xsl:value-of select="."/>|</xsl:when>
+<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+</xsl:choose>
+</xsl:template>
 
 <xsl:template match="titlepic">
 \includegraphics[width=0.8\textwidth]{<xsl:value-of select="includegraphics[last()]/@src"/>}
@@ -72,7 +84,7 @@
 <xsl:template match="section">
 
 \section{<xsl:apply-templates select="node()"/>}
-%\label{<xsl:value-of select="@id"/>}
+\label{<xsl:value-of select="@id"/>}
 </xsl:template>
 
 <xsl:template match="strong">\textbf{<xsl:apply-templates select="node()"/>}</xsl:template>
@@ -84,7 +96,7 @@
 <xsl:template match="ref">\cref{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 <xsl:template match="code">\begin{verbatim}
-<xsl:apply-templates select="node()"/>
+<xsl:apply-templates select="node()" mode="verbatim"/>
 \end{verbatim}
 
 </xsl:template>
