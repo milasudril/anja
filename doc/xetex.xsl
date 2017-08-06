@@ -29,14 +29,16 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 </xsl:template>
 
 <xsl:template match="chapter-star">
-\chapter*{<xsl:apply-templates select="node()"/>}
 <xsl:choose>
 <xsl:when test="text()='Acknowledgements'">
+\chapter*{<xsl:apply-templates select="node()"/>}
 \thispagestyle{empty}
 \pagenumbering{roman}
 \setcounter{page}{0}
 </xsl:when>
 <xsl:otherwise>
+\makeatletter\@openrightfalse\makeatother
+\chapter*{<xsl:apply-templates select="node()"/>}
 \addcontentsline{toc}{chapter}{<xsl:apply-templates select="node()"/>}
 </xsl:otherwise>
 </xsl:choose>
@@ -94,13 +96,16 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 </xsl:template>
 
 <xsl:template match="chapter">
-
 \chapter{<xsl:value-of select="node()"/>}
 \label{<xsl:value-of select="@id"/>}
 </xsl:template>
 
 <xsl:template match="//chapter[1]">
+\clearpage
+\mbox{}
+\thispagestyle{empty}
 \chapter{<xsl:value-of select="node()"/>}
+\makeatletter\@openrighttrue\makeatother
 \label{<xsl:value-of select="@id"/>}
 \setcounter{page}{1}
 \pagenumbering{arabic}
@@ -175,7 +180,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 </xsl:template>
 
 <xsl:template match="bibliography">
-\let\cleardoublepage\clearpage
+\makeatletter\@openrightfalse\makeatother
 \begin{thebibliography}{9}
 <xsl:apply-templates select="node()"/>\end{thebibliography}
 </xsl:template>
@@ -317,6 +322,7 @@ U+%
 
 \begin{document}
 \maketitle
+\let\cleardoublepageold\cleardoublepage
 <xsl:apply-templates select="node()/abstract"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']/following-sibling::node()"/>
