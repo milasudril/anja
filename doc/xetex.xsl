@@ -181,7 +181,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage[multidot]{grffile}
 
 \usepackage{varioref}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 \usepackage{siunitx}
 \usepackage{tcolorbox}
