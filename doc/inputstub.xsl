@@ -6,7 +6,7 @@
     </xsl:template>
 
 	<xsl:template match="input">
-		<!--this is a hack (only works if we are one level from project root)-->
+		<!--this is a hack (only works if PWD is one level from project root)-->
 		<xsl:apply-templates select="document(concat('../',@src))/content/*"/>
 	</xsl:template>
 

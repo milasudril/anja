@@ -5,10 +5,6 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:strip-space elements="*"/>
 <xsl:preserve-space elements="code"/>
 
-<!--xsl:template match="verbatiminput" >\verbatiminput{<xsl:value-of select="@src"/>}</xsl:template-->
-<xsl:template match="verbatiminput" />
-
-
 <xsl:template match="text()" mode="verbatim">
 <xsl:value-of select="." />
 </xsl:template>
@@ -21,7 +17,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="title">\title{<xsl:value-of select="node()"/>}
 </xsl:template>
-<xsl:template match="subtitle">\subtitle{<xsl:value-of select="node()"/>}
+<xsl:template match="subtitle">\subtitle{<xsl:apply-templates select="node()"/>}
 </xsl:template>
 <xsl:template match="author">\author{<xsl:value-of select="node()"/>}
 </xsl:template>
@@ -37,9 +33,12 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 </xsl:template>
 
-<xsl:template match="ul">\begin{itemize}
+<xsl:template match="ul">\begin{multicols}{2}
+\begin{itemize}\setlength{\itemsep}{1ex}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
 <xsl:apply-templates select="node()"/>\end{itemize}
-
+\end{multicols}
 </xsl:template>
 
 <xsl:template match="p"><xsl:apply-templates select="node()"/><xsl:text>
@@ -186,6 +185,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{cleveref}
 \usepackage{siunitx}
 \usepackage{tcolorbox}
+\usepackage{multicol}
 
 
 \definecolor{lightgray}{gray}{0.9}

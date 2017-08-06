@@ -37,7 +37,7 @@ try:
 	text=projinfo['license_short'].replace('>','&gt;');
 	text=text.replace('<','<url>')
 	text=text.replace('&gt;','</url>')
-	subst['license_short']='<p>' + '</p><p>'.join( text.split('\n\n')) + '</p>'
+	subst['license_short']='</p><p>'.join( text.split('\n\n'))
 
 	with open(target_dir + '/' + in_dir + '/legalbrief.xml','wb') as output:
 		output.write(doc.substitute(subst).encode('utf-8'))

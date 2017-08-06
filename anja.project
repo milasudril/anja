@@ -239,6 +239,7 @@
       <File Name="doc/xetex.xsl"/>
       <File Name="doc/texscape.cpp"/>
       <File Name="doc/manual.sh"/>
+      <File Name="doc/version.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>
