@@ -62,6 +62,10 @@ int main()
 						break;
 
 					case '-':
+						printf("{}-");
+						state=State::ESCAPE;
+						break;
+
 					case '\\':
 					case '#':
 					case '_':

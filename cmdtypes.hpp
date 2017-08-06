@@ -76,7 +76,7 @@ namespace Alice
 		{
 		typedef WindowMode Type;
 		static constexpr const char* descriptionShortGet() noexcept
-			{return "fullscreen | windowed";}
+			{return "`fullscreen` | `windowed`";}
 
 		static constexpr const char* descriptionLongGet() noexcept
 			{return "";}

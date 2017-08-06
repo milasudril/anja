@@ -448,7 +448,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <input src="dependencies.xml" />
 
 <chapter id="script">Commands accepted in scripts</chapter>
-<p>With the <cmdoption>--script</cmdoption> (see <ref>cmdline</ref>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and it is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
+<p>With the <cmdoption>--script</cmdoption> option (see <ref>cmdline</ref>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and it is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
 
 <ul>
 <li class="cmdoption"><p><cmdoption>layout inspect</cmdoption></p>
