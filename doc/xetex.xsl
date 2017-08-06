@@ -265,8 +265,14 @@ U+%
 \else
 \charwithcodepointb{#1}%
 \fi}
-
 \makeatother
+
+\addto\captionsenglish{\renewcommand{\figurename}{\sffamily{\textbf{Figure}}}}
+\renewcommand*{\figureformat}{%
+  \figurename~\thefigure%
+%  \autodot% DELETED
+}
+
 
 <xsl:apply-templates select="node()/title"/>
 <xsl:apply-templates select="node()/subtitle"/>
