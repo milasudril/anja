@@ -11,6 +11,7 @@
 import sys
 import string
 import json
+import html
 
 def write_error(*args, **kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -18,7 +19,7 @@ def write_error(*args, **kwargs):
 doc=string.Template('''<?xml version="1.0"?>
 <content>
 <chapter id="legalbrief">Legal information</chapter>
-<p>$legal_brief</p></content>
+<p>$license_short</p></content>
 ''')
 
 
@@ -32,8 +33,14 @@ try:
 
 	projinfo=load_json('projectinfo.json')
 
+	subst=dict()
+	text=projinfo['license_short'].replace('>','&gt;');
+	text=text.replace('<','<url>')
+	text=text.replace('&gt;','</url>')
+	subst['license_short']='<p>' + '</p><p>'.join( text.split('\n\n')) + '</p>'
+
 	with open(target_dir + '/' + in_dir + '/legalbrief.xml','wb') as output:
-		output.write(doc.substitute(projinfo).encode('utf-8'))
+		output.write(doc.substitute(subst).encode('utf-8'))
 
 	sys.exit(0)
 
