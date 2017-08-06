@@ -175,8 +175,10 @@ dpkg -i anja_$version-$distro_$architecture.deb
 <p>A port can be connected to other ports in the system by clicking on the corresponding status indicator. This brings up a dialog box that contains toggle buttons for all availible ports (see <ref>portselector</ref>). Click <ui-button>OK</ui-button> to confirm your choicee.</p>
 
 <infobox type="info">JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be
-<code language="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
-jack_connect 'New session.anja:Audition' 'system:playback_2'
+<code language="bash">jack_connect 'New session.anja:Master out' \
+	'system:playback_1'
+jack_connect 'New session.anja:Audition' \
+	'system:playback_2'
 </code>
 Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</infobox>
 
