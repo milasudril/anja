@@ -46,7 +46,7 @@ namespace Alice
 		{
 		typedef Theme Type;
 		static constexpr const char* descriptionShortGet() noexcept
-			{return "dark | light";}
+			{return "`dark` | `light`";}
 
 		static constexpr const char* descriptionLongGet() noexcept
 			{return "";}

@@ -166,6 +166,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \end{center}
 </xsl:template>
 
+<xsl:template match="cmdoption">\texttt{<xsl:apply-templates select="node()" />}</xsl:template>
+
+<xsl:template match="em">\emph{<xsl:apply-templates select="node()" />}</xsl:template>
+
+
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 
