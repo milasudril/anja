@@ -87,6 +87,18 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \label{<xsl:value-of select="@id"/>}
 </xsl:template>
 
+<xsl:template match="subsection">
+
+\subsection{<xsl:apply-templates select="node()"/>}
+\label{<xsl:value-of select="@id"/>}
+</xsl:template>
+
+<xsl:template match="subsubsection">
+
+\subsubsection{<xsl:apply-templates select="node()"/>}
+\label{<xsl:value-of select="@id"/>}
+</xsl:template>
+
 <xsl:template match="strong">\textbf{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 <xsl:template match="cite">\cite{<xsl:apply-templates select="node()"/>}</xsl:template>
@@ -103,21 +115,63 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="kbd">\kbd{<xsl:apply-templates select="node()" />}</xsl:template>
 <xsl:template match="ui-button">\uibutton{<xsl:apply-templates select="node()" />}</xsl:template>
-
 <xsl:template match="ui-formfield">\uiformfield{<xsl:apply-templates select="node()" />}</xsl:template>
-
+<xsl:template match="dfn">\emph{<xsl:apply-templates select="node()" />}</xsl:template>
 <xsl:template match="char">\charwithcodepoint{<xsl:apply-templates select="node()" />}</xsl:template>
 
 <xsl:template match="includegraphics">\includegraphics[height=2ex]{<xsl:value-of select="@src"/><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>}</xsl:template>
 
 <xsl:template match="col/includegraphics">\multicolumn{1}{c}{\includegraphics[height=2ex]{<xsl:value-of select="@src"/><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>}}</xsl:template>
 
-<xsl:template match="/">\documentclass[a4paper,twoside,12pt]{scrbook}
+<xsl:template match="quantity">\SI{<xsl:value-of select="node()"/>}{<xsl:value-of select="@unit"/>}</xsl:template>
+
+<xsl:template match="infobox">
+\begin{centering}
+\begin{tcolorbox}[width=0.8\textwidth,colback=<xsl:value-of select="@type"/>back,colframe=<xsl:value-of select="@type"/>border,sidebyside,sidebyside align=top seam,lefthand width=8ex,lower separated=false,sidebyside gap=0.4cm,left=0cm,right=0cm,top=0cm,bottom=0cm,boxsep=0.2cm]
+\includegraphics[height=8ex]{message_<xsl:value-of select="@type"/>.svg.pdf}
+\tcblower
+<xsl:apply-templates select="node()" />
+\end{tcolorbox}
+\end{centering}
+</xsl:template>
+
+<xsl:template match="figure">
+\begin{figure}
+\centering
+\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/>}
+\caption{\label{<xsl:value-of select="@id"/>}<xsl:apply-templates select="caption" />}
+\end{figure}
+</xsl:template>
+
+<xsl:template match="url">\url{<xsl:value-of select="node()"/>}</xsl:template>
+
+<xsl:template match="bibliography/item">\bibitem{<xsl:value-of select="@id"/>}<xsl:apply-templates select="node()"/><xsl:text>
+
+</xsl:text>
+</xsl:template>
+
+<xsl:template match="bibliography">
+\let\cleardoublepage\clearpage
+\begin{thebibliography}{9}
+<xsl:apply-templates select="node()"/>\end{thebibliography}
+</xsl:template>
+
+<xsl:template match="appendix">
+\appendix</xsl:template>
+
+<xsl:template match="herefigure">
+\begin{center}
+\centering
+\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/>}
+\end{center}
+</xsl:template>
+
+<xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 
 \usepackage{fontspec}
 \usepackage{verbatim}
-\usepackage{graphicx}
+\usepackage[export]{adjustbox} % loads also graphicx
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage[multidot]{grffile}
@@ -125,10 +179,16 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{varioref}
 \usepackage{hyperref}
 \usepackage{cleveref}
-
+\usepackage{siunitx}
+\usepackage{tcolorbox}
 
 
 \definecolor{lightgray}{gray}{0.9}
+\definecolor{warningborder}{HTML}{FFC000}
+\definecolor{infoborder}{HTML}{0000FF}
+\definecolor{warningback}{HTML}{FFF0A0}
+\definecolor{infoback}{HTML}{D0D0FF}
+
 \newcommand{\kbd}[1]{ \colorbox{black}{\textcolor{white}{{\texttt{#1}}}} }
 \newcommand{\uibutton}[1]{ \colorbox{lightgray}{{{\textsf{#1}}}} }
 \newcommand{\uiformfield}[1]{ \colorbox{lightgray}{{{\textit{\textsf{#1}}}}} }

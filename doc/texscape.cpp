@@ -4,44 +4,78 @@
 
 int main()
 	{
-	bool run_esc=0;
+	enum class State:int{NORMAL,ESCAPE,DASH};
+
+	auto state=State::NORMAL;
+
 	while(true)
 		{
 		auto ch_in=getchar();
 		if(ch_in==EOF)
 			{return 0;}
 
-		if(run_esc)
+		switch(state)
 			{
-			switch(ch_in)
-				{
-				case 127:
-					run_esc=0;
-					break;
+			case State::NORMAL:
+				switch(ch_in)
+					{
+					case 127:
+						state=State::ESCAPE;
+						break;
+					default:
+						putchar(ch_in);
+					}
+				break;
 
-				case '#':
-				case '_':
-				case '-':
-				case '\\':
-				case '~':
-					putchar('\\');
-					putchar(ch_in);
-					break;
+			case State::ESCAPE:
+				switch(ch_in)
+					{
+					case 127:
+						state=State::NORMAL;
+						break;
 
-				default:
-					putchar(ch_in);
-				}
-			}
-		else
-			{
-			switch(ch_in)
-				{
-				case 127:
-					run_esc=1;
-					break;
-				default:
-					putchar(ch_in);
-				}
+					case '-':
+						putchar(ch_in);
+						state=State::DASH;
+						break;
+
+					case '\\':
+					case '#':
+					case '_':
+					case '~':
+					case '&':
+					case '%':
+						putchar('\\');
+						putchar(ch_in);
+						break;
+
+					default:
+						putchar(ch_in);
+					}
+				break;
+
+			case State::DASH:
+				switch(ch_in)
+					{
+					case 127:
+						state=State::NORMAL;
+						break;
+
+					case '-':
+					case '\\':
+					case '#':
+					case '_':
+					case '~':
+						putchar('\\');
+						putchar(ch_in);
+						state=State::ESCAPE;
+						break;
+
+					default:
+						state=State::ESCAPE;
+						putchar(ch_in);
+					}
+				break;
 			}
 		}
 	return 0;
