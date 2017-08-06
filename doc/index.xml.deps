@@ -29,6 +29,20 @@
 <xsl:if test="not(position()=1)">,</xsl:if> <xsl:apply-templates select="." /><xsl:text>
 		</xsl:text>
 </xsl:for-each>]
+	},{
+	 "name":"anja-usersguide.pdf"
+	,"compiler":
+		{
+		 "name":"bash"
+		,"args":["doc/manual.sh"]
+		}
+	,"dependencies":
+		[
+		{"ref":"manual.sh","rel":"misc"}
+		<xsl:if test="count(//includegraphics | //input | //verbatiminput)>0">,</xsl:if><xsl:for-each select="//includegraphics | //input | //verbatiminput">
+<xsl:if test="not(position()=1)">,</xsl:if> <xsl:apply-templates select="." /><xsl:text>
+		</xsl:text>
+</xsl:for-each>]
 	}]
 }
 </xsl:template>

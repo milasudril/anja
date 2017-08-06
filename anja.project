@@ -237,6 +237,8 @@
       <File Name="doc/anja-manpage.py"/>
       <File Name="doc/options_troff.sh"/>
       <File Name="doc/xetex.xsl"/>
+      <File Name="doc/texscape.cpp"/>
+      <File Name="doc/manual.sh"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

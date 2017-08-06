@@ -1,8 +1,7 @@
 #@	{
 #@	"dependencies_extra":
 #@		[
-#@			 {"ref":"makepage.py","rel":"misc"}
-#@			,{"ref":"format.css","rel":"include_extra"}
+#@			 {"ref":"format.css","rel":"include_extra"}
 #@			,{"ref":"color.css","rel":"include_extra"}
 #@			,{"ref":"xsltproc","rel":"tool"}
 #@			,{"ref":"awk","rel":"tool"}
