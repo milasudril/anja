@@ -48,7 +48,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:apply-templates select="node()"/>\end{itemize}
 </xsl:template>
 
-<xsl:template match="ul[@class='deps']">\begin{multicols}{2}
+<xsl:template match="ul[@class='deps']">\begin{multicols}{3}
 \begin{itemize}\setlength{\itemsep}{1ex}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
@@ -70,22 +70,26 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="col" mode="normal"><xsl:apply-templates select="node()"/></xsl:template>
 
 
-<xsl:template match="colheaders"><xsl:apply-templates select="col[1]" mode="header" /> &amp; <xsl:apply-templates select="col[2]" mode="header"/> \\
+<xsl:template match="colheaders"><xsl:for-each select="col"><xsl:if test="position()>1"> &amp; </xsl:if><xsl:apply-templates select="." mode="header"/>
+</xsl:for-each> \\
 \hline
+\endhead
 </xsl:template>
 
 <xsl:template match="hline">\hline</xsl:template>
 
-<xsl:template match="row"><xsl:apply-templates select="col[1]" mode="normal"/> &amp; <xsl:apply-templates select="col[2]" mode="normal"/>\\
+<xsl:template match="row"><xsl:for-each select="col"><xsl:if test="position()>1"> &amp; </xsl:if><xsl:apply-templates select="." mode="normal"/>
+</xsl:for-each>\\
+
 </xsl:template>
 
 <xsl:template match="tabular">\begin{center}
-\begin{tabular}{lp{0.6\textwidth}}
+\begin{tabularx}{\textwidth}{<xsl:for-each select="./colheaders/col"><xsl:choose><xsl:when test="position()=last()">X</xsl:when><xsl:otherwise>l</xsl:otherwise></xsl:choose></xsl:for-each>}
 \hline
 \hline
 <xsl:apply-templates select="node()"/>\hline
 \hline
-\end{tabular}
+\end{tabularx}
 \end{center}
 </xsl:template>
 
@@ -213,6 +217,9 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{siunitx}
 \usepackage{tcolorbox}
 \usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{ltablex}
 
 \definecolor{lightgray}{gray}{0.9}
 \definecolor{warningborder}{HTML}{FFC000}
