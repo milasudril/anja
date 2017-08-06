@@ -23,15 +23,15 @@ doc=string.Template('''<?xml version="1.0"?>
 
 <section id="libs">Libraries</section>
 <p>The following list contains all libraries except for the C++ runtime library,  required by Anja.</p>
-<ul><li>$libs</li></ul>
+<ul class="deps"><li>$libs</li></ul>
 
 <section id="tools">Tools</section>
 <p>The following list contains all tools, required to compile Anja.</p>
-<ul><li>$tools</li></ul>
+<ul class="deps"><li>$tools</li></ul>
 
 <section id="resources">Packages and resources</section>
 <p>The following list contains all external resources, required to compile Anja. This list includes static resources like fonts, and packages for scripting languages.</p>
-<ul><li>$resources</li></ul>
+<ul class="deps"><li>$resources</li></ul>
 
 </content>
 ''')

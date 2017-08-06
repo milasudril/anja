@@ -33,7 +33,13 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 </xsl:template>
 
-<xsl:template match="ul">\begin{multicols}{2}
+<xsl:template match="ul">\begin{itemize}\setlength{\itemsep}{1ex}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+<xsl:apply-templates select="node()"/>\end{itemize}
+</xsl:template>
+
+<xsl:template match="ul[@class='deps']">\begin{multicols}{2}
 \begin{itemize}\setlength{\itemsep}{1ex}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
