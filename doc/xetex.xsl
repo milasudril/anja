@@ -151,7 +151,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="infobox">
 \begin{centering}
-\begin{tcolorbox}[width=0.8\textwidth,colback=<xsl:value-of select="@type"/>back,colframe=<xsl:value-of select="@type"/>border,sidebyside,sidebyside align=top seam,lefthand width=8ex,lower separated=false,sidebyside gap=0.4cm,left=0cm,right=0cm,top=0cm,bottom=0cm,boxsep=0.2cm]
+\begin{tcolorbox}[width=0.8\textwidth,colback=<xsl:value-of select="@type"/>back,colframe=<xsl:value-of select="@type"/>border,sidebyside,sidebyside align=top seam,lefthand width=8ex,lower separated=false,sidebyside gap=0.0cm,left=0cm,right=0cm,top=0cm,bottom=0cm,boxsep=0.2cm]
 \includegraphics[height=6ex]{message_<xsl:value-of select="@type"/>.svg.pdf}
 \tcblower
 <xsl:apply-templates select="node()" />

@@ -73,7 +73,7 @@
 
 	<code language="bash">tar -xf anja-src.tar.gz</code>
 
-	<p>This will create a directory <dirname>anja</dirname>, in current directory. Now <prgname>cd</prgname> into that directory and run <prgname>make</prgname>:</p>
+	<p>This will create a directory <dirname>anja-src</dirname>, in current directory. Now <prgname>cd</prgname> into that directory and run <prgname>make</prgname>:</p>
 
 	<code language="bash">cd anja-src
 make</code>
@@ -92,20 +92,19 @@ for k in __anja_*; do
 	cp "$k"/anja ~/bin/"$k"
 done</code>
 
-<p>You can also run</p>
+<p>In order to install everything to your home directory, you can run</p>
 <code language="bash">./install ~</code>
-<p>In order to install everything to your home directory</p>
 
 	<p>If you have <prgname>sudo</prgname> permissions, you can do</p>
 <code language="bash">sudo make install</code>
-<p>This will perform a regular install, for all users.</p>
+<p>This will perform a regular install, for all users. If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
 
-	<p>If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
-
-	<code language="bash">make deb
+	<code language="bash">make deb #Do not run this command as root
 cd ..
-dpkg -i anja_$version-$distro_$architecture.deb
+sudo dpkg -i anja_$version-$distro_$architecture.deb
 </code>
+
+<p>The <dirname>deb</dirname> target will ask you some questions about dependencies, before it can continue to compile the Anja package. Notice that if all packages are installed, the script may give you some hints. Otherwise you will need to look for the corresponding package name useing other resources such as searching the Internet, and install the corresponding package.</p>
 
 	<chapter id="using">Using Anja</chapter>
 
@@ -176,9 +175,9 @@ dpkg -i anja_$version-$distro_$architecture.deb
 
 <infobox type="info">JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be
 <code language="bash">jack_connect 'New session.anja:Master out' \
-	'system:playback_1'
+    'system:playback_1'
 jack_connect 'New session.anja:Audition' \
-	'system:playback_2'
+    'system:playback_2'
 </code>
 Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</infobox>
 
