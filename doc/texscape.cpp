@@ -22,6 +22,9 @@ int main()
 					case 127:
 						state=State::ESCAPE;
 						break;
+					case '\t':
+						printf("    ");
+						break;
 					default:
 						putchar(ch_in);
 					}
@@ -49,6 +52,10 @@ int main()
 						putchar(ch_in);
 						break;
 
+					case '\t':
+						printf("    ");
+						break;
+
 					default:
 						putchar(ch_in);
 					}
@@ -73,6 +80,10 @@ int main()
 						putchar('\\');
 						putchar(ch_in);
 						state=State::ESCAPE;
+						break;
+
+					case '\t':
+						printf("    ");
 						break;
 
 					default:
