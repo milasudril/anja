@@ -175,10 +175,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="em">\emph{<xsl:apply-templates select="node()" />}</xsl:template>
 
+<xsl:template match="sub">\textsubscript{<xsl:apply-templates select="node()"/>}</xsl:template>
+
 
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
-
 \usepackage{fontspec}
 \usepackage{verbatim}
 \usepackage[export]{adjustbox} % loads also graphicx
@@ -192,7 +193,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{siunitx}
 \usepackage{tcolorbox}
 \usepackage{multicol}
-
+\usepackage{fixltx2e}
 
 \definecolor{lightgray}{gray}{0.9}
 \definecolor{warningborder}{HTML}{FFC000}
