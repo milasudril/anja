@@ -24,13 +24,22 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="abstract">
 \chapter*{Abstract}
-
+\thispagestyle{empty}
 <xsl:apply-templates select="@*|node()"/>
 </xsl:template>
 
 <xsl:template match="chapter-star">
 \chapter*{<xsl:apply-templates select="node()"/>}
-
+<xsl:choose>
+<xsl:when test="text()='Acknowledgements'">
+\thispagestyle{empty}
+\pagenumbering{roman}
+\setcounter{page}{0}
+</xsl:when>
+<xsl:otherwise>
+\addcontentsline{toc}{chapter}{<xsl:apply-templates select="node()"/>}
+</xsl:otherwise>
+</xsl:choose>
 </xsl:template>
 
 <xsl:template match="ul">\begin{itemize}\setlength{\itemsep}{1ex}
@@ -84,6 +93,13 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 \chapter{<xsl:value-of select="node()"/>}
 \label{<xsl:value-of select="@id"/>}
+</xsl:template>
+
+<xsl:template match="//chapter[1]">
+\chapter{<xsl:value-of select="node()"/>}
+\label{<xsl:value-of select="@id"/>}
+\setcounter{page}{1}
+\pagenumbering{arabic}
 </xsl:template>
 
 <xsl:template match="section">
@@ -284,9 +300,7 @@ U+%
 \titlehead{\centering<xsl:apply-templates select="node()/titlepic"/>}
 
 \begin{document}
-\begin{titlepage}
 \maketitle
-\end{titlepage}
 <xsl:apply-templates select="node()/abstract"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']/following-sibling::node()"/>
