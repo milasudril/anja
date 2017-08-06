@@ -124,7 +124,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="dfn">\emph{<xsl:apply-templates select="node()" />}</xsl:template>
 <xsl:template match="char">\charwithcodepoint{<xsl:apply-templates select="node()" />}</xsl:template>
 
-<xsl:template match="includegraphics">\includegraphics[height=2ex]{<xsl:value-of select="@src"/><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>}</xsl:template>
+<xsl:template match="includegraphics">\includegraphics[height=1.5ex]{<xsl:value-of select="@src"/><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>}</xsl:template>
 
 <xsl:template match="col/includegraphics">\multicolumn{1}{c}{\includegraphics[height=2ex]{<xsl:value-of select="@src"/><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>}}</xsl:template>
 
@@ -181,6 +181,10 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 \usepackage{fontspec}
+\newfontfamily\uifont{DejaVu Sans}
+\DeclareTextFontCommand{\textuiimpl}{\uifont}
+%HACK DejaVu Sans has all glpyhs but is too large compared to Latin Modern
+\newcommand{\textui}[1]{\footnotesize{\textuiimpl{#1}}}
 \usepackage{verbatim}
 \usepackage[export]{adjustbox} % loads also graphicx
 \usepackage{color}
@@ -193,7 +197,6 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{siunitx}
 \usepackage{tcolorbox}
 \usepackage{multicol}
-\usepackage{fixltx2e}
 
 \definecolor{lightgray}{gray}{0.9}
 \definecolor{warningborder}{HTML}{FFC000}
@@ -201,9 +204,9 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \definecolor{warningback}{HTML}{FFF0A0}
 \definecolor{infoback}{HTML}{D0D0FF}
 
-\newcommand{\kbd}[1]{ \colorbox{black}{\textcolor{white}{{\texttt{#1}}}} }
-\newcommand{\uibutton}[1]{ \colorbox{lightgray}{{{\textsf{#1}}}} }
-\newcommand{\uiformfield}[1]{ \colorbox{lightgray}{{{\textit{\textsf{#1}}}}} }
+\newcommand{\kbd}[1]{\colorbox{black}{\textcolor{white}{{\texttt{#1}}}} }
+\newcommand{\uibutton}[1]{ \colorbox{lightgray}{ \textui{#1} } }
+\newcommand{\uiformfield}[1]{ \colorbox{lightgray}{ \textui{ {\textit{#1} } }  } }
 
 \makeatletter
 \def\charwithcodepointb#1{%
