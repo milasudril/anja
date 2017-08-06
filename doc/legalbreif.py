@@ -18,7 +18,7 @@ def write_error(*args, **kwargs):
 
 doc=string.Template('''<?xml version="1.0"?>
 <content>
-<chapter id="legalbrief">Legal information</chapter>
+<chapter-star id="legalbrief">Legal information</chapter-star>
 <p>$license_short</p></content>
 ''')
 

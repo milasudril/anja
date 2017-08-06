@@ -210,8 +210,18 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \usepackage{xcolor}
 \usepackage[multidot]{grffile}
 
+
+
 \usepackage{varioref}
 \usepackage[hidelinks]{hyperref}
+% TODO:
+%\usepackage[pdftex,
+            %pdfauthor={Your Name},
+            %pdftitle={The Title},
+            %pdfsubject={The Subject},
+            %pdfkeywords={Some Keywords},
+            %pdfproducer={Latex with hyperref, or other system},
+            %pdfcreator={pdflatex, or other tool}]{hyperref}
 \usepackage{cleveref}
 \usepackage{siunitx}
 \usepackage{tcolorbox}
