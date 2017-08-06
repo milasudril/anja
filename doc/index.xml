@@ -44,13 +44,15 @@
 	<section id="requirements">System requirements</section>
 	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname>, <libname>libsamplerate</libname> and <libname>GTK+</libname> version 3, together with <libname>gtksourceview</libname> version 3. A complete list of dependencies are found in <ref>deps</ref>.</p>
 
-	<p>Anja currently only builds on x86-64. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. Notice that a version that has been compiled for such a CPU cannot run on a CPU without AVX support. This is because only one version of the audio engine is build during compilation.</p>
+	<p>Anja currently only builds on x86-64, and has been tested on Prescott 2m (late Pentium 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
 
 	<p>Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
 
 
 	<section id="comparison">Anja compared to other software</section>
-	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also an exposed <em>kill all</em> feature.</p>
+	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard.</p>
+
+	<p>Other features in Anja is event-triggerd auto-fade (see <ref>chmixer</ref>), and also an exposed <em>kill all</em> feature. It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back right afterwards (see <ref>rec</ref>).</p>
 
 	<chapter id="install">Installing Anja</chapter>
 

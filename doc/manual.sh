@@ -30,4 +30,5 @@ for svg in *.svg; do
 done
 
 xelatex -file-line-error-style -halt-on-error manual.tex \
+	&& xelatex -file-line-error-style -halt-on-error manual.tex \
 	&& xelatex -file-line-error-style -halt-on-error manual.tex
