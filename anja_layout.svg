@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<svg width="854.0" height="617.0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+<svg width="864.0" height="619.0" xmlns="http://www.w3.org/2000/svg" version="1.1">
 <style>
 text
 	{
@@ -11,19 +11,19 @@ rect
 	}
 </style>
 <g transform="translate(4.0,31.0)">
-    <rect x="0" y="0" width="113.0" height="582.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="56.5" y="291.0" text-anchor="middle" dominant-baseline="middle">Action panel</text>
+    <rect x="0" y="0" width="123.0" height="584.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="61.5" y="292.0" text-anchor="middle" dominant-baseline="middle">Action panel</text>
   </g>
-<g transform="translate(128.0,31.0)">
+<g transform="translate(138.0,31.0)">
     <rect x="0" y="0" width="720.0" height="240.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
 	<text x="360.0" y="120.0" text-anchor="middle" dominant-baseline="middle">Keyboard view</text>
   </g>
-<g transform="translate(128.0,278.0)">
-    <rect x="0" y="0" width="720.0" height="335.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="360.0" y="167.5" text-anchor="middle" dominant-baseline="middle">Settings panel</text>
+<g transform="translate(138.0,278.0)">
+    <rect x="0" y="0" width="720.0" height="337.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="360.0" y="168.5" text-anchor="middle" dominant-baseline="middle">Settings panel</text>
   </g>
 <g transform="translate(4.0,4.0)">
-    <rect x="0" y="0" width="846.0" height="22.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
-	<text x="423.0" y="11.0" text-anchor="middle" dominant-baseline="middle">Status area</text>
+    <rect x="0" y="0" width="856.0" height="22.0" style="fill:#ffffff;stroke-width:2px;stroke:rgb(0,0,0)" />
+	<text x="428.0" y="11.0" text-anchor="middle" dominant-baseline="middle">Status area</text>
   </g>
 </svg>

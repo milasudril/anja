@@ -4,26 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anja user's guide</title>
+<meta name="author" content="Torbjörn Rathsman">
+<meta name="description" content="Anja is a sampler designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server.">
+<meta name="keywords" content="LivePerformance, JACK, Audio, Player, Recorder, Midi, Music, sound">
 <link rel="stylesheet" href="format.css" type="text/css">
 <link rel="stylesheet" href="color.css" type="text/css">
 </head>
 <body>
-<h1>Anja user's guide</h1><title>Anja user's guide</title>
-	<sub-title>version 1.9-beta.16</sub-title>
+<h1>Anja user's guide</h1><sub-title>version 
+1.9-beta.18-1-44-g474ace1</sub-title>
 	<p class="titlepage">Torbjörn Rathsman</p><div class="titlepic">
 <picture><source srcset="logo_3.png" media="(max-width:128px)"><source srcset="logo_2.png" media="(max-width:256px)"><source srcset="logo_1.png" media="(max-width:512px)"><source srcset="logo.png" media="(min-width:512px)"><img src="logo_1.png" alt="Title picture"></picture>
-</div><div class="abstract"><p>Anja is a sampler designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server.</p>
+</div><p style="text-indent:0px;text-align:right; font-weight:bold"><a href="anja-usersguide.pdf" rel="alternate">Printer friendly version</a></p><div class="abstract"><p>Anja is a sampler designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys of the computer keyboard. Anja also features a channel mixer with 16 channels making it possible to fade a group of sound effects together, as well as MIDI capabilities for remote control. The backend of Anja is JACK, the low-latency audio server.</p>
 </div><h2 id="ack">Acknowledgements</h2><p>Anja would not have been possible without these people:</p><ul><li>Erik de Castro Lopo—for libsamplerate and libsndfile</li>
 <li>Jason Evans—for the jemalloc library</li>
 <li>Melissa O'Neill—for the PCG32 random number generator</li>
 <li>Paul Davis et.al.—for JACK</li>
 <li>Stefan Buller—for valuable feedback on the user interface</li>
-<li>The GTK+ team—for the UI toolkit</li></ul><p>The author, 2017</p>
+<li>The GTK+ team—for the UI toolkit</li></ul><p>The author, 2017</p><nav id="toc">
+<h2>Contents</h2>
+<ol><li><a href="#ack"><span class="content">Acknowledgements</span></a></li><li><a href="#legalbrief"><span class="content">Legal information</span></a></li><li><a href="#notations"><span class="content">Notations</span></a></li><li><a href="#intro"><span class="fill">1</span> <span class="content">Introduction</span></a><ol><li><a href="#requirements"><span class="fill">1.1</span> <span class="content">System requirements</span></a></li><li><a href="#comparison"><span class="fill">1.2</span> <span class="content">Anja compared to other software</span></a></li></ol></li><li><a href="#install"><span class="fill">2</span> <span class="content">Installing Anja</span></a><ol><li><a href="#installlinux"><span class="fill">2.1</span> <span class="content">Installing on a GNU/Linux system</span></a></li><li><a href="#compile"><span class="fill">2.2</span> <span class="content">Compiling Anja</span></a></li></ol></li><li><a href="#using"><span class="fill">3</span> <span class="content">Using Anja</span></a><ol><li><a href="#statusarea"><span class="fill">3.1</span> <span class="content">The status area</span></a></li><li><a href="#addfx"><span class="fill">3.2</span> <span class="content">Loading a waveform</span></a></li><li><a href="#play"><span class="fill">3.3</span> <span class="content">Playing waveforms</span></a><ol><li><a href="#engstatus"><span class="fill">3.3.1</span> <span class="content">Controlling and manipulating engine status</span></a></li><li><a href="#connections"><span class="fill">3.3.2</span> <span class="content">Connecting Anja to system playback</span></a></li><li><a href="#keybstatus"><span class="fill">3.3.3</span> <span class="content">Activating the keyboard</span></a></li></ol></li><li><a href="#rec"><span class="fill">3.4</span> <span class="content">Capturing waveforms</span></a></li><li><a href="#waveformprop"><span class="fill">3.5</span> <span class="content">Configuring waveform playback</span></a><ol><li><a href="#wavesource"><span class="fill">3.5.1</span> <span class="content">Source file selection</span></a></li><li><a href="#description"><span class="fill">3.5.2</span> <span class="content">Waveform description</span></a></li><li><a href="#wavecolor"><span class="fill">3.5.3</span> <span class="content">Waveform color</span></a></li><li><a href="#pbchannel"><span class="fill">3.5.4</span> <span class="content">Playback channel</span></a></li><li><a href="#pbgain"><span class="fill">3.5.5</span> <span class="content">Playback gain</span></a></li><li><a href="#pbgainrandom"><span class="fill">3.5.6</span> <span class="content">Playback gain randomization</span></a></li><li><a href="#pboptions"><span class="fill">3.5.7</span> <span class="content">Controlling playback behavior</span></a></li><li><a href="#rangeadjust"><span class="fill">3.5.8</span> <span class="content">Adjusting playback or loop range</span></a></li></ol></li><li><a href="#chmixer"><span class="fill">3.6</span> <span class="content">Configuring playback channels</span></a></li><li><a href="#multichannel"><span class="fill">3.7</span> <span class="content">Multi-channel output</span></a></li><li><a href="#midi"><span class="fill">3.8</span> <span class="content">Using MIDI</span></a></li><li><a href="#sessprops"><span class="fill">3.9</span> <span class="content">Modifying session properties</span></a></li></ol></li><li><a href="#chstatus"><span class="fill">A</span> <span class="content">Port status indicators</span></a></li><li><a href="#fileformats"><span class="fill">B</span> <span class="content">Supported file formats</span></a></li><li><a href="#keybindings"><span class="fill">C</span> <span class="content">Key bindings</span></a></li><li><a href="#signalflow"><span class="fill">D</span> <span class="content">Signal flow</span></a></li><li><a href="#midiref"><span class="fill">E</span> <span class="content">MIDI message processing</span></a></li><li><a href="#cmdline"><span class="fill">F</span> <span class="content">Command line options</span></a><ol><li><a href="#cmdline8"><span class="fill">F.1</span> <span class="content">Program information</span></a></li><li><a href="#cmdline12"><span class="fill">F.2</span> <span class="content">Appearance</span></a></li><li><a href="#cmdline16"><span class="fill">F.3</span> <span class="content">Session loading or control</span></a></li></ol></li><li><a href="#sessfile"><span class="fill">G</span> <span class="content">Session file format</span></a></li><li><a href="#deps"><span class="fill">H</span> <span class="content">Dependencies</span></a><ol><li><a href="#libs"><span class="fill">H.1</span> <span class="content">Libraries</span></a></li><li><a href="#tools"><span class="fill">H.2</span> <span class="content">Tools</span></a></li><li><a href="#resources"><span class="fill">H.3</span> <span class="content">Packages and resources</span></a></li></ol></li><li><a href="#script"><span class="fill">I</span> <span class="content">Commands accepted in scripts</span></a></li><li><a href="#srcview"><span class="fill">J</span> <span class="content">Source code overview</span></a><ol><li><a href="#modintract"><span class="fill">J.1</span> <span class="content">Component interaction</span></a></li><li><a href="#uiframework"><span class="fill">J.2</span> <span class="content">The design of the UI component</span></a></li></ol></ol>
+</nav><h2 id="legalbrief">Legal information</h2><p>Anja program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p><p>Anja is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p><p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses/" target="blank">https://www.gnu.org/licenses/</a></p>
 
-	<nav id="toc">
-<h2>Table of contents</h2>
-<ol><li><a href="#ack"><span class="content">Acknowledgements</span></a></li><li><a href="#notations"><span class="content">Notations</span></a></li><li><a href="#intro"><span class="fill">1</span> <span class="content">Introduction</span></a><ol><li><a href="#requirements"><span class="fill">1.1</span> <span class="content">System requirements</span></a></li><li><a href="#comparison"><span class="fill">1.2</span> <span class="content">Anja compared to other software</span></a></li></ol></li><li><a href="#install"><span class="fill">2</span> <span class="content">Installing Anja</span></a><ol><li><a href="#installlinux"><span class="fill">2.1</span> <span class="content">Installing on a GNU/Linux system</span></a></li><li><a href="#compile"><span class="fill">2.2</span> <span class="content">Compiling Anja</span></a></li></ol></li><li><a href="#using"><span class="fill">3</span> <span class="content">Using Anja</span></a><ol><li><a href="#statusarea"><span class="fill">3.1</span> <span class="content">The status area</span></a></li><li><a href="#addfx"><span class="fill">3.2</span> <span class="content">Loading a waveform</span></a></li><li><a href="#play"><span class="fill">3.3</span> <span class="content">Playing waveforms</span></a><ol><li><a href="#engstatus"><span class="fill">3.3.1</span> <span class="content">Controlling and manipulating engine status</span></a></li><li><a href="#connections"><span class="fill">3.3.2</span> <span class="content">Connecting Anja to system playback</span></a></li><li><a href="#keybstatus"><span class="fill">3.3.3</span> <span class="content">Activating the keyboard</span></a></li></ol></li><li><a href="#rec"><span class="fill">3.4</span> <span class="content">Capturing waveforms</span></a></li><li><a href="#waveformprop"><span class="fill">3.5</span> <span class="content">Configuring waveform playback</span></a><ol><li><a href="#wavesource"><span class="fill">3.5.1</span> <span class="content">Source file selection</span></a></li><li><a href="#description"><span class="fill">3.5.2</span> <span class="content">Waveform description</span></a></li><li><a href="#wavecolor"><span class="fill">3.5.3</span> <span class="content">Waveform color</span></a></li><li><a href="#pbchannel"><span class="fill">3.5.4</span> <span class="content">Playback channel</span></a></li><li><a href="#pbgain"><span class="fill">3.5.5</span> <span class="content">Playback gain</span></a></li><li><a href="#pbgainrandom"><span class="fill">3.5.6</span> <span class="content">Playback gain randomization</span></a></li><li><a href="#pboptions"><span class="fill">3.5.7</span> <span class="content">Controlling playback behavior</span></a></li><li><a href="#rangeadjust"><span class="fill">3.5.8</span> <span class="content">Adjusting playback or loop range</span></a></li></ol></li><li><a href="#chmixer"><span class="fill">3.6</span> <span class="content">Configuring playback channels</span></a></li><li><a href="#multichannel"><span class="fill">3.7</span> <span class="content">Multi-channel output</span></a></li><li><a href="#midi"><span class="fill">3.8</span> <span class="content">Using MIDI</span></a></li><li><a href="#sessprops"><span class="fill">3.9</span> <span class="content">Modifying session properties</span></a></li></ol></li><li><a href="#chstatus"><span class="fill">A</span> <span class="content">Port status indicators</span></a></li><li><a href="#fileformats"><span class="fill">B</span> <span class="content">Supported file formats</span></a></li><li><a href="#keybindings"><span class="fill">C</span> <span class="content">Key bindings</span></a></li><li><a href="#signalflow"><span class="fill">D</span> <span class="content">Signal flow</span></a></li><li><a href="#midiref"><span class="fill">E</span> <span class="content">MIDI message processing</span></a></li><li><a href="#cmdline"><span class="fill">F</span> <span class="content">Command line options</span></a><ol><li><a href="#cmdline_12"><span class="fill">F.1</span> <span class="content">Program information</span></a></li><li><a href="#cmdline_16"><span class="fill">F.2</span> <span class="content">Appearance</span></a></li><li><a href="#cmdline_20"><span class="fill">F.3</span> <span class="content">Session loading or control</span></a></li></ol></li><li><a href="#sessfile"><span class="fill">G</span> <span class="content">Session file format</span></a></li><li><a href="#deps"><span class="fill">H</span> <span class="content">Dependencies</span></a><ol><li><a href="#libs"><span class="fill">H.1</span> <span class="content">Libraries</span></a></li><li><a href="#tools"><span class="fill">H.2</span> <span class="content">Tools</span></a></li></ol></li><li><a href="#script"><span class="fill">I</span> <span class="content">Commands accepted in scripts</span></a></li><li><a href="#srcview"><span class="fill">J</span> <span class="content">Source code overview</span></a><ol><li><a href="#modintract"><span class="fill">J.1</span> <span class="content">Component interaction</span></a></li><li><a href="#uiframework"><span class="fill">J.2</span> <span class="content">The design of the UI component</span></a></li></ol></li><li><a href="#legalbrief"><span class="fill">K</span> <span class="content">Legal information</span></a></ol>
-</nav><h2 id="notations">Notations</h2><p>The following table shows examples of notations used within this manual, or within Anja itself.</p>
+	<h2 id="notations">Notations</h2><p>The following table shows examples of notations used within this manual, or within Anja itself.</p>
 	<table>
 <tr class="colheaders"><td>Symbol</td><td>Meaning</td></tr>
 <tr><td><img src="message_info.svg" alt="message_info.svg"></td><td>The surrounding box may contain useful tips or shortcuts</td></tr>
@@ -46,16 +49,22 @@
 
 	<h3 id="requirements"><span class="fill">1.1</span> System requirements</h3><p>To run Anja, a working installation of JACK&#160;<cite><a href="#jack">[1]</a></cite> is required. Moreover, Anja requires <code>libsndfile</code>, <code>libsamplerate</code> and <code>GTK+</code> version 3, together with <code>gtksourceview</code> version 3. A complete list of dependencies are found in <a href="#deps">Appendix H</a>.</p>
 
-	<p>Anja currently only builds on x86-64. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. Notice that a version that has been compiled for such a CPU cannot run on a CPU without AVX support. This is because only one version of the audio engine is build during compilation.</p>
+	<p>Anja currently only builds on x86-64, and has been tested on Prescott 2m (late Pentium 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <a href="#compile">Section 2.2</a>), and a wrapper script is used to select the appropriate version for the current machine.</p>
 
 	<p>Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At 48&#160;kHz, the RAM usage is 11&#160;MiB/min of sound. The minimum screen resolution for running Anja is 1024&#160;px × 768&#160;px.</p>
 
 
-	<h3 id="comparison"><span class="fill">1.2</span> Anja compared to other software</h3><p>There are other sample players that also may be used with JACK. One such program is Hydrogen&#160;<cite><a href="#hydrogen">[4]</a></cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard. Other features in Anja is event-triggerd auto-fade, and also an exposed <em>kill all</em> feature.</p>
+	<h3 id="comparison"><span class="fill">1.2</span> Anja compared to other software</h3><p>There are other sample players that also may be used with JACK. One such program is Hydrogen&#160;<cite><a href="#hydrogen">[4]</a></cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard.</p>
+
+	<p>Other features in Anja is event-triggerd auto-fade (see <a href="#chmixer">Section 3.6</a>), and also an exposed <em>kill all</em> feature. It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back right afterwards (see <a href="#rec">Section 3.4</a>).</p>
 
 	<h2 id="install"><span class="fill">2</span> Installing Anja</h2><p>Before Anja can be used, the program needs to be installed. This chapter goes through the installation procedure.</p>
 
-	<h3 id="installlinux"><span class="fill">2.1</span> Installing on a GNU/Linux system</h3><p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. If there is no package available, download the source package&#160;<cite><a href="#anjasrc">[5]</a></cite>, and compile it as according to the instructions in <a href="#compile">Section 2.2</a>.</p>
+	<h3 id="installlinux"><span class="fill">2.1</span> Installing on a GNU/Linux system</h3><p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. Ubuntu users can use the following ppa:</p>
+
+<pre><code class="ppa">milasudril/anja</code></pre>
+
+	<p>If there is no package available, download the source package&#160;<cite><a href="#anjasrc">[5]</a></cite>, and compile it as according to the instructions in <a href="#compile">Section 2.2</a>.</p>
 
 	<h3 id="compile"><span class="fill">2.2</span> Compiling Anja</h3><p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in <a href="#deps">Appendix H</a>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <code>maike</code> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <code>maike</code> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <code>maike</code>, a package containing <code>maike</code> is downloaded from the author's GitHub repository by using <code>wget</code> and <code>jq</code>.</p>
 
@@ -72,7 +81,7 @@
 
 	<pre><code class="bash">tar -xf anja-src.tar.gz</code></pre>
 
-	<p>This will create a directory <code>anja</code>, in current directory. Now <code>cd</code> into that directory and run <code>make</code>:</p>
+	<p>This will create a directory <code>anja-src</code>, in current directory. Now <code>cd</code> into that directory and run <code>make</code>:</p>
 
 	<pre><code class="bash">cd anja-src
 make</code></pre>
@@ -98,20 +107,19 @@ for k in __anja_*; do
 	cp "$k"/anja ~/bin/"$k"
 done</code></pre>
 
-<p>You can also run</p>
+<p>In order to install everything to your home directory, you can run</p>
 <pre><code class="bash">./install ~</code></pre>
-<p>In order to install everything to your home directory</p>
 
 	<p>If you have <code>sudo</code> permissions, you can do</p>
 <pre><code class="bash">sudo make install</code></pre>
-<p>This will perform a regular install, for all users.</p>
+<p>This will perform a regular install, for all users. If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
 
-	<p>If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
-
-	<pre><code class="bash">make deb
+	<pre><code class="bash">make deb #Do not run this command as root
 cd ..
-dpkg -i anja_$version-$distro_$architecture.deb
+sudo dpkg -i anja_$version-$distro_$architecture.deb
 </code></pre>
+
+<p>The <code>deb</code> target will ask you some questions about dependencies, before it can continue to compile the Anja package. Notice that if all packages are installed, the script may give you some hints. Otherwise you will need to look for the corresponding package name useing other resources such as searching the Internet, and install the corresponding package.</p>
 
 	<h2 id="using"><span class="fill">3</span> Using Anja</h2><p>Starting Anja brings up a window that looks like the one presented in <a href="#anjastart">Figure 3.1</a>. The workspace consists of four main parts outlined in <a href="#anjaworkspace">Figure 3.2</a>. At the top, there is a <dfn>status area</dfn>, showing the state of Anja. Below that, there are two columns. The leftmost column contains the <dfn>action panel</dfn> with different buttons that affect Anja's current state. To the right of that, the <dfn>keyboard view</dfn> is located, and below that, there is a <dfn>settings panel</dfn>, controlling which waveforms are loaded as well as the playback of loaded waveforms.</p>
 
@@ -133,6 +141,8 @@ dpkg -i anja_$version-$distro_$architecture.deb
 </info-content></div>
 
 <h3 id="addfx"><span class="fill">3.2</span> Loading a waveform</h3><p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <a href="#anjaworkspace">Figure 3.2</a>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <a href="#anjastart">Figure 3.1</a>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
+
+<p>If you want to remove the waveform from the slot, without loading a new one, click on <ui-button>✗</ui-button>. If you need the same waveform again, it is possible to load the same file agian, since this action does not remove the orignal file from disk.</p>
 
 <div class="infobox_info ">
 <info-content>
@@ -187,8 +197,10 @@ dpkg -i anja_$version-$distro_$architecture.deb
 <img src="message_info.gif" alt="info">
 </picture>
 <div>JACK ports can be connected by using the command <code>jack_connect</code>&#160;<cite><a href="#manjack">[6]</a></cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be
-<pre><code class="bash">jack_connect 'New session.anja:Master out' 'system:playback_1'
-jack_connect 'New session.anja:Audition' 'system:playback_2'
+<pre><code class="bash">jack_connect 'New session.anja:Master out' \
+    'system:playback_1'
+jack_connect 'New session.anja:Audition' \
+    'system:playback_2'
 </code></pre>
 Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</div>
 </info-content></div>
@@ -525,7 +537,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 		<a href="http://www.hydrogen-music.org/hcms" target="blank">http://www.hydrogen-music.org/hcms</a></p><p class="bibitem" id="anjasrc"> [5] 
 		<a href="https://github.com/milasudril/anja/releases/latest" target="blank">https://github.com/milasudril/anja/releases/latest</a></p><p class="bibitem" id="manjack"> [6] 
 		<code>jack_connect</code> manual page</p><p class="bibitem" id="catia"> [7] 
-		<a href="http://kxstudio.org" target="blank">http://kxstudio.org</a></p><p class="bibitem" id="mma"> [8] 
+		<a href="http://kxstudio.linuxaudio.org" target="blank">http://kxstudio.linuxaudio.org</a></p><p class="bibitem" id="mma"> [8] 
 		<a href="http://midi.org" target="blank">http://midi.org</a></p><h2 id="chstatus"><span class="fill">A</span> Port status indicators</h2><p>This table shows all states the port status indicators can have.</p>
 <table>
 <tr class="colheaders"><td>Indicator</td><td>Meaning</td></tr>
@@ -565,16 +577,19 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <tr><td> </td><td>GENERAL_PURPOSE_3</td><td>If possible, enable recording to the slot given by the second data byte. If recording is already enabled, the last block of the current recording is discarded.</td></tr>
 <tr><td> </td><td>GENERAL_PURPOSE_4</td><td>If possible, disable recording to the slot given by the second data byte</td></tr>
 </table>
-<h2 id="cmdline"><span class="fill">F</span> Command line options</h2><p>This is a summary of all command line options. Values inside square brackets are optional. The different argument types accepted by the different options are</p><p>bool</p><p>can be <code>true</code>, <code>false</code>, <code>yes</code>, or <code>no</code>. <code>true</code> is equivalent to <code>yes</code> and <code>false</code> is equivalent to no. It is also possible to use a number. In this case, any non-zero value is <code>true</code> and zero is <code>false</code>.</p><ul>
+<h2 id="cmdline"><span class="fill">F</span> Command line options</h2><p>This is a summary of all command line options. Values inside square brackets are optional. The different argument types accepted by the different options are</p><ul>
+<li class="cmdoption"><p><em>bool</em> := (<code>true</code> | <code>false</code> | <code>yes</code> | <code>no</code>)</p>
+
+<p>can be <code>true</code>, <code>false</code>, <code>yes</code>, or <code>no</code>. <code>true</code> is equivalent to <code>yes</code> and <code>false</code> is equivalent to no. It is also possible to use a number. In this case, any non-zero value is <code>true</code> and zero is <code>false</code>.</p></li>
 <li class="cmdoption"><p><em>filename in</em> := (A name of an existing file)</p>
 
 <p>If there is no file with the given name, an error occurs.</p></li>
 <li class="cmdoption"><p><em>filename out</em> := (A valid filename)</p>
 
 <p>If a file with the same name already exists, it will be overwritten.</p></li>
-<li class="cmdoption"><p><em>theme</em> := (dark | light)</p></li>
-<li class="cmdoption"><p><em>window mode</em> := (fullscreen | windowed)</p></li>
-</ul><h3 id="cmdline_12"><span class="fill">F.1</span> Program information</h3><ul>
+<li class="cmdoption"><p><em>theme</em> := (<code>dark</code> | <code>light</code>)</p></li>
+<li class="cmdoption"><p><em>window mode</em> := (<code>fullscreen</code> | <code>windowed</code>)</p></li>
+</ul><h3 id="cmdline8"><span class="fill">F.1</span> Program information</h3><ul>
 <li class="cmdoption"><p><code>--about</code>[=<em>filename out</em>]</p>
 
 <p>prints an about message to <em>filename out</em>. Without argument, the data is written to standard outout.</p></li>
@@ -584,14 +599,14 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <li class="cmdoption"><p><code>--version</code>[=<em>filename out</em>]</p>
 
 <p>prints version information to <em>filename out</em>. Without argument, the data is written to standard outout.</p></li>
-</ul><h3 id="cmdline_16"><span class="fill">F.2</span> Appearance</h3><ul>
+</ul><h3 id="cmdline12"><span class="fill">F.2</span> Appearance</h3><ul>
 <li class="cmdoption"><p><code>--theme</code>=<em>theme</em></p>
 
 <p>selects the UI theme. The default theme is <code>dark</code>. Notice that theme modes does not work on all GTK+3 themes. In this case, this option has no effect.</p></li>
 <li class="cmdoption"><p><code>--window-mode</code>=<em>window mode</em></p>
 
 <p>selects the window mode. The default mode is <code>windowed</code>.</p></li>
-</ul><h3 id="cmdline_20"><span class="fill">F.3</span> Session loading or control</h3><ul>
+</ul><h3 id="cmdline16"><span class="fill">F.3</span> Session loading or control</h3><ul>
 <li class="cmdoption"><p><code>--session</code>=<em>filename in</em></p>
 
 <p>loads a saved session from <em>filename in</em>. Notice that this option is ignored if <code>script</code> is given.</p></li>
@@ -611,7 +626,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 
 <p>If the first key in a section is <code>Description</code>, it is possible to ommit the key, and write its value right after the section header. This makes it possible to write session files more like a regular document.</p>
 
-<h2 id="deps"><span class="fill">H</span> Dependencies</h2><p>This chapter lists all external dependencies used within the Anja project. The items listed in <a href="#libs">Section H.1</a> are also needed to run Anja. On some distributions, library packages are split into a runtime package and a development package. In this case, only the runtime package is needed to run Anja, but the development package is needed to compile Anja.</p><h3 id="libs"><span class="fill">H.1</span> Libraries</h3><p>The following list contains all libraries except for the C++ runtime library,  required by Anja.</p><ul><li>atk-1.0</li>
+<h2 id="deps"><span class="fill">H</span> Dependencies</h2><p>This chapter lists all external dependencies, as extracted by <code>maike</code>, used within the Anja project. The items listed in <a href="#libs">Section H.1</a> are also needed to run Anja. On some distributions, library packages are split into a runtime package and a development package. In this case, only the runtime package is needed to run Anja, but the development package is needed to compile Anja.</p><h3 id="libs"><span class="fill">H.1</span> Libraries</h3><p>The following list contains all libraries except for the C++ runtime library,  required by Anja.</p><ul class="deps"><li>atk-1.0</li>
 <li>cairo</li>
 <li>cairo-gobject</li>
 <li>gdk-3</li>
@@ -627,7 +642,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <li>pangocairo-1.0</li>
 <li>pthread</li>
 <li>samplerate</li>
-<li>sndfile</li></ul><h3 id="tools"><span class="fill">H.2</span> Tools</h3><p>The following list contains all tools, required in order to compile Anja.</p><ul><li>Xvfb</li>
+<li>sndfile</li></ul><h3 id="tools"><span class="fill">H.2</span> Tools</h3><p>The following list contains all tools, required to compile Anja.</p><ul class="deps"><li>Xvfb</li>
 <li>ar</li>
 <li>awk</li>
 <li>bash</li>
@@ -641,11 +656,17 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <li>grep</li>
 <li>import</li>
 <li>inkscape</li>
+<li>jackd</li>
+<li>maike</li>
 <li>markdown</li>
 <li>octave-cli</li>
+<li>pkg-config</li>
 <li>python3</li>
+<li>rm</li>
+<li>rmdir</li>
 <li>ronn</li>
 <li>sed</li>
+<li>sleep</li>
 <li>sort</li>
 <li>tail</li>
 <li>tar</li>
@@ -654,9 +675,11 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <li>xargs</li>
 <li>xdotool</li>
 <li>xdpyinfo</li>
-<li>xsltproc</li></ul>
+<li>xelatex</li>
+<li>xsltproc</li></ul><h3 id="resources"><span class="fill">H.3</span> Packages and resources</h3><p>The following list contains all external resources, required to compile Anja. This list includes static resources like fonts, and packages for scripting languages.</p><ul class="deps"><li>linux-libertine</li>
+<li>numpy</li></ul>
 
-<h2 id="script"><span class="fill">I</span> Commands accepted in scripts</h2><p>With the <code>--script</code> (see <a href="#cmdline">Appendix F</a>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and it is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
+<h2 id="script"><span class="fill">I</span> Commands accepted in scripts</h2><p>With the <code>--script</code> option (see <a href="#cmdline">Appendix F</a>), it is possible to perform some tasks when starting Anja. This option has been added to make it possible to generate relevant screenshots for this manual. This means that only features that are needed for that purpose are currently implemented. Also, the syntax may change in a future release and it is not very tolerant with respect to whitespace. Nevertheless, this appendix contains a list of all implemented commands.</p>
 
 <ul>
 <li class="cmdoption"><p><code>layout inspect</code></p>
@@ -696,6 +719,5 @@ The session also has a set of properties that affects certain behaviour of Anja.
 
 <p>Modal dialog boxes are emulated as modeless dialogues that disables the main window. The <code>Dialog</code> is a template that owns a widget, and some buttons specified by a dialog trait. Event handlers for the buttons are handled in a similar way as for widgets. A callback object is assigned to the dialog, and when the user activates a button, the corresponding method on the callback object is invoked.</p>
 
-<h2 id="legalbrief"><span class="fill">K</span> Legal information</h2><p>Anja comes with ABSOLUTELY NO WARRANTY; for details see section 15 and 16 in the GNU General Public License version 3. Anja is free software, and you are welcome to redistribute it under the terms of the GNU General Public License, either version 3, or at your option, any later version.</p>
 </body>
 </html>
