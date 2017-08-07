@@ -33,7 +33,7 @@ is affected by the same environment variables as any GTK+\-3. For a complete lis
 https://developer.gnome.org/gtk3/stable/gtk-running.html. $name is also affected by \\fBJACK_DEFAULT_SERVER\\fR, which sets the name of the default JACK(1) server.
 .SH BUGS
 .IP \(bu 4
-The \\fB\-\-theme\\fR only works when the current GTK+\-3 theme supports different variants.
+The \\fB\-\-theme\\fR option only works when the current GTK+\-3 theme supports different variants.
 .IP \(bu 4
 $name does not fully honour right-to-left layouts. This means that the user interface may look strange under certain locals.
 .SH SEE ALSO
