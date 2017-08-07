@@ -68,13 +68,14 @@ def titlepic(node):
 </div>''')
 
 def abstract(node):
+	printWrapper('<p style="text-indent:0px;text-align:right; font-weight:bold"><a href="anja-usersguide.pdf" rel="alternate">Printer friendly version</a></p>')
 	printWrapper('<div class="abstract">')
 	processElements(node)
 	printWrapper('</div>')
 
 def tableofcontents(node,document):
 	printWrapper('''<nav id="toc">
-<h2>Table of contents</h2>
+<h2>Contents</h2>
 <ol><li>''')
 	sibling_prev='none'
 	chapter=0
