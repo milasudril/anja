@@ -218,15 +218,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 
 \usepackage{varioref}
-\usepackage[hidelinks]{hyperref}
-% TODO:
-%\usepackage[pdftex,
-            %pdfauthor={Your Name},
-            %pdftitle={The Title},
-            %pdfsubject={The Subject},
-            %pdfkeywords={Some Keywords},
-            %pdfproducer={Latex with hyperref, or other system},
-            %pdfcreator={pdflatex, or other tool}]{hyperref}
+\usepackage[hidelinks,
+	pdfauthor={<xsl:value-of select="node()/author"/>},
+    pdftitle={<xsl:value-of select="node()/title"/>},
+    pdfkeywords={<xsl:value-of select="node()/keywords"/>}]{hyperref}
+
 \usepackage{cleveref}
 \usepackage{siunitx}
 \usepackage{tcolorbox}
@@ -322,7 +318,7 @@ U+%
 
 \begin{document}
 \maketitle
-\let\cleardoublepageold\cleardoublepage
+
 <xsl:apply-templates select="node()/abstract"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']/following-sibling::node()"/>

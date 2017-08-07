@@ -229,7 +229,6 @@
       <File Name="doc/signalflow.dot"/>
       <File Name="doc/signalflow.sh"/>
       <File Name="doc/dependencies.py"/>
-      <File Name="doc/acknowledgements.py"/>
       <File Name="doc/legalbreif.py"/>
       <File Name="doc/modinteract.dot"/>
       <File Name="doc/modinteract.sh"/>
@@ -240,6 +239,7 @@
       <File Name="doc/texscape.cpp"/>
       <File Name="doc/manual.sh"/>
       <File Name="doc/version.sh"/>
+      <File Name="doc/metatags.py"/>
     </VirtualDirectory>
     <VirtualDirectory Name="icons">
       <File Name="icons/inkscape.py"/>

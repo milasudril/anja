@@ -10,14 +10,8 @@
 		<includegraphics src="logo.png" media="(min-width:512px)" />
 	</titlepic>
 
-	<input src="abstract.xml" />
-
-	<input src="acknowledgements.xml" />
-
-	<tableofcontents />
+	<input src="metatags.xml" />
 	
-	<input src="legalbrief.xml" />
-
 	<chapter-star id="notations">Notations</chapter-star>
 	<p>The following table shows examples of notations used within this manual, or within Anja itself.</p>
 	<tabular>
