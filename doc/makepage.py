@@ -449,9 +449,11 @@ def appendix():
 
 def processElements(document):
 	for node in document.findall('*'):
-		if node.tag=='title':
+		if node.tag=='keywords':
+			pass
+		elif node.tag=='title':
 			title(node)
-		if node.tag=='subtitle':
+		elif node.tag=='subtitle':
 			subtitle(node)
 		elif node.tag=='author':
 			author(node)
@@ -549,8 +551,12 @@ def main(argv):
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>''' + document.findall('title')[0].text + '''</title>''')
+<meta name="viewport" content="width=device-width, initial-scale=1.0">''')
+	print('''<title>''' + document.findall('title')[0].text + '''</title>''')
+	print('''<meta name="author" content="''' + document.findall('author')[0].text + '''">''')
+	print('''<meta name="description" content="''' + document.findall('abstract')[0].findall('p')[0].text + '''">''')
+	print('''<meta name="keywords" content="''' + document.findall('keywords')[0].text + '''">''')
+
 	if 'stylesheets' in args:
 		for style in args['stylesheets']:
 			print('''<link rel="stylesheet" href="'''+style+'''" type="text/css">''')

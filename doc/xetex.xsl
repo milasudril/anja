@@ -318,7 +318,7 @@ U+%
 
 \begin{document}
 \maketitle
-This document is also available at \url{https://milasudril.github.io/anja}
+{\noindent This document is also available at \url{https://milasudril.github.io/anja}}
 <xsl:apply-templates select="node()/abstract"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']/following-sibling::node()"/>

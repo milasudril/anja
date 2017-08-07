@@ -3,6 +3,7 @@
 #@		[
 #@			 {"ref":"format.css","rel":"include_extra"}
 #@			,{"ref":"color.css","rel":"include_extra"}
+#@			,{"ref":"makepage.py","rel":"misc"}
 #@			,{"ref":"xsltproc","rel":"tool"}
 #@			,{"ref":"awk","rel":"tool"}
 #@			,{"ref":"tee","rel":"tool"}
