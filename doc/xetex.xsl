@@ -29,6 +29,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 </xsl:template>
 
 <xsl:template match="chapter-star">
+\makeatletter\@openrightfalse\makeatother
 <xsl:choose>
 <xsl:when test="text()='Acknowledgements'">
 \chapter*{<xsl:apply-templates select="node()"/>}
@@ -37,7 +38,6 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \setcounter{page}{0}
 </xsl:when>
 <xsl:otherwise>
-\makeatletter\@openrightfalse\makeatother
 \chapter*{<xsl:apply-templates select="node()"/>}
 \addcontentsline{toc}{chapter}{<xsl:apply-templates select="node()"/>}
 </xsl:otherwise>
@@ -101,11 +101,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 </xsl:template>
 
 <xsl:template match="//chapter[1]">
-\clearpage
-\mbox{}
-\thispagestyle{empty}
-\chapter{<xsl:value-of select="node()"/>}
+%\clearpage
+%\mbox{}
+%\thispagestyle{empty}
 \makeatletter\@openrighttrue\makeatother
+\chapter{<xsl:value-of select="node()"/>}
 \label{<xsl:value-of select="@id"/>}
 \setcounter{page}{1}
 \pagenumbering{arabic}
@@ -332,6 +332,7 @@ U+%
 \begin{document}
 \defaultfont
 \maketitle
+\thispagestyle{empty}
 {\noindent This document is also available at \url{https://milasudril.github.io/anja}}
 <xsl:apply-templates select="node()/abstract"/>
 <xsl:apply-templates select="node()/chapter-star[@id='ack']"/>

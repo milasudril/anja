@@ -38,7 +38,7 @@
 
 
 	<section id="requirements">System requirements</section>
-	<p>To run Anja, a working installation of JACK is required. Moreover, Anja requires <libname>libsndfile</libname><cite>libsndfile</cite>, <libname>libsamplerate</libname><cite>libsamplerate</cite> and <libname>GTK+</libname> version 3<cite>gtk</cite>, together with <libname>gtksourceview</libname> version 3. A complete list of dependencies are found in <ref>deps</ref>.</p>
+	<p>To run Anja, a working installation of JACK is required. Moreover, Anja requires <libname>libsndfile</libname><cite>libsndfile</cite>, <libname>libsamplerate</libname><cite>libsamplerate</cite> and <libname>GTK+</libname> version 3<cite>gtk</cite>, together with <libname>gtksourceview</libname> version 3<cite>gtksrcview</cite>. A complete list of dependencies are found in <ref>deps</ref>.</p>
 
 	<p>Anja currently only builds on x86-64, and has been tested on a Prescott 2m processor (a late Pentium® 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron® N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
 
@@ -379,7 +379,8 @@ The session also has a set of properties that affects certain behaviour of Anja.
 		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
 		<item id="libsndfile">libsndfile <url>http://www.mega-nerd.com/libsndfile</url></item>
 		<item id="libsamplerate">Secret Rabbit Code (aka libsamplerate) <url>http://www.mega-nerd.com/SRC</url></item>
-		<item id="gtk">The GTK+ Project <url>https://www.gtk.org</url></item>		
+		<item id="gtk">The GTK+ Project <url>https://www.gtk.org</url></item>
+		<item id="gtksrcview">Projects/GtkSourceView - GNOME Wiki! <url>https://wiki.gnome.org/Projects/GtkSourceView</url></item>	
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
 		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
 		<item id="maike">Maike build system <url>https://github.com/milasudril/maike</url></item>
