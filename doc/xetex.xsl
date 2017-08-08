@@ -12,7 +12,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="text()"><xsl:text>&#x7f;</xsl:text><xsl:value-of select="."/><xsl:text>&#x7f;</xsl:text></xsl:template>
 
 <xsl:template match="titlepic">
-\includegraphics[width=0.8\textwidth]{<xsl:value-of select="includegraphics[last()]/@src"/>}
+\includegraphics[width=0.6\textheight]{<xsl:value-of select="includegraphics[last()]/@src"/>}
 </xsl:template>
 
 <xsl:template match="title">\title{<xsl:value-of select="node()"/>}
