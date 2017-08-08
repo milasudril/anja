@@ -138,11 +138,11 @@ sudo dpkg -i anja_${version}-${tag}_${architecture}.deb
 <section id="addfx">Loading a waveform</section>
 	<p>To load a waveform, choose a slot by clicking on the corresponding key in the <dfn>keyboard view</dfn> (see <ref>anjaworkspace</ref>). It is possible to choose any typing key except system keys and the space bar. After choosing a key <kbd><var>K</var></kbd>, the corresponding key will be highlighted. Now click <ui-button>Browse…</ui-button> to the right of <ui-formfield>Source</ui-formfield> field now visible in the <dfn>settings panel</dfn> (see <ref>anjastart</ref>). This brings up a file selection dialog. It is also possible to type a filename directly in the text input field to the left of <ui-button>Browse…</ui-button>.</p>
 
-<p>If you want to remove the waveform from the slot, without loading a new one, click on <ui-button>✗</ui-button>. If you need the same waveform again, it is possible to load the same file agian, since this action does not remove the orignal file from disk.</p>
+<p>If you want to remove the waveform from the slot, without loading a new one, click on <ui-button>✗</ui-button>. If you need the same waveform again, it is possible to load the same file again, since this action does not remove the original file from disk.</p>
 
-<infobox type="info">In case a multi-channel audio file is loaded, all channels in the input stream are mixed into one. This is because Anja uses mono waveforms. If you want to preserve individual channles, separate the channels of the input file with a tool such as <prgname>ffmpeg</prgname> and load the resulting files into different slots, mapped to different channels. Then use multi-channel output (see <ref>multichannel</ref>) and trigger playback of these slots simultaneously.</infobox>
+<infobox type="info">In case a multi-channel audio file is loaded, all channels in the input stream are mixed into one. This is because Anja uses mono waveforms. If you want to preserve individual channels, separate the channels of the input file with a tool such as <prgname>ffmpeg</prgname><cite>ffmpeg</cite> and load the resulting files into different slots, mapped to different channels. Then use multi-channel output (see <ref>multichannel</ref>) and trigger playback of these slots simultaneously.</infobox>
 
-<infobox type="warning">Anja does not resample any waveform during playback. Instead, it will resample waveforms that do not match the current sample rate when the engine is started. If the engine has to be restarted and the new sample rate differs (the only reason for this is that JACK itself was restarted using another sample rate), it is recommended to save the current session and reload it rather than restarting the engine. This is because multiple resample steps can be lossy.
+<infobox type="warning">Anja does not resample any waveform during playback. Instead, it will resample waveforms that do not match the current sample rate when the engine is started. If the engine has to be restarted and the new sample rate differs (the only reason for this is that JACK itself was restarted using another sample rate), it is recommended to save the current session and reload it rather than restarting the engine. This is because multiple resample steps can result in loss of quality.
 </infobox>
 
 	<section id="play">Playing waveforms</section>
@@ -158,10 +158,10 @@ sudo dpkg -i anja_${version}-${tag}_${architecture}.deb
 	<p>As stated in <ref>statusarea</ref>, the state of the engine is showed by the leftmost panel in the <dfn>status area</dfn>. If a JACK server was already running when Anja was started, the engine should be running already. Otherwise, make sure that there is a JACK server running, and click the button <ui-button>Start engine</ui-button> in the <dfn>action panel</dfn> (see <ref>anjaworkspace</ref>). Now, there should be a new JACK client with a name that derived from the name of the current Anja session. For example, after starting the engine on the default session, there should be a JACK client called <env>New session.anja</env>.</p>
 
 <subsection id="connections">Connecting Anja to system playback</subsection>
-	<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>.</p>
+<p>By default, Anja has two output ports: <dirname>Master out</dirname> and <dirname>Audition</dirname>. The difference between these ports is what sound that are routed to them. <dirname>Master out</dirname> is the main output, in the sense that all playback triggered by regular key input and MIDI (see <ref>midi</ref>) will be routed to this port. The <dirname>Audition</dirname> port is used for playback of the current slot (in <ref>addfx</ref> the slot mapped to key <kbd><var>K</var></kbd>), triggered by hitting <kbd>Space</kbd>. To stop all non-audition playback, hit <kbd>Del</kbd>. All auditions can be stopped by hitting <kbd>Page Down</kbd>.</p>
 
 	<infobox type="info">
-	Notice that hitting <kbd>Space</kbd> bar will never output any sound to <dirname>Master out</dirname>. This makes it possible to pre-listen to sounds without routing them to a PA system.
+	Notice that hitting <kbd>Space</kbd> will never output any sound to <dirname>Master out</dirname>. This makes it possible to pre-listen to sounds without routing them to a PA system.
 	</infobox>
 
 <p>The connection status of <dirname>Master out</dirname> and <dirname>Audition</dirname> is shown by the two indicators with blue-shaded background in the output section of the <dfn>port status area</dfn> (see <ref>statusareacut</ref> and <ref>statusareafig</ref>). When the engine is not running, these are black <includegraphics src="led_off.png" />. When the engine is running, a non-connected port is indicated by a yellow <includegraphics src="led_wait.png" /> light, and a connected port is indicated by a green <includegraphics src="led_ready.png"/>. For more details about port status indicators, see <ref>chstatus</ref>.</p>
@@ -185,7 +185,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 
 
 <subsection id="keybstatus">Activating the keyboard</subsection>
-<p>Since the keyboard is shared between the playback triggering system and form input fields, playback can only be triggered from the keyboard when keyboard triggering is active. The <dfn>keyboard status indicator</dfn> (see <ref>statusarea</ref>) is red <includegraphics src="led_stop.png"/> when a form input field has keyboard focus, and green <includegraphics src="led_ready.png"/> when playback triggering is active. Keyboard triggering is activated by hitting <kbd>ESC</kbd>, or by clicking anywhere on the workspace that would not capture keyboard focus.</p>
+<p>Since the keyboard is shared between the playback triggering system and form input fields, playback can only be triggered from the keyboard when keyboard triggering is active. The <dfn>keyboard status indicator</dfn> (see <ref>statusarea</ref>) is red <includegraphics src="led_stop.png"/> when a form input field has keyboard focus, and green <includegraphics src="led_ready.png"/> when playback triggering is active. Keyboard triggering is activated by hitting <kbd>Esc</kbd>, or by clicking anywhere on the workspace that would not capture keyboard focus.</p>
 
 <section id="rec">Capturing waveforms</section>
 <p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source by clicking on the indicator for <dirname>Wave in</dirname>. That is, the leftmost indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>). Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
@@ -371,9 +371,6 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	Both toggling multi-channel output and setting a new title requires the engine to be restarted.
 </infobox>
 
-
-
-
 	<bibliography>
 		<item id="jack">JACK Audio Connection Kit <url>http://jackaudio.org</url></item>
 		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
@@ -384,6 +381,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 		<item id="wget">GNU wget <url>https://www.gnu.org/software/wget/</url></item>
 		<item id="jq">jq <url>https://stedolan.github.io/jq/</url></item>
 		<item id="blender">Blender <url>https://www.blender.org</url></item>
+		<item id="ffmpeg">FFmpeg <url>https://www.ffmpeg.org</url></item>
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">KxStudio <url>http://kxstudio.linuxaudio.org</url></item>
 		<item id="mma">MIDI Association <url>http://midi.org</url></item>
@@ -406,12 +404,12 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	<p>Anja uses <libname>libsndfile</libname> in order to load waveform files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular waveform file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
 
 	<chapter id="keybindings">Key bindings</chapter>
-	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>ESC</kbd> requires that the computer keyboard is active.</p>
+	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>Esc</kbd> requires that the computer keyboard is active.</p>
 	<tabular>
 		<colheaders><col>Key combination</col><col>Function</col></colheaders>
 		<row><col><kbd>Ctrl</kbd>+<kbd><var>key</var></kbd></col><col>Record to <kbd><var>key</var></kbd></col></row>
-		<row><col><kbd>ESC</kbd></col><col>Activate the computer keyboard. Hit this key if other keys in this list have no effect.</col></row>
-		<row><col><kbd>DEL</kbd></col><col>Stop all audio playback on <dirname>Master out</dirname> or channel ports</col></row>
+		<row><col><kbd>Esc</kbd></col><col>Activate the computer keyboard. Hit this key if other keys in this list have no effect.</col></row>
+		<row><col><kbd>Del</kbd></col><col>Stop all audio playback on <dirname>Master out</dirname> or channel ports</col></row>
 		<row><col><kbd><var>key</var></kbd></col><col>Start playback of the slot associated with <var>key</var></col></row>
 		<row><col><kbd>Page Down</kbd></col><col>Stop all audio playback on <dirname>Audition</dirname></col></row>
 		<row><col><kbd>Space</kbd></col><col>Start audition playback of current slot</col></row>

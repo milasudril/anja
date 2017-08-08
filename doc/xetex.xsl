@@ -212,10 +212,11 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 \newfontfamily\arrowfont{DejaVu Sans}
 \newfontfamily{\uifont}{Latin Modern Sans}
 
-\usepackage[Latin,MathematicalOperators,Arrows]{ucharclasses}
+\usepackage[Latin,MathematicalOperators,Arrows,Dingbats]{ucharclasses}
 \setTransitionFrom{MathematicalOperators}{\defaultfont}
 \setTransitionTo{MathematicalOperators}{\mathfont}
 \setTransitionTo{Arrows}{\arrowfont}
+\setTransitionTo{Dingbats}{\arrowfont}
 \DeclareTextFontCommand{\textuiimpl}{\uifont}
 \newcommand{\textui}[1]{\textuiimpl{#1}}
 
