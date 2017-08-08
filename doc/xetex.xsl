@@ -200,15 +200,24 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="em">\emph{<xsl:apply-templates select="node()" />}</xsl:template>
 
 <xsl:template match="sub">\textsubscript{<xsl:apply-templates select="node()"/>}</xsl:template>
+<xsl:template match="var">\textit{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 \usepackage{fontspec}
-\newfontfamily\uifont{DejaVu Sans}
+\newfontfamily{\defaultfont}{Latin Modern Roman}
+\newfontfamily{\mathfont}{Latin Modern Math}
+\newfontfamily\arrowfont{DejaVu Sans}
+\newfontfamily{\uifont}{Latin Modern Sans}
+
+\usepackage[Latin,MathematicalOperators,Arrows]{ucharclasses}
+\setTransitionFrom{MathematicalOperators}{\defaultfont}
+\setTransitionTo{MathematicalOperators}{\mathfont}
+\setTransitionTo{Arrows}{\arrowfont}
 \DeclareTextFontCommand{\textuiimpl}{\uifont}
-%HACK DejaVu Sans has all glpyhs but is too large compared to Latin Modern
-\newcommand{\textui}[1]{\footnotesize{\textuiimpl{#1}}}
+\newcommand{\textui}[1]{\textuiimpl{#1}}
+
 \usepackage{verbatim}
 \usepackage[export]{adjustbox} % loads also graphicx
 \usepackage{color}
