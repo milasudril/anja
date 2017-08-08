@@ -131,7 +131,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="strong">\textbf{<xsl:apply-templates select="node()"/>}</xsl:template>
 
-<xsl:template match="cite">\cite{<xsl:apply-templates select="node()"/>}</xsl:template>
+<xsl:template match="cite">\,\cite{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 <xsl:template match="prgname|libname|dirname">\texttt{<xsl:apply-templates select="node()"/>}</xsl:template>
 
@@ -209,8 +209,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 \usepackage{fontspec}
-\setmainfont{Latin Modern Roman}
-\newfontfamily{\defaultfont}{Latin Modern Roman}
+\newfontfamily{\defaultfont}{Latin Modern Roman}[Ligatures=TeX]
 \newfontfamily{\mathfont}{Latin Modern Math}
 \newfontfamily\arrowfont{DejaVu Sans}
 \newfontfamily{\uifont}{Latin Modern Sans}
