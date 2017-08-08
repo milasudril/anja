@@ -60,7 +60,7 @@ td > img
 
 p > img,div > img
 	{
-	height: 1em;
+	height: 1.5ex;
 	width: initial;
 	margin-left: auto;
 	margin-right: auto;
