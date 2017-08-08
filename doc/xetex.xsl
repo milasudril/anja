@@ -167,7 +167,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="figure">
 \begin{figure}
 \centering
-\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/>}
+\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/><xsl:if test="substring-after(includegraphics/@src,'.')='svg'">.pdf</xsl:if>}
 \caption{\label{<xsl:value-of select="@id"/>}<xsl:apply-templates select="caption" />}
 \end{figure}
 </xsl:template>
@@ -201,6 +201,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 
 <xsl:template match="sub">\textsubscript{<xsl:apply-templates select="node()"/>}</xsl:template>
 <xsl:template match="var">\textit{<xsl:apply-templates select="node()"/>}</xsl:template>
+<xsl:template match="env">\texttt{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}

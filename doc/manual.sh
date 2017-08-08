@@ -17,16 +17,12 @@ in_dir="$3"
 dest_dir=`dirname "$1"`
 target_dir=`echo "$dest_dir" | sed 's,\(.*\)/.*,\1,'`
 
-xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" > /dev/shm/temp.xml
-
 xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 	| xsltproc "$in_dir"/xetex.xsl - \
 	| "$dest_dir"/texscape > "$dest_dir"/anja-usersguide.tex
 
 cd "$dest_dir"
-for svg in *.svg; do
-	inkscape "$svg" --export-pdf="$svg".pdf "$svg"
-done
+
 xelatex -file-line-error-style -halt-on-error anja-usersguide.tex \
 	&& xelatex -file-line-error-style -halt-on-error anja-usersguide.tex \
 	&& xelatex -file-line-error-style -halt-on-error anja-usersguide.tex

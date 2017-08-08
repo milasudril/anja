@@ -9,9 +9,15 @@
 
 <xsl:template match="includegraphics">{"ref":"<xsl:value-of select="@src" />","rel":"include_extra"}</xsl:template>
 
+<xsl:template match="includegraphics" mode="tex">{"ref":"<xsl:value-of select="@src" /><xsl:if test="substring-after(@src,'.')='svg'">.pdf</xsl:if>","rel":"include_extra"}</xsl:template>
+
 <xsl:template match="input">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
 
 <xsl:template match="verbatiminput">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
+
+<xsl:template match="input" mode="tex">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
+
+<xsl:template match="verbatiminput" mode="tex">{"ref":"<xsl:value-of select="@src" />","rel":"include"}</xsl:template>
 
 <xsl:template match="/">{
 "targets":
@@ -40,7 +46,7 @@
 		[
 		{"ref":"manual.sh","rel":"misc"}
 		<xsl:if test="count(//includegraphics | //input | //verbatiminput)>0">,</xsl:if><xsl:for-each select="//includegraphics | //input | //verbatiminput">
-<xsl:if test="not(position()=1)">,</xsl:if> <xsl:apply-templates select="." /><xsl:text>
+<xsl:if test="not(position()=1)">,</xsl:if> <xsl:apply-templates select="." mode="tex"/><xsl:text>
 		</xsl:text>
 </xsl:for-each>]
 	}]

@@ -18,13 +18,13 @@
 		<colheaders><col>Symbol</col><col>Meaning</col></colheaders>
 			<row><col><includegraphics src="message_info.svg" /></col><col>The surrounding box may contain useful tips or shortcuts</col></row>
 			<row><col><includegraphics src="message_warning.svg" /></col><col>The surrounding box contains information that will save you trouble</col></row>
-			<row><col><includegraphics src="message_usererror.svg" /></col><col>You have done something in a wrong way. The surrounding box contains information about how you should fix it.</col></row>
+			<row><col><includegraphics src="message_usererror.svg" /></col><col>You have done something in an incorrect way. The surrounding box contains information about how you should fix it.</col></row>
 			<row><col><includegraphics src="message_error.svg" /></col><col>The desired action failed. The surrounding box contains information about what went wrong.</col></row>
 			<hline colspan="2"/>
 			<row><col><kbd>Key</kbd></col><col>A key on the computer keyboard</col></row>
 			<row><col><ui-button>Button</ui-button></col><col>A button in the user interface</col></row>
 			<row><col><ui-formfield>Formfield</ui-formfield></col><col>An input field within the user interface</col></row>
-			<row><col><char>#</char></col><col>A symbol with its Unicode® codepoint</col></row>
+			<row><col><char>#</char></col><col>A symbol with its Unicode® codepoint in hexadecimal notation</col></row>
 	</tabular>
 
 	<chapter id="intro">Introduction</chapter>
@@ -34,13 +34,13 @@
 
 	<p>The backend of Anja is JACK, the low-latency audio server<cite>jack</cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
 
-	<p>The session file format of Anja described in more detail in <ref>sessfile</ref> is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, to the price of somewhat larger session files.</p>
+	<p>The session file format of Anja described in more detail in <ref>sessfile</ref> is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, at the cost of somewhat larger session files.</p>
 
 
 	<section id="requirements">System requirements</section>
 	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname>, <libname>libsamplerate</libname> and <libname>GTK+</libname> version 3, together with <libname>gtksourceview</libname> version 3. A complete list of dependencies are found in <ref>deps</ref>.</p>
 
-	<p>Anja currently only builds on x86-64, and has been tested on Prescott 2m (late Pentium 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
+	<p>Anja currently only builds on x86-64, and has been tested on a Prescott 2m processor (a late Pentium® 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
 
 	<p>Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
 
@@ -48,7 +48,7 @@
 	<section id="comparison">Anja compared to other software</section>
 	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard.</p>
 
-	<p>Other features in Anja is event-triggerd auto-fade (see <ref>chmixer</ref>), and also an exposed <em>kill all</em> feature. It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back right afterwards (see <ref>rec</ref>).</p>
+	<p>Other features in Anja is event-triggered auto-fade (see <ref>chmixer</ref>), and also an exposed <em>kill all</em> feature (see <ref>play</ref>). It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back right afterwards (see <ref>rec</ref>).</p>
 
 	<chapter id="install">Installing Anja</chapter>
 
@@ -63,7 +63,7 @@
 	<p>If there is no package available, download the source package<cite>anjasrc</cite>, and compile it as according to the instructions in <ref>compile</ref>.</p>
 
 	<section id="compile">Compiling Anja</section>
-	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in <ref>deps</ref>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname> and <prgname>jq</prgname>.</p>
+	<p>Before Anja can be compiled, certain programs, and libraries are needed. These are listed in <ref>deps</ref>. Observe that some of the libraries may be split into a runtime package, and a development package. In this case you must install both parts of the library. On Ubuntu, these packages usually have the suffix <em>dev</em>. Anja has been written using the <prgname>maike</prgname><cite>maike</cite> build tool. Therefore, this program has to be available when Anja is compiled. The <dfn>makefile</dfn> distributed with Anja, tries to detect <prgname>maike</prgname> before the compilation starts. If the <dfn>makefile</dfn> fails to detect <prgname>maike</prgname>, a package containing <prgname>maike</prgname> is downloaded from the author's GitHub repository by using <prgname>wget</prgname><cite>wget</cite> and <prgname>jq</prgname><cite>jq</cite>.</p>
 
 	<infobox type="info">In addition to the general instructions given here, there are some additional information regarding build preparation in the file <dirname>README.md</dirname>.</infobox>
 
@@ -76,13 +76,13 @@
 	<code language="bash">cd anja-src
 make</code>
 
-<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_*</dirname>. After the compilation has completed, Anja can be launched directly by running the command</p>
+<infobox type="warning">Normally, Anja is distributed with pre-rendered images. It may happen that the corresponding <prgname>blender</prgname><cite>blender</cite> file has been updated and the render. In this case, it will take a much longer time than normal to compile Anja, since the images will need to be rerendered.</infobox>
+
+<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_*</dirname>, where  <dirname>*</dirname> respresents the current profile. To satisfy all needs, four binaries are generated: {debug &#8746; release}&#215;{Prescott 2m+ &#8746; Core i<var>x</var>}. After the compilation has completed, Anja can be launched directly by running the command</p>
 
 <code language="bash">./anja</code>
 
-<infobox type="warning">Normally, Anja is distributed with pre-rendered images. It may happen that the corresponding <prgname>blender</prgname> file has been updated and the render. In this case, it will take a much longer time than normal to compile Anja, since the images will need to be rerendered.</infobox>
-
-	<p>To make it easier to launch Anja, you can move (or copy) the script, <em>and the binaries it refers to</em> to a place mentioned in the <env>PATH</env> variable. For example, a simple install (without desktop icon and manpage) could look like</p>
+<p>This is a shell script that selects the most appropriate binary. To make it easier to launch Anja, you can move (or copy) the script, <em>and the binaries it refers to</em> to a place mentioned in the <env>PATH</env> variable. For example, a simple install (without desktop icon and manpage) could look like</p>
 
 <code language="bash">cp ./anja ~/bin/anja
 for k in __anja_*; do
@@ -99,10 +99,10 @@ done</code>
 
 	<code language="bash">make deb #Do not run this command as root
 cd ..
-sudo dpkg -i anja_$version-$distro_$architecture.deb
+sudo dpkg -i anja_${version}-${tag}_${architecture}.deb
 </code>
 
-<p>The <dirname>deb</dirname> target will ask you some questions about dependencies, before it can continue to compile the Anja package. Notice that if all packages are installed, the script may give you some hints. Otherwise you will need to look for the corresponding package name useing other resources such as searching the Internet, and install the corresponding package.</p>
+<p>The <dirname>deb</dirname> target will ask you some questions about dependencies, before it can continue to compile the Anja package. Notice that if all packages are installed, the script may give you some hints. Otherwise you will need to look for the corresponding package name using other resources such as searching the Internet, and install the corresponding package.</p>
 
 	<chapter id="using">Using Anja</chapter>
 
@@ -375,11 +375,15 @@ The session also has a set of properties that affects certain behaviour of Anja.
 
 
 	<bibliography>
-		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
 		<item id="jack">JACK Audio Connection Kit <url>http://jackaudio.org</url></item>
 		<item id="markdown">Daring Firball: Markdown <url>https://daringfireball.net/projects/markdown</url></item>
 		<item id="doomwiki">Doom file template <url>http://doom.wikia.com/wiki/Doom_file_template</url></item>
 		<item id="hydrogen">Hydrogen <url>http://www.hydrogen-music.org/hcms</url></item>
+		<item id="anjasrc">Anja source archive <url>https://github.com/milasudril/anja/releases/latest</url></item>
+		<item id="maike">Maike build system <url>https://github.com/milasudril/maike</url></item>
+		<item id="wget">GNU wget <url>https://www.gnu.org/software/wget/</url></item>
+		<item id="jq">jq <url>https://stedolan.github.io/jq/</url></item>
+		<item id="blender">Blender <url>https://www.blender.org</url></item>
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">KxStudio <url>http://kxstudio.linuxaudio.org</url></item>
 		<item id="mma">MIDI Association <url>http://midi.org</url></item>

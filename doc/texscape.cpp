@@ -48,6 +48,8 @@ int main()
 					case '~':
 					case '&':
 					case '%':
+					case '{':
+					case '}':						
 						putchar('\\');
 						putchar(ch_in);
 						break;
