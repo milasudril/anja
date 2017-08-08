@@ -202,11 +202,14 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="sub">\textsubscript{<xsl:apply-templates select="node()"/>}</xsl:template>
 <xsl:template match="var">\textit{<xsl:apply-templates select="node()"/>}</xsl:template>
 <xsl:template match="env">\texttt{<xsl:apply-templates select="node()"/>}</xsl:template>
+<xsl:template match="function">\texttt{<xsl:apply-templates select="node()"/>}</xsl:template>
+<xsl:template match="class">\texttt{<xsl:apply-templates select="node()"/>}</xsl:template>
 
 
 <xsl:template match="/">\documentclass[a4paper,twoside,12pt,BCOR=10mm]{scrbook}
 \usepackage[english]{babel}
 \usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
 \newfontfamily{\defaultfont}{Latin Modern Roman}
 \newfontfamily{\mathfont}{Latin Modern Math}
 \newfontfamily\arrowfont{DejaVu Sans}
@@ -328,6 +331,7 @@ U+%
 \titlehead{\centering<xsl:apply-templates select="node()/titlepic"/>}
 
 \begin{document}
+\defaultfont
 \maketitle
 {\noindent This document is also available at \url{https://milasudril.github.io/anja}}
 <xsl:apply-templates select="node()/abstract"/>

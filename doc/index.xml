@@ -28,19 +28,19 @@
 	</tabular>
 
 	<chapter id="intro">Introduction</chapter>
-	<p><strong>Anja</strong> is a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
+	<p><strong>Anja</strong>'s a sample player designed for live sound effect playback. Anja makes it possible to assign sound effects to the keys typing keys of the computer keyboard. To make it easier to find sound effects, each sound effect can have a description and a color, that shows up on Anja's virtual computer keyboard.</p>
 
 	<p>Anja also features a channel mixer with 16 channels. All sound effects are routed through one of these channels. The channel mixer makes it possible to fade a group of sound effects together. As with sound effects, each channel has a color and a description. In addition to color, description and channel gain, each channel also has an adjustable fade time, that is used to automatically fade the channel.</p>
 
 	<p>The backend of Anja is JACK, the low-latency audio server<cite>jack</cite>. This makes it possible to connect Anja to other JACK clients enabling the creation of more complex signal flows.</p>
 
-	<p>The session file format of Anja described in more detail in <ref>sessfile</ref> is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the "Doom template file"<cite>doomwiki</cite>. Therefore, session files can be easiliy edited by hand in a text editor, at the cost of somewhat larger session files.</p>
+	<p>The session file format of Anja described in more detail in <ref>sessfile</ref> is in a formalized text format, optimized for human readability. The syntax of the session files has taken inspiration from formats such as Markdown<cite>markdown</cite> and is very similar to the syntax used in the “Doom template file”<cite>doomwiki</cite>. Therefore, session files can be easily edited by hand in a text editor, at the cost of somewhat larger session files.</p>
 
 
 	<section id="requirements">System requirements</section>
 	<p>To run Anja, a working installation of JACK<cite>jack</cite> is required. Moreover, Anja requires <libname>libsndfile</libname>, <libname>libsamplerate</libname> and <libname>GTK+</libname> version 3, together with <libname>gtksourceview</libname> version 3. A complete list of dependencies are found in <ref>deps</ref>.</p>
 
-	<p>Anja currently only builds on x86-64, and has been tested on a Prescott 2m processor (a late Pentium® 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
+	<p>Anja currently only builds on x86-64, and has been tested on a Prescott 2m processor (a late Pentium® 4 with long mode and HyperThreading), Core i5 IvyBridge, and Celeron® N3050. If possible, parts of the code can execute faster if Anja is compiled for an AVX capable CPU. By default, two versions of Anja are compiled, one with AVX enabled, and one without (see <ref>compile</ref>), and a wrapper script is used to select the appropriate version for the current machine.</p>
 
 	<p>Since Anja completely loads all sound files referenced from a session file, it may consume some RAM. At <quantity unit="kHz">48</quantity>, the RAM usage is <quantity unit="MiB/min">11</quantity> of sound. The minimum screen resolution for running Anja is <quantity unit="px">1024</quantity> &#215; <quantity unit="px">768</quantity>.</p>
 
@@ -48,7 +48,7 @@
 	<section id="comparison">Anja compared to other software</section>
 	<p>There are other sample players that also may be used with JACK. One such program is Hydrogen<cite>hydrogen</cite>. Compared to Hydrogen, Anja lacks a sequencer. However, in Hydrogen, waveforms need to be assigned in a particular order, and Hydrogen does not feature an on-screen keyboard.</p>
 
-	<p>Other features in Anja is event-triggered auto-fade (see <ref>chmixer</ref>), and also an exposed <em>kill all</em> feature (see <ref>play</ref>). It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back right afterwards (see <ref>rec</ref>).</p>
+	<p>Other features in Anja is event-triggered auto-fade (see <ref>chmixer</ref>), and also an exposed <em>kill all</em> feature (see <ref>play</ref>). It also features reverse playback, and the possibility to do shorter live recordings to any given slot, which can be played back immediately  (see <ref>rec</ref>).</p>
 
 	<chapter id="install">Installing Anja</chapter>
 
@@ -56,7 +56,7 @@
 
 	<section id="installlinux">Installing on a GNU/Linux system</section>
 
-	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. Ubuntu users can use the following ppa:</p>
+	<p>On GNU/Linux, the recommended way of installing Anja is to install it from the software repository. Ubuntu users can use the following PPA:</p>
 
 <code language="ppa">milasudril/anja</code>
 
@@ -78,7 +78,7 @@ make</code>
 
 <infobox type="warning">Normally, Anja is distributed with pre-rendered images. It may happen that the corresponding <prgname>blender</prgname><cite>blender</cite> file has been updated and the render. In this case, it will take a much longer time than normal to compile Anja, since the images will need to be rerendered.</infobox>
 
-<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_*</dirname>, where  <dirname>*</dirname> respresents the current profile. To satisfy all needs, four binaries are generated: {debug &#8746; release}&#215;{Prescott 2m+ &#8746; Core i<var>x</var>}. After the compilation has completed, Anja can be launched directly by running the command</p>
+<p>When running <prgname>make</prgname>, files are written to <dirname>__targets_*</dirname>, where  <dirname>*</dirname> represents the current profile. To satisfy all needs, four binaries are generated: {debug &#8746; release}&#215;{Prescott 2m+ &#8746; Core i<var>x</var>}. After the compilation has completed, Anja can be launched directly by running the command</p>
 
 <code language="bash">./anja</code>
 
@@ -87,7 +87,7 @@ make</code>
 <code language="bash">cp ./anja ~/bin/anja
 for k in __anja_*; do
 	mkdir ~/bin/"$k"
-	cp "$k"/anja ~/bin/"$k"
+	cp “$k"/anja ~/bin/"$k"
 done</code>
 
 <p>In order to install everything to your home directory, you can run</p>
@@ -95,7 +95,7 @@ done</code>
 
 	<p>If you have <prgname>sudo</prgname> permissions, you can do</p>
 <code language="bash">sudo make install</code>
-<p>This will perform a regular install, for all users. If you ar using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
+<p>This will perform a regular install, for all users. If you are using a Debian based system, you can also create a deb package, and install that. If prefer this method, run</p>
 
 	<code language="bash">make deb #Do not run this command as root
 cd ..
@@ -171,7 +171,7 @@ sudo dpkg -i anja_${version}-${tag}_${architecture}.deb
 	<caption>The port selection dialog. To route the signal to a port, toggle the corresponding button. The choices are confirmed by clicking <ui-button>OK</ui-button>.</caption>
 </figure>
 
-<p>A port can be connected to other ports in the system by clicking on the corresponding status indicator. This brings up a dialog box that contains toggle buttons for all availible ports (see <ref>portselector</ref>). Click <ui-button>OK</ui-button> to confirm your choicee.</p>
+<p>A port can be connected to other ports in the system by clicking on the corresponding status indicator. This brings up a dialog box that contains toggle buttons for all available ports (see <ref>portselector</ref>). Click <ui-button>OK</ui-button> to confirm your choiee.</p>
 
 <infobox type="info">JACK ports can be connected by using the command <prgname>jack_connect</prgname><cite>manjack</cite>. To connect the mentioned ports to a pair of system playback ports. the commands would be
 <code language="bash">jack_connect 'New session.anja:Master out' \
@@ -179,16 +179,16 @@ sudo dpkg -i anja_${version}-${tag}_${architecture}.deb
 jack_connect 'New session.anja:Audition' \
     'system:playback_2'
 </code>
-Then, Anja will use the "Left" channel as main output, and the "Right" channel as Audition.</infobox>
+Then, Anja will use the “Left” channel as main output, and the “Right” channel as Audition.</infobox>
 
-<infobox type="info">Instead of using the command line, it is possible to use a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using "Drag and drop".</infobox>
+<infobox type="info">Instead of using the command line, it is possible to use a JACK patchbay tool such as <prgname>Catia</prgname><cite>catia</cite>. In <prgname>Catia</prgname> ports can be connected using “Drag and drop”.</infobox>
 
 
 <subsection id="keybstatus">Activating the keyboard</subsection>
 <p>Since the keyboard is shared between the playback triggering system and form input fields, playback can only be triggered from the keyboard when keyboard triggering is active. The <dfn>keyboard status indicator</dfn> (see <ref>statusarea</ref>) is red <includegraphics src="led_stop.png"/> when a form input field has keyboard focus, and green <includegraphics src="led_ready.png"/> when playback triggering is active. Keyboard triggering is activated by hitting <kbd>Esc</kbd>, or by clicking anywhere on the workspace that would not capture keyboard focus.</p>
 
 <section id="rec">Capturing waveforms</section>
-<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source by clicking on the indicator for <dirname>Wave in</dirname>. That is, the leftmost indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>). Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stoppped.</p>
+<p>Similar to waveform playback (see <ref>play</ref>), waveform capture requires that the audio engine is started. In order to capture a waveform, make sure that <dirname>Wave in</dirname> is connected to a signal source by clicking on the indicator for <dirname>Wave in</dirname>. That is, the leftmost indicator in the <dfn>port status area</dfn> (see <ref>statusarea</ref>). Then press <kbd>Ctrl</kbd> and the typing area key <kbd><var>K</var></kbd> that should be used for playing the captured waveform. If the <kbd>Ctrl</kbd> is released before the typing area key, playback of the recorded waveform is triggered. If <kbd><var>K</var></kbd> is released first, the capture process is stopped.</p>
 
 <infobox type="info">Triggering audio capture from the computer keyboard is only possible when keyboard triggering is active. When it is active, the <dfn>keyboard status indicator</dfn> is green <includegraphics src="led_ready.png"/>. Otherwise, it is red <includegraphics src="led_stop.png"/>.</infobox>
 
@@ -243,7 +243,7 @@ Then, Anja will use the "Left" channel as main output, and the "Right" channel a
 <subsection id="pbgainrandom">Playback gain randomization</subsection>
 <p>In addition to deterministic playback gain adjustment, it is possible to add a non-deterministic component to the playback gain. The  parameter <ui-formfield>Gain random</ui-formfield> sets how much the random component is amplified.</p>
 
-<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful for creating a more "living" sound.</infobox>
+<infobox type="info">Depending on the state of the <ui-formfield>Set gain on loop</ui-formfield> flag (see <ref>pboptgainrand</ref>), new random numbers are drawn on manual re-triggering, or for each iteration when playback loop is active. This can be useful for creating a more “living” sound.</infobox>
 
 <subsection id="pboptions">Controlling playback behavior</subsection>
 <p>There are different options for controlling the playback behavior. These are <dfn>Loop</dfn>, <dfn>Sustain</dfn>, <dfn>Readonly</dfn>, and <dfn>Set gain on loop</dfn>.</p>
@@ -348,11 +348,11 @@ Notice that when a cursor is located at the same position as another cursor, it 
 <infobox type="info">As with wave ports, MIDI ports can be connected by clicking on the corresponding status indicator (see <ref>connections</ref>). See <ref>statusarea</ref> for information about how to identify ports in the <dfn>status area</dfn>.</infobox>
 
 <infobox type="info">
-MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channels are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referered to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
+MIDI messages for playing notes are always tagged with a MIDI channel number. In Anja, the MIDI channels are the same as the playback channels (see <ref>pbchannel</ref> and <ref>chmixer</ref>). Thus, there are two sources for the channel number: the MIDI message itself, and the channel number of the slot referred to by the MIDI message. To resolve this, there is an option <ui-button>Allow external MIDI sources to set playback channel</ui-button> in the <dfn>session tab</dfn> (see <ref>sessprops</ref>).
 </infobox>
 
 <infobox type="info">
-When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets the state of the receiver, and updates its channel volumes. This means that if the owner of the input port plays any note, there will be no more audio output from that device or software application until the next "note on" message comes.
+When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets the state of the receiver, and updates its channel volumes. This means that if the owner of the input port plays any note, there will be no more audio output from that device or software application until the next “note on” message comes.
 </infobox>
 
 <section id="sessprops">Modifying session properties</section>
@@ -364,7 +364,7 @@ When <dirname>MIDI out</dirname> is connected to a MIDI input port, Anja resets 
 </figure>
 
 <infobox type="info">
-The session also has a set of properties that affects certain behaviour of Anja. For example, see <ref>multichannel</ref> and <ref>midi</ref>.
+The session also has a set of properties that affects certain behaviour of Anja. For more information, see <ref>multichannel</ref> and <ref>midi</ref>.
 </infobox>
 
 <infobox type="info">
@@ -432,8 +432,8 @@ The session also has a set of properties that affects certain behaviour of Anja.
 	<row><col>NOTE_ON</col><col>N/A</col><col>If possible, start playback using the slot given by the first data byte. If channel override is allowed (see <ref>midi</ref>), the mapped waveform will be played through the channel given by the message. Otherwise, the it is played through the channel set by anja (see <ref>pbchannel</ref>).</col></row>
 	<row><col>CONTROL_CHANGE</col><col>CHANNEL_VOLUME</col><col>Set playback channel volume. Notice that Anja assumes that the value is a linearly mapped dB value (0 corresponds to <quantity unit="dB">-72</quantity>, 127 corresponds to <quantity unit="dB">6</quantity>), as opposed to General MIDI, which says that the value should be a regular gain. The reason for this implementation is to make better use of the seven bits available in a single channel volume message.</col></row>
 	<row><col> </col><col>SOUND_OFF</col><col>Stop all ongoing playback. If The last data byte is non-zero, it stops all <dirname>Audiotion</dirname> playback. Otherwise, all other playback is stopped.</col></row>
-	<row><col> </col><col>GENERAL_PURPOSE_1</col><col>Start a fade out on the given channel. The second data byte controls the decay rate.</col></row>
-	<row><col> </col><col>GENERAL_PURPOSE_2</col><col>Start a fade in on the given channel. The second data byte controls the decay rate.</col></row>
+	<row><col> </col><col>GENERAL_PURPOSE_1</col><col>Start a fade-out on the given channel. The second data byte controls the decay rate.</col></row>
+	<row><col> </col><col>GENERAL_PURPOSE_2</col><col>Start a fade-in on the given channel. The second data byte controls the decay rate.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_3</col><col>If possible, enable recording to the slot given by the second data byte. If recording is already enabled, the last block of the current recording is discarded.</col></row>
 	<row><col> </col><col>GENERAL_PURPOSE_4</col><col>If possible, disable recording to the slot given by the second data byte</col></row>
 </tabular>
@@ -479,7 +479,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <p>The source code of Anja is divided into three major components: Engine, Session data storage, and UI. The engine is the component that communicates with JACK. The session data component is responsible for disk I/O of session and waveform files. The UI code handles the user interface. In addition to these components, there are in the repository, some more general classes, MIDI interaction helper files, resource files, test data, and also the source files for this manual. These file categories are represented by a directory, which contains all of its files.</p>
 
 <section id="modintract">Component interaction</section>
-<p>The component interaction is illustrated in <ref>modinteractfig</ref>. It is the engine and the UI that are the "active" components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data component. This direct approach makes the code easier to follow and keeps the session data component clean, but requires changes at more places in the code, compared to an orthodox MVC approach, where the model updates all registered views upon a succeeded change request.</p>
+<p>The component interaction is illustrated in <ref>modinteractfig</ref>. It is the engine and the UI that are the “active” components. When a setting is changed, the UI will modify the corresponding field in the session data. If that change should affect another part of the UI, the UI will update the relevant parts itself. When the engine needs a waveform and its parameter values, it will fetch these from the session data component. This direct approach makes the code easier to follow and keeps the session data component clean, but requires changes at more places in the code, compared to an orthodox MVC approach, where the model updates all registered views upon a succeeded change request.</p>
 
 <figure id="modinteractfig">
 	<includegraphics src="modinteract.svg" />
@@ -493,7 +493,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <section id="uiframework">The design of the UI component</section>
 <p>The UI component has been designed to hide as much as possible about the underlying framework, while trying to preserve the native look and feel. This means that no widget exposes the internal handle, and most of the common UI widgets, i.e. buttons, checkboxes, comboboxes, labels, sliders, and text input fields, are nothing more than thin wrappers on top of the framework. Also, the file selection dialog belongs to this category. Widgets that have a sematic difference between different platforms, are emulated using these basic widgets. As an example, listboxes are emulated using a <class>ButtonList</class>, which itself consists of a set of buttons. Some widgets such as the <class>XYPlot</class> are completely missing from common UI frameworks. In this case, they have been implemented directly at top of the framework. This is because it is hard to construct a general abstraction on top of a drawing API.</p>
 
-<p>In addition to widgets, there are "containers". A container is any class that implements the <class>Container</class> interface. Since some frameworks, such as the classic Windows API, is easiest to work with if the container is created before its children, and this design is more restrictive than creating the widgets before the container, Anja uses the container-first priciple. Notice that  unlike in <libname>GTK+-3.0</libname>, <em>containers are not widgets</em>. In fact, there is no exposed <class>Widget</class> base class, since the only polymorphic behaviour required by widgets, positioning, are handled by the framework.</p>
+<p>In addition to widgets, there are “containers”. A container is any class that implements the <class>Container</class> interface. Since some frameworks, such as the classic Windows API, is easiest to work with if the container is created before its children, and this design is more restrictive than creating the widgets before the container, Anja uses the container-first priciple. Notice that  unlike in <libname>GTK+-3.0</libname>, <em>containers are not widgets</em>. In fact, there is no exposed <class>Widget</class> base class, since the only polymorphic behaviour required by widgets, positioning, are handled by the framework.</p>
 
 <p>Event handlers are registered by passing a callback object and an id, to the widget of interest. Different widget has different requirement of the callback object. More information about this topic can be found in the include file for the widget.</p>
 
