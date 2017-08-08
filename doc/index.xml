@@ -338,7 +338,7 @@ Notice that when a cursor is located at the same position as another cursor, it 
 <p>The signal sent to the channel-dedicated output ports are taken after the channel strip, but before the master gain adjustment. When activating multi-channel output, the port status indicators for the playback channels turns yellow <includegraphics src="led_wait.png" /> or black <includegraphics src="led_off.png" /> (depending on mute state) since the corresponding ports are not connected to any input port. However, the signal is still being routed to <dirname>Master out</dirname>. For a complete overview of the signal flow, see <ref>signalflow</ref>.
 </p>
 
-<infobox type="info">With JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname> can be used</infobox>
+<infobox type="info">With JACK, it is possible to connect multiple output ports to one input port. In this case, JACK will sum over all inputs. To reduce the signal level after summation, other JACK tools such as <prgname>Non Mixer</prgname><cite>non</cite> can be used</infobox>
 
 <section id="midi">Using MIDI</section>
 <p>MIDI is a standard for communications between musical instruments, and other equipment<cite>mma</cite>. Through MIDI, Anja can be controlled by other MIDI enabled devices or software applications. To make it work, connect the <dirname>MIDI in</dirname> port to any MIDI output port such as <dirname>midi_capture_1</dirname>, and Anja will respond to external MIDI messages. Implementation details of different MIDI messages can be found in <ref>midiref</ref>.</p>
@@ -384,6 +384,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 		<item id="ffmpeg">FFmpeg <url>https://www.ffmpeg.org</url></item>
 		<item id="manjack"><prgname>jack_connect</prgname> manual page</item>
 		<item id="catia">KxStudio <url>http://kxstudio.linuxaudio.org</url></item>
+		<item id="non">Non Mixer | Non <url>http://non.tuxfamily.org/wiki/Non%20Mixer</url></item>
 		<item id="mma">MIDI Association <url>http://midi.org</url></item>
 	</bibliography>
 
@@ -401,7 +402,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 </tabular>
 
 <chapter id="fileformats">Supported file formats</chapter>
-	<p>Anja uses <libname>libsndfile</libname> in order to load waveform files. Thus the file formats supported by Anja, are the same as the file formats supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular waveform file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
+	<p>Anja uses <libname>libsndfile</libname> in order to load waveform files. Thus the file formats supported by Anja, are the same as those supported by <libname>libsndfile</libname>. If <libname>libsndfile</libname> does not support the file format of a particular waveform file, it can probably be converted to a supported file format by using <prgname>ffmpeg</prgname>. In such case, remember that you should not transcode to a lossy format (mp3 to ogg is bad), but rather to a lossless format (mp3 to wav is good).</p>
 
 	<chapter id="keybindings">Key bindings</chapter>
 	<p>These are the key bindins used in Anja. Notice that any of these except <kbd>Esc</kbd> requires that the computer keyboard is active.</p>
@@ -440,7 +441,7 @@ The session also has a set of properties that affects certain behaviour of Anja.
 <input src="cmdline.xml" />
 
 <chapter id="sessfile">Session file format</chapter>
-<p>Anja session files are plain text files, that contains all session properties, waveform settings, and channel settings. Session files do not contain any waveforms. Instead they refer to the file that contains the actual waveform. The idea is that the session file acts as a machine-readable readme file, that is somehow bundled with the waveform files. Thus, the session file should be very easy to be read by humans.</p>
+<p>Anja session files are plain text files, that contains all session properties, waveform settings, and channel settings. Session files do not contain any waveforms. Instead they refer to the file that contains the actual waveform. The idea is that the session file acts as a machine-readable <dirname>README</dirname> file, that is somehow bundled with the waveform files. Thus, the session file should be very easy to read by humans.</p>
 
 <p>For an example of what a session file might look like, see <dirname>testbank/testbank.txt</dirname> in the source repository. The file is organized as a hierarchical key-value store. Section headers begin with a number of consecutive <char>#</char>, which have to appear as the first non-whitespace character on a line. The header ends with a newline character. The section level is the same as the number of characters used to begin the header. A key begins with a <char>~</char>, which similarly to the section header delimiter, has to be the first non-whitespace character on the line, and ends with <char>:</char> or a newline character. After the ending delimiter, follows the associated value. At any point, a <char>\</char> can be used if a delimiter should be processed literally.</p>
 
