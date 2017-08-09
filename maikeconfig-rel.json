@@ -5,7 +5,7 @@
 			"args":[
 				"-O3",
 				"-fpic",
-				"-fno-PIE",
+				"-no-pie",
 				"-ffast-math",
 				"-fno-stack-protector",
 				"{cxxversion}",

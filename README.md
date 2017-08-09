@@ -51,6 +51,7 @@ https://milasudril.github.io/anja#deps.
  * pkg-config -- return metainformation about installed libraries
  * python3 -- an interpreted, interactive, object-oriented programming language
  * xdotool -- tool for manipulating X clients
+ * xelatex -- LaTeX and the XeTeX engine
  * xdpyinfo -- display information utility for X
  * xsltproc -- command-line XSLT processor
 
