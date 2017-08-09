@@ -5,6 +5,7 @@
 			"args":[
 				"-g",
 				"-fpic",
+				"-fno-PIE",
 				"-ffast-math",
 				"{cxxversion}",
 				"-Wall",
