@@ -25,6 +25,11 @@ class SourceView::Impl:private SourceView
 			{
 			auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
 			gtk_text_buffer_set_text(buffer,text,-1);
+			if(m_content!=nullptr)
+				{
+				g_free(m_content);
+				m_content=nullptr;
+				}
 			}
 
 		void readonly(bool status)
