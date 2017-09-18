@@ -31,6 +31,7 @@
                     "."
                 ],
                 "iquote_format":"-iquote^",
+				"mode":"C++",
                 "libcompile":{
                     "args":[
                         "rcs",
