@@ -23,6 +23,6 @@ xsltproc --path "$dest_dir" "$in_dir"/inputstub.xsl "$src" \
 
 cd "$dest_dir"
 
-xelatex -file-line-error-style -halt-on-error anja-usersguide.tex 1>&2 \
+xelatex -file-line-error-style -halt-on-error -interaction=nonstopmode anja-usersguide.tex 1>&2 \
 	&& xelatex -file-line-error-style -halt-on-error anja-usersguide.tex 1>&2 \
 	&& xelatex -file-line-error-style -halt-on-error anja-usersguide.tex 1>&2

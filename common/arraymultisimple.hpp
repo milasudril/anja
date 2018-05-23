@@ -198,7 +198,7 @@ namespace Anja
 			{
 			for_each(data,[N,&a,&success_count](auto x,auto index)
 				{
-				ArrayInit::copy(x,x+N,a.begin<decltype(index)::value>());
+				ArrayInit::copy(x,x+N,a.template begin<decltype(index)::value>());
 				++success_count;
 				});
 			}
