@@ -26,8 +26,13 @@ in_dir="$3"
 dest_dir=`dirname "$1"`
 target_dir=`echo "$dest_dir" | sed 's,\(.*\)/.*,\1,'`
 
-export LC_ALL=C.UTF-8 #PEP 538
-export LANG=C.UTF-8
+locals=`locale -a`
+for value in C.UTF-8 en_US.UTF-8 C.en_UK.UTF-8; do
+	if echo $locals | grep $value > /dev/null; then
+		export LC_ALL=C.UTF-8
+		break
+	fi
+done
 
 for k in "${@:4}"; do
 	echo "$k"
