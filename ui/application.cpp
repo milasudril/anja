@@ -578,7 +578,7 @@ void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,i
 Application& Application::dark(bool status)
 	{
 	m_ctx.dark(status);
-	m_session_control[8].label(m_ctx.dark()?"Light UI":"Dark UI");
+	m_session_control[9].label(m_ctx.dark()?"Light UI":"Dark UI");
 	return *this;
 	}
 
@@ -586,7 +586,7 @@ Application& Application::fullscreen(bool status)
 	{
 	m_fullscreen=status;
 	m_mainwin.fullscreen(m_fullscreen);
-	m_session_control[7].label(m_fullscreen?"Windowed":"Fullscreen");
+	m_session_control[8].label(m_fullscreen?"Windowed":"Fullscreen");
 	return *this;
 	}
 
@@ -870,23 +870,37 @@ void Application::clicked(ButtonList& buttons,int id,Button& btn)
 				engine_stop();
 				break;
 			case 7:
+				if(m_engine)
+					{
+					for(size_t k=0;k<ChannelMixer::length();++k)
+						{
+						m_engine->messagePost(MIDIConstants::Message
+							{
+							 MIDIConstants::ControlCodes::SOUND_OFF
+							,static_cast<int>(k)
+							,0
+							});
+						}
+					}
+				break;
+			case 8:
 				m_fullscreen=!m_fullscreen;
 				m_mainwin.fullscreen(m_fullscreen);
 				btn.label(m_fullscreen?"Windowed":"Fullscreen");
 				break;
-			case 8:
+			case 9:
 				m_ctx.dark(!m_ctx.dark());
 				btn.label(m_ctx.dark()?"Light UI":"Dark UI");
 				break;
 
-			case 9:
+			case 10:
 				if(m_session.dirty())
 					{save_ask(ConfirmSaveDialogId::EXIT);}
 				else
 					{m_ctx.exit();}
 				break;
 
-			case 10:
+			case 11:
 				m_about.reset(new Dialog<AboutBox,AboutDialog>(m_mainwin,"About Anja",ProjectInfo{}));
 				m_about->widget().logo(m_images,StatusIconEnd,{s_logo_begin,s_logo_end},192);
 				m_about->callback(*this,0);
@@ -1025,7 +1039,7 @@ Application::Application():
 	,m_rec_count(0)
 	{
 	m_session_control.append("New session","Load session…","Reload session","Save session"
-		,"Save session as…","","Start engine","Stop engine","","Fullscreen","Dark UI",""
+		,"Save session as…","","Start engine","Stop engine","Kill all","","Fullscreen","Dark UI",""
 		,"Exit","About Anja…");
 	m_session_control.callback(*this,0);
 	m_mainwin.callback(*this,0);
