@@ -245,6 +245,8 @@ namespace Anja
 
 			void focusIn(Window&,int){}
 
+			void childFocusOut(Window&,int){}
+
 			void focusOut(Window&,int){}
 
 			void show()

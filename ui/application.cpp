@@ -521,10 +521,30 @@ void Application::focusIn(Window& win,int id)
 		,static_cast<size_t>(StatusIcon::READY),statusIcon(StatusIcon::READY));
 	}
 
+void Application::childFocusOut(Window& win,int id)
+	{
+	m_keyb_status_view.showPng(m_images
+		,static_cast<size_t>(StatusIcon::STOP),statusIcon(StatusIcon::STOP));
+	
+	if((m_session.flags() & Session::SOUND_OFF_ON_KEYBOARD_FOCUS_OUT) && m_engine)
+		{
+		for(size_t k=0;k<ChannelMixer::length();++k)
+			{m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
+		m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,0,1});
+		}
+	}
+
 void Application::focusOut(Window& win,int id)
 	{
 	m_keyb_status_view.showPng(m_images
 		,static_cast<size_t>(StatusIcon::STOP),statusIcon(StatusIcon::STOP));
+
+	if((m_session.flags() & Session::SOUND_OFF_ON_MAINWIN_FOCUS_OUT) && m_engine)
+		{
+		for(size_t k=0;k<ChannelMixer::length();++k)
+			{m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,static_cast<int>(k),0});}
+		m_engine->messagePost(MIDIConstants::Message{MIDIConstants::ControlCodes::SOUND_OFF,0,1});
+		}
 	}
 
 void Application::keyUp(Anja::Window& win,int scancode,Anja::keymask_t keymask,int id)

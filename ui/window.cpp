@@ -75,7 +75,8 @@ class Window::Impl final:private Window
 		static gboolean key_up(GtkWidget* widget,GdkEvent* event,void* user_data);
 		static gboolean mouse_down(GtkWidget* object,GdkEventButton* event,void* user_data);
 		static gboolean focus_in_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
-		static void focus_out(void* user_data);
+		static gboolean focus_out_callback(GtkWidget* widget, GdkEvent* event, gpointer user_data);
+		static void child_focus_out_callback(void* user_data);
 
 		int m_id;
 		void* r_cb_obj;
@@ -165,7 +166,8 @@ Window::Impl::Impl(const char* ti,Container* owner):Window(*this),m_id(0)
 	g_signal_connect(widget,"key-release-event",G_CALLBACK(key_up),this);
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(mouse_down),this);
 	g_signal_connect(widget,"focus-in-event",G_CALLBACK(focus_in_callback),this);
-	m_focus={this,focus_out};
+	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_out_callback),this);
+	m_focus={this,child_focus_out_callback};
 	g_object_set_data(G_OBJECT(widget),"anja-focus-sink",&m_focus);
 
 
@@ -328,11 +330,11 @@ gboolean Window::Impl::mouse_down(GtkWidget* widget,GdkEventButton* event,void* 
 	return FALSE;
 	}
 
-void Window::Impl::focus_out(void* user_data)
+void Window::Impl::child_focus_out_callback(void* user_data)
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
 	if(self->r_cb_obj!=nullptr)
-		{self->m_vt.focus_out(self->r_cb_obj,*self,self->m_id);}
+		{self->m_vt.child_focus_out(self->r_cb_obj,*self,self->m_id);}
 	}
 
 gboolean Window::Impl::focus_in_callback(GtkWidget* widget,GdkEvent* event,void* user_data)
@@ -340,5 +342,13 @@ gboolean Window::Impl::focus_in_callback(GtkWidget* widget,GdkEvent* event,void*
 	auto self=reinterpret_cast<Impl*>(user_data);
 	if(self->r_cb_obj!=nullptr)
 		{self->m_vt.focus_in(self->r_cb_obj,*self,self->m_id);}
+	return FALSE;
+	}
+
+gboolean Window::Impl::focus_out_callback(GtkWidget* widget, GdkEvent* event, gpointer user_data)
+	{
+	auto self=reinterpret_cast<Impl*>(user_data);
+	if(self->r_cb_obj!=nullptr)
+		{self->m_vt.focus_out(self->r_cb_obj,*self,self->m_id);}
 	return FALSE;
 	}

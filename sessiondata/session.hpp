@@ -96,6 +96,8 @@ namespace Anja
 
 			static constexpr unsigned int MULTIOUTPUT=0x1;
 			static constexpr unsigned int ALLOW_CHANNEL_OVERRIDE=0x2;
+			static constexpr unsigned int SOUND_OFF_ON_MAINWIN_FOCUS_OUT=0x4;
+			static constexpr unsigned int SOUND_OFF_ON_KEYBOARD_FOCUS_OUT=0x8;
 
 			static const char* const* flagNames() noexcept;
 

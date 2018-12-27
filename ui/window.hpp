@@ -54,7 +54,8 @@ namespace Anja
 		protected:
 			struct Vtable
 				{
-				Vtable():closing(nullptr),key_down(nullptr),key_up(nullptr)
+				Vtable():closing(nullptr),key_down(nullptr),key_up(nullptr),
+					focus_in(nullptr), focus_out(nullptr),  child_focus_out(nullptr)
 					{}
 
 				template<class Callback,class IdType>
@@ -68,9 +69,11 @@ namespace Anja
 						{reinterpret_cast<Callback*>(cb_obj)->keyUp(self,scancode,keymask,static_cast<IdType>(id));};
 					focus_in=[](void* cb_obj,Window& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->focusIn(self,static_cast<IdType>(id));};
-
 					focus_out=[](void* cb_obj,Window& self,int id)
 						{reinterpret_cast<Callback*>(cb_obj)->focusOut(self,static_cast<IdType>(id));};
+
+					child_focus_out=[](void* cb_obj,Window& self,int id)
+						{reinterpret_cast<Callback*>(cb_obj)->childFocusOut(self,static_cast<IdType>(id));};
 					}
 
 				void (*closing)(void* cb_obj,Window& self,int id);
@@ -78,6 +81,7 @@ namespace Anja
 				void (*key_up)(void* cb_obj,Window& self,int scancode,keymask_t keymask,int id);
 				void (*focus_in)(void* cb_obj,Window& self,int id);
 				void (*focus_out)(void* cb_obj,Window& self,int id);
+				void (*child_focus_out)(void* cb_obj,Window& self,int id);
 				};
 
 

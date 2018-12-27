@@ -117,6 +117,7 @@ namespace Anja
 			void clicked(ButtonList& buttons,int id,Button& btn);
 			void focusIn(Window& win,int id);
 			void focusOut(Window& win,int id);
+			void childFocusOut(Window& win,int id);
 
 			void titleChanged(SessionPropertiesEditor& editor,int id);
 			void descriptionChanged(SessionPropertiesEditor& editor,int id);

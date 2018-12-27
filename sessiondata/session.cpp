@@ -19,6 +19,8 @@ static constexpr const char* FLAG_NAMES[]=
 	{
 	 "Use individual ports for each channel"
 	,"Allow external MIDI sources to set playback channel"
+	,"Send Sound Off events when main window looses focus"
+	,"Send Sound Off events when virtual keyboard looses focus"
 	,nullptr
 	};
 
