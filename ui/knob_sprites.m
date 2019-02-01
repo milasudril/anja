@@ -35,5 +35,3 @@ imwrite(uint8(255*srgb(diffuse_in)),[target_dir,'/',in_dir,'/knob_diffuse.png'] 
 	,'Alpha',uint8(255*mask_in));
 imwrite(uint8(255*srgb(mask_in)),[target_dir,'/',in_dir,'/knob_mask.png'] ...
 	,'Alpha',uint8(255*mask_in));
-
-exit(0);
