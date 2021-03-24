@@ -191,7 +191,7 @@ xmlns:fn="http://www.w3.org/2005/xpath-functions" version="1.0">
 <xsl:template match="herefigure">
 \begin{center}
 \centering
-\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/>}
+\includegraphics[max height=0.3\textheight,max width=\textwidth]{<xsl:value-of select="includegraphics/@src"/><xsl:if test="substring-after(includegraphics/@src,'.')='svg'">.pdf</xsl:if>}
 \end{center}
 </xsl:template>
 
