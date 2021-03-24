@@ -38,7 +38,7 @@ static ArrayDynamicShort<ColorRGBA> color_presets_load(const char* ptr)
 			{
 			case '\0':
 				ret.append(colorFromString(buffer.begin()));
-				return std::move(ret);
+				return ret;
 			case '|':
 				ret.append(colorFromString(buffer.begin()));
 				buffer.clear();
@@ -49,7 +49,7 @@ static ArrayDynamicShort<ColorRGBA> color_presets_load(const char* ptr)
 
 		++ptr;
 		}
-	return std::move(ret);
+	return ret;
 	}
 
 template<class Range>
@@ -62,7 +62,7 @@ static String string_from_color_presets(const Range& r)
 		});
 	ret.append(ColorString(*(r.end()-1)).begin());
 
-	return std::move(ret);
+	return ret;
 	}
 
 
@@ -180,7 +180,7 @@ ArraySimple<String> Session::channelLabels() const
 		ret[k]=x.label();
 		++k;
 		});
-	return std::move(ret);
+	return ret;
 	}
 
 ArraySimple<ColorRGBA> Session::channelColors() const
@@ -192,7 +192,7 @@ ArraySimple<ColorRGBA> Session::channelColors() const
 		ret[k]=x.color();
 		++k;
 		});
-	return std::move(ret);
+	return ret;
 	}
 
 

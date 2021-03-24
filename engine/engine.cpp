@@ -10,7 +10,7 @@ static String client_name(const String& str)
 	{
 	auto ret=str;
 	ret.append(".anja");
-	return std::move(ret);
+	return ret;
 	}
 
 namespace

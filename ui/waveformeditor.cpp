@@ -161,7 +161,7 @@ ArraySimple<float> WaveformEditor::mean_square(const float* begin,const float* e
 	m_progress_null.reset(new Dialog<ProgressBar,DialogNull>(m_box,"Anja: Computing signal levels"));
 	ms.compute(begin,vals_ms.begin(),end - begin,*this);
 	m_progress_null.reset();
-	return std::move(vals_ms);
+	return vals_ms;
 	}
 
 static ArraySimple<float> decimate(const ArraySimple<float>& src,double dt)
@@ -175,7 +175,7 @@ static ArraySimple<float> decimate(const ArraySimple<float>& src,double dt)
 		val=src[pos];
 		++k;
 		});
-	return std::move(ret);
+	return ret;
 	}
 
 static void plot_append(const float* begin,const float* end,double dt,XYPlot& plot)
@@ -206,7 +206,7 @@ ArraySimple<float> WaveformEditor::filename_update(const WaveformProxy& waveform
 			{return std::max(powerToDb(x),-145.0f);});
 
 		plot_append(ms.begin(),ms.end(),0.5e-3,plot.curvesRemove());
-		return std::move(ms);
+		return ms;
 		}
 	else
 		{
@@ -214,7 +214,7 @@ ArraySimple<float> WaveformEditor::filename_update(const WaveformProxy& waveform
 		ret[0]=-145.0f;
 		ret[1]=-145.0f;
 		plot.curvesRemove();
-		return std::move(ret);
+		return ret;
 		}
 	}
 

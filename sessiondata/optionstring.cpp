@@ -12,7 +12,7 @@ String Anja::stringFromOptions(unsigned int option_bits
 	String ret;
 
 	if(*option_names==nullptr)
-		{return std::move(ret);}
+		{return ret;}
 
 	auto mask=0x1u;
 
@@ -28,7 +28,7 @@ String Anja::stringFromOptions(unsigned int option_bits
 		++option_names;
 		mask<<=1;
 		}
-	return std::move(ret);
+	return ret;
 	}
 
 unsigned int Anja::optionsFromString(const char* string
