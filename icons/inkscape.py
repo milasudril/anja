@@ -11,7 +11,8 @@ def run(source,dest,height):
 	try:
 		subprocess.run(['inkscape' \
 			,'--export-png='+dest \
-			,('-h %d')%height
+			,'-h'
+			,str(height)
 			,source] \
 			,check=True \
 			,stdout=subprocess.DEVNULL)
