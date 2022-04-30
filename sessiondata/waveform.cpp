@@ -11,6 +11,8 @@
 #include "../common/floatconv.hpp"
 #include "../common/localeguard.hpp"
 
+#include <cstdio>
+
 using namespace Anja;
 
 static constexpr unsigned int BUFFER_SIZE=1024;
