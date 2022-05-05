@@ -6,6 +6,9 @@
 #include "error.hpp"
 #include "syserror.hpp"
 
+#include <cstdio>
+#include <cerrno>
+
 namespace Anja
 	{
 	class FileIn
