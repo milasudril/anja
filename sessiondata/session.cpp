@@ -12,6 +12,7 @@
 #include "../common/error.hpp"
 
 #include <cstring>
+#include <cstdio>
 
 using namespace Anja;
 
