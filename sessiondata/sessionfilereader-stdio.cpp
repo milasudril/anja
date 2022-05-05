@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cassert>
+#include <cerrno>
 
 using namespace Anja;
 
