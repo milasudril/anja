@@ -5,8 +5,9 @@
 #include "channelstrip.hpp"
 #include "../common/floatconv.hpp"
 
-using namespace Anja;
+#include <cstdio>
 
+using namespace Anja;
 
 ChannelStrip& ChannelStrip::colorPresets(const ColorRGBA* begin,const ColorRGBA* end)
 	{
