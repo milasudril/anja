@@ -4,8 +4,9 @@
 #include "../sessiondata/session.hpp"
 #include "../common/floatconv.hpp"
 
-using namespace Anja;
+#include <cstdio>
 
+using namespace Anja;
 
 static double gain_map(double x)
 	{return 6.0*x + (1-x)*(-72.0);}
